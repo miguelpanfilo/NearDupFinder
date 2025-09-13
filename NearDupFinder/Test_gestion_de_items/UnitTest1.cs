@@ -6,7 +6,7 @@ namespace Test_gestion_de_items;
 public class UnitTest1
 {
     [TestMethod]
-    public void TestItems_CrearItem_Ok()
+    public void TestItems_Crear_Item_Ok()
     {
         Catalogo catalogo = new Catalogo
         {
@@ -26,5 +26,18 @@ public class UnitTest1
         Assert.AreEqual("Titulo de catalogo", item.Catalogo.Titulo);
             
 
+    }
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void TestItems_Crear_Item_Sin_Catalogo()
+    {
+       
+        Item item = new Item
+        {
+            Titulo = "Soy un titulo",
+            Descripcion = "Soy una descripcion",
+           
+        };
+        
     }
 }
