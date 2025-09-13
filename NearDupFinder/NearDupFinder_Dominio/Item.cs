@@ -14,12 +14,16 @@ public class Item
     public string Marca{get;set;}
     public string Modelo{get;set;}
     public string Categoria{get;set;}
-    
+
     public Catalogo Catalogo
     {
         get => catalogo;
-        set => catalogo = value ?? throw new ArgumentException("El Item debe tener un Catalogo.");
+        set
+        {
+            if (value == null)
+                throw new ArgumentException("El Item debe tener un Catalogo.");
+            catalogo = value;
+        }
     }
-    
 
 }
