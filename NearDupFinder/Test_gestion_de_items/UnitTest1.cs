@@ -6,13 +6,13 @@ namespace Test_gestion_de_items;
 public class UnitTest1
 {
     [TestMethod]
-    public void TestItems_CrearItemOk()
+    public void TestItems_CrearItem_Ok()
     {
         Catalogo catalogo = new Catalogo
         {
             Titulo = "Titulo de catalogo"
         };
-        Item i = new Item
+        Item item = new Item
         {
             Titulo = "Soy un titulo",
             Descripcion = "Soy una descripcion",
@@ -20,10 +20,10 @@ public class UnitTest1
         };
 
         
-        Assert.AreEqual("Soy un titulo", i.Titulo);
-        Assert.AreEqual("Soy una descripcion", i.Descripcion);
-        Assert.IsNotNull(i.Catalogo);
-        Assert.AreEqual("Titulo de catalogo", i.Catalogo.Titulo);
+        Assert.AreEqual("Soy un titulo", item.Titulo);
+        Assert.AreEqual("Soy una descripcion", item.Descripcion);
+        Assert.IsNotNull(item.Catalogo);
+        Assert.AreEqual("Titulo de catalogo", item.Catalogo.Titulo);
             
 
     }
