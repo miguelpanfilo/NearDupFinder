@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Excepciones;
+
 namespace NearDupFinder_Dominio;
 
 public class Item
@@ -9,7 +11,7 @@ public class Item
     public string categoria;
     public Catalogo catalogo;
     
-    public string Titulo{get;set;}
+    
     public string Descripcion{get;set;}
     public string Marca{get;set;}
     public string Modelo{get;set;}
@@ -23,6 +25,16 @@ public class Item
             if (value == null)
                 throw new ArgumentException("El Item debe tener un Catalogo.");
             catalogo = value;
+        }
+    }
+    public string Titulo
+    {
+        get => titulo;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ItemException("El Título es obligatorio");
+            titulo = value;
         }
     }
 
