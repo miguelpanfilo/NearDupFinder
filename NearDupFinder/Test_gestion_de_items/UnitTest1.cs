@@ -36,6 +36,7 @@ public class UnitTest1
         {
             Titulo = "Soy un titulo",
             Descripcion = "Soy una descripcion",
+            Catalogo = null
            
         };
         
