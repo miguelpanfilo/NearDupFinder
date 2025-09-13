@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C5B7097F-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{02D9B160-C2E0-4380-8767-045B610C15DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_gestion_de_items", "Test_gestion_de_items\Test_gestion_de_items.csproj", "{EDBA9152-D12B-49C3-8E26-48C5CD579C66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,9 +24,14 @@ Global
 		{4C677F7A-DD37-4B08-BA1D-AE4A3F029EC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C677F7A-DD37-4B08-BA1D-AE4A3F029EC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C677F7A-DD37-4B08-BA1D-AE4A3F029EC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDBA9152-D12B-49C3-8E26-48C5CD579C66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDBA9152-D12B-49C3-8E26-48C5CD579C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDBA9152-D12B-49C3-8E26-48C5CD579C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDBA9152-D12B-49C3-8E26-48C5CD579C66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4C677F7A-DD37-4B08-BA1D-AE4A3F029EC2} = {02D9B160-C2E0-4380-8767-045B610C15DF}
 		{1E54973F-2076-458C-A09F-61589487C4BE} = {C5B7097F-8BCC-4509-BA77-E9429330531D}
+		{EDBA9152-D12B-49C3-8E26-48C5CD579C66} = {C5B7097F-8BCC-4509-BA77-E9429330531D}
 	EndGlobalSection
 EndGlobal

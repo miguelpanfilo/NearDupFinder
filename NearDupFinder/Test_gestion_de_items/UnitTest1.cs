@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio;
+
 namespace Test_gestion_de_items;
 
 [TestClass]
