@@ -166,7 +166,7 @@ public class UnitTest1
                 Titulo = "titulo",
                 Descripcion = " Soy descripcion",
                 Catalogo = catalogo,
-             Categoria = categoria
+                Categoria = categoria
             };
         });
 
