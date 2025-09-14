@@ -1,3 +1,4 @@
+using NearDupFinder_Dominio;
 
 namespace NearDupFinder_Test;
 
@@ -9,6 +10,9 @@ public class CatalogoTest
     {
         Catalogo c = new Catalogo("Stock Tata");
 		
-        Assert.AreEqual("Stock Tata", c.Titulo);
+        Assert.AreEqual("Stock Tata", c.titulo);
     }
+    
+    
+
 }
