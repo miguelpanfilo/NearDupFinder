@@ -12,7 +12,7 @@ public class Item
     public Catalogo catalogo;
     
     
-    public string Descripcion{get;set;}
+   
     public string Marca{get;set;}
     public string Modelo{get;set;}
     public string Categoria{get;set;}
@@ -35,6 +35,16 @@ public class Item
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("El Título es obligatorio");
             titulo = value;
+        }
+    }
+    public string Descripcion
+    {
+        get => titulo;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ItemException("La Descripción es obligatoria.");
+            descripcion = value;
         }
     }
 
