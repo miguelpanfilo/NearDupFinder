@@ -12,7 +12,7 @@ public class Item
     public Catalogo catalogo;
     
    
-    public string Modelo  {get;set;}
+
     public string Categoria   {get;set;}
    
  
@@ -59,6 +59,16 @@ public class Item
             if (value != null && value.Length > 60)
                 throw new ItemException("La marca no puede superar 60 caracteres.");
             marca = value;
+        }
+    }
+    public string Modelo
+    {
+        get => modelo;
+        set
+        {
+            if (value != null && value.Length > 60)
+                throw new ItemException("El modelo no puede superar 60 caracteres.");
+            modelo = value;
         }
     }
 
