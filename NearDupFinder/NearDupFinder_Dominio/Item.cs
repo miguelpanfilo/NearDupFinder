@@ -34,6 +34,8 @@ public class Item
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("El Título es obligatorio");
+            if (value.Length > 120)
+                throw new ItemException("El Título no puede superar 120 caracteres.");
             titulo = value;
         }
     }
