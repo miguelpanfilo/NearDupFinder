@@ -13,6 +13,12 @@ public class CatalogoTest
         Assert.AreEqual("Stock Tata", c.Titulo);
     }
     
-    
+    [TestMethod]
+    public void CrearCatalogo_ErrorSinTituloTest()
+    {
+        var ex = Assert.ThrowsException<ArgumentException>(() => new Catalogo(""));
+        
+        Assert.AreEqual("El titulo es obligatorio", ex.Message);
+    }
 
 }
