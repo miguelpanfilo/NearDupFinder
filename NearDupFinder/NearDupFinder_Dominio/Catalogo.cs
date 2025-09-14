@@ -16,6 +16,11 @@ public class Catalogo
     }
     public void CambiarTitulo(string titulo)
     {
+        if (string.IsNullOrWhiteSpace(titulo))
+        {
+            throw new ArgumentException("El titulo es obligatorio");
+        }
+
         this.Titulo = titulo.Trim();
     }
 
