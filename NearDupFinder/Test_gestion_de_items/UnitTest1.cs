@@ -78,5 +78,22 @@ public class UnitTest1
 
         Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
     }
-    
+    [TestMethod]
+    public void TestItems_Crear_Item_Titulo_Largo_Fallo()
+    {
+        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
+        string tituloLargo = new string('A', 121);
+
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            Item item = new Item
+            {
+                Titulo = tituloLargo,
+                Descripcion = "Descripcion",
+                Catalogo = catalogo
+            };
+        });
+
+        Assert.AreEqual("El Título no puede superar 120 caracteres.", exception.Message);
+    }
 }
