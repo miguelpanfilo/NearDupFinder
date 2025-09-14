@@ -19,7 +19,7 @@ public class Item
         set
         {
             if (value == null)
-                throw new ArgumentException("El Item debe tener un Catalogo.");
+                throw new ItemException("El Item debe tener un Catalogo.");
             catalogo = value;
         }
     }

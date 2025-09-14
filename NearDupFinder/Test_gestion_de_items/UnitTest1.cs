@@ -29,17 +29,20 @@ public class UnitTest1
 
     }
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void TestItems_Crear_Item_Sin_Catalogo()
+   public void TestItems_Crear_Item_Sin_Catalogo()
     {
-       
-        Item item = new Item
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
-            Titulo = "Soy un titulo",
-            Descripcion = "Soy una descripcion",
-            Catalogo = null
+            Item item = new Item
+            {
+                Titulo = "Soy un titulo",
+                Descripcion = "Soy una descripcion",
+                Catalogo = null
            
-        };
+            };
+        });
+        Assert.AreEqual("El Item debe tener un Catalogo.", exception.Message);
+        
         
     }
     
