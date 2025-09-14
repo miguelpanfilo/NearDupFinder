@@ -20,6 +20,14 @@ public class CatalogoTest
         
         Assert.AreEqual("El titulo es obligatorio", ex.Message);
     }
+
+    [TestMethod]
+    public void CambiarTitulo_OkTest()
+    {
+        Catalogo c = new Catalogo("Stock Tata");
+        c.CambiarTitulo("Nuevo nombre");
+        Assert.AreEqual("Nuevo nombre", c.Titulo);
+    }
     
     [TestMethod]
     public void CambiarDescripcion_OkTest()
