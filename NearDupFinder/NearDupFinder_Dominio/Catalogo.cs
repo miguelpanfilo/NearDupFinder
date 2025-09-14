@@ -3,6 +3,7 @@ namespace NearDupFinder_Dominio;
 public class Catalogo
 {
     public String Titulo { get; private set; }
+    public String Descripcion { get; private set; } = "";
 
     public Catalogo(string titulo)
     {
@@ -12,5 +13,10 @@ public class Catalogo
         }
         
         this.Titulo = titulo.Trim();
+    }
+
+    public void CambiarDescripcion(string descripcion)
+    {
+        this.Descripcion = descripcion;
     }
 }
