@@ -16,7 +16,7 @@ public class Catalogo
     }
     public void CambiarTitulo(string titulo)
     {
-        this.Titulo = titulo;
+        this.Titulo = titulo.Trim();
     }
 
     public void CambiarDescripcion(string descripcion)
