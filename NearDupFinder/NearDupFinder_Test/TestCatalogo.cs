@@ -29,4 +29,12 @@ public class CatalogoTest
         Assert.AreEqual("Local numero 145, del barrio Centro", c.Descripcion);
     }
     
+    [TestMethod]
+    public void CambiarDescripcion_NullTest()
+    {
+        Catalogo c = new Catalogo("Stock Tata");
+        c.CambiarDescripcion(null);
+        Assert.AreEqual("", c.Descripcion);
+    }
+    
 }
