@@ -46,6 +46,8 @@ public class Item
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("La Descripción es obligatoria.");
+            if (value.Length > 400)
+                throw new ItemException("La descripcion no puede superar 400 caracteres."); 
             descripcion = value;
         }
     }
