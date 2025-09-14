@@ -61,5 +61,22 @@ public class UnitTest1
             });
         Assert.AreEqual("El Título es obligatorio", exception.Message);
     }
+    [TestMethod]
+    public void TestItems_Crear_Item_Sin_Descripcion()
+    {
+        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
+
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            Item item = new Item
+            {
+                Titulo = "Soy un titulo",
+                Descripcion = "",  
+                Catalogo = catalogo
+            };
+        });
+
+        Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
+    }
     
 }
