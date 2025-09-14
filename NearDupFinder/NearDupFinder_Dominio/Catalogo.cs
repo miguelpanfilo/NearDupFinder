@@ -2,9 +2,10 @@ namespace NearDupFinder_Dominio;
 
 public class Catalogo
 {
-    public String titulo;
+    public String Titulo { get; private set; }
+
     public Catalogo(string titulo)
     {
-        this.titulo = titulo;
+        this.Titulo = titulo;
     }
 }

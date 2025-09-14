@@ -10,7 +10,7 @@ public class CatalogoTest
     {
         Catalogo c = new Catalogo("Stock Tata");
 		
-        Assert.AreEqual("Stock Tata", c.titulo);
+        Assert.AreEqual("Stock Tata", c.Titulo);
     }
     
     
