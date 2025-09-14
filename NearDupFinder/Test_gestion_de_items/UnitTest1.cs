@@ -226,4 +226,21 @@ public class UnitTest1
         Assert.AreEqual(40, item.Categoria.Length);
         Assert.AreEqual(categoriaMax, item.Categoria);
     }
+    [TestMethod]
+    public void TestItems_Marca_Maxima_60_Caracteres()
+    {
+        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
+        string marcaMax = new string('M', 60);
+
+        Item item = new Item
+        {
+            Titulo = "Titulo válido",
+            Descripcion = "Descripcion válida",
+            Catalogo = catalogo,
+            Marca = marcaMax
+        };
+
+        Assert.AreEqual(60, item.Marca.Length);
+        Assert.AreEqual(marcaMax, item.Marca);
+    }
 }
