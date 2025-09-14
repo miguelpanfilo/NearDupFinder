@@ -11,6 +11,6 @@ public class Catalogo
             throw new ArgumentException("El titulo es obligatorio");
         }
         
-        this.Titulo = titulo;
+        this.Titulo = titulo.Trim();
     }
 }
