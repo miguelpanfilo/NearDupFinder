@@ -175,6 +175,22 @@ public class UnitTest1
 
         Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
     } 
+    [TestMethod]
+    public void TestItems_Titulo_Obligatorio_Con_Maximo_120_Caracteres()
+    {
+        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
+        string tituloMax = new string('A', 120);
+
+        Item item = new Item
+        {
+            Titulo = tituloMax,
+            Descripcion = "Descripcion válida",
+            Catalogo = catalogo
+        };
+
+        Assert.AreEqual(120, item.Titulo.Length);
+        Assert.AreEqual(tituloMax, item.Titulo);
+    }
     
     
 }
