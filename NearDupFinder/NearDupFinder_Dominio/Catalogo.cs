@@ -17,6 +17,6 @@ public class Catalogo
 
     public void CambiarDescripcion(string descripcion)
     {
-        this.Descripcion = descripcion;
+        this.Descripcion = descripcion.Trim();
     }
 }
