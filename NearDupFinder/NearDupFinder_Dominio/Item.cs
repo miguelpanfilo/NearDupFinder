@@ -66,7 +66,7 @@ public class Item
         get => modelo;
         set
         {
-            if (value != null && value.Length > 60)
+            if (value != null & value.Length > 60)
                 throw new ItemException("El modelo no puede superar 60 caracteres.");
             modelo = value;
         }
