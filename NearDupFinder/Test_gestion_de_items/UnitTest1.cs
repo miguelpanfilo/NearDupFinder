@@ -82,13 +82,13 @@ public class UnitTest1
     public void TestItems_Crear_Item_Titulo_Largo_Fallo()
     {
         Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
-        string tituloLargo = new string('A', 121);
+        string titulo = new string('A', 121);
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
             Item item = new Item
             {
-                Titulo = tituloLargo,
+                Titulo = titulo,
                 Descripcion = "Descripcion",
                 Catalogo = catalogo
             };
