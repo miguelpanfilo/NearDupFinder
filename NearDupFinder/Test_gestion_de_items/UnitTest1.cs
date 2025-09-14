@@ -114,4 +114,24 @@ public class UnitTest1
 
         Assert.AreEqual("La descripcion no puede superar 400 caracteres.", exception.Message);
     }
+    
+    [TestMethod]
+    public void TestItems_Crear_Item_Marca_Larga_Fallo()
+    {
+        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
+       string  marca = new string('A', 61);
+
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            Item item = new Item
+            {
+                Titulo = "titulo",
+                Descripcion = " Soy descripcion",
+                Catalogo = catalogo,
+                Marca = marca
+            };
+        });
+
+        Assert.AreEqual("La marca no puede superar 60 caracteres.", exception.Message);
+    }
 }
