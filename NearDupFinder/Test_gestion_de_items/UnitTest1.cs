@@ -278,5 +278,23 @@ public class UnitTest1
 
         Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
     }
+    [TestMethod]
+    public void TestCatalogo_Agregar_Item_Correcto()
+    {
+        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
 
+        Item item = new Item
+        {
+            Titulo = "Titulo obligatorio",
+            Descripcion = "Descripcion obligatoria",
+            Catalogo = catalogo
+        };
+
+        // Supongamos que Catalogo tiene un método AgregarItem
+        catalogo.AgregarItem(item);
+
+        
+        Assert.IsTrue(catalogo.Items.Contains(item));
+        Assert.AreEqual(1, catalogo.Items.Count);
+    }
 }
