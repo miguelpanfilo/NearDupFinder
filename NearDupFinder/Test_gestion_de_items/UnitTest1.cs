@@ -290,11 +290,11 @@ public class UnitTest1
             Catalogo = catalogo
         };
 
-        // Supongamos que Catalogo tiene un método AgregarItem
+    
         catalogo.AgregarItem(item);
 
         
-        Assert.IsTrue(catalogo.Items.Contains(item));
-        Assert.AreEqual(1, catalogo.Items.Count);
+        Assert.IsTrue(catalogo.items.Contains(item));
+        Assert.AreEqual(1, catalogo.items.Count);
     }
 }
