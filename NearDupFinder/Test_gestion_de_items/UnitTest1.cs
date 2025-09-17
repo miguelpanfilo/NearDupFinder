@@ -297,4 +297,6 @@ public class UnitTest1
         Assert.IsTrue(catalogo.items.Contains(item));
         Assert.AreEqual(1, catalogo.items.Count);
     }
+    
+    
 }
