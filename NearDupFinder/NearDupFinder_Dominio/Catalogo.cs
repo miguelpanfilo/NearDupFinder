@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Excepciones;
+
 namespace NearDupFinder_Dominio;
 
 public class Catalogo
@@ -14,16 +16,16 @@ public class Catalogo
         items.Add(item);
     }
     
-    public Item ObtenerItemPorId(int i)
+    public Item ObtenerItemPorId(int id)
     {
         foreach (Item item in items)
         {
-            if (item.Id == i)
+            if (item.Id == id)
             {
                 return item; 
             }
         }
 
-        return null; 
+        throw new CatalogoException($"No existe ningún Item con Id {id} en este catálogo.");
     }
 }
