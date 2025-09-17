@@ -324,5 +324,24 @@ public class UnitTest1
         Assert.AreEqual(item2, buscado);
         Assert.AreEqual("Item 2", buscado.Titulo);
     }
+    [TestMethod]
+    public void EliminarItem_PorId_ItemEliminadoCorrectamente()
+    {
+        
+        Catalogo catalogo = new Catalogo("Catalogo Ejemplo");
+        Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
+        Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
+
+        catalogo.AgregarItem(item1);
+        catalogo.AgregarItem(item2);
+
+        
+        catalogo.EliminarItem(item1.Id);
+
+        
+        Assert.IsFalse(catalogo.items.Contains(item1)); 
+        Assert.AreEqual(1, catalogo.items.Count);       
+        Assert.IsTrue(catalogo.items.Contains(item2)); 
+    }
 
 }
