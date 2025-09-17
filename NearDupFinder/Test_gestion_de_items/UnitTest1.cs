@@ -305,7 +305,7 @@ public class UnitTest1
     }
     
     [TestMethod]
-    public void CrearItem_AsignarIdAutoincremental()
+    public void TestItem_Crear_AsignarIdAutoincremental_Correcto()
     {
         Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
         Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
@@ -314,8 +314,9 @@ public class UnitTest1
         Assert.AreEqual(2, item2.Id);
         Assert.AreNotEqual(item1.Id, item2.Id);
     }
+
     [TestMethod]
-    public void ObtenerItemPorId_DevuelveItemCorrecto()
+    public void TestCatalogo_ObtenerItemPorId_DevuelveItemCorrecto()
     {
         Catalogo catalogo = new Catalogo();
 
@@ -332,9 +333,8 @@ public class UnitTest1
     }
 
     [TestMethod]
-    public void EliminarItem_PorId_ItemEliminadoCorrectamente()
+    public void TestCatalogo_EliminarItem_PorId_ItemEliminadoCorrectamente()
     {
-
         Catalogo catalogo = new Catalogo();
         Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
         Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
@@ -342,9 +342,7 @@ public class UnitTest1
         catalogo.AgregarItem(item1);
         catalogo.AgregarItem(item2);
 
-
         catalogo.EliminarItem(item1.Id);
-
 
         Assert.IsFalse(catalogo.Items.Contains(item1)); 
         Assert.AreEqual(1, catalogo.Items.Count);       
