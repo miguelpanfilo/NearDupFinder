@@ -298,5 +298,15 @@ public class UnitTest1
         Assert.AreEqual(1, catalogo.items.Count);
     }
     
+    [TestMethod]
+    public void CrearItem_AsignarIdAutoincremental()
+    {
+        Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
+        Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
+
+        Assert.AreEqual(1, item1.Id);
+        Assert.AreEqual(2, item2.Id);
+        Assert.AreNotEqual(item1.Id, item2.Id);
+    }
     
 }
