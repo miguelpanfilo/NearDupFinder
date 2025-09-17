@@ -31,7 +31,7 @@ public class Catalogo
             }
         }
 
-        return null;
+        throw new CatalogoException($"No existe ningún Item con Id {id} en este catálogo.");
 
     }
 
