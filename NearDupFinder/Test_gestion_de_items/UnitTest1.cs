@@ -348,5 +348,21 @@ public class UnitTest1
         Assert.AreEqual(1, catalogo.Items.Count);       
         Assert.IsTrue(catalogo.Items.Contains(item2)); 
     }
+    [TestMethod]
+    public void TestCatalogo_ObtenerItemPorId_Inexistente_LanzaExcepcion()
+    {
+        
+        Catalogo catalogo = new Catalogo();
+
+        
+        CatalogoException ex = Assert.ThrowsException<CatalogoException>(() =>
+        {
+            catalogo.ObtenerItemPorId(999); // Id que no existe
+        });
+
+        // Verificamos que el mensaje sea el esperado
+        Assert.AreEqual("No existe ningún Item con Id 999 en este catálogo.", ex.Message);
+    }
+
 
 }

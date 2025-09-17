@@ -31,7 +31,8 @@ public class Catalogo
             }
         }
 
-        throw new CatalogoException($"No existe ningún Item con Id {id} en este catálogo.");
+        return null;
+
     }
 
     public void EliminarItem(int itemId)
