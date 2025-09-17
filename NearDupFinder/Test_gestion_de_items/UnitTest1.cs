@@ -308,5 +308,21 @@ public class UnitTest1
         Assert.AreEqual(2, item2.Id);
         Assert.AreNotEqual(item1.Id, item2.Id);
     }
-    
+    [TestMethod]
+    public void ObtenerItemPorId_DevuelveItemCorrecto()
+    {
+        Catalogo catalogo = new Catalogo("Catalogo Ejemplo");
+
+        Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
+        Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
+
+        catalogo.AgregarItem(item1);
+        catalogo.AgregarItem(item2);
+
+        Item buscado = catalogo.ObtenerItemPorId(2);
+
+        Assert.AreEqual(item2, buscado);
+        Assert.AreEqual("Item 2", buscado.Titulo);
+    }
+
 }
