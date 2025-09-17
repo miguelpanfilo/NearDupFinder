@@ -13,5 +13,17 @@ public class Catalogo
         
         items.Add(item);
     }
+    
+    public Item ObtenerItemPorId(int i)
+    {
+        foreach (Item item in items)
+        {
+            if (item.Id == i)
+            {
+                return item; 
+            }
+        }
 
+        return null; 
+    }
 }

@@ -17,6 +17,7 @@ public class Item
     {
         Id = _nextId++;
     }
+
     public Catalogo Catalogo
     {
         get => _catalogo;
@@ -49,7 +50,7 @@ public class Item
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("La Descripción es obligatoria.");
             if (value.Length > 400)
-                throw new ItemException("La descripcion no puede superar 400 caracteres."); 
+                throw new ItemException("La descripcion no puede superar 400 caracteres.");
             _descripcion = value;
         }
     }
@@ -86,4 +87,12 @@ public class Item
             _categoria = value;
         }
     }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is not Item other)
+            return false;
+        return this.Id == other.Id;
+    }
+
 }
