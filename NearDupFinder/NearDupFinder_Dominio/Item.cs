@@ -4,13 +4,19 @@ namespace NearDupFinder_Dominio;
 
 public class Item
 {
+    private static int _nextId = 1;
     private string _titulo;
     private string _descripcion;
     private string _marca;
     private string _modelo;
     private string _categoria;
     private Catalogo _catalogo;
+    public int Id { get; private set; }
 
+    public Item()
+    {
+        Id = _nextId++;
+    }
     public Catalogo Catalogo
     {
         get => _catalogo;
