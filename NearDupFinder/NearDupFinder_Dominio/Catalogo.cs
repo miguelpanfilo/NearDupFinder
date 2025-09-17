@@ -28,4 +28,11 @@ public class Catalogo
 
         throw new CatalogoException($"No existe ningún Item con Id {id} en este catálogo.");
     }
+
+    public void EliminarItem(int item1Id)
+    {
+        Item item= ObtenerItemPorId(item1Id);
+        
+        items.Remove(item);
+    }
 }

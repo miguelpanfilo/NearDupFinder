@@ -328,7 +328,7 @@ public class UnitTest1
     public void EliminarItem_PorId_ItemEliminadoCorrectamente()
     {
         
-        Catalogo catalogo = new Catalogo("Catalogo Ejemplo");
+        Catalogo catalogo = new Catalogo();
         Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
         Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
 
