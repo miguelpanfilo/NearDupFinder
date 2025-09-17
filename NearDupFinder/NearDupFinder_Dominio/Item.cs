@@ -95,4 +95,8 @@ public class Item
         return this.Id == other.Id;
     }
 
+    public static void ResetIdCounter()
+    {
+      _nextId = 1;
+    }
 }

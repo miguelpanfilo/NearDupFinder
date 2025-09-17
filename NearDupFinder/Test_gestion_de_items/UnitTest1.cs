@@ -5,7 +5,13 @@ namespace Test_gestion_de_items;
 
 [TestClass]
 public class UnitTest1
-{
+{  
+    [TestInitialize]
+    public void Setup()
+    {
+        Item.ResetIdCounter();
+    }
+    
     [TestMethod]
     public void TestItems_Crear_Item_Ok()
     {
