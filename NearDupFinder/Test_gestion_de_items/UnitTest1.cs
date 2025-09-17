@@ -363,6 +363,18 @@ public class UnitTest1
         // Verificamos que el mensaje sea el esperado
         Assert.AreEqual("No existe ningún Item con Id 999 en este catálogo.", ex.Message);
     }
+    
+    [TestMethod]
+    public void TestItem_Equals_ComparaPorId()
+    {
+        Catalogo catalogo = new Catalogo();
+        Item item1 = new Item { Titulo = "A", Descripcion = "B", Catalogo = catalogo };
+        Item item2 = new Item { Titulo = "C", Descripcion = "D", Catalogo = catalogo };
+        Item item3 = item1;
+
+        Assert.IsTrue(item1.Equals(item3));
+        Assert.IsFalse(item1.Equals(item2));
+    }
 
 
 }
