@@ -44,7 +44,7 @@ public class EmailPruebas
     }
     
     [TestMethod]
-    public void Equals_Valido()
+    public void Igual_Valido()
     {
         var email1 = Email.Crear("USER@Example.COM");
         var email2 = Email.Crear("user@example.com");
@@ -53,7 +53,7 @@ public class EmailPruebas
     }
 
     [TestMethod]
-    public void Equals_Invalido()
+    public void Igual_Invalido()
     {
         var email1 = Email.Crear("user@example.com");
         var email2 = Email.Crear("otro@example.com");
