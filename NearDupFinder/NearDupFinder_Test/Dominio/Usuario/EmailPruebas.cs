@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Usuario;
+
 namespace NearDupFinder_Test.Usuario.Dominio.VO;
 
 [TestClass]
