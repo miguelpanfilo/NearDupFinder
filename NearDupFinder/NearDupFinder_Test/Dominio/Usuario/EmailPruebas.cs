@@ -33,4 +33,13 @@ public class EmailPruebas
     {
         Assert.ThrowsException<ArgumentException>(() => Email.Crear(textoCorreoInvalido));
     }
+    
+    [DataTestMethod]
+    [DataRow("  Usuario@Ejemplo.Com  ", "usuario@ejemplo.com")]
+    [DataRow("UsEr.Name+Tag@Sub.Dominio.IO ", "user.name+tag@sub.dominio.io")]
+    public void Crear_RecortaEspaciosYNormalizaMinusculas(string correoConEspaciosYMayusculas, string correoNormalizadoEsperado)
+    {
+        var email = Email.Crear(correoConEspaciosYMayusculas);
+        Assert.AreEqual(correoNormalizadoEsperado, email.ToString());
+    }
 }
