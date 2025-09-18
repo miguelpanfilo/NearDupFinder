@@ -35,6 +35,12 @@ public class EmailPruebas
     }
     
     [DataTestMethod]
+    public void Crear_Nulo_LanzaArgumentNullException()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() => Email.Crear(null));
+    }
+    
+    [DataTestMethod]
     [DataRow("  Usuario@Ejemplo.Com  ", "usuario@ejemplo.com")]
     [DataRow("UsEr.Name+Tag@Sub.Dominio.IO ", "user.name+tag@sub.dominio.io")]
     public void Crear_RecortaEspaciosYNormalizaMinusculas(string correoConEspaciosYMayusculas, string correoNormalizadoEsperado)
@@ -59,5 +65,13 @@ public class EmailPruebas
         var email2 = Email.Crear("otro@example.com");
 
         Assert.IsFalse(email1.Igual(email2));
+    }
+    
+    [TestMethod]
+    public void Igual_Nulo_DevuelveFalse()
+    {
+        var email = Email.Crear("usuario@ejemplo.com");
+
+        Assert.IsFalse(email.Igual(null));
     }
 }

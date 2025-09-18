@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Usuario;
+
 namespace NearDupFinder_Test.Usuario.Dominio.VO;
 
 [TestClass]
@@ -47,5 +49,13 @@ public class FechaPruebas
         var fecha2 = Fecha.Crear(2000, 12, 30);
 
         Assert.IsFalse(fecha1.Igual(fecha2));
+    }
+    
+    [TestMethod]
+    public void Igual_Nulo_DevuelveFalse()
+    {
+        var fecha = Fecha.Crear(2000, 12, 31);
+
+        Assert.IsFalse(fecha.Igual(null));
     }
 }
