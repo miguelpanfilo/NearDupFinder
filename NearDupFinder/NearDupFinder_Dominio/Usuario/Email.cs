@@ -13,10 +13,12 @@ public sealed class Email
         if (email is null)
             throw new ArgumentNullException(nameof(email));
         
-        if (!EsFormatoValido(email))
+        var emailNormalizado = email.Trim().ToLowerInvariant();
+        
+        if (!EsFormatoValido(emailNormalizado))
             throw new ArgumentException("El email no tiene un formato válido.", nameof(email));
 
-        return new Email(email);
+        return new Email(emailNormalizado);
     }
     
     public override string ToString() => _valor;
