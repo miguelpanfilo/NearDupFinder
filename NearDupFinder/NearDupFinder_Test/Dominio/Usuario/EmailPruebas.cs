@@ -42,4 +42,22 @@ public class EmailPruebas
         var email = Email.Crear(correoConEspaciosYMayusculas);
         Assert.AreEqual(correoNormalizadoEsperado, email.ToString());
     }
+    
+    [TestMethod]
+    public void Equals_Valido()
+    {
+        var email1 = Email.Crear("USER@Example.COM");
+        var email2 = Email.Crear("user@example.com");
+
+        Assert.IsTrue(email1.Igual(email2));
+    }
+
+    [TestMethod]
+    public void Equals_Invalido()
+    {
+        var email1 = Email.Crear("user@example.com");
+        var email2 = Email.Crear("otro@example.com");
+
+        Assert.IsFalse(email1.Igual(email2));
+    }
 }
