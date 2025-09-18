@@ -24,4 +24,8 @@
       <ProjectReference Include="..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Dominio\" />
+    </ItemGroup>
+
 </Project>
