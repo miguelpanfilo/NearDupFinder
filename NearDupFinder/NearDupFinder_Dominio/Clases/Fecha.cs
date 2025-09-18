@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace NearDupFinder_Dominio.Usuario;
+namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Fecha
 {

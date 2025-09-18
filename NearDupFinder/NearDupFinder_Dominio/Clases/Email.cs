@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace NearDupFinder_Dominio.Usuario;
+namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Email
 {

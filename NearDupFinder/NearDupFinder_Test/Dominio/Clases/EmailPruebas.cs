@@ -1,6 +1,6 @@
-using NearDupFinder_Dominio.Usuario;
+using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_Test.Usuario.Dominio.VO;
+namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class EmailPruebas

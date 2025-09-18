@@ -1,0 +1,69 @@
+using System.Collections;
+
+namespace NearDupFinder_Dominio.Clases;
+
+public enum Rol
+{
+    Administrador,
+    Revisor
+}
+
+public class Usuario
+{
+    public string Nombre { get; }
+    public string Apellido { get; }
+    public Email Email { get; }
+    public Fecha FechaNacimiento { get; }
+
+    private readonly HashSet<Rol> _roles = new();
+    
+    private Usuario(string nombre, string apellido, Email email, Fecha fechaNacimiento)
+    {
+        Nombre = nombre;
+        Apellido = apellido;
+        Email = email;
+        FechaNacimiento = fechaNacimiento;
+    }
+    
+    public static Usuario Crear(string nombre, string apellido, Email email, Fecha fechaNacimiento)
+    {
+        if (string.IsNullOrWhiteSpace(nombre))
+            throw new ArgumentException("El nombre no puede estar vacío.", nameof(nombre));
+        if (string.IsNullOrWhiteSpace(apellido))
+            throw new ArgumentException("El apellido no puede estar vacío.", nameof(apellido));
+        if (email is null)
+            throw new ArgumentNullException(nameof(email));
+        if (fechaNacimiento is null)
+            throw new ArgumentNullException(nameof(fechaNacimiento));
+
+        return new Usuario(nombre.Trim(), apellido.Trim(), email, fechaNacimiento);
+    }
+
+    public void AgregarRol(Rol rol)
+    {
+        _roles.Add(rol);
+    }
+    
+    public void RemoverRol(Rol rol)
+    {
+        _roles.Remove(rol);
+    }
+
+    public bool TieneRol(Rol rol)
+    {
+        return _roles.Contains(rol);
+    }
+
+    public IReadOnlyCollection<Rol> ObtenerRoles()
+    {
+        return _roles.ToArray();
+    }
+    
+    public bool Igual(Usuario otroUsuario)
+    {
+        if (otroUsuario is null) 
+            return false;
+
+        return this.Email.Igual(otroUsuario.Email);
+    }
+}

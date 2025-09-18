@@ -1,6 +1,6 @@
-using NearDupFinder_Dominio.Usuario;
+using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_Test.Usuario.Dominio.VO;
+namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class UsuarioPruebas
@@ -10,7 +10,7 @@ public class UsuarioPruebas
     {
         Email email = Email.Crear("manuelperezmartirene@gmail.com");
         Fecha fecha = Fecha.Crear(1997,12,27);
-        Usuario usuario = Usuario.Crear("Manuel","Perez",email,fecha);
+       var usuario = Usuario.Crear("Manuel","Perez",email,fecha);
         
         Assert.AreEqual("Manuel", usuario.Nombre);
         Assert.AreEqual("Perez", usuario.Apellido);
@@ -23,7 +23,7 @@ public class UsuarioPruebas
     {
         var fecha = Fecha.Crear(1997, 12, 27);
 
-        Assert.ThrowsException<ArgumentNullException>(() => Usuario.Crear("Manuel", "Perez", null, fecha));
+        Assert.ThrowsException<ArgumentNullException>(() => Usuario.Crear("Manuel", "Perez", null!, fecha));
     }
     
     [TestMethod]
@@ -31,7 +31,7 @@ public class UsuarioPruebas
     {
         var email = Email.Crear("manuelperezmartirene@gmail.com");
 
-        Assert.ThrowsException<ArgumentNullException>(() => Usuario.Crear("Manuel", "Perez", email, null));
+        Assert.ThrowsException<ArgumentNullException>(() => Usuario.Crear("Manuel", "Perez", email, null!));
     }
     
     [TestMethod]
@@ -131,7 +131,7 @@ public class UsuarioPruebas
         usuario.AgregarRol(Rol.Administrador);
         usuario.AgregarRol(Rol.Revisor);
 
-        CollectionAssert.AreEquivalent(new[] { Rol.Administrador, Rol.Revisor }, usuario.ObtenerRoles());
+        CollectionAssert.AreEquivalent(new[] { Rol.Administrador, Rol.Revisor }, usuario.ObtenerRoles().ToArray());   
     }
     
     [TestMethod]
@@ -140,7 +140,7 @@ public class UsuarioPruebas
         var usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
         var usuario2 = Usuario.Crear("Manuel", "Perez", Email.Crear("MANUEL@EJEMPLO.COM"), Fecha.Crear(2000, 3, 3));
 
-        Assert.IsTrue(manuel1.Igual(manuel2));
+        Assert.IsTrue(usuario1.Igual(usuario2));
     }
 
     [TestMethod]
@@ -157,6 +157,6 @@ public class UsuarioPruebas
     {
         var usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
 
-        Assert.IsFalse(manuel.Igual(null));
+        Assert.IsFalse(usuario.Igual(null!));
     }
 }
