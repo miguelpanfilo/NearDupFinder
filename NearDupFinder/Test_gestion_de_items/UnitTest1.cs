@@ -402,6 +402,14 @@ public class UnitTest1
         var item3 = new Item { Titulo = "Tres", Descripcion = "Desc", Catalogo = new Catalogo() };
         Assert.AreEqual(1, item3.Id); // vuelve a empezar en 1
     }
+    [TestMethod]
+    public void TestItem_Equals_ConObjetoDeOtroTipo_DevuelveFalse()
+    {
+        Item item = new Item { Titulo = "A", Descripcion = "B", Catalogo = new Catalogo() };
+
+        Assert.IsFalse(item.Equals("no soy un item"));
+    }
+
 
 
 }
