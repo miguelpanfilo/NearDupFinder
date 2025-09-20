@@ -19,6 +19,7 @@ public class CatalogoTest
     {
         _catalogo = null;
     }
+    
     [TestMethod]
     public void CrearCatalogo_OkTest()
     {
@@ -57,6 +58,13 @@ public class CatalogoTest
     {
         var ex = Assert.ThrowsException<ArgumentException>(() => new Catalogo(""));
         
+        Assert.AreEqual("El titulo es obligatorio", ex.Message);
+    }
+    
+    [TestMethod]
+    public void CrearCatalogo_TituloSoloEspacios_ErrorTest()
+    {
+        var ex = Assert.ThrowsException<ArgumentException>(() => new Catalogo("   "));
         Assert.AreEqual("El titulo es obligatorio", ex.Message);
     }
     
