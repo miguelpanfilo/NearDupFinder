@@ -10,7 +10,7 @@ public class Item
     private string _marca;
     private string _modelo;
     private string _categoria;
-    private Catalogo _catalogo;
+   
     public int Id { get; private set; }
 
     public Item()
@@ -18,16 +18,7 @@ public class Item
         Id = _nextId++;
     }
 
-    public Catalogo Catalogo
-    {
-        get => _catalogo;
-        set
-        {
-            if (value == null)
-                throw new ItemException("El Item debe tener un Catalogo.");
-            _catalogo = value;
-        }
-    }
+   
 
     public string Titulo
     {
@@ -36,6 +27,8 @@ public class Item
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("El Título es obligatorio");
+           
+            
             if (value.Length > 120)
                 throw new ItemException("El Título no puede superar 120 caracteres.");
             _titulo = value;
@@ -99,4 +92,6 @@ public class Item
     {
       _nextId = 1;
     }
+    
+    
 }

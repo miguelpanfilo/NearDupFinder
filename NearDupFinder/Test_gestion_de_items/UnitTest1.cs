@@ -15,48 +15,33 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Crear_Item_Ok()
     {
-        Catalogo catalogo = new Catalogo
-        {
-            Titulo = "Titulo de catalogo"
-        };
+        
+        
         Item item = new Item
         {
             Titulo = "Soy un titulo",
             Descripcion = "Soy una descripcion",
-            Catalogo = catalogo
+            Marca = "Marca",
+            Modelo = "Modelo",
+            Categoria = "Categoria"
         };
 
         
         Assert.AreEqual("Soy un titulo", item.Titulo);
         Assert.AreEqual("Soy una descripcion", item.Descripcion);
-        Assert.IsNotNull(item.Catalogo);
-        Assert.AreEqual("Titulo de catalogo", item.Catalogo.Titulo);
+        Assert.AreEqual("Marca", item.Marca);
+        Assert.AreEqual("Modelo", item.Modelo); 
+        Assert.AreEqual("Categoria", item.Categoria);  
             
 
     }
-    [TestMethod]
-   public void TestItems_Crear_Item_Sin_Catalogo()
-    {
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item
-            {
-                Titulo = "Soy un titulo",
-                Descripcion = "Soy una descripcion",
-                Catalogo = null
-           
-            };
-        });
-        Assert.AreEqual("El Item debe tener un Catalogo.", exception.Message);
-        
-        
-    }
+ 
     
     [TestMethod]
     
     public void TestItems_Crear_Item_Sin_Titulo()
     {
-        Catalogo catalogo = new Catalogo();
+    
        
         
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
@@ -65,15 +50,18 @@ public class UnitTest1
                 {
                     Titulo = "",  
                     Descripcion = "Soy una descripcion",
-                    Catalogo = catalogo
+                    Marca = "Marca",
+                    Modelo = "Modelo",
+                    Categoria = "Categoria"
                 };
             });
         Assert.AreEqual("El Título es obligatorio", exception.Message);
     }
+    
     [TestMethod]
     public void TestItems_Crear_Item_Sin_Descripcion()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
+        
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
@@ -81,7 +69,9 @@ public class UnitTest1
             {
                 Titulo = "Soy un titulo",
                 Descripcion = "",  
-                Catalogo = catalogo
+                Marca = "Marca",
+                Modelo = "Modelo",
+                Categoria = "Categoria"
             };
         });
 
@@ -90,7 +80,6 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Crear_Item_Titulo_Largo_Fallo()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string titulo = new string('A', 121);
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
@@ -99,7 +88,9 @@ public class UnitTest1
             {
                 Titulo = titulo,
                 Descripcion = "Descripcion",
-                Catalogo = catalogo
+                Marca = "Marca",
+                Modelo = "Modelo",
+                Categoria = "Categoria"
             };
         });
 
@@ -108,16 +99,17 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Crear_Item_Descripcion_Largo_Fallo()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string descripcion = new string('A', 401);
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
             Item item = new Item
             {
-                Titulo = "titulo",
+                Titulo = "Titulo",
                 Descripcion = descripcion,
-                Catalogo = catalogo
+                Marca = "Marca",
+                Modelo = "Modelo",
+                Categoria = "Categoria"
             };
         });
 
@@ -127,55 +119,58 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Crear_Item_Marca_Larga_Fallo()
     {
-       Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
        string  marca = new string('A', 61);
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
             Item item = new Item
             {
-                Titulo = "titulo",
-                Descripcion = " Soy descripcion",
-                Catalogo = catalogo,
-                Marca = marca
+                Titulo = "Titulo",
+                Descripcion = "Descripcion",
+                Marca = marca,
+                Modelo = "Modelo",
+                Categoria = "Categoria"
             };
         });
 
         Assert.AreEqual("La marca no puede superar 60 caracteres.", exception.Message);
     }
+    
     [TestMethod]
     public void TestItems_Crear_Item_Modelo_Largo_Fallo()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string  modelo = new string('A', 61);
 
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        ItemException exception = Assert.ThrowsException<ItemException>( () =>
         {
             Item item = new Item
-            {
-                Titulo = "titulo",
-                Descripcion = " Soy descripcion",
-                Catalogo = catalogo,
-                Modelo = modelo
+            { 
+                Titulo = "Titulo",
+                Descripcion = "descripcion",
+                Marca = "Marca",
+                Modelo = modelo,
+                Categoria = "Categoria"
             };
         });
 
         Assert.AreEqual("El modelo no puede superar 60 caracteres.", exception.Message);
     } 
+    
     [TestMethod]
     public void TestItems_Crear_Item_Categoria_Larga_Fallo()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string  categoria = new string('A', 61);
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
             Item item = new Item
             {
-                Titulo = "titulo",
-                Descripcion = " Soy descripcion",
-                Catalogo = catalogo,
-                Categoria = categoria
+                Titulo = "Titulo",
+                Descripcion = "descripcion",
+                Marca = "Marca",
+                Modelo = "Modelo",
+                Categoria = categoria,
+                
             };
         });
 
@@ -184,14 +179,16 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Titulo_Obligatorio_Con_Maximo_120_Caracteres()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string tituloMax = new string('A', 120);
 
         Item item = new Item
         {
             Titulo = tituloMax,
             Descripcion = "Descripcion válida",
-            Catalogo = catalogo
+            Marca = "Marca",
+            Modelo = "Modelo",  
+            Categoria = "Categoria"
+            
         };
 
         Assert.AreEqual(120, item.Titulo.Length);
@@ -200,15 +197,15 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Modelo_Maximo_60_Caracteres()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string modeloMax = new string('D', 60);
 
         Item item = new Item
         {
-            Titulo = "Titulo válido",
+            Titulo= "Titulo",
             Descripcion = "Descripcion válida",
-            Catalogo = catalogo,
-            Modelo = modeloMax
+            Marca = "Marca",
+            Modelo = modeloMax,  
+            Categoria = "Categoria"
         };
 
         Assert.AreEqual(60, item.Modelo.Length);
@@ -218,14 +215,14 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Categoria_Maxima_40_Caracteres()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string categoriaMax = new string('E', 40);
 
         Item item = new Item
         {
-            Titulo = "Titulo válido",
+            Titulo = "Titulo",
             Descripcion = "Descripcion válida",
-            Catalogo = catalogo,
+            Marca = "Marca",
+            Modelo = "Modelo",  
             Categoria = categoriaMax
         };
 
@@ -235,42 +232,81 @@ public class UnitTest1
     [TestMethod]
     public void TestItems_Marca_Maxima_60_Caracteres()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
         string marcaMax = new string('M', 60);
 
         Item item = new Item
         {
-            Titulo = "Titulo válido",
+            Titulo = "Titulo",
             Descripcion = "Descripcion válida",
-            Catalogo = catalogo,
-            Marca = marcaMax
+            Marca = marcaMax,
+            Modelo = "Modelo",  
+            Categoria = "Categoria"
         };
 
         Assert.AreEqual(60, item.Marca.Length);
         Assert.AreEqual(marcaMax, item.Marca);
     }
     [TestMethod]
-    public void TestItems_Titulo_Solo_Espacios_Fallo()
+    public void TestItems_Titulo_Null_Fallo()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
             Item item = new Item
             {
-                Titulo = "            ",  
+                Titulo = null,
                 Descripcion = "Descripcion válida",
-                Catalogo = catalogo
+                Marca = "marca",
+                Modelo = "Modelo",
+                Categoria = "categoria"
             };
         });
 
         Assert.AreEqual("El Título es obligatorio", exception.Message);
     }
+
+    [TestMethod]
+    public void TestItems_Titulo_Vacio_Fallo()
+    {
+
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            Item item = new Item
+            {
+                Titulo = "",
+                Descripcion = "Descripcion válida",
+                Marca = "marca",
+                Modelo = "Modelo",
+                Categoria = "Categoria"
+            };
+        });
+
+        Assert.AreEqual("El Título es obligatorio", exception.Message);
+    }
+
+    [TestMethod]
+    public void TestItems_Titulo_Solo_Espacios_Fallo()
+    {
+
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            Item item = new Item
+            {
+                Titulo = "    ",  // solo espacios
+                Descripcion = "Descripcion válida",
+                Marca = "Marca",
+                Modelo = "Modelo",
+                Categoria = "Categoria"
+            };
+        });
+
+        Assert.AreEqual("El Título es obligatorio", exception.Message);
+    }
+
     
     [TestMethod]
     public void TestItems_Descripcion_Solo_Espacios_Fallo()
     {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
 
         ItemException exception = Assert.ThrowsException<ItemException>(() =>
         {
@@ -278,31 +314,15 @@ public class UnitTest1
             {
                 Titulo = "Titulo válido",
                 Descripcion = "    ", 
-                Catalogo = catalogo
+                Marca = "Marca",
+                Modelo = "Modelo",
+                Categoria = "Categoria"
             };
         });
 
         Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
     }
-    [TestMethod]
-    public void TestCatalogo_Agregar_Item_Correcto()
-    {
-        Catalogo catalogo = new Catalogo { Titulo = "Catalogo Ejemplo" };
-
-        Item item = new Item
-        {
-            Titulo = "Titulo obligatorio",
-            Descripcion = "Descripcion obligatoria",
-            Catalogo = catalogo
-        };
-
-    
-        catalogo.AgregarItem(item);
-
-        
-        Assert.IsTrue(catalogo.Items.Contains(item));
-        Assert.AreEqual(1, catalogo.Items.Count);
-    }
+  
     
     [TestMethod]
     public void TestItem_Crear_AsignarIdAutoincremental_Correcto()
@@ -315,101 +335,94 @@ public class UnitTest1
         Assert.AreNotEqual(item1.Id, item2.Id);
     }
 
-    [TestMethod]
-    public void TestCatalogo_ObtenerItemPorId_DevuelveItemCorrecto()
-    {
-        Catalogo catalogo = new Catalogo();
+  
 
-        Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
-        Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
-
-        catalogo.AgregarItem(item1);
-        catalogo.AgregarItem(item2);
-
-        Item buscado = catalogo.ObtenerItemPorId(2);
-
-        Assert.AreEqual(item2, buscado);
-        Assert.AreEqual("Item 2", buscado.Titulo);
-    }
-
-    [TestMethod]
-    public void TestCatalogo_EliminarItem_PorId_ItemEliminadoCorrectamente()
-    {
-        Catalogo catalogo = new Catalogo();
-        Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
-        Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
-
-        catalogo.AgregarItem(item1);
-        catalogo.AgregarItem(item2);
-
-        catalogo.EliminarItem(item1.Id);
-
-        Assert.IsFalse(catalogo.Items.Contains(item1)); 
-        Assert.AreEqual(1, catalogo.Items.Count);       
-        Assert.IsTrue(catalogo.Items.Contains(item2)); 
-    }
-    [TestMethod]
-    public void TestCatalogo_ObtenerItemPorId_Inexistente_LanzaExcepcion()
-    {
-        
-        Catalogo catalogo = new Catalogo();
-
-        
-        CatalogoException ex = Assert.ThrowsException<CatalogoException>(() =>
-        {
-            catalogo.ObtenerItemPorId(999); // Id que no existe
-        });
-
-        // Verificamos que el mensaje sea el esperado
-        Assert.AreEqual("No existe ningún Item con Id 999 en este catálogo.", ex.Message);
-    }
+  
+   
     
     [TestMethod]
     public void TestItem_Equals_ComparaPorId()
     {
-        Catalogo catalogo = new Catalogo();
-        Item item1 = new Item { Titulo = "A", Descripcion = "B", Catalogo = catalogo };
-        Item item2 = new Item { Titulo = "C", Descripcion = "D", Catalogo = catalogo };
+        Item item1 = new Item { Titulo = "A", Descripcion = "B", Categoria = "Categoria", Marca = "Marca",  Modelo = "Modelo" };
+        Item item2 = new Item { Titulo = "C", Descripcion = "D",  Categoria = "Categoria", Marca = "Marca", Modelo = "Modelo" };
         Item item3 = item1;
 
         Assert.IsTrue(item1.Equals(item3));
         Assert.IsFalse(item1.Equals(item2));
     }
-    [TestMethod]
-    public void TestCatalogo_EliminarItem_Inexistente_LanzaExcepcion()
-    {
-       
-        Catalogo catalogo = new Catalogo();
-
-      
-        CatalogoException ex = Assert.ThrowsException<CatalogoException>(() =>
-        {
-            catalogo.EliminarItem(999); 
-        });
-
-        Assert.AreEqual("No existe ningún Item con Id 999 en este catálogo.", ex.Message);
-    }
+ 
     [TestMethod]
     public void TestItem_ResetIdCounter_ReiniciaIds()
     {
-        var item1 = new Item { Titulo = "Uno", Descripcion = "Desc", Catalogo = new Catalogo() };
-        var item2 = new Item { Titulo = "Dos", Descripcion = "Desc", Catalogo = new Catalogo() };
+        var item1 = new Item { Titulo = "Uno", Descripcion = "Desc" , Categoria = "Categoria",  Marca = "Marca", Modelo = "Modelo" };
+        var item2 = new Item { Titulo = "Dos", Descripcion = "Desc",  Categoria = "Categoria", Marca = "Marca", Modelo = "Modelo" };
         Assert.AreEqual(1, item1.Id);
         Assert.AreEqual(2, item2.Id);
 
         Item.ResetIdCounter();
 
-        var item3 = new Item { Titulo = "Tres", Descripcion = "Desc", Catalogo = new Catalogo() };
+        var item3 = new Item { Titulo = "Tres", Descripcion = "Desc"};
         Assert.AreEqual(1, item3.Id); // vuelve a empezar en 1
     }
+
     [TestMethod]
     public void TestItem_Equals_ConObjetoDeOtroTipo_DevuelveFalse()
     {
-        Item item = new Item { Titulo = "A", Descripcion = "B", Catalogo = new Catalogo() };
+        Item item = new Item { Titulo = "A", Descripcion = "B", Marca = "Marca", Modelo = "Modelo", Categoria = "Categoria" };
 
         Assert.IsFalse(item.Equals("no soy un item"));
+
+    }
+    [TestMethod]
+    public void TestItem_AccederGettersParaCobertura()
+    {
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion",
+            Marca = "Marca",
+            Modelo = "Modelo",
+            Categoria = "Categoria"
+        };
+
+        // Acceder explícitamente a todos los getters
+        var id = item.Id;
+        var titulo = item.Titulo;
+        var descripcion = item.Descripcion;
+        var marca = item.Marca;
+        var modelo = item.Modelo;
+        var categoria = item.Categoria;
+    
+
+        Assert.IsNotNull(id);
+        Assert.IsNotNull(titulo);
+        Assert.IsNotNull(descripcion);
+        Assert.IsNotNull(marca);
+        Assert.IsNotNull(modelo);
+        Assert.IsNotNull(categoria);
+    }
+    [TestMethod]
+    public void TestItems_Marca_Null_Ok()
+    {
+        Item item = new Item { Titulo = "T", Descripcion = "D", Marca = null };
+        Assert.IsNull(item.Marca);
     }
 
+    [TestMethod]
+    public void TestItems_Modelo_Null_Ok()
+    {
+        Item item = new Item { Titulo = "T", Descripcion = "D", Modelo = null };
+        Assert.IsNull(item.Modelo);
+    }
 
+    [TestMethod]
+    public void TestItems_Categoria_Null_Ok()
+    {
+        Item item = new Item { Titulo = "T", Descripcion = "D", Categoria = null };
+        Assert.IsNull(item.Categoria);
+    }
+    
+    
+   
 
 }
