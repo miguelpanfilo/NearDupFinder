@@ -5,12 +5,41 @@ namespace NearDupFinder_Test;
 [TestClass]
 public class CatalogoTest
 {
+    
+    private Catalogo _catalogo;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _catalogo = new Catalogo("Stock Tata");
+    }
+    
+    [TestCleanup]
+    public void TearDown()
+    {
+        _catalogo = null;
+    }
     [TestMethod]
     public void CrearCatalogo_OkTest()
     {
-        Catalogo c = new Catalogo("Stock Tata");
         
-        Assert.AreEqual("Stock Tata", c.Titulo);
+        Assert.AreEqual("Stock Tata", _catalogo.Titulo);
+    }
+    
+    [TestMethod]
+    public void CrearCatalogo_TituloMinimo_OkTest()
+    {
+        string titulo = new string('a', 1); 
+        Catalogo c = new Catalogo(titulo);
+        Assert.AreEqual(1, c.Titulo.Length);
+    }
+    
+    [TestMethod]
+    public void CrearCatalogo_TituloMaximo_OkTest()
+    {
+        string titulo = new string('a', 120);
+        Catalogo c = new Catalogo(titulo);
+        Assert.AreEqual(120, c.Titulo.Length);
     }
     
     [TestMethod]
@@ -32,52 +61,32 @@ public class CatalogoTest
     }
     
     [TestMethod]
-    public void CrearCatalogo_TituloMinimo_OkTest()
-    {
-        string titulo = new string('a', 1); 
-        Catalogo c = new Catalogo(titulo);
-        Assert.AreEqual(1, c.Titulo.Length);
-    }
-    
-    [TestMethod]
-    public void CrearCatalogo_TituloMaximo_OkTest()
-    {
-        string titulo = new string('a', 120);
-        Catalogo c = new Catalogo(titulo);
-        Assert.AreEqual(120, c.Titulo.Length);
-    }
-
-
-    [TestMethod]
     public void CambiarTitulo_OkTest()
     {
-        Catalogo c = new Catalogo("Stock Tata");
-        c.CambiarTitulo("Nuevo nombre");
-        Assert.AreEqual("Nuevo nombre", c.Titulo);
+        _catalogo.CambiarTitulo("Nuevo nombre");
+        Assert.AreEqual("Nuevo nombre", _catalogo.Titulo);
     }
 
     [TestMethod]
     public void CambiarTitulo_ErrorSinTituloTest()
     {
-        Catalogo c = new Catalogo("Stock Tata");
-        var ex = Assert.ThrowsException<ArgumentException>(() => c.CambiarTitulo(""));
+        var ex = Assert.ThrowsException<ArgumentException>(() => _catalogo.CambiarTitulo(""));
         Assert.AreEqual("El titulo es obligatorio", ex.Message);
     }
     
     [TestMethod]
     public void CambiarDescripcion_OkTest()
     {
-        Catalogo c = new Catalogo("Stock Tata");
-        c.CambiarDescripcion("Local numero 145, del barrio Centro");
-        Assert.AreEqual("Local numero 145, del barrio Centro", c.Descripcion);
+        
+        _catalogo.CambiarDescripcion("Local numero 145, del barrio Centro");
+        Assert.AreEqual("Local numero 145, del barrio Centro", _catalogo.Descripcion);
     }
     
     [TestMethod]
     public void CambiarDescripcion_NullTest()
     {
-        Catalogo c = new Catalogo("Stock Tata");
-        c.CambiarDescripcion(null);
-        Assert.AreEqual("", c.Descripcion);
+        _catalogo.CambiarDescripcion(null);
+        Assert.AreEqual("", _catalogo.Descripcion);
     }
     
 }
