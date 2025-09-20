@@ -2,6 +2,7 @@ namespace NearDupFinder_Dominio;
 
 public class Catalogo
 {
+    public const int TituloMaxLength = 120;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
     
@@ -26,7 +27,7 @@ public class Catalogo
         if (string.IsNullOrWhiteSpace(titulo))
         {
             throw new ArgumentException("El titulo es obligatorio");
-        }else if (titulo.Length > 120)
+        }else if (titulo.Length > TituloMaxLength)
         {
             throw new ArgumentException("El titulo debe tener entre 1 y 120 caracteres");
         }
