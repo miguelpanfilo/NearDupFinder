@@ -112,4 +112,12 @@ public class CatalogoTest
         Assert.AreEqual(400, _catalogo.Descripcion.Length);
     }
 
+    [TestMethod]
+    public void CambiarDescripcion_MuyLargo_Error()
+    {
+        string d = new string('a', 401);
+        var ex = Assert.ThrowsException<ArgumentException>(() => _catalogo.CambiarDescripcion(d));
+        Assert.AreEqual("La descripcion debe tener entre 1 y 400 caracteres", ex.Message);
+    }
+    
 }
