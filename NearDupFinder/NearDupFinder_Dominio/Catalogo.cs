@@ -19,7 +19,14 @@ public class Catalogo
 
     public void CambiarDescripcion(string? descripcion)
     {
-        this.Descripcion = (descripcion ?? "").Trim();
+        string d = (descripcion ?? "").Trim();
+
+        if (d.Length > 400)
+        {
+            throw new ArgumentException("La descripcion debe tener entre 1 y 400 caracteres");
+        }
+        
+        Descripcion = d;
     }
     
     private void EstablecerTitulo(string titulo)
