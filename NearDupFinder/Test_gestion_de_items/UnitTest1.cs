@@ -421,7 +421,186 @@ public class UnitTest1
         Item item = new Item { Titulo = "T", Descripcion = "D", Categoria = null };
         Assert.IsNull(item.Categoria);
     }
-    
+     [TestMethod]
+    public void TestItem_Editar_Titulo_Fallo()
+    {
+        // Arrange
+        Item item = new Item
+        {
+            Titulo = "Titulo original",
+            Descripcion = "Descripcion original"
+        };
+
+        // Act & Assert: asignar título nulo 
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarTitulo(null); // aún no existe el método
+        });
+
+        Assert.AreEqual("El Título es obligatorio", exception.Message);
+    }
+    [TestMethod]
+    public void TestItem_Editar_Descripcion_Fallo()
+    {
+        // Arrange
+        Item item = new Item
+        {
+            Titulo = "Titulo original",
+            Descripcion = "Descripcion original"
+        };
+
+        // Act & Assert: asignar descripción vacía debe lanzar excepción
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarDescripcion(""); // aún no existe el método
+        });
+
+        Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
+    }
+    [TestMethod]
+    public void TestItem_Editar_Marca_FalloInicial()
+    {
+        // Arrange
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        // Act & Assert: asignar marca
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarMarca(new string('A', 61));
+        });
+
+        Assert.AreEqual("La marca no puede superar 60 caracteres.", exception.Message);
+    }
+
+    [TestMethod]
+    public void TestItem_Editar_Modelo_FalloInicial()
+    {
+        // Arrange
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        // Act & Assert: asignar modelo demasiado largo
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarModelo(new string('B', 61));
+        });
+
+        Assert.AreEqual("El modelo no puede superar 60 caracteres.", exception.Message);
+    }
+    [TestMethod]
+    public void TestItem_Editar_Categoria_FalloInicial()
+    {
+        // Arrange
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        // Act & Assert: asignar categoria demasiado larga
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarCategoria(new string('C', 41));
+        });
+
+        Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
+    }
+    [TestMethod]
+    public void TestItem_Editar_Categoria_FalloInicial()
+    {
+        // Arrange
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        // Act & Assert: asignar categoria demasiado larga
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarCategoria(new string('C', 41));
+        });
+
+        Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
+    }
+
+    [TestMethod]
+    public void TestItem_Editar_Titulo_Correcto()
+    {
+        Item item = new Item
+        {
+            Titulo = "Titulo original",
+            Descripcion = "Descripcion original"
+        };
+
+        // Editar correctamente
+        item.EditarTitulo("Nuevo Titulo");
+
+        Assert.AreEqual("Nuevo Titulo", item.Titulo);
+    }
+
+    [TestMethod]
+    public void TestItem_Editar_Descripcion_Correcto()
+    {
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion original"
+        };
+
+        item.EditarDescripcion("Nueva Descripcion");
+
+        Assert.AreEqual("Nueva Descripcion", item.Descripcion);
+    }
+
+
+    [TestMethod]
+    public void TestItem_Editar_Marca_Correcto()
+    {
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        item.EditarMarca("NuevaMarca");
+
+        Assert.AreEqual("NuevaMarca", item.Marca);
+    }
+    [TestMethod]
+    public void TestItem_Editar_Modelo_Correcto()
+    {
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        item.EditarModelo("NuevoModelo");
+
+        Assert.AreEqual("NuevoModelo", item.Modelo);
+    }
+
+    [TestMethod]
+    public void TestItem_Editar_Categoria_Correcto()
+    {
+        Item item = new Item
+        {
+            Titulo = "Titulo",
+            Descripcion = "Descripcion"
+        };
+
+        item.EditarCategoria("NuevaCategoria");
+
+        Assert.AreEqual("NuevaCategoria", item.Categoria);
+    }
     
    
 
