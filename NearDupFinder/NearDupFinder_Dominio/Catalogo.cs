@@ -37,7 +37,7 @@ public class Catalogo
             throw new ArgumentException("El titulo es obligatorio");
         }else if (titulo.Length > TituloMaxLength)
         {
-            throw new ArgumentException("El titulo debe tener entre 1 y 120 caracteres");
+            throw new ArgumentException($"El titulo debe tener entre 1 y {TituloMaxLength} caracteres");
         }
         
         Titulo = titulo.Trim();
