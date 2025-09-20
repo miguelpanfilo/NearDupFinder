@@ -97,6 +97,13 @@ public class CatalogoTest
     }
     
     [TestMethod]
+    public void CambiarDescripcion_SoloEspacios_OK()
+    {
+        _catalogo.CambiarDescripcion("   ");
+        Assert.AreEqual("", _catalogo.Descripcion);
+    }
+    
+    [TestMethod]
     public void CambiarDescripcion_Minimo_OK()
     {
         string d = new string('a', 1);
