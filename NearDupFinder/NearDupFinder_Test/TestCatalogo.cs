@@ -89,4 +89,11 @@ public class CatalogoTest
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
+    [TestMethod]
+    public void CambiarDescripcion_Vacia_OK()
+    {
+        _catalogo.CambiarDescripcion("");
+        Assert.AreEqual("", _catalogo.Descripcion);
+    }
+
 }
