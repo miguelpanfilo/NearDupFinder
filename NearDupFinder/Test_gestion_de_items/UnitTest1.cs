@@ -389,6 +389,19 @@ public class UnitTest1
 
         Assert.AreEqual("No existe ningún Item con Id 999 en este catálogo.", ex.Message);
     }
+    [TestMethod]
+    public void TestItem_ResetIdCounter_ReiniciaIds()
+    {
+        var item1 = new Item { Titulo = "Uno", Descripcion = "Desc", Catalogo = new Catalogo() };
+        var item2 = new Item { Titulo = "Dos", Descripcion = "Desc", Catalogo = new Catalogo() };
+        Assert.AreEqual(1, item1.Id);
+        Assert.AreEqual(2, item2.Id);
+
+        Item.ResetIdCounter();
+
+        var item3 = new Item { Titulo = "Tres", Descripcion = "Desc", Catalogo = new Catalogo() };
+        Assert.AreEqual(1, item3.Id); // vuelve a empezar en 1
+    }
 
 
 }
