@@ -30,6 +30,14 @@ public class CatalogoTest
         
         Assert.AreEqual("El titulo es obligatorio", ex.Message);
     }
+    
+    [TestMethod]
+    public void CrearCatalogo_TituloMinimo_OkTest()
+    {
+        string titulo = new string('a', 1); 
+        Catalogo c = new Catalogo(titulo);
+        Assert.AreEqual(1, c.Titulo.Length);
+    }
 
     [TestMethod]
     public void CambiarTitulo_OkTest()
