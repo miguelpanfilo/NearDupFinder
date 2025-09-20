@@ -103,5 +103,13 @@ public class CatalogoTest
         _catalogo.CambiarDescripcion(d);
         Assert.AreEqual(1, _catalogo.Descripcion.Length);
     }
+    
+    [TestMethod]
+    public void CambiarDescripcion_Maximo_OK()
+    {
+        string d = new string('a', 400);
+        _catalogo.CambiarDescripcion(d);
+        Assert.AreEqual(400, _catalogo.Descripcion.Length);
+    }
 
 }
