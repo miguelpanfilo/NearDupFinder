@@ -6,6 +6,10 @@ namespace NearDupFinder_Dominio.Clases;
 public sealed class Contrasena
 {
     private readonly string _hash;
+    
+    private readonly string _contrasenaDefault = "Encr1pt@do";
+
+    public Contrasena() => _hash = HashearMd5(_contrasenaDefault);
 
     private Contrasena(string hash) => _hash = hash;
     
@@ -74,7 +78,7 @@ public sealed class Contrasena
         return string.Equals(HashearMd5(contrasena), _hash, StringComparison.OrdinalIgnoreCase);
     }
 
-    public string GetHash()
+    public string ObtenerHash()
     {
         return _hash;
     }

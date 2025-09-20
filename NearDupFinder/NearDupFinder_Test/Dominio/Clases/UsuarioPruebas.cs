@@ -10,7 +10,7 @@ public class UsuarioPruebas
     {
         Email email = Email.Crear("manuelperezmartirene@gmail.com");
         Fecha fecha = Fecha.Crear(1997,12,27);
-       var usuario = Usuario.Crear("Manuel","Perez",email,fecha);
+       Usuario usuario = Usuario.Crear("Manuel","Perez",email,fecha);
         
         Assert.AreEqual("Manuel", usuario.Nombre);
         Assert.AreEqual("Perez", usuario.Apellido);
@@ -21,7 +21,7 @@ public class UsuarioPruebas
     [TestMethod]
     public void Crear_EmailNulo_LanzaArgumentNullException()
     {
-        var fecha = Fecha.Crear(1997, 12, 27);
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
 
         Assert.ThrowsException<ArgumentNullException>(() => Usuario.Crear("Manuel", "Perez", null!, fecha));
     }
@@ -29,7 +29,7 @@ public class UsuarioPruebas
     [TestMethod]
     public void Crear_FechaNula_LanzaArgumentNullException()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
 
         Assert.ThrowsException<ArgumentNullException>(() => Usuario.Crear("Manuel", "Perez", email, null!));
     }
@@ -37,8 +37,8 @@ public class UsuarioPruebas
     [TestMethod]
     public void Crear_NombreVacio_LanzaExcepcion()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
 
         Assert.ThrowsException<ArgumentException>(() => Usuario.Crear("", "Perez", email, fecha));
         Assert.ThrowsException<ArgumentException>(() => Usuario.Crear("   ", "Perez", email, fecha));
@@ -47,8 +47,8 @@ public class UsuarioPruebas
     [TestMethod]
     public void Crear_ApellidoVacio_LanzaExcepcion()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
 
         Assert.ThrowsException<ArgumentException>(() => Usuario.Crear("Manuel", "", email, fecha));
         Assert.ThrowsException<ArgumentException>(() => Usuario.Crear("Manuel", "   ", email, fecha));
@@ -57,9 +57,9 @@ public class UsuarioPruebas
     [TestMethod]
     public void Agregar_RolValido()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
-        var usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
 
         usuario.AgregarRol(Rol.Administrador);
         Assert.IsTrue(usuario.TieneRol(Rol.Administrador));
@@ -68,9 +68,9 @@ public class UsuarioPruebas
     [TestMethod]
     public void Agregar_RolRepetido()
     {
-        var email = Email.Crear("manuel@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
-        var usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
+        Email email = Email.Crear("manuel@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
 
         usuario.AgregarRol(Rol.Revisor);
         usuario.AgregarRol(Rol.Revisor);
@@ -82,9 +82,9 @@ public class UsuarioPruebas
     [TestMethod]
     public void Remover_RolValido()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
-        var usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
 
         usuario.AgregarRol(Rol.Revisor);
         usuario.RemoverRol(Rol.Revisor);
@@ -95,9 +95,9 @@ public class UsuarioPruebas
     [TestMethod]
     public void Remover_RolInvalido()
     {
-        var email = Email.Crear("manuel@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
-        var usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
+        Email email = Email.Crear("manuel@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
 
         usuario.RemoverRol(Rol.Administrador);
 
@@ -108,9 +108,9 @@ public class UsuarioPruebas
     [TestMethod]
     public void PuedeCoexistir_AdministradorYRevisor_DevuelveVerdadero()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
-        var usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
 
         usuario.AgregarRol(Rol.Administrador);
         usuario.AgregarRol(Rol.Revisor);
@@ -123,9 +123,9 @@ public class UsuarioPruebas
     [TestMethod]
     public void ListadoRoles_SinDuplicados()
     {
-        var email = Email.Crear("manuelperezmartirene@gmail.com");
-        var fecha = Fecha.Crear(1997, 12, 27);
-        var usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", email, fecha);
 
         usuario.AgregarRol(Rol.Administrador);
         usuario.AgregarRol(Rol.Administrador);
@@ -137,8 +137,8 @@ public class UsuarioPruebas
     [TestMethod]
     public void Igual_Valido()
     {
-        var usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-        var usuario2 = Usuario.Crear("Manuel", "Perez", Email.Crear("MANUEL@EJEMPLO.COM"), Fecha.Crear(2000, 3, 3));
+        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        Usuario usuario2 = Usuario.Crear("Manuel", "Perez", Email.Crear("MANUEL@EJEMPLO.COM"), Fecha.Crear(2000, 3, 3));
 
         Assert.IsTrue(usuario1.Igual(usuario2));
     }
@@ -146,8 +146,8 @@ public class UsuarioPruebas
     [TestMethod]
     public void Igual_Invalido()
     {
-        var usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-        var usuario2 = Usuario.Crear("Juan", "Perez", Email.Crear("juan@ejemplo.com"), Fecha.Crear(1991, 3, 3));
+        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        Usuario usuario2 = Usuario.Crear("Juan", "Perez", Email.Crear("juan@ejemplo.com"), Fecha.Crear(1991, 3, 3));
 
         Assert.IsFalse(usuario1.Igual(usuario2));
     }
@@ -155,8 +155,81 @@ public class UsuarioPruebas
     [TestMethod]
     public void Igual_Nulo_DevuelveFalse()
     {
-        var usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
 
         Assert.IsFalse(usuario.Igual(null!));
+    }
+
+    [TestMethod]
+    public void UsuarioNuevo_TienePasswordDefault_Valida()
+    {
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        
+        Assert.IsTrue(usuario.VerificarContrasena("Encr1pt@do"));
+    }
+
+    [TestMethod]
+    public void CambiarContrasena_Valida_RetornaVerdadero()
+    {
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        Contrasena nuevaContrasena =  Contrasena.Crear("123QWEasdzxc@");
+
+        bool exito = usuario.CambiarContrasena(nuevaContrasena) && usuario.VerificarContrasena("123QWEasdzxc@");
+        
+        Assert.IsTrue(exito);
+    }
+    
+    [TestMethod]
+    public void CambiarContrasena_Nula_RetornaFalso()
+    {
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        Contrasena? nuevaContrasena = null;
+
+        bool exito = usuario.CambiarContrasena(nuevaContrasena);
+        
+        Assert.IsFalse(exito);
+    }
+    
+    [TestMethod]
+    public void VerificarContrasena_Valida_RetornaVerdadero()
+    {
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+
+        bool exito = usuario.VerificarContrasena("Encr1pt@do");
+        
+        Assert.IsTrue(exito);
+    }
+    
+    [TestMethod]
+    public void VerificarContrasena_Incorrecta_RetornaFalso()
+    {
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+
+        bool exito = usuario.VerificarContrasena("falso");
+        
+        Assert.IsFalse(exito);
+    }
+
+    [TestMethod]
+    public void CambioLaContrasenaYReseteo_RetornaVerdadero()
+    {
+        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+        Usuario usuario2 = Usuario.Crear("Juan", "Perez", Email.Crear("juan@ejemplo.com"), Fecha.Crear(2000, 12, 18));
+        Contrasena nuevaContra =  Contrasena.Crear("123QWEasdzxc@do");
+        
+        usuario2.CambiarContrasena(nuevaContra);
+        usuario1.ResetiarContrasena(usuario2);
+        
+        Assert.IsTrue(usuario2.VerificarContrasena("Encr1pt@do"));
+    }
+    
+    [TestMethod]
+    public void ResetiarContrasena_UsuarioNulo_RetornaFalso()
+    {
+        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
+
+        bool exito = usuario1.ResetiarContrasena(null);
+        
+        Assert.IsFalse(exito);
     }
 }

@@ -17,12 +17,15 @@ public class Usuario
 
     private readonly HashSet<Rol> _roles = new();
     
+    private Contrasena _contrasena;
+    
     private Usuario(string nombre, string apellido, Email email, Fecha fechaNacimiento)
     {
         Nombre = nombre;
         Apellido = apellido;
         Email = email;
         FechaNacimiento = fechaNacimiento;
+        _contrasena = new Contrasena();
     }
     
     public static Usuario Crear(string nombre, string apellido, Email email, Fecha fechaNacimiento)
@@ -59,11 +62,35 @@ public class Usuario
         return _roles.ToArray();
     }
     
-    public bool Igual(Usuario otroUsuario)
+    public bool Igual(Usuario? otroUsuario)
     {
         if (otroUsuario is null) 
             return false;
 
         return this.Email.Igual(otroUsuario.Email);
+    }
+    
+    public bool CambiarContrasena(Contrasena? nuevaContra)
+    {
+        if (nuevaContra is null)
+            return false;
+        
+        this._contrasena = nuevaContra; 
+        return true;
+    }
+
+    public bool VerificarContrasena(string contra)
+    {
+        return _contrasena.Verificar(contra);
+    }
+
+    public bool ResetiarContrasena(Usuario? usuario)
+    {
+        if (usuario is null)
+            return false;
+        
+        Contrasena contrasenaDefault = new Contrasena();
+        usuario.CambiarContrasena(contrasenaDefault);
+        return true;
     }
 }

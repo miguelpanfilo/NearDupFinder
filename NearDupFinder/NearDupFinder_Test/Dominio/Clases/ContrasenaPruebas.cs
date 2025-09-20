@@ -54,7 +54,7 @@ public class ContrasenaPruebas
         Contrasena contrasena = Contrasena.Crear(valida);
         
         Assert.IsNotNull(contrasena);
-        string hash = contrasena.GetHash();
+        string hash = contrasena.ObtenerHash();
 
         Assert.IsFalse(string.IsNullOrWhiteSpace(hash), "El hash no debería ser nulo ni vacío."); 
         Assert.AreEqual(32, hash!.Length, "MD5 en hex debería tener 32 caracteres.");
@@ -91,8 +91,8 @@ public class ContrasenaPruebas
         Contrasena c1 = Contrasena.Crear(valida); 
         Contrasena c2 = Contrasena.Crear(valida);
         
-        string hash1 = c1.GetHash(); 
-        string hash2 = c2.GetHash();
+        string hash1 = c1.ObtenerHash(); 
+        string hash2 = c2.ObtenerHash();
         
         Assert.AreEqual(hash1, hash2, "Mismo input debe producir el mismo hash MD5.");
     }
@@ -101,13 +101,13 @@ public class ContrasenaPruebas
     public void Hash_InputDistinto_GeneraHashDistinto() 
     { 
         string valida1 = "Aa1@aaaa";
-        string valida2 = "Aa1@aaab"; // cambia 1 char
+        string valida2 = "Aa1@aaab";
 
         var c1 = Contrasena.Crear(valida1); 
         var c2 = Contrasena.Crear(valida2);
         
-        string hash1 = c1.GetHash(); 
-        string hash2 = c2.GetHash();
+        string hash1 = c1.ObtenerHash(); 
+        string hash2 = c2.ObtenerHash();
 
         Assert.AreNotEqual(hash1, hash2, "Inputs distintos deben producir hashes distintos.");
     }
