@@ -38,6 +38,15 @@ public class CatalogoTest
         Catalogo c = new Catalogo(titulo);
         Assert.AreEqual(1, c.Titulo.Length);
     }
+    
+    [TestMethod]
+    public void CrearCatalogo_TituloMaximo_OkTest()
+    {
+        string titulo = new string('a', 120);
+        Catalogo c = new Catalogo(titulo);
+        Assert.AreEqual(120, c.Titulo.Length);
+    }
+
 
     [TestMethod]
     public void CambiarTitulo_OkTest()
