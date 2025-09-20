@@ -3,6 +3,7 @@ namespace NearDupFinder_Dominio;
 public class Catalogo
 {
     public const int TituloMaxLength = 120;
+    public const int DescripcionMaxLength = 400;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
     
@@ -21,9 +22,9 @@ public class Catalogo
     {
         string d = (descripcion ?? "").Trim();
 
-        if (d.Length > 400)
+        if (d.Length > DescripcionMaxLength)
         {
-            throw new ArgumentException("La descripcion debe tener entre 1 y 400 caracteres");
+            throw new ArgumentException($"La descripcion debe tener entre 1 y {DescripcionMaxLength} caracteres");
         }
         
         Descripcion = d;
