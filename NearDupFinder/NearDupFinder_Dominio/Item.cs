@@ -17,6 +17,17 @@ public class Item
     {
         Id = _nextId++;
     }
+    public Item(string titulo, string descripcion, string marca = null, string modelo = null, string categoria = null)
+    {
+        // Se asignan los valores usando los setters para que se ejecuten las validaciones
+        Titulo = titulo;          // valida nulo, vacío y largo
+        Descripcion = descripcion; // valida nulo, vacío y largo
+        Marca = marca;            // valida largo si no es null
+        Modelo = modelo;          // valida largo si no es null
+        Categoria = categoria;    // valida largo si no es null
+
+        Id = _nextId++;
+    }
 
    
 
@@ -92,30 +103,16 @@ public class Item
     {
       _nextId = 1;
     }
-    
-    public void EditarTitulo(string nuevoTitulo)
-    {
-        this.Titulo = nuevoTitulo; // reutiliza la validación del setter
-    }
+    public void EditarTitulo(string nuevoTitulo) => Titulo = nuevoTitulo;
 
-    public void EditarDescripcion(string nuevaDescripcion)
-    {
-        this.Descripcion = nuevaDescripcion;
-    }
+    public void EditarDescripcion(string nuevaDescripcion) => Descripcion = nuevaDescripcion;
 
-    public void EditarMarca(string nuevaMarca)
-    {
-        this.Marca = nuevaMarca;
-    }
+    public void EditarMarca(string nuevaMarca) => Marca = nuevaMarca;
 
-    public void EditarModelo(string nuevoModelo)
-    {
-        this.Modelo = nuevoModelo;
-    }
+    public void EditarModelo(string nuevoModelo) => Modelo = nuevoModelo;
 
-    public void EditarCategoria(string nuevaCategoria)
-    {
-        this.Categoria = nuevaCategoria;
-    }
+    public void EditarCategoria(string nuevaCategoria) => Categoria = nuevaCategoria;
+
+
 
 }
