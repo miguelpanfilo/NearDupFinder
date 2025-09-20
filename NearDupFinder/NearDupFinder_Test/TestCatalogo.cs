@@ -74,6 +74,13 @@ public class CatalogoTest
         _catalogo.CambiarTitulo("Nuevo nombre");
         Assert.AreEqual("Nuevo nombre", _catalogo.Titulo);
     }
+    
+    [TestMethod]
+    public void CambiarTitulo_Trim_OK()
+    {
+        _catalogo.CambiarTitulo("  Hola  ");
+        Assert.AreEqual("Hola", _catalogo.Titulo);
+    }
 
     [TestMethod]
     public void CambiarTitulo_ErrorSinTituloTest()
