@@ -2,8 +2,8 @@ namespace NearDupFinder_Dominio;
 
 public class Catalogo
 {
-    public const int TituloMaxLength = 120;
-    public const int DescripcionMaxLength = 400;
+    private const int tituloMaxLength = 120;
+    private const int descripcionMaxLength = 400;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
     
@@ -22,9 +22,9 @@ public class Catalogo
     {
         string d = (descripcion ?? "").Trim();
 
-        if (d.Length > DescripcionMaxLength)
+        if (d.Length > descripcionMaxLength)
         {
-            throw new ArgumentException($"La descripcion debe tener entre 1 y {DescripcionMaxLength} caracteres");
+            throw new ArgumentException($"La descripcion debe tener entre 1 y {descripcionMaxLength} caracteres");
         }
         
         Descripcion = d;
@@ -35,9 +35,9 @@ public class Catalogo
         if (string.IsNullOrWhiteSpace(titulo))
         {
             throw new ArgumentException("El titulo es obligatorio");
-        }else if (titulo.Length > TituloMaxLength)
+        }else if (titulo.Length > tituloMaxLength)
         {
-            throw new ArgumentException($"El titulo debe tener entre 1 y {TituloMaxLength} caracteres");
+            throw new ArgumentException($"El titulo debe tener entre 1 y {tituloMaxLength} caracteres");
         }
         
         Titulo = titulo.Trim();
