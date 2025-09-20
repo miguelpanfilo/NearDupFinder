@@ -50,45 +50,56 @@ public class UnitTest1
     }
  
     [TestMethod]
-    public void TestItems_Crear_Item_Sin_Titulo()
+    public void TestItems_Crear_Item_Titulo_Vacio_Fallo()
     {
-        // Act & Assert
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item(
-                "", 
-                "Soy una descripcion",
-                "Marca",
-                "Modelo",
-                "Categoria"
-            );
-        });
-
-        Assert.AreEqual("El Título es obligatorio", exception.Message);
+        var ex = Assert.ThrowsException<ItemException>(() => new Item("", "Descripcion"));
+        Assert.AreEqual("El Título es obligatorio", ex.Message);
     }
+
+    [TestMethod]
+    public void TestItems_Crear_Item_Titulo_SoloEspacios_Fallo()
+    {
+        var ex = Assert.ThrowsException<ItemException>(() => new Item("   ", "Descripcion"));
+        Assert.AreEqual("El Título es obligatorio", ex.Message);
+    }
+
+
 
     
     [TestMethod]
-    public void TestItems_Crear_Item_Sin_Descripcion()
+    public void TestItems_Crear_Item_Descripcion_Vacio_Fallo()
     {
-        
+        // Act & Assert: descripción vacía
+        var ex = Assert.ThrowsException<ItemException>(() => 
+            new Item(
+                "Titulo válido",
+                "",          // descripción vacía
+                "Marca",
+                "Modelo",
+                "Categoria"
+            )
+        );
 
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item
-            {
-                Titulo = "Soy un titulo",
-                Descripcion = "",  
-                Marca = "Marca",
-                Modelo = "Modelo",
-                Categoria = "Categoria"
-            };
-        });
-
-        Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
+        Assert.AreEqual("La Descripción es obligatoria.", ex.Message);
     }
-  
- 
+
+    [TestMethod]
+    public void TestItems_Crear_Item_Descripcion_Solo_Espacios_Fallo()
+    {
+        // Act & Assert: descripción solo espacios
+        var ex = Assert.ThrowsException<ItemException>(() => 
+            new Item(
+                "Titulo válido",
+                "   ",       // descripción solo espacios
+                "Marca",
+                "Modelo",
+                "Categoria"
+            )
+        );
+
+        Assert.AreEqual("La Descripción es obligatoria.", ex.Message);
+    }
+
 
     [TestMethod]
     public void TestItems_Crear_Item_Descripcion_Largo_Fallo()
@@ -193,76 +204,8 @@ public class UnitTest1
         Assert.AreEqual(60, item.Marca.Length);
         Assert.AreEqual(marcaMax, item.Marca);
     }
-    [TestMethod]
-    public void TestItems_Titulo_Null_Fallo()
-    {
-
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item
-            {
-                Titulo = null,
-                Descripcion = "Descripcion válida",
-                Marca = "marca",
-                Modelo = "Modelo",
-                Categoria = "categoria"
-            };
-        });
-
-        Assert.AreEqual("El Título es obligatorio", exception.Message);
-    }
-
-    [TestMethod]
-    public void TestItems_Titulo_Vacio_Fallo()
-    {
-
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item
-            {
-                Titulo = "",
-                Descripcion = "Descripcion válida",
-                Marca = "marca",
-                Modelo = "Modelo",
-                Categoria = "Categoria"
-            };
-        });
-
-        Assert.AreEqual("El Título es obligatorio", exception.Message);
-    }
-
-    [TestMethod]
-    public void TestItems_Titulo_Solo_Espacios_Fallo()
-    {
-        // Act & Assert
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item("    ", "Descripcion válida");
-        });
-
-        Assert.AreEqual("El Título es obligatorio", exception.Message);
-    }
-
-  
-    
-    [TestMethod]
-    public void TestItems_Descripcion_Solo_Espacios_Fallo()
-    {
-
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            Item item = new Item
-            {
-                Titulo = "Titulo válido",
-                Descripcion = "    ", 
-                Marca = "Marca",
-                Modelo = "Modelo",
-                Categoria = "Categoria"
-            };
-        });
-
-        Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
-    }
+ 
+   
   
     
     [TestMethod]
@@ -362,50 +305,62 @@ public class UnitTest1
         Item item = new Item { Titulo = "T", Descripcion = "D", Categoria = null };
         Assert.IsNull(item.Categoria);
     }
-   [TestMethod]
-public void TestItem_Editar_Titulo_Fallo()
-{
-    // Arrange
-    Item item = new Item("Titulo original", "Descripcion original");
-
-    // Act & Assert: asignar título nulo
-    ItemException exception = Assert.ThrowsException<ItemException>(() =>
+    [TestMethod]
+    public void TestItem_Editar_Titulo_Fallo()
     {
-        item.EditarTitulo(null);
-    });
+        // Arrange
+        Item item = new Item("Titulo original", "Descripcion original");
 
-    Assert.AreEqual("El Título es obligatorio", exception.Message);
-}
+        // Asignar un valor válido primero para cubrir el setter completo
+        item.EditarTitulo("TituloValido");
+        Assert.AreEqual("TituloValido", item.Titulo);
 
-[TestMethod]
-public void TestItem_Editar_Descripcion_Fallo()
-{
-    // Arrange
-    Item item = new Item("Titulo original", "Descripcion original");
+        // Act & Assert: asignar título nulo para provocar la excepción
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarTitulo(null);
+        });
 
-    // Act & Assert: asignar descripción vacía
-    ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        Assert.AreEqual("El Título es obligatorio", exception.Message);
+    }
+
+    [TestMethod]
+    public void TestItem_Editar_Descripcion_Fallo()
     {
-        item.EditarDescripcion("");
-    });
+        // Arrange
+        Item item = new Item("Titulo original", "Descripcion original");
 
-    Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
-}
+        // Asignar un valor válido primero
+        item.EditarDescripcion("DescripcionValida");
+        Assert.AreEqual("DescripcionValida", item.Descripcion);
 
-[TestMethod]
-public void TestItem_Editar_Marca_Fallo()
-{
-    // Arrange
-    Item item = new Item("Titulo", "Descripcion");
+        // Act & Assert: asignar descripción vacía para provocar la excepción
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarDescripcion("");
+        });
 
-    // Act & Assert: asignar marca demasiado larga
-    ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        Assert.AreEqual("La Descripción es obligatoria.", exception.Message);
+    }
+
+    [TestMethod]
+    public void TestItem_Editar_Marca_Fallo()
     {
-        item.EditarMarca(new string('A', 61));
-    });
+        // Arrange
+        Item item = new Item("Titulo", "Descripcion");
 
-    Assert.AreEqual("La marca no puede superar 60 caracteres.", exception.Message);
-}
+        // Asignar un valor válido primero
+        item.EditarMarca("MarcaValida");
+        Assert.AreEqual("MarcaValida", item.Marca);
+
+        // Act & Assert: asignar marca demasiado larga para provocar la excepción
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarMarca(new string('A', 61));
+        });
+
+        Assert.AreEqual("La marca no puede superar 60 caracteres.", exception.Message);
+    }
 
 
 [TestMethod]
@@ -414,7 +369,11 @@ public void TestItem_Editar_Modelo_Fallo()
     // Arrange
     Item item = new Item("Titulo", "Descripcion");
 
-    // Act & Assert: asignar modelo demasiado largo
+    // Asignar un valor válido primero para cubrir el setter completo
+    item.EditarModelo("ModeloValido");
+    Assert.AreEqual("ModeloValido", item.Modelo);
+
+    // Act & Assert: asignar modelo demasiado largo para provocar la excepción
     ItemException exception = Assert.ThrowsException<ItemException>(() =>
     {
         item.EditarModelo(new string('B', 61));
@@ -429,7 +388,11 @@ public void TestItem_Editar_Categoria_Fallo()
     // Arrange
     Item item = new Item("Titulo", "Descripcion");
 
-    // Act & Assert: asignar categoria demasiado larga
+    // Asignar un valor válido primero
+    item.EditarCategoria("CategoriaValida");
+    Assert.AreEqual("CategoriaValida", item.Categoria);
+
+    // Act & Assert: asignar categoria demasiado larga para provocar la excepción
     ItemException exception = Assert.ThrowsException<ItemException>(() =>
     {
         item.EditarCategoria(new string('C', 41));
@@ -437,6 +400,9 @@ public void TestItem_Editar_Categoria_Fallo()
 
     Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
 }
+
+
+
 
 [TestMethod]
 public void TestItem_Editar_Titulo_Correcto()
