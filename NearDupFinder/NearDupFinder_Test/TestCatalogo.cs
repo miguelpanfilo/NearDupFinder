@@ -98,6 +98,13 @@ public class CatalogoTest
     }
     
     [TestMethod]
+    public void CambiarDescripcion_Trim_OK()
+    {
+        _catalogo.CambiarDescripcion("  Centro  ");
+        Assert.AreEqual("Centro", _catalogo.Descripcion);
+    }
+    
+    [TestMethod]
     public void CambiarDescripcion_NullTest()
     {
         _catalogo.CambiarDescripcion(null);
