@@ -14,6 +14,16 @@ public class CatalogoTest
     }
     
     [TestMethod]
+    public void CrearCatalogoLargo_ErrorTest()
+    {
+        string titulo = new string('a', 121);
+
+        var ex = Assert.ThrowsException<ArgumentException>(() => new Catalogo(titulo));
+        Assert.AreEqual("El titulo debe tener entre 1 y 120 caracteres", ex.Message);
+    }
+    
+    
+    [TestMethod]
     public void CrearCatalogo_ErrorSinTituloTest()
     {
         var ex = Assert.ThrowsException<ArgumentException>(() => new Catalogo(""));
