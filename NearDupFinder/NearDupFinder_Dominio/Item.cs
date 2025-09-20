@@ -93,5 +93,29 @@ public class Item
       _nextId = 1;
     }
     
-    
+    public void EditarTitulo(string nuevoTitulo)
+    {
+        this.Titulo = nuevoTitulo; // reutiliza la validación del setter
+    }
+
+    public void EditarDescripcion(string nuevaDescripcion)
+    {
+        this.Descripcion = nuevaDescripcion;
+    }
+
+    public void EditarMarca(string nuevaMarca)
+    {
+        this.Marca = nuevaMarca;
+    }
+
+    public void EditarModelo(string nuevoModelo)
+    {
+        this.Modelo = nuevoModelo;
+    }
+
+    public void EditarCategoria(string nuevaCategoria)
+    {
+        this.Categoria = nuevaCategoria;
+    }
+
 }

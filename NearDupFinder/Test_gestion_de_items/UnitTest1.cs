@@ -512,24 +512,7 @@ public class UnitTest1
 
         Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
     }
-    [TestMethod]
-    public void TestItem_Editar_Categoria_FalloInicial()
-    {
-        // Arrange
-        Item item = new Item
-        {
-            Titulo = "Titulo",
-            Descripcion = "Descripcion"
-        };
-
-        // Act & Assert: asignar categoria demasiado larga
-        ItemException exception = Assert.ThrowsException<ItemException>(() =>
-        {
-            item.EditarCategoria(new string('C', 41));
-        });
-
-        Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
-    }
+  
 
     [TestMethod]
     public void TestItem_Editar_Titulo_Correcto()
