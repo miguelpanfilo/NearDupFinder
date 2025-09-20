@@ -5,6 +5,7 @@ public class Catalogo
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
     
+    
 
     public Catalogo(string titulo)
     {
@@ -23,8 +24,13 @@ public class Catalogo
     private void EstablecerTitulo(string titulo)
     {
         if (string.IsNullOrWhiteSpace(titulo))
+        {
             throw new ArgumentException("El titulo es obligatorio");
-
+        }else if (titulo.Length > 120)
+        {
+            throw new ArgumentException("El titulo debe tener entre 1 y 120 caracteres");
+        }
+        
         Titulo = titulo.Trim();
     }
 
