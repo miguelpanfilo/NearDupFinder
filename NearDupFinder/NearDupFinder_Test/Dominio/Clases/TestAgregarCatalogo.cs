@@ -17,4 +17,14 @@ public class TestAgregarCatalogo
         Assert.AreEqual(1, s.CantidadDeCatalogos());
         
     }
+    
+    [TestMethod]
+    public void AgregarCatalogo_Null_Falla()
+    {
+        Sistema s = new Sistema();
+
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => s.AgregarCatalogo(null));
+
+        StringAssert.Contains(ex.Message, "El catálogo no puede ser null");
+    }
 }
