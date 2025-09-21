@@ -11,6 +11,10 @@ public class Sistema
 
     public void AgregarCatalogo(Catalogo c)
     {
+        if (c == null)
+        {
+            throw new ArgumentNullException(nameof(c),"El catálogo no puede ser null");
+        }
         _catalogos.Add(c);
     }
 
