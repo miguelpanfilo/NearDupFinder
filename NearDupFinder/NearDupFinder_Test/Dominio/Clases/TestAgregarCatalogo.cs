@@ -23,8 +23,8 @@ public class TestAgregarCatalogo
     {
         Sistema s = new Sistema();
 
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => s.AgregarCatalogo(null));
-
-        StringAssert.Contains(ex.Message, "El catálogo no puede ser null");
+        var ex = Assert.ThrowsException<ArgumentException>(() => s.AgregarCatalogo(null));
+        
+        Assert.AreEqual( "El catálogo no puede ser null", ex.Message);
     }
 }
