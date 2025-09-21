@@ -1,0 +1,21 @@
+@page "/login"
+
+<PageTitle>Login</PageTitle>
+
+<h3>Iniciar sesión</h3>
+
+<form method="post" action="/auth/login">
+    <!-- tenés app.UseAntiforgery(); → agregamos el token -->
+    <AntiforgeryToken />
+
+    <div style="max-width:320px;display:flex;flex-direction:column;gap:8px;">
+        <input name="Username"   @bind="usuario" placeholder="Usuario" />
+        <input name="Password"   @bind="clave"   type="password" placeholder="Contraseña" />
+        <button type="submit">Entrar</button>
+    </div>
+</form>
+
+@code {
+    private string usuario = "";
+    private string clave   = "";
+}
