@@ -1,10 +1,10 @@
-using NearDupFinder_Dominio;
+using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 
-namespace Test_gestion_de_items;
+namespace NearDupFinder_Test;
 
 [TestClass]
-public class UnitTest1
+public class ItemsPruebas
 {  
     [TestInitialize]
     public void Setup()

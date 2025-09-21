@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Excepciones;
 
-namespace NearDupFinder_Dominio;
+namespace NearDupFinder_Dominio.Clases;
 
 public class Item
 {
