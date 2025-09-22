@@ -100,17 +100,69 @@ public class SistemaPruebas
     [TestMethod]
     public void AgregarItem_Valido_Ok()
     {
-        // Arrange
+        
         Sistema sistema = new Sistema();
         Item item = new Item("Titulo", "Descripcion", "Marca", "Modelo", "Categoria");
 
-        // Act
+        
         sistema.AgregarItem(item);
 
-        // Assert
+        
         var items = sistema.ObtenerItems();
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual("Titulo", items[0].Titulo);
+    }
+
+
+    [TestMethod]
+    public void EditarTitulo_CambiaSoloTitulo()
+    {
+        
+        Item item = new Item("Titulo original", "Descripcion", "Marca", "Modelo", "Categoria");
+
+        
+        item.EditarTitulo("Nuevo titulo");
+
+        Assert.AreEqual("Nuevo titulo", item.Titulo);
+    }
+    [TestMethod]
+    public void EditarDescripcion_CambiaSoloDescripcion()
+    {
+        Item item = new Item("Titulo", "Descripcion original", "Marca", "Modelo", "Categoria");
+
+        item.EditarDescripcion("Nueva descripcion");
+
+        Assert.AreEqual("Nueva descripcion", item.Descripcion);
+    }
+
+    [TestMethod]
+    public void EditarMarca_CambiaSoloMarca()
+    {
+        Item item = new Item("Titulo", "Descripcion", "Marca original", "Modelo", "Categoria");
+
+        item.EditarMarca("Nueva marca");
+
+        Assert.AreEqual("Nueva marca", item.Marca);
+    }
+
+    [TestMethod]
+    public void EditarModelo_CambiaSoloModelo()
+    {
+        Item item = new Item("Titulo", "Descripcion", "Marca", "Modelo original", "Categoria");
+
+        item.EditarModelo("Nuevo modelo");
+
+        Assert.AreEqual("Nuevo modelo", item.Modelo);
+    }
+
+    [TestMethod]
+    public void EditarCategoria_CambiaSoloCategoria()
+    {
+        Item item = new Item("Titulo", "Descripcion", "Marca", "Modelo", "Categoria original");
+
+        item.EditarCategoria("Nueva categoria");
+
+        Assert.AreEqual("Nueva categoria", item.Categoria);
     }
 
 

@@ -10,6 +10,7 @@ public class Sistema
     public Sistema()
     {
         _usuarios.Add(CrearUsuarioAdmin());
+        _items = new List<Item>();
     }
 
     private Usuario CrearUsuarioAdmin()
