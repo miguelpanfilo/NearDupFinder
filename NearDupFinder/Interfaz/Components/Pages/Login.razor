@@ -9,8 +9,8 @@
     <AntiforgeryToken />
 
     <div style="max-width:320px;display:flex;flex-direction:column;gap:8px;">
-        <input name="Username"   @bind="usuario" placeholder="Usuario" />
-        <input name="Password"   @bind="clave"   type="password" placeholder="Contraseña" />
+        <input name="Email"    @bind="usuario" type="email" placeholder="Email" />
+        <input name="Password" @bind="clave"   type="password" placeholder="Contraseña" />
         <button type="submit">Entrar</button>
     </div>
 </form>
