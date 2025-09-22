@@ -61,4 +61,24 @@ public class Sistema
         _usuarios.Add(nuevoUsuario);
         return true;
     }
+
+    public bool RemoverUsuario(string? email)
+    {
+        Email emailUsuario;
+        try
+        {
+            emailUsuario = Email.Crear(email);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        foreach (var usuario in _usuarios)
+            if (usuario.Email.Igual(emailUsuario))
+            {
+                _usuarios.Remove(usuario);
+                return true;
+            }
+        return false;
+    }
 }
