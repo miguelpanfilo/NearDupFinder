@@ -10,6 +10,7 @@ public class Item
     private string _marca;
     private string _modelo;
     private string _categoria;
+    public string EstadoDuplicado;
    
     public int Id { get; private set; }
 
