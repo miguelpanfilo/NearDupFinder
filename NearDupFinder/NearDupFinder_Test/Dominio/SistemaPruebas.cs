@@ -97,6 +97,22 @@ public class SistemaPruebas
         
         Assert.AreEqual(0, items.Count, "El sistema debería iniciar sin items.");
     }
+    [TestMethod]
+    public void AgregarItem_Valido_Ok()
+    {
+        // Arrange
+        Sistema sistema = new Sistema();
+        Item item = new Item("Titulo", "Descripcion", "Marca", "Modelo", "Categoria");
+
+        // Act
+        sistema.AgregarItem(item);
+
+        // Assert
+        var items = sistema.ObtenerItems();
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual("Titulo", items[0].Titulo);
+    }
+
 
     
     

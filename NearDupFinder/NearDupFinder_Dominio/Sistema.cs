@@ -47,4 +47,9 @@ public class Sistema
     {
         return _items;
     }
+
+    public void AgregarItem(Item item)
+    {
+        _items.Add(item);
+    }
 }
