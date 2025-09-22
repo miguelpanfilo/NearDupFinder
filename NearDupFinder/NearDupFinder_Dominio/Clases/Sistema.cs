@@ -22,6 +22,9 @@ public class Sistema
 
     _catalogos.Add(c);
     }
+    
+    public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
+        => _catalogos.FirstOrDefault(c => c.Titulo == titulo);
 
     public int CantidadDeCatalogos()
     {
