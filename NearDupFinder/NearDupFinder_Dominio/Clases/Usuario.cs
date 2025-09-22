@@ -28,7 +28,7 @@ public class Usuario
         _contrasena = new Contrasena();
     }
     
-    public static Usuario Crear(string nombre, string apellido, Email email, Fecha fechaNacimiento)
+    public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
     {
         if (string.IsNullOrWhiteSpace(nombre))
             throw new ArgumentException("El nombre no puede estar vacío.", nameof(nombre));
