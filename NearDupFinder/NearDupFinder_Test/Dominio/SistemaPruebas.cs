@@ -254,4 +254,50 @@ public class SistemaPruebas
         
         Assert.IsFalse(usuarioCreado);
     }
+
+    [TestMethod]
+    public void RemoverUsuario_Existente_RetornaVerdadero()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+
+        // La clase sistema comienza con el Usuario admin por defecto por lo tanto no es necesario depender de agregar 
+        // a un usuario para este test
+        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        
+        Assert.IsTrue(usuarioRemovido);
+    }
+    
+    [TestMethod]
+    public void RemoverUsuario_Inexistente_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "manuel@gmail.com";
+        
+        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        
+        Assert.IsFalse(usuarioRemovido);
+    }
+    
+    [TestMethod]
+    public void RemoverUsuario_EmailInvalido_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "manuel.com";
+        
+        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        
+        Assert.IsFalse(usuarioRemovido);
+    }
+    
+    [TestMethod]
+    public void RemoverUsuario_EmailNulo_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string? email = null;
+        
+        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        
+        Assert.IsFalse(usuarioRemovido);
+    }
 }
