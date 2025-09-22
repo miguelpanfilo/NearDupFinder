@@ -300,4 +300,76 @@ public class SistemaPruebas
         
         Assert.IsFalse(usuarioRemovido);
     }
+    
+    [TestMethod]
+    public void CambiarClave_DatosValidos_RetornaVerdadero()
+    {
+        Sistema sistema = new Sistema();
+        string emailValido = "admin@gmail.com";
+        string claveValida = "@Manuel182@";
+        
+        bool seModificoLaClave = sistema.CambiarClave(emailValido, claveValida);
+        
+        Assert.IsTrue(seModificoLaClave);
+    }
+    
+    [TestMethod]
+    public void CambiarClave_EmailNoExistente_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string emailNoExistente = "manuek@gmail.com";
+        string claveValida = "@Manuel182@";
+        
+        bool seModificoLaClave = sistema.CambiarClave(emailNoExistente, claveValida);
+        
+        Assert.IsFalse(seModificoLaClave);
+    }
+    
+    [TestMethod]
+    public void CambiarClave_EmailInvalido_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string emailInvalido = "manuel.com";
+        string claveValida = "@Manuel182@";
+        
+        bool seModificoLaClave = sistema.CambiarClave(emailInvalido, claveValida);
+        
+        Assert.IsFalse(seModificoLaClave);
+    }
+    
+    [TestMethod]
+    public void CambiarClave_EmailNulo_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string? emailInvalido = null;
+        string claveValida = "@Manuel182@";
+        
+        bool seModificoLaClave = sistema.CambiarClave(emailInvalido, claveValida);
+        
+        Assert.IsFalse(seModificoLaClave);
+    }
+    
+    [TestMethod]
+    public void CambiarClave_ClaveInvalida_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string emailValido = "admin@gmail.com";
+        string claveInvalida = "invalida";
+        
+        bool seModificoLaClave = sistema.CambiarClave(emailValido, claveInvalida);
+        
+        Assert.IsFalse(seModificoLaClave);
+    }
+    
+    [TestMethod]
+    public void CambiarClave_ClaveNula_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string emailValido = "admin@gmail.com";
+        string? claveInvalida = null;
+        
+        bool seModificoLaClave = sistema.CambiarClave(emailValido, claveInvalida);
+        
+        Assert.IsFalse(seModificoLaClave);
+    }
 }
