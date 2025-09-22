@@ -40,4 +40,14 @@ public class TestAgregarCatalogo
         var ex = Assert.ThrowsException<InvalidOperationException>(() => s.AgregarCatalogo(c2));
         StringAssert.Contains(ex.Message, "Ya existe un catálogo con ese título");
     }
+    
+    [TestMethod]
+    public void AgregarVariosCatalogos_Ok()
+    {
+        var s = new Sistema();
+        s.AgregarCatalogo(new Catalogo("Stock Tata"));
+        s.AgregarCatalogo(new Catalogo("Ofertas"));
+
+        Assert.AreEqual(2, s.CantidadDeCatalogos());
+    }
 }
