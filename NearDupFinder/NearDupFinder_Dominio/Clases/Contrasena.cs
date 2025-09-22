@@ -62,11 +62,11 @@ public sealed class Contrasena
         return hashString;
     }
     
-    public static Contrasena Crear(string contrasena)
+    public static Contrasena Crear(string? contrasena)
     {
         if (Validar(contrasena))
         {
-            var hash = HashearMd5(contrasena);
+            var hash = HashearMd5(contrasena!);
             return new Contrasena(hash);
         }
         else

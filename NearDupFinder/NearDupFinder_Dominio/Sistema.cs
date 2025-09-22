@@ -81,4 +81,26 @@ public class Sistema
             }
         return false;
     }
+
+    public bool CambiarClave(string correo, string? clave)
+    {
+        Email email;
+        Contrasena contrasena;
+        try
+        {
+            email = Email.Crear(correo);
+            contrasena = Contrasena.Crear(clave);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        foreach (var usuario in _usuarios)
+            if (usuario.Email.Igual(email))
+            {
+                usuario.CambiarContrasena(contrasena);
+                return true;
+            }
+        return false;
+    }
 }
