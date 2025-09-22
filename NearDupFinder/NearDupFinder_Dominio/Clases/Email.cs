@@ -11,7 +11,7 @@ public sealed class Email
     public static Email Crear(string? email)
     {
         if (String.IsNullOrWhiteSpace(email))
-            throw new ArgumentNullException(nameof(email));
+            throw new ArgumentException(nameof(email));
         
         var emailNormalizado = email.Trim().ToLowerInvariant();
         

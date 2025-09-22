@@ -103,4 +103,25 @@ public class Sistema
             }
         return false;
     }
+
+    public bool ResetClave(string? email)
+    {
+        Email correo;
+        try
+        {
+            correo = Email.Crear(email);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        
+        foreach (var usuario in _usuarios)
+            if (usuario.Email.Igual(correo))
+            {
+                usuario.ResetiarContrasena();
+                return true;
+            }
+        return false;
+    }
 }

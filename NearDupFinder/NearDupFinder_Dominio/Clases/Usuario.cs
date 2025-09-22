@@ -84,13 +84,10 @@ public class Usuario
         return _contrasena.Verificar(contra);
     }
 
-    public bool ResetiarContrasena(Usuario? usuario)
+    public bool ResetiarContrasena()
     {
-        if (usuario is null)
-            return false;
-        
         Contrasena contrasenaDefault = new Contrasena();
-        usuario.CambiarContrasena(contrasenaDefault);
+        this.CambiarContrasena(contrasenaDefault);
         return true;
     }
 }

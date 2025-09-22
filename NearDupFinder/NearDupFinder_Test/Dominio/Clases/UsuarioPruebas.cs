@@ -213,23 +213,12 @@ public class UsuarioPruebas
     [TestMethod]
     public void CambioLaContrasenaYReseteo_RetornaVerdadero()
     {
-        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-        Usuario usuario2 = Usuario.Crear("Juan", "Perez", Email.Crear("juan@ejemplo.com"), Fecha.Crear(2000, 12, 18));
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
         Contrasena nuevaContra =  Contrasena.Crear("123QWEasdzxc@do");
         
-        usuario2.CambiarContrasena(nuevaContra);
-        usuario1.ResetiarContrasena(usuario2);
+        usuario.CambiarContrasena(nuevaContra);
+        usuario.ResetiarContrasena();
         
-        Assert.IsTrue(usuario2.VerificarContrasena("Encr1pt@do"));
-    }
-    
-    [TestMethod]
-    public void ResetiarContrasena_UsuarioNulo_RetornaFalso()
-    {
-        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-
-        bool exito = usuario1.ResetiarContrasena(null);
-        
-        Assert.IsFalse(exito);
+        Assert.IsTrue(usuario.VerificarContrasena("Encr1pt@do"));
     }
 }
