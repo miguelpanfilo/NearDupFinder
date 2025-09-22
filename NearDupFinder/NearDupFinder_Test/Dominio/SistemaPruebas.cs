@@ -165,7 +165,27 @@ public class SistemaPruebas
         Assert.AreEqual("Nueva categoria", item.Categoria);
     }
 
+    [TestMethod]
+    public void AgregarItemACatalogo_ItemValido_ItemAgregado()
+    {
+        
+        var sistema = new Sistema();
+            
+        
+        var catalogo = new Catalogo();
+        sistema.AgregarCatalogo(catalogo);
 
+        var item = new Item
+        {
+            Titulo = "Item Test",
+            Descripcion = "Descripción de prueba",
+            Categoria = "Categoria1"
+        };
+
+        sistema.AgregarItemACatalogo(item, catalogo);
+
+        CollectionAssert.Contains(catalogo.ObtenerItems(), item, "El item no fue agregado al catálogo");
+    }
     
     
     
