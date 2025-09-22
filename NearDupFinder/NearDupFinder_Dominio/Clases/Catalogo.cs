@@ -6,8 +6,17 @@ public class Catalogo
     private const int descripcionMaxLength = 400;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
-    
-    
+    private List<Item> _items = new List<Item>();
+
+    public void AgregarItem(Item item)
+    {
+        _items.Add(item);
+    }
+
+    public List<Item> ObtenerItems()
+    {
+        return _items;
+    }
 
     public Catalogo(string titulo)
     {

@@ -152,8 +152,8 @@ public class CatalogoTest
     [TestMethod]
     public void AgregarItem_Valido_ItemAgregadoAlCatalogo()
     {
-        
-        var catalogo = new Catalogo(); 
+
+        var catalogo = _catalogo;
         var nuevoItem = new Item
         {
             Titulo = "Item Prueba",
