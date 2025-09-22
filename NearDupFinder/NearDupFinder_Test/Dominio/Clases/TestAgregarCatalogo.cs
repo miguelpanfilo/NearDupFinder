@@ -50,4 +50,15 @@ public class TestAgregarCatalogo
 
         Assert.AreEqual(2, s.CantidadDeCatalogos());
     }
+    
+    [TestMethod]
+    public void AgregarCatalogo_SeGuardaCorrectamente()
+    {
+        var s = new Sistema();
+        var c = new Catalogo("Stock Tata");
+
+        s.AgregarCatalogo(c);
+
+        Assert.AreSame(c, s.ObtenerCatalogoPorTitulo(c.Titulo));
+    }
 }
