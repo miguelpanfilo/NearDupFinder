@@ -5,6 +5,7 @@ namespace NearDupFinder_Dominio;
 public class Sistema
 {
     private readonly List<Usuario> _usuarios = [];
+    private List<Item> _items;
 
     public Sistema()
     {
@@ -41,5 +42,9 @@ public class Sistema
                 return usuario;
         }
         return null;
+    }
+    public List<Item> ObtenerItems()
+    {
+        return _items;
     }
 }

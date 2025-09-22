@@ -6,6 +6,12 @@ namespace NearDupFinder_Test.Dominio;
 [TestClass]
 public class SistemaPruebas
 {
+    [TestInitialize]
+    public void Init()
+    {
+        Item.ResetIdCounter();
+    }
+    
     [TestMethod]
     public void AutenticarUsuario_Correto_RetornaUsuario()
     {
@@ -77,4 +83,22 @@ public class SistemaPruebas
         
         Assert.IsNull(admin);
     }
+    
+    
+    
+    [TestMethod]
+    public void Sistema_Inicio_Vacio()
+    {
+        Sistema sistema = new Sistema();
+
+        
+        var items = sistema.ObtenerItems();
+
+        
+        Assert.AreEqual(0, items.Count, "El sistema debería iniciar sin items.");
+    }
+
+    
+    
+    
 }
