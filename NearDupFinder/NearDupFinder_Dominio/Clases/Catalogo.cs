@@ -52,6 +52,6 @@ public class Catalogo
     
     public override int GetHashCode()
     {
-        return Titulo.GetHashCode(StringComparison.OrdinalIgnoreCase);
+        return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
     }
 }
