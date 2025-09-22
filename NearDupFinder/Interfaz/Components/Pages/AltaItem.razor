@@ -8,9 +8,6 @@
 
 <h3>Alta de Item</h3>
 
-
-    
-
 <div class="card p-3 shadow-sm">
     <div class="mb-3">
         <label for="titulo" class="form-label">Título *</label>
@@ -45,7 +42,6 @@
         <div class="alert alert-danger mt-3">@_mensajeError</div>
     }
 </div>
-
 @code {
     private string _titulo = "";
     private string _descripcion = "";
@@ -54,12 +50,21 @@
     private string _modelo = "";
     private string _mensajeError = "";
 
+    // Supongamos que tomamos el primer catálogo existente
+    private Catalogo _catalogoSeleccionado => sistema.ObtenerCatalogos().FirstOrDefault();
+
     private void GuardarItem()
     {
         // Validar obligatorios
         if (string.IsNullOrWhiteSpace(_titulo) || string.IsNullOrWhiteSpace(_descripcion))
         {
             _mensajeError = "Título y Descripción son obligatorios.";
+            return;
+        }
+
+        if (_catalogoSeleccionado == null)
+        {
+            _mensajeError = "No hay catálogos disponibles para agregar el item.";
             return;
         }
 
@@ -72,15 +77,15 @@
             Modelo = string.IsNullOrWhiteSpace(_modelo) ? null : _modelo
         };
 
-        sistema.AgregarItem(nuevoItem);
+        // Agregar el item al catálogo mediante Sistema
+        sistema.AgregarItemACatalogo(nuevoItem, _catalogoSeleccionado);
 
         // Volver a la lista
-        Nav.NavigateTo("/listaCrud");
+        Nav.NavigateTo("/lista-CRUD");
     }
 
     private void Cancelar()
     {
-        Nav.NavigateTo("/listaCrud");
+        Nav.NavigateTo("/lista-CRUD");
     }
-
 }

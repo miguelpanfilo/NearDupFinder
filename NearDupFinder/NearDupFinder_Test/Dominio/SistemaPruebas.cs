@@ -89,26 +89,34 @@ public class SistemaPruebas
     [TestMethod]
     public void Sistema_Inicio_Vacio()
     {
+        // 1) Crear sistema
         Sistema sistema = new Sistema();
 
-        
-        var items = sistema.ObtenerItems();
+        // 2) Crear un catálogo vacío
+        Catalogo catalogo = new Catalogo("CatalogoPrueba");
 
-        
-        Assert.AreEqual(0, items.Count, "El sistema debería iniciar sin items.");
+        // 3) Agregar el catálogo al sistema
+        sistema.AgregarCatalogo(catalogo);
+
+        // 4) Obtener items del catálogo
+        var items = sistema.ObtenerItemsDeCatalogo(catalogo);
+
+        // 5) Validar que está vacío
+        Assert.AreEqual(0, items.Count, "El sistema debería iniciar sin items en el catálogo.");
     }
+
     [TestMethod]
     public void AgregarItem_Valido_Ok()
     {
-        
+        // Arrange
         Sistema sistema = new Sistema();
         Item item = new Item("Titulo", "Descripcion", "Marca", "Modelo", "Categoria");
+        Catalogo catalogo = new Catalogo("Titulo");
+        // Act
+        sistema.AgregarItemACatalogo(item, catalogo);
 
-        
-        sistema.AgregarItem(item);
-
-        
-        var items = sistema.ObtenerItems();
+        // Assert
+        var items = sistema.ObtenerItemsDeCatalogo(catalogo);
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual("Titulo", items[0].Titulo);
     }
@@ -184,7 +192,7 @@ public class SistemaPruebas
 
         sistema.AgregarItemACatalogo(item, catalogo);
 
-        CollectionAssert.Contains(catalogo.ObtenerItems(), item, "El item no fue agregado al catálogo");
+        CollectionAssert.Contains(catalogo.ObtenerItems(), item, "El item fue agregado al catálogo");
     }
     
     

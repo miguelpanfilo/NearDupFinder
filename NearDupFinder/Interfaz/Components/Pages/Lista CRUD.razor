@@ -45,8 +45,9 @@
 
 <button class="btn btn-secondary ms-2" @onclick="AgregarItem">Agregar item</button>
 @code {
-    private List<Item> _itemsOriginales = new(); // lista completa de items
-    private List<Item> _itemsFiltradosEnTabla = new();  // lista que se muestra en la tabla
+    // Lista de items que se mostrarán en la tabla (de todos los catálogos)
+    private List<Item> _itemsFiltradosEnTabla = new();
+    // Categorías distintas de todos los items
     private List<string> _categorias = new();
 
     private string _textoBusqueda = string.Empty;
@@ -54,86 +55,58 @@
 
     protected override void OnInitialized()
     {
-        _itemsFiltradosEnTabla = sistema.ObtenerItems().ToList();
-        _categorias = sistema.ObtenerItems()
+        // Obtener todos los items de todos los catálogos
+        _itemsFiltradosEnTabla = sistema
+            .ObtenerTodosLosItems() // <-- esta función la tendrías que crear en Sistema
+            .ToList();
+
+        _categorias = _itemsFiltradosEnTabla
             .Select(i => i.Categoria)
             .Where(c => !string.IsNullOrEmpty(c))
             .Distinct()
             .ToList();
     }
 
-
     private void AplicarFiltros()
     {
-        var filtrados = new List<Item>();
+        _itemsFiltradosEnTabla = sistema
+            .ObtenerTodosLosItems()
+            .Where(item =>
+                (string.IsNullOrWhiteSpace(_textoBusqueda) ||
+                 Normalizar(item.Titulo).Contains(Normalizar(_textoBusqueda)) ||
+                 Normalizar(item.Descripcion).Contains(Normalizar(_textoBusqueda)))
+                &&
+                (string.IsNullOrWhiteSpace(_categoriaAFiltrar) ||
+                 item.Categoria == _categoriaAFiltrar)
+            )
+            .ToList();
 
-        foreach (var item in sistema.ObtenerItems())
-        {
-            bool coincideBusqueda = true;
-            bool coincideCategoria = true;
-
-            // Filtrar por texto si hay algo escrito
-            if (!string.IsNullOrWhiteSpace(_textoBusqueda))
-            {
-                var textoNorm = Normalizar(_textoBusqueda);
-                coincideBusqueda = Normalizar(item.Titulo).Contains(textoNorm) ||
-                                   Normalizar(item.Descripcion).Contains(textoNorm);
-            }
-
-            // Filtrar por categoría si hay seleccionada
-            if (!string.IsNullOrWhiteSpace(_categoriaAFiltrar))
-            {
-                coincideCategoria = item.Categoria == _categoriaAFiltrar;
-            }
-
-            if (coincideBusqueda && coincideCategoria)
-            {
-                filtrados.Add(item);
-            }
-        }
-
-        // Solo actualizar con los filtrados
-        _itemsFiltradosEnTabla = filtrados.ToList();
-
-        // Forzar renderizado en Blazor (opcional)
         StateHasChanged();
     }
-
 
     private void LimpiarFiltros()
     {
         _textoBusqueda = string.Empty;
         _categoriaAFiltrar = string.Empty;
-        _itemsFiltradosEnTabla = sistema.ObtenerItems().ToList();
+        _itemsFiltradosEnTabla = sistema.ObtenerTodosLosItems().ToList();
     }
-
-
 
     private string Normalizar(string texto)
     {
         if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
 
-        texto = texto.ToLowerInvariant();
-        texto = texto.Replace("á", "a")
-                     .Replace("é", "e")
-                     .Replace("í", "i")
-                     .Replace("ó", "o")
-                     .Replace("ú", "u")
-                     .Replace("ü", "u")
-                     .Replace("ñ", "n");
-
-        return texto;
+        return texto.ToLowerInvariant()
+                    .Replace("á", "a")
+                    .Replace("é", "e")
+                    .Replace("í", "i")
+                    .Replace("ó", "o")
+                    .Replace("ú", "u")
+                    .Replace("ü", "u")
+                    .Replace("ñ", "n");
     }
-
 
     private void AgregarItem()
-    { 
+    {
         Nav.NavigateTo("/alta-item");
-           
     }
-    
-    
-    
 }
-
-

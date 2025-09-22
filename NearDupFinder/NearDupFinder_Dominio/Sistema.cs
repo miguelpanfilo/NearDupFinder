@@ -53,6 +53,7 @@ public class Sistema
         if (catalogo == null) throw new ArgumentNullException(nameof(catalogo));
         _catalogos.Add(catalogo);
     }
+    
 
     // Función que agrega un Item a un Catalogo específico
     public void AgregarItemACatalogo(Item item, Catalogo catalogo)
@@ -62,4 +63,22 @@ public class Sistema
 
         catalogo.AgregarItem(item);
     }
+   
+    
+    public List<Item> ObtenerItemsDeCatalogo(Catalogo catalogo)
+    {
+        if (catalogo == null) throw new ArgumentNullException(nameof(catalogo));
+        return catalogo.ObtenerItems(); // usa la función del catálogo
+    }
+    
+    public List<Item> ObtenerTodosLosItems()
+    {
+        return _catalogos.SelectMany(c => c.ObtenerItems()).ToList();
+    }
+    public List<Catalogo> ObtenerCatalogos()
+    {
+        return _catalogos;
+    }
+
+    
 }
