@@ -7,44 +7,51 @@ namespace NearDupFinder_Test.Dominio.Clases;
 public class ContrasenaPruebas
 {
     [TestMethod]
-    public void Validar_LongitudMenorA8_LanzaExcepcion() 
+    public void Validar_Correcta_RetornaVerdadero() 
     {
-        string invalida = "Aa1@aaa"; 
-        Assert.ThrowsException<ArgumentException>(() => Contrasena.Validar(invalida));
-    }
-
-    [TestMethod] 
-    public void Validar_SinMayuscula_LanzaExcepcion() 
-    {
-        string invalida = "aa1@aaaa"; 
-        Assert.ThrowsException<ArgumentException>(() => Contrasena.Validar(invalida));
-    }
-
-    [TestMethod] 
-    public void Validar_SinMinuscula_LanzaExcepcion() 
-    { 
-        string invalida = "AA1@AAAA"; 
-        Assert.ThrowsException<ArgumentException>(() => Contrasena.Validar(invalida));
-    }
-
-    [TestMethod] 
-    public void Validar_SinDigito_LanzaExcepcion() 
-    { 
-        string invalida = "Aa@aaaaa"; 
-        Assert.ThrowsException<ArgumentException>(() => Contrasena.Validar(invalida));
-    }
-
-    [TestMethod] 
-    public void Validar_SinCaracterEspecial_LanzaExcepcion() 
-    { 
-        string invalida = "Aa1aaaaa"; 
-        Assert.ThrowsException<ArgumentException>(() => Contrasena.Validar(invalida));
+        string valida = "123QWEasdzxc@"; 
+        Assert.IsTrue(Contrasena.Validar(valida));
     }
     
     [TestMethod]
-    public void Validar_Nulo_LanzaArgumentNullException()
+    public void Validar_LongitudMenorA8_RetornaFalso() 
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Contrasena.Validar(null!));
+        string invalida = "Aa1@aaa"; 
+        Assert.IsFalse(Contrasena.Validar(invalida));
+    }
+
+    [TestMethod] 
+    public void Validar_SinMayuscula_RetornaFalso() 
+    {
+        string invalida = "aa1@aaaa"; 
+        Assert.IsFalse(Contrasena.Validar(invalida));
+    }
+
+    [TestMethod] 
+    public void Validar_SinMinuscula_RetornaFalso() 
+    { 
+        string invalida = "AA1@AAAA"; 
+        Assert.IsFalse(Contrasena.Validar(invalida));
+    }
+
+    [TestMethod] 
+    public void Validar_SinDigito_RetornaFalso() 
+    { 
+        string invalida = "Aa@aaaaa"; 
+        Assert.IsFalse(Contrasena.Validar(invalida));
+    }
+
+    [TestMethod] 
+    public void Validar_SinCaracterEspecial_RetornaFalso() 
+    { 
+        string invalida = "Aa1aaaaa"; 
+        Assert.IsFalse(Contrasena.Validar(invalida));
+    }
+    
+    [TestMethod]
+    public void Validar_Nulo_RetornaFalso()
+    {
+        Assert.IsFalse(Contrasena.Validar(null!));
     }
     
     [TestMethod]
@@ -61,9 +68,9 @@ public class ContrasenaPruebas
     }
     
     [TestMethod]
-    public void Crear_Nulo_LanzaArgumentNullException()
+    public void Crear_Nulo_LanzaArgumentException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Contrasena.Crear(null!));
+        Assert.ThrowsException<ArgumentException>(() => Contrasena.Crear(null!));
     }
     
     [TestMethod]
@@ -76,7 +83,7 @@ public class ContrasenaPruebas
     }
 
     [TestMethod] 
-    public void Verificar_ContrasenaIncorrecta_DevuelveFalse() 
+    public void Verificar_ContrasenaIncorrecta_DevuelveFalso() 
     { 
         string valida = "Aa1@aaaa"; 
         var contrasena = Contrasena.Crear(valida);

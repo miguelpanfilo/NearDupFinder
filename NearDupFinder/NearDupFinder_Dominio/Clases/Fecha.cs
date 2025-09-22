@@ -34,7 +34,7 @@ public sealed class Fecha
         return new DateTime(_anio, _mes, _dia).ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
     }
     
-    public bool Igual(Fecha otraFecha)
+    public bool Igual(Fecha? otraFecha)
     {
         if (otraFecha is null) 
             return false;
