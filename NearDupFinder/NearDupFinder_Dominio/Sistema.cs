@@ -23,6 +23,14 @@ public class Sistema
         return adminUsuario;
     }
 
+    private Usuario? BuscarUsuario(Email email)
+    {
+        foreach (Usuario usuario in _usuarios)
+            if (usuario.Email.Igual(email))
+                return usuario;
+        return null;
+    }
+
     public Usuario? AutenticarUsuario(string? email, string? clave)
     {
         Email emailAValidar;
@@ -34,12 +42,13 @@ public class Sistema
         {
             return null;
         }
-
-        foreach (var usuario in _usuarios)
-        {
-            if (usuario.Email.Igual(emailAValidar) && usuario.VerificarContrasena(clave))
-                return usuario;
-        }
+        Usuario? usuario = BuscarUsuario(emailAValidar);
+        if (usuario == null)
+            return null;
+        
+        if (usuario.VerificarContrasena(clave))
+            return usuario;
+        
         return null;
     }
     
@@ -54,7 +63,7 @@ public class Sistema
             fecha = Fecha.Crear(anio,mes,dia);
             nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
         }
-        catch (Exception e)
+        catch
         {
             return false;
         }
@@ -69,20 +78,19 @@ public class Sistema
         {
             emailUsuario = Email.Crear(email);
         }
-        catch (Exception e)
+        catch
         {
             return false;
         }
-        foreach (var usuario in _usuarios)
-            if (usuario.Email.Igual(emailUsuario))
-            {
-                _usuarios.Remove(usuario);
-                return true;
-            }
-        return false;
+        Usuario? usuario = BuscarUsuario(emailUsuario);
+        if (usuario is null)
+            return false;
+        
+        _usuarios.Remove(usuario);
+        return true;
     }
 
-    public bool CambiarClave(string correo, string? clave)
+    public bool CambiarClave(string? correo, string? clave)
     {
         Email email;
         Contrasena contrasena;
@@ -91,17 +99,16 @@ public class Sistema
             email = Email.Crear(correo);
             contrasena = Contrasena.Crear(clave);
         }
-        catch (Exception e)
+        catch
         {
             return false;
         }
-        foreach (var usuario in _usuarios)
-            if (usuario.Email.Igual(email))
-            {
-                usuario.CambiarContrasena(contrasena);
-                return true;
-            }
-        return false;
+        Usuario? usuario = BuscarUsuario(email);
+        if (usuario is null)
+            return false;
+        
+        usuario.CambiarContrasena(contrasena);
+        return true;
     }
 
     public bool ResetClave(string? email)
@@ -111,17 +118,15 @@ public class Sistema
         {
             correo = Email.Crear(email);
         }
-        catch (Exception e)
+        catch
         {
             return false;
         }
+        Usuario? usuario = BuscarUsuario(correo);
+        if (usuario is null)
+            return false;
         
-        foreach (var usuario in _usuarios)
-            if (usuario.Email.Igual(correo))
-            {
-                usuario.ResetiarContrasena();
-                return true;
-            }
-        return false;
+        usuario.ResetearContrasena();
+        return true;
     }
 }

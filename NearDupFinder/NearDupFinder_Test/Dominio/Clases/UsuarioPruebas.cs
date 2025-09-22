@@ -217,7 +217,7 @@ public class UsuarioPruebas
         Contrasena nuevaContra =  Contrasena.Crear("123QWEasdzxc@do");
         
         usuario.CambiarContrasena(nuevaContra);
-        usuario.ResetiarContrasena();
+        usuario.ResetearContrasena();
         
         Assert.IsTrue(usuario.VerificarContrasena("Encr1pt@do"));
     }

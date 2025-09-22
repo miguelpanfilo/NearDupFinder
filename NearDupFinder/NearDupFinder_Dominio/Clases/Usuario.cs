@@ -79,12 +79,12 @@ public class Usuario
         return true;
     }
 
-    public bool VerificarContrasena(string contra)
+    public bool VerificarContrasena(string? contra)
     {
         return _contrasena.Verificar(contra);
     }
 
-    public bool ResetiarContrasena()
+    public bool ResetearContrasena()
     {
         Contrasena contrasenaDefault = new Contrasena();
         this.CambiarContrasena(contrasenaDefault);
