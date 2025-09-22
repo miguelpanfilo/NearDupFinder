@@ -43,4 +43,15 @@ public class Catalogo
         Titulo = titulo.Trim();
     }
 
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Catalogo otro) return false;
+
+        return Titulo.Equals(otro.Titulo, StringComparison.OrdinalIgnoreCase);
+    }
+    
+    public override int GetHashCode()
+    {
+        return Titulo.GetHashCode(StringComparison.OrdinalIgnoreCase);
+    }
 }

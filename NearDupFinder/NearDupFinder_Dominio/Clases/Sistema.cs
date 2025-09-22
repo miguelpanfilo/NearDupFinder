@@ -15,7 +15,12 @@ public class Sistema
         {
             throw new ArgumentException("El catálogo no puede ser null");
         }
-        _catalogos.Add(c);
+        else if (_catalogos.Contains(c))
+        {
+            throw new InvalidOperationException("Ya existe un catálogo con ese título");
+        }
+
+    _catalogos.Add(c);
     }
 
     public int CantidadDeCatalogos()
