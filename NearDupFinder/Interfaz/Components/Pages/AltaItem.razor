@@ -1,0 +1,86 @@
+@page "/alta-item"
+@inject Sistema sistema 
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@inject NavigationManager Nav
+
+<PageTitle>Alta de Item</PageTitle>
+
+<h3>Alta de Item</h3>
+
+
+    
+
+<div class="card p-3 shadow-sm">
+    <div class="mb-3">
+        <label for="titulo" class="form-label">Título *</label>
+        <input id="titulo" @bind="_titulo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción *</label>
+        <textarea id="descripcion" @bind="_descripcion" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="categoria" class="form-label">Categoría</label>
+        <input id="categoria" @bind="_categoria" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="marca" class="form-label">Marca</label>
+        <input id="marca" @bind="_marca" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="modelo" class="form-label">Modelo</label>
+        <input id="modelo" @bind="_modelo" class="form-control" />
+    </div>
+
+    <button class="btn btn-success" @onclick="GuardarItem">Guardar</button>
+    <button class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+
+    @if (!string.IsNullOrEmpty(_mensajeError))
+    {
+        <div class="alert alert-danger mt-3">@_mensajeError</div>
+    }
+</div>
+
+@code {
+    private string _titulo = "";
+    private string _descripcion = "";
+    private string _categoria = "";
+    private string _marca = "";
+    private string _modelo = "";
+    private string _mensajeError = "";
+
+    private void GuardarItem()
+    {
+        // Validar obligatorios
+        if (string.IsNullOrWhiteSpace(_titulo) || string.IsNullOrWhiteSpace(_descripcion))
+        {
+            _mensajeError = "Título y Descripción son obligatorios.";
+            return;
+        }
+
+        var nuevoItem = new Item
+        {
+            Titulo = _titulo,
+            Descripcion = _descripcion,
+            Categoria = string.IsNullOrWhiteSpace(_categoria) ? null : _categoria,
+            Marca = string.IsNullOrWhiteSpace(_marca) ? null : _marca,
+            Modelo = string.IsNullOrWhiteSpace(_modelo) ? null : _modelo
+        };
+
+        sistema.AgregarItem(nuevoItem);
+
+        // Volver a la lista
+        Nav.NavigateTo("/listaCrud");
+    }
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/listaCrud");
+    }
+
+}

@@ -1,0 +1,139 @@
+@page "/lista-CRUD"
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@inject NavigationManager Nav
+@inject Sistema sistema
+
+<h3>Lista de Items</h3>
+
+<div class="mb-3">
+    <input type="text" @bind="_textoBusqueda" placeholder="Buscar por título o descripción" class="form-control mb-2" />
+
+    <select class="form-select mb-2" @bind="_categoriaAFiltrar" @bind:event="onchange">
+        <option value="">-- Todas las categorías --</option>
+        @foreach (var cat in _categorias)
+        {
+            <option value="@cat">@cat</option>
+        }
+    </select>
+
+    <button class="btn btn-primary me-2" @onclick="AplicarFiltros">Filtrar</button>
+    <button class="btn btn-secondary" @onclick="LimpiarFiltros">Limpiar</button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Estado Duplicado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _itemsFiltradosEnTabla)
+        {
+            <tr>
+                <td>@item.Titulo</td>
+                <td>@item.Descripcion</td>
+                <td>@item.Categoria</td>
+                <td>@(item.EstadoDuplicado ?? "No disponible")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-secondary ms-2" @onclick="AgregarItem">Agregar item</button>
+@code {
+    private List<Item> _itemsOriginales = new(); // lista completa de items
+    private List<Item> _itemsFiltradosEnTabla = new();  // lista que se muestra en la tabla
+    private List<string> _categorias = new();
+
+    private string _textoBusqueda = string.Empty;
+    private string _categoriaAFiltrar = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _itemsFiltradosEnTabla = sistema.ObtenerItems().ToList();
+        _categorias = sistema.ObtenerItems()
+            .Select(i => i.Categoria)
+            .Where(c => !string.IsNullOrEmpty(c))
+            .Distinct()
+            .ToList();
+    }
+
+
+    private void AplicarFiltros()
+    {
+        var filtrados = new List<Item>();
+
+        foreach (var item in sistema.ObtenerItems())
+        {
+            bool coincideBusqueda = true;
+            bool coincideCategoria = true;
+
+            // Filtrar por texto si hay algo escrito
+            if (!string.IsNullOrWhiteSpace(_textoBusqueda))
+            {
+                var textoNorm = Normalizar(_textoBusqueda);
+                coincideBusqueda = Normalizar(item.Titulo).Contains(textoNorm) ||
+                                   Normalizar(item.Descripcion).Contains(textoNorm);
+            }
+
+            // Filtrar por categoría si hay seleccionada
+            if (!string.IsNullOrWhiteSpace(_categoriaAFiltrar))
+            {
+                coincideCategoria = item.Categoria == _categoriaAFiltrar;
+            }
+
+            if (coincideBusqueda && coincideCategoria)
+            {
+                filtrados.Add(item);
+            }
+        }
+
+        // Solo actualizar con los filtrados
+        _itemsFiltradosEnTabla = filtrados.ToList();
+
+        // Forzar renderizado en Blazor (opcional)
+        StateHasChanged();
+    }
+
+
+    private void LimpiarFiltros()
+    {
+        _textoBusqueda = string.Empty;
+        _categoriaAFiltrar = string.Empty;
+        _itemsFiltradosEnTabla = sistema.ObtenerItems().ToList();
+    }
+
+
+
+    private string Normalizar(string texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
+
+        texto = texto.ToLowerInvariant();
+        texto = texto.Replace("á", "a")
+                     .Replace("é", "e")
+                     .Replace("í", "i")
+                     .Replace("ó", "o")
+                     .Replace("ú", "u")
+                     .Replace("ü", "u")
+                     .Replace("ñ", "n");
+
+        return texto;
+    }
+
+
+    private void AgregarItem()
+    { 
+        Nav.NavigateTo("/alta-item");
+           
+    }
+    
+    
+    
+}
+
+
