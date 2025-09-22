@@ -1,0 +1,76 @@
+@page "/usuarios"
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@inject Sistema Sistema
+
+    <PageTitle>Usuarios</PageTitle>
+
+    <h1>Usuarios</h1>
+
+    <p>Lista de usuarios registrados</p>
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Fecha De Nacimiento</th>
+            <th>Roles</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var usuario in _usuarios!)
+        {
+            var roles = usuario.ObtenerRoles();
+            <tr>
+                <td>@usuario.Nombre</td>
+                <td>@usuario.Apellido</td>
+                <td>@usuario.Email.ToString()</td>
+                <td>@usuario.FechaNacimiento.ToString()</td>
+                <td>
+                @if (roles.Any())
+                {
+                    @string.Join(", ", roles.Select(r => r.ToString()))
+                }
+                else
+                {
+                    <em class="text-muted">Sin roles</em>
+                }
+            </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+<!-- Botones de acciones -->
+<div class="d-flex justify-content-center gap-3 mt-4">
+    <button class="btn btn-primary" @onclick="AgregarUsuario">Agregar Usuario</button>
+    <button class="btn btn-primary" @onclick="EliminarUsuario">Eliminar Usuario</button>
+    <button class="btn btn-primary" @onclick="ModificarUsuario">Modificar Usuario</button>
+</div>
+
+@code {
+    private List<Usuario>? _usuarios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _usuarios = Sistema.ObtenerUsuarios();
+    }
+
+    private void AgregarUsuario()
+    {
+        // lógica a implementar más adelante
+    }
+
+    private void EliminarUsuario()
+    {
+        // lógica a implementar más adelante
+    }
+
+    private void ModificarUsuario()
+    {
+        // lógica a implementar más adelante
+    }
+}
