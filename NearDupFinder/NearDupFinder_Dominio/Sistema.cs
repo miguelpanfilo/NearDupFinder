@@ -4,7 +4,7 @@ namespace NearDupFinder_Dominio;
 
 public class Sistema
 {
-    private readonly List<Usuario> _usuarios = [];
+    private List<Usuario> _usuarios = [];
 
     public Sistema()
     {
@@ -41,5 +41,24 @@ public class Sistema
                 return usuario;
         }
         return null;
+    }
+    
+    public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia)
+    {
+        Email correo;
+        Fecha fecha;
+        Usuario nuevoUsuario;
+        try
+        {
+            correo = Email.Crear(email);
+            fecha = Fecha.Crear(anio,mes,dia);
+            nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        _usuarios.Add(nuevoUsuario);
+        return true;
     }
 }
