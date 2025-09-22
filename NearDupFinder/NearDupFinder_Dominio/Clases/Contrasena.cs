@@ -5,6 +5,8 @@ namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Contrasena
 {
+    private const int LargoMinimo = 8;
+
     private readonly string _hash;
     
     private readonly string _contrasenaDefault = "Encr1pt@do";
@@ -20,25 +22,19 @@ public sealed class Contrasena
      Debe incluir al menos un número (0-9).
      Debe incluir al menos un carácter especial (como @, #, $, etc.).
      */
-    public static void Validar(string contrasena)
+    public static bool Validar(string? contrasena)
     {
-        if (contrasena is null)
-            throw new ArgumentNullException(nameof(contrasena));
-
-        if (contrasena.Length < 8)
-            throw new ArgumentException("La contraseña debe tener al menos 8 caracteres.", nameof(contrasena));
-
-        if (!contrasena.Any(char.IsUpper))
-            throw new ArgumentException("La contraseña debe incluir al menos una letra mayúscula.", nameof(contrasena));
-
-        if (!contrasena.Any(char.IsLower))
-            throw new ArgumentException("La contraseña debe incluir al menos una letra minúscula.", nameof(contrasena));
-
-        if (!contrasena.Any(char.IsDigit))
-            throw new ArgumentException("La contraseña debe incluir al menos un número.", nameof(contrasena));
-
-        if (!contrasena.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c)))
-            throw new ArgumentException("La contraseña debe incluir al menos un carácter especial (no espacio).", nameof(contrasena));
+        if (contrasena is null
+            || contrasena.Length < LargoMinimo
+            || !contrasena.Any(char.IsUpper)
+            || !contrasena.Any(char.IsLower)
+            || !contrasena.Any(char.IsDigit)
+            || !contrasena.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c))
+           )
+        {
+            return false;
+        }
+        return true;
     }
     /*
      MD5 es una función hash que transforma cualquier texto en una “huella” fija de 128 bits (32 caracteres hex).
@@ -68,13 +64,22 @@ public sealed class Contrasena
     
     public static Contrasena Crear(string contrasena)
     {
-        Validar(contrasena);
-        var hash = HashearMd5(contrasena);
-        return new Contrasena(hash);
+        if (Validar(contrasena))
+        {
+            var hash = HashearMd5(contrasena);
+            return new Contrasena(hash);
+        }
+        else
+        {
+            throw new ArgumentException("La contraseña no tiene el formato valido");        
+        }
     }
     
-    public bool Verificar(string contrasena)
+    public bool Verificar(string? contrasena)
     {
+        if (contrasena is null)
+            return false;
+        
         return string.Equals(HashearMd5(contrasena), _hash, StringComparison.OrdinalIgnoreCase);
     }
 

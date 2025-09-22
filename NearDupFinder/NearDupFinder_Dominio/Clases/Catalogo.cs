@@ -1,4 +1,5 @@
-namespace NearDupFinder_Dominio;
+namespace NearDupFinder_Dominio.Clases;
+
 
 public class Catalogo
 {

@@ -27,7 +27,8 @@ public sealed class Email
     {
         // Validación estándar de .NET
         var atributo = new EmailAddressAttribute();
-        if (!atributo.IsValid(correo)) return false;
+        if (!atributo.IsValid(correo)) 
+            return false;
 
         // Ej.: "usuario@ejemplo.com" → dominio = "ejemplo.com".
         var indiceArroba = correo.IndexOf('@');
@@ -40,7 +41,7 @@ public sealed class Email
         return true;
     }
     
-    public bool Igual(Email otroEmail)
+    public bool Igual(Email? otroEmail)
     {
         if (otroEmail is null) 
             return false;

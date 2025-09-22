@@ -1,0 +1,70 @@
+@page "/login"
+
+@inject NavigationManager Nav
+@using Microsoft.AspNetCore.WebUtilities
+@attribute [AllowAnonymous]
+
+<PageTitle>Iniciar sesión</PageTitle>
+
+<div class="container d-flex align-items-center justify-content-center">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Iniciar sesión</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/auth/login">
+                    <AntiforgeryToken />
+
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input id="email"
+                               name="Email"
+                               type="email"
+                               class="form-control"
+                               placeholder="tu@correo.com"
+                               autocomplete="username"
+                               @bind="_usuario" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pwd">Contraseña</label>
+                        <input id="pwd"
+                               name="Password"
+                               type="password"
+                               class="form-control"
+                               placeholder="••••••••"
+                               autocomplete="current-password"
+                               @bind="_clave" />
+                    </div>
+                    
+                    @if (_mostrarError)
+                    {
+                        <div class="alert alert-danger mb-3" role="alert">
+                            Email o contraseña incorrectos.
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Entrar
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _usuario = "";
+    private string _clave   = "";
+    private bool _mostrarError;
+
+    protected override void OnParametersSet()
+    {
+        // Nos fijamos en la URL si hubo algun error al intentar hacer login.
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+        _mostrarError = query.TryGetValue("error", out var v) && v == "1";
+    }
+}
