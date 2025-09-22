@@ -9,6 +9,12 @@ public class Sistema
     public Sistema()
     {
         _usuarios.Add(CrearUsuarioAdmin());
+        CrearUsuariosDebug();
+    }
+
+    public List<Usuario> ObtenerUsuarios()
+    {
+        return _usuarios;
     }
 
     private Usuario CrearUsuarioAdmin()
@@ -21,6 +27,26 @@ public class Sistema
         adminUsuario.CambiarContrasena(contrasena);
         
         return adminUsuario;
+    }
+
+    private void CrearUsuariosDebug()
+    {
+        Email email1 = Email.Crear("manuel@gmail.com");
+        Fecha fecha1 = Fecha.Crear(1997,12,27);
+        Email email2 = Email.Crear("Vale@gmail.com");
+        Fecha fecha2 = Fecha.Crear(1998,11,7);
+        Email email3 = Email.Crear("juan@gmail.com");
+        Fecha fecha3 = Fecha.Crear(2000,12,18);
+        Usuario usu1 = Usuario.Crear("Manuel","Perez",email1,fecha1);
+        Usuario usu2 = Usuario.Crear("Valeria","Sarro",email2,fecha2);
+        Usuario usu3 = Usuario.Crear("Juan","Perez",email3,fecha3);
+        usu1.AgregarRol(Rol.Administrador);
+        usu1.AgregarRol(Rol.Revisor);
+        usu2.AgregarRol(Rol.Revisor);
+        
+        _usuarios.Add(usu1);
+        _usuarios.Add(usu2);
+        _usuarios.Add(usu3);
     }
 
     private Usuario? BuscarUsuario(Email email)

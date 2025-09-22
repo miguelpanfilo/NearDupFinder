@@ -272,7 +272,7 @@ public class SistemaPruebas
     public void RemoverUsuario_Inexistente_RetornaFalso()
     {
         Sistema sistema = new Sistema();
-        string email = "manuel@gmail.com";
+        string email = "asdasdasda@gmail.com";
         
         bool usuarioRemovido = sistema.RemoverUsuario(email);
         
@@ -388,7 +388,7 @@ public class SistemaPruebas
     public void ResetClave_UsuarioNoRegistrado_RetornaFalso()
     {
         Sistema sistema = new Sistema();
-        string emailNoRegistrado = "manuel@gmail.com";
+        string emailNoRegistrado = "asdasdasdasd@gmail.com";
 
         bool seReseteoLaClave = sistema.ResetClave(emailNoRegistrado);
         
@@ -415,5 +415,15 @@ public class SistemaPruebas
         bool seReseteoLaClave = sistema.ResetClave(emailNulo);
         
         Assert.IsFalse(seReseteoLaClave);
+    }
+
+    [TestMethod]
+    public void ObtenerUsuarios_RetornaArrayNoVacio()
+    {
+        Sistema sistema = new Sistema();
+
+        int cant = sistema.ObtenerUsuarios().Count();
+        
+        Assert.IsTrue(cant > 0);
     }
 }
