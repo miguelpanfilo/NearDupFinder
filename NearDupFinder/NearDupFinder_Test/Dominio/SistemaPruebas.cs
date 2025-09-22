@@ -372,4 +372,48 @@ public class SistemaPruebas
         
         Assert.IsFalse(seModificoLaClave);
     }
+
+    [TestMethod]
+    public void ResetClave_UsuarioValido_RetornaVerdadero()
+    {
+        Sistema sistema = new Sistema();
+        string emailValido = "admin@gmail.com";
+
+        bool seReseteoLaClave = sistema.ResetClave(emailValido);
+        
+        Assert.IsTrue(seReseteoLaClave);
+    }
+    
+    [TestMethod]
+    public void ResetClave_UsuarioNoRegistrado_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string emailNoRegistrado = "manuel@gmail.com";
+
+        bool seReseteoLaClave = sistema.ResetClave(emailNoRegistrado);
+        
+        Assert.IsFalse(seReseteoLaClave);
+    }
+    
+    [TestMethod]
+    public void ResetClave_EmailInvalido_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string emailInvalido = "manuel.com";
+
+        bool seReseteoLaClave = sistema.ResetClave(emailInvalido);
+        
+        Assert.IsFalse(seReseteoLaClave);
+    }
+    
+    [TestMethod]
+    public void ResetClave_EmailNulo_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string? emailNulo = null;
+
+        bool seReseteoLaClave = sistema.ResetClave(emailNulo);
+        
+        Assert.IsFalse(seReseteoLaClave);
+    }
 }
