@@ -13,7 +13,7 @@ public class Sistema
     {
         if (c == null)
         {
-            throw new ArgumentException("El catálogo no puede ser null");
+            throw new ArgumentNullException(nameof(c), "El catálogo no puede ser null");
         }
         else if (_catalogos.Contains(c))
         {
