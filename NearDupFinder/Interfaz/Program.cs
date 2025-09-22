@@ -57,7 +57,9 @@ app.MapPost("/auth/login", async (HttpContext http, Sistema sistema) =>
         // 2) Validación
         var usuario = sistema.AutenticarUsuario(email, clave);
         if (usuario is null)
-            return Results.Redirect("/login");
+            // credenciales inválidas → marcar error y volver al login
+            return Results.Redirect("/login?error=1");
+
 
         // 3) Crear identidad y firmar sesión → el server emite la COOKIE
         var claims = new List<Claim>
@@ -85,7 +87,7 @@ app.MapPost("/logout", async (HttpContext http) =>
         // elimina la cookie de auth
         await http.SignOutAsync();
         // te lleva a la home
-        return Results.Redirect("/");
+        return Results.Redirect("/login");
     }).AllowAnonymous();
 
 app.MapRazorComponents<App>()
