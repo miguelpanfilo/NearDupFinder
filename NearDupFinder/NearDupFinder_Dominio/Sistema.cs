@@ -5,12 +5,12 @@ namespace NearDupFinder_Dominio;
 public class Sistema
 {
     private readonly List<Usuario> _usuarios = [];
-    private List<Item> _items;
+    private List<Catalogo> _catalogos;
 
     public Sistema()
     {
         _usuarios.Add(CrearUsuarioAdmin());
-        _items = new List<Item>();
+        _catalogos = new List<Catalogo>();
     }
 
     private Usuario CrearUsuarioAdmin()
@@ -44,13 +44,22 @@ public class Sistema
         }
         return null;
     }
-    public List<Item> ObtenerItems()
+  
+
+  
+
+    public void AgregarCatalogo(Catalogo catalogo)
     {
-        return _items;
+        if (catalogo == null) throw new ArgumentNullException(nameof(catalogo));
+        _catalogos.Add(catalogo);
     }
 
-    public void AgregarItem(Item item)
+    // Función que agrega un Item a un Catalogo específico
+    public void AgregarItemACatalogo(Item item, Catalogo catalogo)
     {
-        _items.Add(item);
+        if (item == null) throw new ArgumentNullException(nameof(item));
+        if (catalogo == null) throw new ArgumentNullException(nameof(catalogo));
+
+        catalogo.AgregarItem(item);
     }
 }

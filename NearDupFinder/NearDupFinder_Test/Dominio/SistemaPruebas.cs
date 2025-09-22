@@ -172,7 +172,7 @@ public class SistemaPruebas
         var sistema = new Sistema();
             
         
-        var catalogo = new Catalogo();
+        var catalogo = new Catalogo("Titulo");
         sistema.AgregarCatalogo(catalogo);
 
         var item = new Item
