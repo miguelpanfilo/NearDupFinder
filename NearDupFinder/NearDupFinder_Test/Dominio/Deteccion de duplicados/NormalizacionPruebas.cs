@@ -41,6 +41,28 @@ public class NormalizacionPruebas
         Assert.AreEqual("modelo", resultado.Modelo);
         Assert.AreEqual("tecnologia", resultado.Categoria);
     }
+    [TestMethod]
+    public void NormalizarItem_TituloConSimbolosEspeciales_NormalizaCorrectamente()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "Lap_tóp!123#",
+            Marca = "To!shIBa",
+            Modelo = "MÓDeLo#1",
+            Categoria = "TeCnología!"
+        };
+
+        var resultado = sistema.NormalizarItem(item);
+
+        // Reemplazo de simbolos por espacios 
+        Assert.AreEqual("lap top 123 ", resultado.Titulo);
+        Assert.AreEqual("to shiba", resultado.Marca);
+        Assert.AreEqual("modelo 1", resultado.Modelo);
+        Assert.AreEqual("tecnologia ", resultado.Categoria);
+    }
+
+    
 
 
     
