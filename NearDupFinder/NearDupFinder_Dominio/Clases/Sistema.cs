@@ -6,6 +6,8 @@ namespace NearDupFinder_Dominio.Clases;
 
 public class Sistema
 {
+    private const string TokenPattern = @"\W+";
+    
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
 
@@ -82,9 +84,9 @@ public class Sistema
         };
     }
 
-    private string[] Tokenizar(string texto)
+    private static string[] Tokenizar(string texto)
     {
-        return Regex.Split(texto, @"\W+")
+        return Regex.Split(texto, TokenPattern)
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .ToArray();
     }
