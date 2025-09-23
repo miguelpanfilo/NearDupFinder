@@ -68,4 +68,21 @@ public class Sistema
         return null;
     }
     /*Fin espacio usuario*/
+    
+    public Item NormalizarItem(Item item)
+    {
+        return new Item
+        {
+            Titulo = item.Titulo.ToLowerInvariant(),
+            Marca = item.Marca,
+            Modelo = item.Modelo,
+            Categoria = item.Categoria
+        };
+    }
+
+    
+    
+    
+    
+    
 }
