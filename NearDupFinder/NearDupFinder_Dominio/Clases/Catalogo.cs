@@ -1,5 +1,6 @@
 namespace NearDupFinder_Dominio.Clases;
 
+
 public class Catalogo
 {
     private const int tituloMaxLength = 120;
@@ -43,4 +44,15 @@ public class Catalogo
         Titulo = titulo.Trim();
     }
 
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Catalogo otro) return false;
+
+        return Titulo.Equals(otro.Titulo, StringComparison.OrdinalIgnoreCase);
+    }
+    
+    public override int GetHashCode()
+    {
+        return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
+    }
 }
