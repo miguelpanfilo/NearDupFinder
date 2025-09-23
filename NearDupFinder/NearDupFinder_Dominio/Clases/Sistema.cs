@@ -73,11 +73,17 @@ public class Sistema
     {
         return new Item
         {
-            Titulo = item.Titulo.ToLowerInvariant(),
-            Marca = item.Marca,
-            Modelo = item.Modelo,
-            Categoria = item.Categoria
+            Titulo = Normalizar(item.Titulo),
+            Marca = Normalizar(item.Marca),
+            Modelo = Normalizar(item.Modelo),
+            Categoria = Normalizar(item.Categoria)
         };
+    }
+   
+
+    private string Normalizar(string texto)
+    {
+        return texto.ToLowerInvariant();
     }
 
     
