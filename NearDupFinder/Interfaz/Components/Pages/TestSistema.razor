@@ -1,0 +1,16 @@
+@page "/test-sistema"
+@using NearDupFinder_Dominio.Clases
+@inject Sistema sistema
+
+<h3>Mensaje del sistema:</h3>
+<p>@mensaje</p>
+
+@code {
+    private string mensaje = "Cargando mensaje...";
+
+    protected override void OnInitialized()
+    {
+        // Obtenemos el mensaje directo del sistema al iniciar
+        mensaje = sistema.ObtenerMensaje();
+    }
+}

@@ -3,14 +3,32 @@ namespace NearDupFinder_Dominio.Clases;
 public class Sistema
 {
     private readonly List<Catalogo> _catalogos;
-    private readonly List<Usuario> _usuarios = [];
+    private readonly List<Usuario> _usuarios = new();
+    private readonly List<Item> _items = new();
 
     public Sistema()
     {
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
     }
-    
+
+    public event Action? ItemsChanged;
+
+    public void AgregarItem(Item item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+
+        _items.Add(item);
+
+        // Notifica que cambió la lista
+        ItemsChanged?.Invoke();
+    }
+
+    public List<Item> ObtenerItems()
+    {
+        // Devuelve una copia para que afuera no modifiquen la lista interna
+        return new List<Item>(_items);
+    }
     /* Comienzo espacio Catalogo*/
     public void AgregarCatalogo(Catalogo c)
     {
@@ -68,4 +86,14 @@ public class Sistema
         return null;
     }
     /*Fin espacio usuario*/
+    
+    public void ProbarItemsChanged()
+    {
+        ItemsChanged?.Invoke();
+    }
+    public string ObtenerMensaje()
+    {
+        return "¡El sistema está conectado correctamente!";
+    }
+
 }
