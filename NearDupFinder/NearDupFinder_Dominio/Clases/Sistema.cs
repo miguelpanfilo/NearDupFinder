@@ -98,7 +98,9 @@ public class Sistema
             .Replace("ñ", "n")
             .Replace("ü", "u");
 
-        
+        //Reemplaza caracteres especiales por espacios 
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9ñ]", " ");
+
         return texto;
 
     }
