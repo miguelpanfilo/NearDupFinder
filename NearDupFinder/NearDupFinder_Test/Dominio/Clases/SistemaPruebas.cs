@@ -1,4 +1,3 @@
-using NearDupFinder_Dominio;
 using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_Test.Dominio;
