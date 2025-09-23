@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Struct;
 
 namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 

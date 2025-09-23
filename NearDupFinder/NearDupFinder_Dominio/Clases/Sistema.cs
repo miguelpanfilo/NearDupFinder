@@ -1,4 +1,8 @@
+using System.Text.RegularExpressions;
+using NearDupFinder_Dominio.Struct;
+
 namespace NearDupFinder_Dominio.Clases;
+
 
 public class Sistema
 {
@@ -69,5 +73,19 @@ public class Sistema
     }
     /*Fin espacio usuario*/
     
-    
+    public ItemTokenizado TokenizarItem(Item item)
+    {
+        return new ItemTokenizado
+        {
+            TokenTitulo = Tokenizar(item.Titulo),
+            TokenDescripcion = Tokenizar(item.Descripcion)
+        };
+    }
+
+    private string[] Tokenizar(string texto)
+    {
+        return Regex.Split(texto, @"\W+")
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .ToArray();
+    }
 }
