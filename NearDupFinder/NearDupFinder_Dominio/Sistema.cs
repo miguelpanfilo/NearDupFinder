@@ -6,6 +6,10 @@ public class Sistema
 {
     private readonly List<Usuario> _usuarios = [];
     private List<Catalogo> _catalogos;
+    
+    private List<Item> _items = new List<Item>();
+
+  
 
     public Sistema()
     {
@@ -78,6 +82,16 @@ public class Sistema
     public List<Catalogo> ObtenerCatalogos()
     {
         return _catalogos;
+    }
+    public void AgregarItem(Item item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+        _items.Add(item);
+    }
+
+    public List<Item> ObtenerItems()
+    {
+        return _items;
     }
 
     
