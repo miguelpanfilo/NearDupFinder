@@ -55,11 +55,14 @@ public class NormalizacionPruebas
 
         var resultado = sistema.NormalizarItem(item);
 
-        // Reemplazo de simbolos por espacios 
+        // Reemplazo de caracteres especiales  por espacios 
         Assert.AreEqual("lap top 123 ", resultado.Titulo);
         Assert.AreEqual("to shiba", resultado.Marca);
         Assert.AreEqual("modelo 1", resultado.Modelo);
         Assert.AreEqual("tecnologia ", resultado.Categoria);
+        
+        
+        
     }
 
     
