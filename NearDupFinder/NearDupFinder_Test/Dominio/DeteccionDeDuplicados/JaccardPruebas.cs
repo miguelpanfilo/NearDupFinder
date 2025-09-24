@@ -50,4 +50,15 @@ public class JaccardPruebas
 
         Assert.AreEqual(-1, numTokens);
     }
+    
+    [TestMethod]
+    public void CalcularNumTokensUnion_AmbosInvalidos_RetornaMenosUno()
+    {
+        string[]? a = null;
+        string[]? b = null;
+
+        int numTokens = _sis.CalcularNumTokensUnion(a, b);
+
+        Assert.AreEqual(-1, numTokens);
+    }
 }
