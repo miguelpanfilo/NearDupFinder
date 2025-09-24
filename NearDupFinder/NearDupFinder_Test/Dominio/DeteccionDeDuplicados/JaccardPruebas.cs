@@ -72,4 +72,15 @@ public class JaccardPruebas
 
         Assert.AreEqual(1, numTokens);
     }
+    
+    [TestMethod]
+    public void CalcularNumTokensInterseccion_AmbosValidos_UnoVacio_RetornaCero()
+    {
+        string[] a = ["a", "b"];
+        string[] b = [];
+
+        int numTokens = _sis.CalcularNumTokensInterseccion(a, b);
+        
+        Assert.AreEqual(0, numTokens);
+    }
 }
