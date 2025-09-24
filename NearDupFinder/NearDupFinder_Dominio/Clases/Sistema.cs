@@ -156,4 +156,12 @@ public class Sistema
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .ToArray();
     }
+
+    public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
+    {
+        IEnumerable<string> tokensUnion = tokens1.Union(tokens2);
+        int numTokensUnion = tokensUnion.Count();
+        
+        return numTokensUnion;
+    }
 }
