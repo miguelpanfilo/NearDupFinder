@@ -75,6 +75,70 @@ public class Sistema
     }
     /*Fin espacio usuario*/
     
+  
+  
+  
+  
+  //DETECCION DE DUPLICADOS
+  
+  //Normalizacion
+    public Item NormalizarItem(Item item)
+    {
+       
+        var titulo = Normalizar(item.Titulo);
+        var descripcion = Normalizar(item.Descripcion);
+
+        // Lanzar excepción solo si título o descripción quedan vacíos
+        if (string.IsNullOrWhiteSpace(titulo) || string.IsNullOrWhiteSpace(descripcion))
+            throw new InvalidOperationException("El título y la descripción no puede quedar vacío tras normalizar.");
+
+        // Normalizar propiedades no obligatorias
+        var marca = Normalizar(item.Marca);
+        var modelo = Normalizar(item.Modelo);
+        var categoria = Normalizar(item.Categoria);
+
+        return new Item
+        {
+            Titulo = titulo,
+            Descripcion = descripcion,
+            Marca = marca,
+            Modelo = modelo,
+            Categoria = categoria
+        };
+    }
+
+    private string Normalizar(string texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto))
+            return string.Empty;
+
+        // Convertir a minúsculas
+        texto = texto.ToLowerInvariant();
+
+        // Reemplazo de tildes 
+        texto = texto.Replace("á", "a")
+            .Replace("é", "e")
+            .Replace("í", "i")
+            .Replace("ó", "o")
+            .Replace("ú", "u")
+            .Replace("ñ", "n")
+            .Replace("ü", "u");
+
+        // Reemplaza caracteres especiales por espacios 
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
+
+        // Colapsa múltiples espacios y recorta
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
+
+        
+
+        return texto;
+    }
+
+    
+    
+    
+    // Tokenizacion
     public ItemTokenizado TokenizarItem(Item item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
