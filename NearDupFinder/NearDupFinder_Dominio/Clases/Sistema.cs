@@ -167,9 +167,6 @@ public class Sistema
 
     public int CalcularNumTokensInterseccion(string[] tokens1, string[] tokens2)
     {
-        IEnumerable<string> interseccion = tokens1.Intersect(tokens2);
-        int numTokensInterseccion = interseccion.Count();
-        
-        return numTokensInterseccion;
+        return tokens1.Intersect(tokens2).Count();
     }
 }
