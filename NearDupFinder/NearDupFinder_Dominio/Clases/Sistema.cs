@@ -77,6 +77,8 @@ public class Sistema
     
     public ItemTokenizado TokenizarItem(Item item)
     {
+        if (item is null) throw new ArgumentNullException(nameof(item));
+        
         return new ItemTokenizado
         {
             TokenTitulo = Tokenizar(item.Titulo),
