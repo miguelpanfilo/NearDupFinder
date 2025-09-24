@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NormalizacionPruebas;
+namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class NormalizacionPruebas{
