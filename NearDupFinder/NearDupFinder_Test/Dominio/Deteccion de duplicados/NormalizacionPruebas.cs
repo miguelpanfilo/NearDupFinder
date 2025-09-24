@@ -178,6 +178,27 @@ public class NormalizacionPruebas{
             Assert.AreEqual("model 1", resultado.Modelo);
             Assert.AreEqual("categoria", resultado.Categoria);
         }
+        [TestMethod]
+        public void NormalizarItem_SimbolosYEspacios_InicioFinalCorrecto()
+        {
+            var sistema = new Sistema();
+            var item = new Item
+            {
+                Titulo = "!!!@@@   Laptop ***### ",
+                Descripcion = " $$$ Computadora%% ",
+                Marca = "***Marca***",
+                Modelo = " ##Modelo## ",
+                Categoria = " !!Categoria!! "
+            };
+
+            var resultado = sistema.NormalizarItem(item);
+
+            Assert.AreEqual("laptop", resultado.Titulo);
+            Assert.AreEqual("computadora", resultado.Descripcion);
+            Assert.AreEqual("marca", resultado.Marca);
+            Assert.AreEqual("modelo", resultado.Modelo);
+            Assert.AreEqual("categoria", resultado.Categoria);
+        }
 
 
 
