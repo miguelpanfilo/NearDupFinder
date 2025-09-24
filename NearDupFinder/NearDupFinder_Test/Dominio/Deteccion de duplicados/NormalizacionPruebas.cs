@@ -64,6 +64,29 @@ public class NormalizacionPruebas
         
         
     }
+    
+    [TestMethod]
+    public void NormalizarItem_EspaciosMultiples_ColapsaYRecorta()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "  Lap_tóp   123!!  ",
+            Marca = "  To!shIBa  ",
+            Modelo = " MÓDeLo   #1 ",
+            Categoria = "  TeCnología! "
+        };
+
+        var resultado = sistema.NormalizarItem(item);
+        
+        // Ya esta codigo para sin tildes, minusculas, sin caracteres especiales
+
+        Assert.AreEqual("lap top 123", resultado.Titulo);
+        Assert.AreEqual("to shiba", resultado.Marca);
+        Assert.AreEqual("mo delo 1", resultado.Modelo);
+        Assert.AreEqual("te cnologia", resultado.Categoria);
+    }
+
 
     
 
