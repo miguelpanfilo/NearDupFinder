@@ -150,4 +150,15 @@ public class JaccardPruebas
 
         Assert.AreEqual(0f, valorJaccard);
     }
+    
+    [TestMethod]
+    public void CalcularJaccard_UnoInvalido_RetornaMenosUno()
+    {
+        string[]? a = null;
+        string[]  b = ["x"];
+
+        float valor = _sis.CalcularJaccard(a, b);
+
+        Assert.AreEqual(-1f, valor);
+    }
 }
