@@ -95,6 +95,9 @@
 
 <button class="btn btn-secondary ms-2" @onclick="AgregarItem">Agregar item</button>
 @code {
+    
+    //----------------------------------------------------------------------------------------------
+    //Declaracion de variables 
     private string _mensajeErrorModal = "";
     private bool _mostrarModalEditar = false;
     private ItemEditDataTransfer _itemEditado;
@@ -104,10 +107,12 @@
     // Categorías distintas de todos los items
     private List<string> _categorias = new();
     
-    
+    //Variables implementadas para el filtro de items 
     private string _textoBusqueda = string.Empty;
     private string _categoriaAFiltrar = string.Empty;
 
+    //----------------------------------------------------------------------------------------------
+    //Manejo de filtrado de items segun texto de titulo/descripcion y categoria seleccionada del select. 
     protected override void OnInitialized()
     {
         // Obtener todos los items de todos los catálogos
@@ -164,8 +169,8 @@
     {
         Nav.NavigateTo("/alta-item");
     }
-
-// MODAL EDICION DE ITEM
+//----------------------------------------------------------------------------------------------
+// Logica de modal para editar item
 
  
     private void CerrarModal()
@@ -208,8 +213,6 @@
             sistema.ActualizarItem(_itemEditado);
 
             // Cerrar modal 
-            
-            
             _mostrarModalEditar = false;
             _itemEditado = null;
             _mensajeErrorModal = null;
@@ -224,7 +227,9 @@
     }
 
     
-    // FIN DE MODAL EDICION ITEM
+    // FIN 
+    //----------------------------------------------------------------------------------------------
+
     }
 
 

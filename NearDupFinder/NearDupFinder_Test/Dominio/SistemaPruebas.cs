@@ -261,6 +261,21 @@ public class SistemaPruebas
         Assert.AreEqual("CatNueva", itemActualizado.Categoria);
     }
     
-    
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void ActualizarItem_IdNoExistente_LanzaExcepcion()
+    {
+        var _sistema = new Sistema();
+
+        var dto = new ItemEditDataTransfer()
+        {
+            Id = 999,
+            Titulo = "Titulo",
+            Descripcion = "Desc"
+        };
+
+        _sistema.ActualizarItem(dto); // Debe lanzar excepción
+    }
+
     
 }
