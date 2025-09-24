@@ -194,6 +194,33 @@ public class SistemaPruebas
 
         CollectionAssert.Contains(catalogo.ObtenerItems(), item, "El item fue agregado al catálogo");
     }
+    [TestMethod]
+    public void ActualizarItem_ActualizaPropiedadesCorrectamente()
+    {
+        
+        var _sistema = new Sistema();
+        var itemOriginal = new Item("Titulo1", "Descripcion1");
+        _sistema.AgregarItem(itemOriginal);
+
+        var itemActualizado = new Item("NuevoTitulo", "NuevaDescripcion")
+        {
+            Marca = "NuevaMarca",
+            Modelo = "NuevoModelo",
+            Categoria = "NuevaCategoria"
+        };
+
+        
+        _sistema.ActualizarItem(itemActualizado, itemOriginal.Id);
+
+        
+        var itemEnSistema = _sistema.ObtenerItems().First(i => i.Id == itemOriginal.Id);
+        Assert.AreEqual("NuevoTitulo", itemEnSistema.Titulo);
+        Assert.AreEqual("NuevaDescripcion", itemEnSistema.Descripcion);
+        Assert.AreEqual("NuevaMarca", itemEnSistema.Marca);
+        Assert.AreEqual("NuevoModelo", itemEnSistema.Modelo);
+        Assert.AreEqual("NuevaCategoria", itemEnSistema.Categoria);
+    }
+    
     
     
     
