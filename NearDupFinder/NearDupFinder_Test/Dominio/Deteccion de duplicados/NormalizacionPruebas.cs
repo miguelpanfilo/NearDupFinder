@@ -106,6 +106,31 @@ public class NormalizacionPruebas
 
         var resultado = sistema.NormalizarItem(item);
     }
+    
+    [TestMethod]
+    public void NormalizarItem_MarcaModeloCategoriaVacios_NoLanzaExcepcion()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "Laptop",
+            Descripcion = "Computadora potente",
+            Marca = "!@#$$%",   // se normaliza a vacío
+            Modelo = "###$$$",  // se normaliza a vacío
+            Categoria = "!!@@"  // se normaliza a vacío
+        };
+
+        // No debe lanzar excepción
+        var resultado = sistema.NormalizarItem(item);
+
+        // Verificar normalización
+        Assert.AreEqual("laptop", resultado.Titulo);
+        Assert.AreEqual("computadora potente", resultado.Descripcion);
+        Assert.AreEqual(string.Empty, resultado.Marca);
+        Assert.AreEqual(string.Empty, resultado.Modelo);
+        Assert.AreEqual(string.Empty, resultado.Categoria);
+    }
+
 
 
 
