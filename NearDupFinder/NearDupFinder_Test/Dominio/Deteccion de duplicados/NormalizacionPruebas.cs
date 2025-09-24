@@ -89,8 +89,7 @@ public class NormalizacionPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcion()
+    public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcionConMensaje()
     {
         var sistema = new Sistema();
         var item = new Item
@@ -101,11 +100,12 @@ public class NormalizacionPruebas
             Modelo = "###$$$",
             Categoria = "!!@@"
         };
-        
-        //Tras normalizar, me tendria que dar cada propiedad vacia, lanzando una excepcion 
 
-        var resultado = sistema.NormalizarItem(item);
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
+
+        Assert.AreEqual("El título o la descripción no puede quedar vacío tras normalizar.", ex.Message);
     }
+
     
     [TestMethod]
     public void NormalizarItem_MarcaModeloCategoriaVacios_NoLanzaExcepcion()
@@ -132,6 +132,7 @@ public class NormalizacionPruebas
     }
 
 
+   
 
 
     

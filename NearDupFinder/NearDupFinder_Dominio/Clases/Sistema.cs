@@ -71,15 +71,28 @@ public class Sistema
     
     public Item NormalizarItem(Item item)
     {
+       
+        var titulo = Normalizar(item.Titulo);
+        var descripcion = Normalizar(item.Descripcion);
+
+        // Lanzar excepción solo si título o descripción quedan vacíos
+        if (string.IsNullOrWhiteSpace(titulo) || string.IsNullOrWhiteSpace(descripcion))
+            throw new InvalidOperationException("El título o la descripción no puede quedar vacío tras normalizar.");
+
+        // Normalizar propiedades no obligatorias
+        var marca = Normalizar(item.Marca);
+        var modelo = Normalizar(item.Modelo);
+        var categoria = Normalizar(item.Categoria);
+
         return new Item
         {
-            Titulo = Normalizar(item.Titulo),
-            Marca = Normalizar(item.Marca),
-            Modelo = Normalizar(item.Modelo),
-            Categoria = Normalizar(item.Categoria)
+            Titulo = titulo,
+            Descripcion = descripcion,
+            Marca = marca,
+            Modelo = modelo,
+            Categoria = categoria
         };
     }
-
 
     private string Normalizar(string texto)
     {
@@ -104,9 +117,7 @@ public class Sistema
         // Colapsa múltiples espacios y recorta
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
 
-        // Mínimo código para pasar el test de excepción
-        if (string.IsNullOrWhiteSpace(texto))
-            throw new InvalidOperationException("El texto no puede quedar vacío tras normalizar.");
+        
 
         return texto;
     }
