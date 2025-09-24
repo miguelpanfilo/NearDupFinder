@@ -79,7 +79,7 @@ public class NormalizacionPruebas
 
         var resultado = sistema.NormalizarItem(item);
         
-        // Ya esta codigo para sin tildes, minusculas, sin caracteres especiales
+        // Hasta ese momento, linea de texto sin tildes, minusculas, sin caracteres especiales
 
         Assert.AreEqual("lap top 123", resultado.Titulo);
         Assert.AreEqual("to shiba", resultado.Marca);
