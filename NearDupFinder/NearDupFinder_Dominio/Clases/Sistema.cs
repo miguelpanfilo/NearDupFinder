@@ -77,7 +77,7 @@ public class Sistema
 
         // Lanzar excepción solo si título o descripción quedan vacíos
         if (string.IsNullOrWhiteSpace(titulo) || string.IsNullOrWhiteSpace(descripcion))
-            throw new InvalidOperationException("El título o la descripción no puede quedar vacío tras normalizar.");
+            throw new InvalidOperationException("El título y la descripción no puede quedar vacío tras normalizar.");
 
         // Normalizar propiedades no obligatorias
         var marca = Normalizar(item.Marca);

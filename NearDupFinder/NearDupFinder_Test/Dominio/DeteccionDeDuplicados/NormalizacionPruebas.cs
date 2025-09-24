@@ -95,7 +95,7 @@ public class NormalizacionPruebas{
         }
 
         [TestMethod]
-        public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcionConMensaje()
+        public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcion()
         {
             var sistema = new Sistema();
             var item = new Item
@@ -109,12 +109,12 @@ public class NormalizacionPruebas{
 
             var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
 
-            Assert.AreEqual("El título o la descripción no puede quedar vacío tras normalizar.", ex.Message);
+            Assert.AreEqual("El título y la descripción no puede quedar vacío tras normalizar.", ex.Message);
         }
 
 
         [TestMethod]
-        public void NormalizarItem_MarcaModeloCategoriaVacios_NoLanzaExcepcion()
+        public void NormalizarItem_MarcaModeloCategoriaSoloSimbolos_NoLanzaExcepcion()
         {
             var sistema = new Sistema();
             var item = new Item
@@ -126,7 +126,7 @@ public class NormalizacionPruebas{
                 Categoria = "!!@@" // se normaliza a vacío
             };
 
-            // No debe lanzar excepción
+            
             var resultado = sistema.NormalizarItem(item);
 
             // Verificar normalización
@@ -199,8 +199,26 @@ public class NormalizacionPruebas{
             Assert.AreEqual("modelo", resultado.Modelo);
             Assert.AreEqual("categoria", resultado.Categoria);
         }
+        [TestMethod]
+        public void NormalizarItem_TituloSoloCaracteresEspeciales_LanzaExcepcion()
+        {
+            var sistema = new Sistema();
+            var item = new Item
+            {
+                Titulo = "!!!@@@    ***### ",
+                Descripcion = " $$$ Computadora%% ",
+                Marca = "***Marca***",
+                Modelo = " ##Modelo## ",
+                Categoria = " !!Categoria!! "
+            };
 
+            var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
 
+            Assert.AreEqual("El título y la descripción no puede quedar vacío tras normalizar.", ex.Message);
+        }
+        
+
+      
 
 
 
