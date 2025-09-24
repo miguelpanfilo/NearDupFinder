@@ -176,6 +176,11 @@ public class Sistema
     public float CalcularJaccard(string[] tokens1, string[] tokens2)
     {
         float numTokensUnion = CalcularNumTokensUnion(tokens1, tokens2);
+        if (numTokensUnion == 0)
+        {
+            return 0;
+        }
+
         float numTokensInterseccion = CalcularNumTokensInterseccion(tokens1, tokens2);
         float valorJaccard = numTokensInterseccion / numTokensUnion;
         
