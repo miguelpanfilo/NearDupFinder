@@ -28,4 +28,15 @@ public class JaccardPruebas
 
         Assert.AreEqual(2, numTokens);
     }
+    
+    [TestMethod]
+    public void CalcularNumTokensUnion_AmbosValidos_AmbosVacios_RetornaCero()
+    {
+        string[] a = [];
+        string[] b = [];
+
+        int numTokens = _sis.CalcularNumTokensUnion(a, b);
+
+        Assert.AreEqual(0, numTokens);
+    }
 }
