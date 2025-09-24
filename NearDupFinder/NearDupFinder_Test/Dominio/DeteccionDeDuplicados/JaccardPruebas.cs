@@ -46,8 +46,8 @@ public class JaccardPruebas
         string[]? a = null;
         string[] b = ["x"];
 
-        int actual = _sis.CalcularNumTokensUnion(a, b);
+        int numTokens = _sis.CalcularNumTokensUnion(a, b);
 
-        Assert.AreEqual(-1, actual);
+        Assert.AreEqual(-1, numTokens);
     }
 }

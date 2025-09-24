@@ -157,12 +157,10 @@ public class Sistema
             .ToArray();
     }
 
-    public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
+    public int CalcularNumTokensUnion(string[]? tokens1, string[]? tokens2)
     {
-        if (tokens1 == null || tokens2 == null)
-        {
+        if (tokens1 is null || tokens2 is null)
             return -1;
-        }
 
         return tokens1.Union(tokens2).Count();
     }
