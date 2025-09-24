@@ -180,6 +180,11 @@ public class Sistema
             return 0;
 
         float numTokensInterseccion = CalcularNumTokensInterseccion(tokens1, tokens2);
+        if (numTokensInterseccion < 0 || numTokensUnion < 0)
+        {
+            return -1;
+        }
+
         float valorJaccard = numTokensInterseccion / numTokensUnion;
         
         return valorJaccard;
