@@ -157,6 +157,28 @@ public class NormalizacionPruebas{
             Assert.AreEqual("modelo", resultado.Modelo);
             Assert.AreEqual("categoria", resultado.Categoria);
         }
+        [TestMethod]
+        public void NormalizarItem_CombinacionCaracteres_NormalizaTodo()
+        {
+            var sistema = new Sistema();
+            var item = new Item
+            {
+                Titulo = "ÁÉÍÓÚñÜ!@#    $$%^&*()    ",
+                Descripcion = "áéíóúÑü123",
+                Marca = "Márcá$%",
+                Modelo = "Módel#1",
+                Categoria = "Cátégoría!"
+            };
+
+            var resultado = sistema.NormalizarItem(item);
+
+            Assert.AreEqual("aeiounu", resultado.Titulo);
+            Assert.AreEqual("aeiounu123", resultado.Descripcion);
+            Assert.AreEqual("marca", resultado.Marca);
+            Assert.AreEqual("model 1", resultado.Modelo);
+            Assert.AreEqual("categoria", resultado.Categoria);
+        }
+
 
 
 
