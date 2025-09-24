@@ -167,6 +167,11 @@ public class Sistema
 
     public int CalcularNumTokensInterseccion(string[] tokens1, string[] tokens2)
     {
+        if (tokens1 == null || tokens2 == null)
+        {
+            return -1;
+        }
+
         return tokens1.Intersect(tokens2).Count();
     }
 }

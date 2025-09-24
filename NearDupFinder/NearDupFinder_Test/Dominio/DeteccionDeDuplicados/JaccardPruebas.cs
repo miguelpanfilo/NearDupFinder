@@ -100,7 +100,7 @@ public class JaccardPruebas
     {
         string[]? a = null;
         string[] b =["a"];
-
+    
         int numTokens = _sis.CalcularNumTokensInterseccion(a, b);
 
         Assert.AreEqual(-1, numTokens);
