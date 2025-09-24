@@ -222,6 +222,40 @@ public class SistemaPruebas
     }
     
     
+    [TestMethod]
+    public void ActualizarItem_ConItemEditDto_CambiaPropiedadesCorrectamente()
+    {
+        
+        var _sistema = new Sistema();
+
+        // Arrange: creamos un item original
+        var itemOriginal = new Item("Titulo1", "Desc1", "Marca1", "Modelo1", "Cat1");
+        _sistema.AgregarItem(itemOriginal);
+
+        // Creamos data transfer con cambios ( item temporal que va a tener todos los datos nuevos del item que se quizo editar, a excepecion del id )
+        
+        var dto = new ItemEditDto
+        {
+            Id = itemOriginal.Id,
+            Titulo = "TituloNuevo",
+            Descripcion = "DescNueva",
+            Marca = "MarcaNueva",
+            Modelo = "ModeloNuevo",
+            Categoria = "CatNueva"
+        };
+
+        // Act
+        _sistema.ActualizarItem(dto);
+
+        // Assert
+        var itemActualizado = _sistema.ObtenerItems().Find(i => i.Id == itemOriginal.Id);
+        Assert.AreEqual("TituloNuevo", itemActualizado.Titulo);
+        Assert.AreEqual("DescNueva", itemActualizado.Descripcion);
+        Assert.AreEqual("MarcaNueva", itemActualizado.Marca);
+        Assert.AreEqual("ModeloNuevo", itemActualizado.Modelo);
+        Assert.AreEqual("CatNueva", itemActualizado.Categoria);
+    }
+    
     
     
 }
