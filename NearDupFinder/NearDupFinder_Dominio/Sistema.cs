@@ -93,7 +93,23 @@ public class Sistema
     {
         return _items;
     }
+    public void ActualizarItem(Item itemActualizado, int id)
+    {
+        if (itemActualizado == null)
+            throw new ArgumentNullException(nameof(itemActualizado));
 
+        // Buscar el item original por Id en la lista de sistema
+        var original = _items.FirstOrDefault(i => i.Id == id);
+        if (original == null)
+            throw new InvalidOperationException("No se encontró el item a actualizar.");
+
+        // Actualizar propiedades usando los métodos de edición existentes
+        original.EditarTitulo(itemActualizado.Titulo);
+        original.EditarDescripcion(itemActualizado.Descripcion);
+        original.EditarMarca(itemActualizado.Marca);
+        original.EditarModelo(itemActualizado.Modelo);
+        original.EditarCategoria(itemActualizado.Categoria);
+    }
 
 
 }
