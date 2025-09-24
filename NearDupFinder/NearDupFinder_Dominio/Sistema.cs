@@ -100,7 +100,9 @@ public class Sistema
 
         // Buscar el item original por Id en la lista de sistema
         var original = _items.FirstOrDefault(i => i.Id == itemTranferido.Id);
-      
+        if (original == null)
+            throw new InvalidOperationException("No se encontró el item a actualizar.");
+
         // Actualizar propiedades usando los métodos de edición existentes
         original.EditarTitulo(itemTranferido.Titulo);
         original.EditarDescripcion(itemTranferido.Descripcion);
