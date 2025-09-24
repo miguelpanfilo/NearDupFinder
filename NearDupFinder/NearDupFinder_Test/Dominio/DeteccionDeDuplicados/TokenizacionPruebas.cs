@@ -67,6 +67,11 @@ public class TokenizacionPruebas
         CollectionAssert.AreEqual(new[] { "celular", "de", "ultima", "generacion" }, tokens.TokenDescripcion);
     }
     
-
+    [TestMethod]
+    public void TokenizarItem_ItemNull_TiraArgumentNull()
+    {
+        var s = new Sistema();
+        Assert.ThrowsException<ArgumentNullException>(() => s.TokenizarItem(null));
+    }
     
 }
