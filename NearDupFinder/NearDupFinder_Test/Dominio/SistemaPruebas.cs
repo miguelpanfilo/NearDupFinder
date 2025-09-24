@@ -278,6 +278,16 @@ public class SistemaPruebas
 
         Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
     }
+    
+    [TestMethod]
+    public void ActualizarItem_DtoNulo_LanzaArgumentNullException()
+    {
+        var sistema = new Sistema();
+
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => sistema.ActualizarItem(null));
+        Assert.AreEqual("itemTranferido", ex.ParamName);
+    }
+
 
 
     
