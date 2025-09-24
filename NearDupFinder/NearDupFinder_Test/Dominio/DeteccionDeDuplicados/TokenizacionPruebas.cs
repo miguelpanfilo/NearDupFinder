@@ -53,7 +53,20 @@ public class TokenizacionPruebas
 
         CollectionAssert.AreEqual(new[] { "ps5", "slim", "1tb" }, tokens.TokenTitulo);
         CollectionAssert.AreEqual(new[] { "ssd", "512" }, tokens.TokenDescripcion);
-    }    
+    }
+    
+    [TestMethod]
+    public void CrearToken_ConEspaciosExtremos_Ok()
+    {
+        var s = new Sistema();
+        var item = new Item("   iphone 17   ", "   celular   de   ultima   generacion   ");
+
+        var tokens = s.TokenizarItem(item);
+
+        CollectionAssert.AreEqual(new[] { "iphone", "17" }, tokens.TokenTitulo);
+        CollectionAssert.AreEqual(new[] { "celular", "de", "ultima", "generacion" }, tokens.TokenDescripcion);
+    }
     
 
+    
 }
