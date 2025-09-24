@@ -105,4 +105,16 @@ public class JaccardPruebas
 
         Assert.AreEqual(-1, numTokens);
     }
+    
+    
+    [TestMethod]
+    public void CalcularNumTokensInterseccion_AmbosInvalidos_RetornaMenosUno()
+    {
+        string[]? a = null;
+        string[]? b = null;
+
+        int numTokens = _sis.CalcularNumTokensInterseccion(a, b);
+
+        Assert.AreEqual(-1, numTokens);
+    }
 }
