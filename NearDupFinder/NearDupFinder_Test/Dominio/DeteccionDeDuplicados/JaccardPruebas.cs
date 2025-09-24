@@ -139,4 +139,15 @@ public class JaccardPruebas
 
         Assert.AreEqual(0f, valorJaccard);
     }
+    
+    [TestMethod]
+    public void CalcularJaccard_AmbosValidos_AmbosVacios_RetornaCero()
+    {
+        string[] a = [];
+        string[] b = [];
+
+        float valorJaccard = _sis.CalcularJaccard(a, b);
+
+        Assert.AreEqual(0f, valorJaccard);
+    }
 }
