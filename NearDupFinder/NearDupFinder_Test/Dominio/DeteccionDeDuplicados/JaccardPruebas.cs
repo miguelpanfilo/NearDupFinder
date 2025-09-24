@@ -128,4 +128,15 @@ public class JaccardPruebas
 
         Assert.AreEqual(1f/3f, valorJaccard);
     }
+    
+    [TestMethod]
+    public void CalcularJaccard_AmbosValidos_UnoVacios_RetornaCero()
+    {
+        string[] a = ["x", "y"];
+        string[] b = [];
+
+        float valorJaccard = _sis.CalcularJaccard(a, b);
+
+        Assert.AreEqual(0f, valorJaccard);
+    }
 }
