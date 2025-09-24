@@ -292,6 +292,28 @@ public class SistemaPruebas
         var ex = Assert.ThrowsException<ArgumentNullException>(() => sistema.ActualizarItem(null));
         Assert.AreEqual("itemTranferido", ex.ParamName);
     }
+    [TestMethod]
+    public void ActualizarItem_SoloTitulo_DescripcionSeMantiene()
+    {
+        // Arrange
+        var sistema = new Sistema();
+        var itemOriginal = new Item("Titulo Original", "Descripcion Original");
+        sistema.AgregarItem(itemOriginal);
+
+        var dto = new ItemEditDataTransfer()
+        {
+            Id = itemOriginal.Id,
+            Titulo = "Nuevo Titulo", // Solo cambio el título
+            Descripcion = itemOriginal.Descripcion // Mantengo la descripción original
+        };
+
+        // Act
+        sistema.ActualizarItem(dto);
+
+        // Assert
+        Assert.AreEqual("Nuevo Titulo", itemOriginal.Titulo);
+        Assert.AreEqual("Descripcion Original", itemOriginal.Descripcion);
+    }
 
 
 
