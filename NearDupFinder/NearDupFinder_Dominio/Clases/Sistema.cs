@@ -159,9 +159,6 @@ public class Sistema
 
     public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
     {
-        IEnumerable<string> tokensUnion = tokens1.Union(tokens2);
-        int numTokensUnion = tokensUnion.Count();
-        
-        return numTokensUnion;
+        return tokens1.Union(tokens2).Count();
     }
 }
