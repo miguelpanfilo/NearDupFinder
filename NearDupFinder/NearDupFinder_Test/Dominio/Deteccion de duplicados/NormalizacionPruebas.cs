@@ -83,8 +83,9 @@ public class NormalizacionPruebas
 
         Assert.AreEqual("lap top 123", resultado.Titulo);
         Assert.AreEqual("to shiba", resultado.Marca);
-        Assert.AreEqual("mo delo 1", resultado.Modelo);
-        Assert.AreEqual("te cnologia", resultado.Categoria);
+        Assert.AreEqual("modelo 1", resultado.Modelo); 
+        Assert.AreEqual("tecnologia", resultado.Categoria);
+
     }
 
 

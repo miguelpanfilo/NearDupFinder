@@ -99,7 +99,11 @@ public class Sistema
             .Replace("ü", "u");
 
         //Reemplaza caracteres especiales por espacios 
-        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9ñ]", " ");
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
+
+        
+        //Trim de espacios en los extremos, compactacion en 1 solo espacio de los multiples espacios entre caracteres 
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
 
         return texto;
 
