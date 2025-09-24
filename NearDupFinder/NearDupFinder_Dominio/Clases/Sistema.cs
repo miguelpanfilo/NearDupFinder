@@ -106,7 +106,7 @@ public class Sistema
 
         // Mínimo código para pasar el test de excepción
         if (string.IsNullOrWhiteSpace(texto))
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("El texto no puede quedar vacío tras normalizar.");
 
         return texto;
     }
