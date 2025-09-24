@@ -195,6 +195,10 @@ public class SistemaPruebas
 
         CollectionAssert.Contains(catalogo.ObtenerItems(), item, "El item fue agregado al catálogo");
     }
+    
+    //---------------------------------------------------------------------------------------------------------------------------------
+    //Pruebas de actualizar item
+    
     [TestMethod]
     public void ActualizarItem_ActualizaPropiedadesCorrectamente()
     {
@@ -293,5 +297,8 @@ public class SistemaPruebas
 
     // No se hace prueba de itemTransferido.Titulo || itemTransferido.Descripcion si son vacios, porque ya se 
     // esta validando en las pruebas de Items. 
+    
+    //---------------------------------------------------------------------------------------------------------------------------------
+
     
 }
