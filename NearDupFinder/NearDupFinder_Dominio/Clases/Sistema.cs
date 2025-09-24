@@ -172,4 +172,13 @@ public class Sistema
 
         return tokens1.Intersect(tokens2).Count();
     }
+
+    public float CalcularJaccard(string[] tokens1, string[] tokens2)
+    {
+        float valorJaccard = 0;
+        float numTokensUnion = CalcularNumTokensUnion(tokens1, tokens2);
+        float numTokensInterseccion = CalcularNumTokensInterseccion(tokens1, tokens2);
+        valorJaccard = numTokensInterseccion / numTokensUnion;
+        return valorJaccard;
+    }
 }
