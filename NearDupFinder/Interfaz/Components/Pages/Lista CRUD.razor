@@ -1,10 +1,10 @@
-@*
-
 @page "/lista-CRUD"
 @using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
+@using NearDupFinder_Dominio.Excepciones
 @inject NavigationManager Nav
 @inject Sistema sistema
+@rendermode InteractiveServer
 
 <h3>Lista de Items</h3>
 
@@ -25,30 +25,85 @@
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th>Título</th>
-            <th>Descripción</th>
-            <th>Categoría</th>
-            <th>Estado Duplicado</th>
-        </tr>
+    <tr>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Categoría</th>
+        <th>Estado Duplicado</th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var item in _itemsFiltradosEnTabla)
-        {
-            <tr>
-                <td>@item.Titulo</td>
-                <td>@item.Descripcion</td>
-                <td>@item.Categoria</td>
-                <td>@(item.EstadoDuplicado ?? "No disponible")</td>
-            </tr>
-        }
+    @foreach (var item in _itemsFiltradosEnTabla)
+    {
+        <tr>
+            <td>@item.Titulo</td>
+            <td>@item.Descripcion</td>
+            <td>@item.Categoria</td>
+            <td>@(item.EstadoDuplicado ?? "No disponible")</td>
+            <td>
+                <button class="btn btn-sm btn-warning" @onclick="() => AbrirModalEditar(item)">Editar</button>
+            </td>
+        </tr>
+    }
     </tbody>
+
 </table>
+@if (_mostrarModalEditar)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Item</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(_mensajeErrorModal))
+                    {
+                        <div class="alert alert-danger">@_mensajeErrorModal</div>
+                    }
+                    <div class="mb-3">
+                        <label>Título:</label>
+                        <input class="form-control" @bind="_itemEditado.Titulo"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Descripción:</label>
+                        <input class="form-control" @bind="_itemEditado.Descripcion"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Categoría:</label>
+                        <input class="form-control" @bind="_itemEditado.Categoria"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Marca:</label>
+                        <input class="form-control" @bind="_itemEditado.Marca"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Modelo:</label>
+                        <input class="form-control" @bind="_itemEditado.Modelo"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @onclick="GuardarCambios">Guardar</button>
+                    <button class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 
 <button class="btn btn-secondary ms-2" @onclick="AgregarItem">Agregar item</button>
 @code {
+    private string _mensajeErrorModal = "";
+
+    private bool _mostrarModalEditar = false;
+
+    private Item _itemEditado;
+
     // Lista de items que se mostrarán en la tabla (de todos los catálogos)
     private List<Item> _itemsFiltradosEnTabla = new();
+
     // Categorías distintas de todos los items
     private List<string> _categorias = new();
 
@@ -59,7 +114,7 @@
     {
         // Obtener todos los items de todos los catálogos
         _itemsFiltradosEnTabla = sistema
-            .ObtenerTodosLosItems() // <-- esta función la tendrías que crear en Sistema
+            .ObtenerItems()
             .ToList();
 
         _categorias = _itemsFiltradosEnTabla
@@ -72,7 +127,7 @@
     private void AplicarFiltros()
     {
         _itemsFiltradosEnTabla = sistema
-            .ObtenerTodosLosItems()
+            .ObtenerItems()
             .Where(item =>
                 (string.IsNullOrWhiteSpace(_textoBusqueda) ||
                  Normalizar(item.Titulo).Contains(Normalizar(_textoBusqueda)) ||
@@ -83,14 +138,14 @@
             )
             .ToList();
 
-        StateHasChanged();
+        ;
     }
 
     private void LimpiarFiltros()
     {
         _textoBusqueda = string.Empty;
         _categoriaAFiltrar = string.Empty;
-        _itemsFiltradosEnTabla = sistema.ObtenerTodosLosItems().ToList();
+        _itemsFiltradosEnTabla = sistema.ObtenerItems().ToList();
     }
 
     private string Normalizar(string texto)
@@ -98,19 +153,77 @@
         if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
 
         return texto.ToLowerInvariant()
-                    .Replace("á", "a")
-                    .Replace("é", "e")
-                    .Replace("í", "i")
-                    .Replace("ó", "o")
-                    .Replace("ú", "u")
-                    .Replace("ü", "u")
-                    .Replace("ñ", "n");
+            .Replace("á", "a")
+            .Replace("é", "e")
+            .Replace("í", "i")
+            .Replace("ó", "o")
+            .Replace("ú", "u")
+            .Replace("ü", "u")
+            .Replace("ñ", "n");
     }
 
     private void AgregarItem()
     {
         Nav.NavigateTo("/alta-item");
     }
+
+// Modal de edicion de un item 
+
+ 
+    private void CerrarModal()
+    {
+        _mostrarModalEditar = false;
+        _itemEditado = null;
+    }
+    private void AbrirModalEditar(Item item)
+    {
+        // Trabajamos directamente con el item original
+        _itemEditado = item;
+        _mostrarModalEditar = true;
+    }
+
+
+    
+
+    private void GuardarCambios()
+    {
+        if (_itemEditado == null) return;
+
+        try
+        {
+            // Validación local antes de llamar a sistema
+            if (string.IsNullOrWhiteSpace(_itemEditado.Titulo) || string.IsNullOrWhiteSpace(_itemEditado.Descripcion))
+            {
+                _mensajeErrorModal = "Título y Descripción son obligatorios.";
+                return;
+            }
+
+            // Actualizar item original en sistema
+            sistema.ActualizarItem(_itemEditado, _itemEditado.Id);
+
+            // Cerrar modal si todo salió bien
+            _mostrarModalEditar = false;
+            _itemEditado = null;
+            _mensajeErrorModal = null;
+
+            StateHasChanged();
+        }
+        catch (ItemException ex)
+        {
+            _mensajeErrorModal = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            _mensajeErrorModal = "Ocurrió un error: " + ex.Message;
+        }
+    }
+
+    }
+   
+    
+
+
+
 }
 
-*@
+

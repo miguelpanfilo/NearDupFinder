@@ -1,25 +1,7 @@
 @page "/alta-item"
-@inject NavigationManager Nav
-
-
-<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
-<NavLink class="nav-link" href="weather">
-    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-</NavLink>
-
-@code {
-    private void Cancelar()
-    {
-       Console.WriteLine("hola");
-        Nav.NavigateTo("weather");
-    }
-    
-}
-
-@*
+@rendermode InteractiveServer
 @using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
-@page "/alta-item"
 @inject Sistema sistema
 @inject NavigationManager Nav
 
@@ -78,14 +60,15 @@
         {
             Titulo = _titulo,
             Descripcion = _descripcion,
-            Categoria = string.IsNullOrWhiteSpace(_categoria) ? null : _categoria,
-            Marca = string.IsNullOrWhiteSpace(_marca) ? null : _marca,
-            Modelo = string.IsNullOrWhiteSpace(_modelo) ? null : _modelo
+            Categoria = string.IsNullOrWhiteSpace(_categoria) ? "" : _categoria,
+            Marca = string.IsNullOrWhiteSpace(_marca) ? "" : _marca,
+            Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
         };
+
 
         sistema.AgregarItem(nuevoItem);
 
-        // Ir a la lista
+        // Ir a la lista de items 
         Nav.NavigateTo("/lista-CRUD");
     }
 
@@ -97,4 +80,3 @@
 
 
 
-*@
