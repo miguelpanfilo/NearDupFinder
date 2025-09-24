@@ -262,20 +262,23 @@ public class SistemaPruebas
     }
     
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void ActualizarItem_IdNoExistente_LanzaExcepcion()
+    public void ActualizarItem_IdNoExistente_LanzaExcepcionConMensajeCorrecto()
     {
-        var _sistema = new Sistema();
+        var sistema = new Sistema();
 
         var dto = new ItemEditDataTransfer()
         {
-            Id = 999,
+            Id = 999,  // Id que no existe en el sistema
             Titulo = "Titulo",
-            Descripcion = "Desc"
+            Descripcion = "Descripcion"
         };
 
-        _sistema.ActualizarItem(dto); // Debe lanzar excepción
+        
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.ActualizarItem(dto));
+
+        Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
     }
+
 
     
 }
