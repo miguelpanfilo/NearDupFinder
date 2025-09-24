@@ -218,7 +218,23 @@ public class NormalizacionPruebas{
         }
         
 
-      
+        [TestMethod]
+        public void NormalizarItem_DescripcionSoloCaracteresEspeciales_LanzaExcepcion()
+        {
+            var sistema = new Sistema();
+            var item = new Item
+            {
+                Titulo = "!!!@@@  titulo  ***### ",
+                Descripcion = " $$$%% ",
+                Marca = "***Marca***",
+                Modelo = " ##Modelo## ",
+                Categoria = " !!Categoria!! "
+            };
+
+            var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
+
+            Assert.AreEqual("El título y la descripción no puede quedar vacío tras normalizar.", ex.Message);
+        }
 
 
 
