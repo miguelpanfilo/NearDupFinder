@@ -43,6 +43,17 @@ public class TokenizacionPruebas
             tokens.TokenDescripcion
         );
     }
+    [TestMethod]
+    public void CrearToken_TextoConNumeros_Ok()
+    {
+        var s = new Sistema();
+        var item = new Item("ps5 slim 1tb", "ssd 512");
+
+        var tokens = s.TokenizarItem(item);
+
+        CollectionAssert.AreEqual(new[] { "ps5", "slim", "1tb" }, tokens.TokenTitulo);
+        CollectionAssert.AreEqual(new[] { "ssd", "512" }, tokens.TokenDescripcion);
+    }    
     
 
 }
