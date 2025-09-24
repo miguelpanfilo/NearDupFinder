@@ -1,7 +1,13 @@
+using System.Text.RegularExpressions;
+using NearDupFinder_Dominio.Struct;
+
 namespace NearDupFinder_Dominio.Clases;
+
 
 public class Sistema
 {
+    private const string TokenPattern = @"\W+";
+    
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
 
@@ -68,4 +74,22 @@ public class Sistema
         return null;
     }
     /*Fin espacio usuario*/
+    
+    public ItemTokenizado TokenizarItem(Item item)
+    {
+        if (item is null) throw new ArgumentNullException(nameof(item));
+        
+        return new ItemTokenizado
+        {
+            TokenTitulo = Tokenizar(item.Titulo),
+            TokenDescripcion = Tokenizar(item.Descripcion)
+        };
+    }
+
+    private static string[] Tokenizar(string texto)
+    {
+        return Regex.Split(texto, TokenPattern)
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .ToArray();
+    }
 }
