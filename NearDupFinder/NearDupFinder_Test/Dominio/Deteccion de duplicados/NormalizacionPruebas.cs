@@ -88,8 +88,22 @@ public class NormalizacionPruebas
 
     }
 
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcion()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "!@#$%^&*()",
+            Marca = "***###",
+            Modelo = "###$$$",
+            Categoria = "!!@@"
+        };
 
-    
+        var resultado = sistema.NormalizarItem(item);
+    }
+
 
 
     
