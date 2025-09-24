@@ -17,4 +17,15 @@ public class JaccardPruebas
         
         Assert.AreEqual(3, numTokens);
     }
+    
+    [TestMethod]
+    public void CalcularNumTokensUnion_AmbosValidos_UnoVacio()
+    {
+        string[] a = ["a", "b", "b" ]; 
+        string[] b = [];
+
+        int numTokens = _sis.CalcularNumTokensUnion(a, b);
+
+        Assert.AreEqual(2, numTokens);
+    }
 }
