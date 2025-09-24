@@ -93,22 +93,22 @@ public class Sistema
     {
         return _items;
     }
-    public void ActualizarItem(Item itemActualizado, int id)
+    public void ActualizarItem(ItemEditDataTransfer itemTranferido)
     {
-        if (itemActualizado == null)
-            throw new ArgumentNullException(nameof(itemActualizado));
+        if (itemTranferido == null)
+            throw new ArgumentNullException(nameof(itemTranferido));
 
         // Buscar el item original por Id en la lista de sistema
-        var original = _items.FirstOrDefault(i => i.Id == id);
+        var original = _items.FirstOrDefault(i => i.Id == itemTranferido.Id);
         if (original == null)
             throw new InvalidOperationException("No se encontró el item a actualizar.");
 
         // Actualizar propiedades usando los métodos de edición existentes
-        original.EditarTitulo(itemActualizado.Titulo);
-        original.EditarDescripcion(itemActualizado.Descripcion);
-        original.EditarMarca(itemActualizado.Marca);
-        original.EditarModelo(itemActualizado.Modelo);
-        original.EditarCategoria(itemActualizado.Categoria);
+        original.EditarTitulo(itemTranferido.Titulo);
+        original.EditarDescripcion(itemTranferido.Descripcion);
+        original.EditarMarca(itemTranferido.Marca);
+        original.EditarModelo(itemTranferido.Modelo);
+        original.EditarCategoria(itemTranferido.Categoria);
     }
 
 

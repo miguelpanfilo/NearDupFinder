@@ -96,17 +96,15 @@
 <button class="btn btn-secondary ms-2" @onclick="AgregarItem">Agregar item</button>
 @code {
     private string _mensajeErrorModal = "";
-
     private bool _mostrarModalEditar = false;
-
-    private Item _itemEditado;
-
+    private ItemEditDataTransfer _itemEditado;
     // Lista de items que se mostrarán en la tabla (de todos los catálogos)
     private List<Item> _itemsFiltradosEnTabla = new();
 
     // Categorías distintas de todos los items
     private List<string> _categorias = new();
-
+    
+    
     private string _textoBusqueda = string.Empty;
     private string _categoriaAFiltrar = string.Empty;
 
@@ -167,7 +165,7 @@
         Nav.NavigateTo("/alta-item");
     }
 
-// Modal de edicion de un item 
+// MODAL EDICION DE ITEM
 
  
     private void CerrarModal()
@@ -177,9 +175,17 @@
     }
     private void AbrirModalEditar(Item item)
     {
-        // Trabajamos directamente con el item original
-        _itemEditado = item;
+        _itemEditado = new ItemEditDataTransfer()
+        {
+            Id = item.Id,
+            Titulo = item.Titulo,
+            Descripcion = item.Descripcion,
+            Categoria = item.Categoria,
+            Marca = item.Marca,
+            Modelo = item.Modelo
+        };
         _mostrarModalEditar = true;
+        _mensajeErrorModal = null;
     }
 
 
@@ -199,9 +205,11 @@
             }
 
             // Actualizar item original en sistema
-            sistema.ActualizarItem(_itemEditado, _itemEditado.Id);
+            sistema.ActualizarItem(_itemEditado);
 
-            // Cerrar modal si todo salió bien
+            // Cerrar modal 
+            
+            
             _mostrarModalEditar = false;
             _itemEditado = null;
             _mensajeErrorModal = null;
@@ -212,14 +220,14 @@
         {
             _mensajeErrorModal = ex.Message;
         }
-        catch (Exception ex)
-        {
-            _mensajeErrorModal = "Ocurrió un error: " + ex.Message;
-        }
+       
     }
 
+    
+    // FIN DE MODAL EDICION ITEM
     }
-   
+
+
     
 
 

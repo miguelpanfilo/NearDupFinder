@@ -197,29 +197,34 @@ public class SistemaPruebas
     [TestMethod]
     public void ActualizarItem_ActualizaPropiedadesCorrectamente()
     {
-        
-        var _sistema = new Sistema();
+        // Arrange
+        var sistema = new Sistema();
         var itemOriginal = new Item("Titulo1", "Descripcion1");
-        _sistema.AgregarItem(itemOriginal);
+        sistema.AgregarItem(itemOriginal);
 
-        var itemActualizado = new Item("NuevoTitulo", "NuevaDescripcion")
+        // Crear DTO con los valores nuevos
+        var itemActualizado = new ItemEditDataTransfer()
         {
+            Id = itemOriginal.Id,          // Muy importante mantener el Id
+            Titulo = "NuevoTitulo",
+            Descripcion = "NuevaDescripcion",
             Marca = "NuevaMarca",
             Modelo = "NuevoModelo",
             Categoria = "NuevaCategoria"
         };
 
-        
-        _sistema.ActualizarItem(itemActualizado, itemOriginal.Id);
+        // Act
+        sistema.ActualizarItem(itemActualizado);
 
-        
-        var itemEnSistema = _sistema.ObtenerItems().First(i => i.Id == itemOriginal.Id);
+        // Assert
+        var itemEnSistema = sistema.ObtenerItems().First(i => i.Id == itemOriginal.Id);
         Assert.AreEqual("NuevoTitulo", itemEnSistema.Titulo);
         Assert.AreEqual("NuevaDescripcion", itemEnSistema.Descripcion);
         Assert.AreEqual("NuevaMarca", itemEnSistema.Marca);
         Assert.AreEqual("NuevoModelo", itemEnSistema.Modelo);
         Assert.AreEqual("NuevaCategoria", itemEnSistema.Categoria);
     }
+
     
     
     [TestMethod]
@@ -233,8 +238,8 @@ public class SistemaPruebas
         _sistema.AgregarItem(itemOriginal);
 
         // Creamos data transfer con cambios ( item temporal que va a tener todos los datos nuevos del item que se quizo editar, a excepecion del id )
-        
-        var dto = new ItemEditDto
+
+        var dto = new ItemEditDataTransfer()
         {
             Id = itemOriginal.Id,
             Titulo = "TituloNuevo",
