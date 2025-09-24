@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio;
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Test.Dominio;
 
@@ -290,5 +291,7 @@ public class SistemaPruebas
 
 
 
+    // No se hace prueba de itemTransferido.Titulo || itemTransferido.Descripcion si son vacios, porque ya se 
+    // esta validando en las pruebas de Items. 
     
 }
