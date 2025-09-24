@@ -164,4 +164,12 @@ public class Sistema
 
         return tokens1.Union(tokens2).Count();
     }
+
+    public int CalcularNumTokensInterseccion(string[] tokens1, string[] tokens2)
+    {
+        IEnumerable<string> interseccion = tokens1.Intersect(tokens2);
+        int numTokensInterseccion = interseccion.Count();
+        
+        return numTokensInterseccion;
+    }
 }
