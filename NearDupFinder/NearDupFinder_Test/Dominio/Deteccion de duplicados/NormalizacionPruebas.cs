@@ -96,10 +96,13 @@ public class NormalizacionPruebas
         var item = new Item
         {
             Titulo = "!@#$%^&*()",
+            Descripcion = "!!!!!",
             Marca = "***###",
             Modelo = "###$$$",
             Categoria = "!!@@"
         };
+        
+        //Tras normalizar, me tendria que dar cada propiedad vacia, lanzando una excepcion 
 
         var resultado = sistema.NormalizarItem(item);
     }

@@ -98,16 +98,19 @@ public class Sistema
             .Replace("ñ", "n")
             .Replace("ü", "u");
 
-        //Reemplaza caracteres especiales por espacios 
+        // Reemplaza caracteres especiales por espacios 
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
 
-        
-        //Trim de espacios en los extremos, compactacion en 1 solo espacio de los multiples espacios entre caracteres 
+        // Colapsa múltiples espacios y recorta
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
 
-        return texto;
+        // Mínimo código para pasar el test de excepción
+        if (string.IsNullOrWhiteSpace(texto))
+            throw new InvalidOperationException();
 
+        return texto;
     }
+
     
     
     
