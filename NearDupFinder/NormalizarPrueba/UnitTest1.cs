@@ -114,6 +114,28 @@ public class UnitTest1
     }
 
 
+    [TestMethod]
+    public void NormalizarItem_TituloConTildesYN_SeNormalizaCorrectamente()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "Cómputañó",
+            Descripcion = "Désc",
+            Marca = "Ñandú",
+            Modelo = "Módelo",
+            Categoria = "Tecnología"
+        };
+
+        var resultado = sistema.NormalizarItem(item);
+
+        Assert.AreEqual("computano", resultado.Titulo);
+        Assert.AreEqual("desc", resultado.Descripcion);
+        Assert.AreEqual("nandu", resultado.Marca);
+        Assert.AreEqual("modelo", resultado.Modelo);
+        Assert.AreEqual("tecnologia", resultado.Categoria);
+    }
+
 
 
 }
