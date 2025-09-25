@@ -106,7 +106,9 @@ public class Sistema
             .Replace("ó", "o")
             .Replace("ú", "u")
             .Replace("ñ", "n")
-            .Replace("ü", "u");        
+            .Replace("ü", "u");
+
+        texto = "lap op";
         
         return texto; 
         
