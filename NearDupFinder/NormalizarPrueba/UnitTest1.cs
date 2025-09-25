@@ -36,6 +36,17 @@ public class UnitTest1
 
         Assert.AreEqual("laptop", resultado);
     }
+    [TestMethod]
+    public void Normalizar_TextoConTildes_SeNormalizaCorrectamente()
+    {
+        var sistema = new Sistema();
+        string textoOriginal = "ÁÉÍÓÚñÜ";
+
+        var resultado = sistema.Normalizar(textoOriginal);
+
+        Assert.AreEqual("aeiounu", resultado);
+    }
+
 
 
 }
