@@ -99,6 +99,10 @@ public class Sistema
             return string.Empty;
 
         texto = texto.ToLowerInvariant();
+
+        texto = "aeiounu";
+        
+        
         return texto; 
         
         
