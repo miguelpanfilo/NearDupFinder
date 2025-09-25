@@ -200,4 +200,25 @@ public class UnitTest1
         Assert.AreEqual(string.Empty, resultado.Categoria);
     }
 
+    [TestMethod]
+    public void NormalizarItem_TextoYaNormalizado_NoCambia()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "laptop",
+            Descripcion = "computadora potente",
+            Marca = "marca",
+            Modelo = "modelo",
+            Categoria = "categoria"
+        };
+
+        var resultado = sistema.NormalizarItem(item);
+
+        Assert.AreEqual("laptop", resultado.Titulo);
+        Assert.AreEqual("computadora potente", resultado.Descripcion);
+        Assert.AreEqual("marca", resultado.Marca);
+        Assert.AreEqual("modelo", resultado.Modelo);
+        Assert.AreEqual("categoria", resultado.Categoria);
+    }
 }
