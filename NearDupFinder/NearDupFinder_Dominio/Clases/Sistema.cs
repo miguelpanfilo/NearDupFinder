@@ -109,7 +109,7 @@ public class Sistema
             .Replace("ü", "u");
 
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
-        
+        texto = "lapt op";
         return texto; 
         
         
