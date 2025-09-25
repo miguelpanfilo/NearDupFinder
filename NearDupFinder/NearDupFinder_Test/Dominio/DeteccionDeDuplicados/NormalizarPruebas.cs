@@ -3,7 +3,7 @@ using NearDupFinder_Dominio.Clases;
 namespace NormalizarPrueba;
 
 [TestClass]
-public class UnitTest1
+public class NormalizarPruebas
 {
     [TestMethod]
     public void Normalizar_TextoVacio_RetornaVacio()
