@@ -15,5 +15,17 @@ public class UnitTest1
 
         Assert.AreEqual(string.Empty, resultado);
     }
+    [TestMethod]
+    public void Normalizar_TextoNull_RetornaVacio()
+    {
+        var sistema = new Sistema();
+        string textoOriginal = null;
+
+        var resultado = sistema.Normalizar(textoOriginal);
+
+        Assert.AreEqual(string.Empty, resultado);
+    }
+
+    
 
 }
