@@ -100,6 +100,7 @@ public class Sistema
         // Normalizamos cada propiedad del item
         string tituloNormalizado = Normalizar(item.Titulo);
         string descripcionNormalizada = Normalizar(item.Descripcion);
+      
        
 
         // Lanzar excepción si título o descripción quedan vacíos
@@ -107,9 +108,22 @@ public class Sistema
         {
             throw new InvalidOperationException("El título y la descripción no pueden quedar vacío tras normalizar.");
         }
+        
+        string marcaNormalizada = Normalizar(item.Marca);
+        string modeloNormalizada = Normalizar(item.Modelo);
+        string categoriaNormalizada = Normalizar(item.Categoria);
 
         // Retornar un nuevo item con los valores normalizados
-        return null;
+        return new Item
+        {
+            Titulo = tituloNormalizado,
+            Descripcion = descripcionNormalizada,
+            Marca = marcaNormalizada,
+            Modelo = modeloNormalizada,
+            Categoria = categoriaNormalizada
+        };
+        
+   
     }
 
     public string Normalizar(string texto)
