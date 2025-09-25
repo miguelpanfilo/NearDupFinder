@@ -158,5 +158,24 @@ public class UnitTest1
         Assert.AreEqual("modelo 1", resultado.Modelo);
         Assert.AreEqual("tecnologia", resultado.Categoria);
     }
+    [TestMethod]
+    public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcion()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "!@#$%^&*()",
+            Descripcion = "!!!!!",
+            Marca = "***###",
+            Modelo = "###$$$",
+            Categoria = "!!@@"
+        };
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
+
+        Assert.AreEqual("El título y la descripción no puede quedar vacío tras normalizar.", ex.Message);
+    }
+
+
 
 }
