@@ -176,6 +176,28 @@ public class UnitTest1
         Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", ex.Message);
     }
 
+    [TestMethod]
+    public void NormalizarItem_MarcaModeloCategoriaSoloSimbolos_NoLanzaExcepcion()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "Laptop",
+            Descripcion = "Computadora potente",
+            Marca = "!@#$$%", // se normaliza a vacío
+            Modelo = "###$$$", // se normaliza a vacío
+            Categoria = "!!@@" // se normaliza a vacío
+        };
 
+            
+        var resultado = sistema.NormalizarItem(item);
+
+        // Verificar normalización
+        Assert.AreEqual("laptop", resultado.Titulo);
+        Assert.AreEqual("computadora potente", resultado.Descripcion);
+        Assert.AreEqual(string.Empty, resultado.Marca);
+        Assert.AreEqual(string.Empty, resultado.Modelo);
+        Assert.AreEqual(string.Empty, resultado.Categoria);
+    }
 
 }
