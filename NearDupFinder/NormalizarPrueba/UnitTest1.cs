@@ -26,6 +26,16 @@ public class UnitTest1
         Assert.AreEqual(string.Empty, resultado);
     }
 
-    
+    [TestMethod]
+    public void Normalizar_TextoMayusculas_RetornarMinusculas()
+    {
+        var sistema = new Sistema();
+        string textoOriginal = "LAPTOP";
+
+        var resultado = sistema.Normalizar(textoOriginal);
+
+        Assert.AreEqual("laptop", resultado);
+    }
+
 
 }
