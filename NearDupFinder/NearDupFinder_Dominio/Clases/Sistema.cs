@@ -100,8 +100,13 @@ public class Sistema
 
         texto = texto.ToLowerInvariant();
 
-        texto = "aeiounu";
-        
+        texto = texto.Replace("á", "a")
+            .Replace("é", "e")
+            .Replace("í", "i")
+            .Replace("ó", "o")
+            .Replace("ú", "u")
+            .Replace("ñ", "n")
+            .Replace("ü", "u");        
         
         return texto; 
         
