@@ -136,6 +136,27 @@ public class UnitTest1
         Assert.AreEqual("tecnologia", resultado.Categoria);
     }
 
+    [TestMethod]
+    public void NormalizarItem_EspaciosMultiples_ColapsaYRecorta()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "  Lap_tóp   123!!  ",
+            Descripcion = "de   sc",
+            Marca = "  To!shIBa  ",
+            Modelo = " MÓDeLo   #1 ",
+            Categoria = "  TeCnología! "
+        };
 
+        var resultado = sistema.NormalizarItem(item);
+
+        Assert.AreEqual("lap top 123", resultado.Titulo);
+        Assert.AreEqual("de sc", resultado.Descripcion);
+            
+        Assert.AreEqual("to shiba", resultado.Marca);
+        Assert.AreEqual("modelo 1", resultado.Modelo);
+        Assert.AreEqual("tecnologia", resultado.Categoria);
+    }
 
 }
