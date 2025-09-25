@@ -98,7 +98,7 @@ public class Sistema
         if (string.IsNullOrEmpty(texto))
             return string.Empty;
 
-        texto = "laptop";
+        texto = texto.ToLowerInvariant();
         return texto; 
         
         
