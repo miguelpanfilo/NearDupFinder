@@ -88,6 +88,31 @@ public class UnitTest1
             ex.Message
         );
     }
+    
+    [TestMethod]
+
+    public void NormalizarItem_TituloConMayusculas()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "LAPTOP",
+            Descripcion = "LAPTOP",
+            Marca = "MarcaX",
+            Modelo = "Modelo1",
+            Categoria = "Categoria1"
+        };
+
+        var resultado = sistema.NormalizarItem(item);
+
+        Assert.AreEqual("laptop", resultado.Titulo);
+        Assert.AreEqual("laptop", resultado.Descripcion);
+
+        Assert.AreEqual("marcax", resultado.Marca);
+        Assert.AreEqual("modelo1", resultado.Modelo);
+        Assert.AreEqual("categoria1", resultado.Categoria);
+    }
+
 
 
 
