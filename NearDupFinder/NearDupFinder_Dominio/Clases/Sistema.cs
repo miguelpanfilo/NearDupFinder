@@ -92,6 +92,10 @@ public class Sistema
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .ToArray();
     }
+    
+    
+    
+
 
     public string Normalizar(string texto)
     {

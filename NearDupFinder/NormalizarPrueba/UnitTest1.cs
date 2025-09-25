@@ -68,6 +68,27 @@ public class UnitTest1
         Assert.AreEqual("lapt op", resultado);
     }
 
+    [TestMethod]
+    public void NormalizarItem_TituloYDescripcionSoloSimbolos_LanzaExcepcion()
+    {
+        var sistema = new Sistema();
+        var item = new Item
+        {
+            Titulo = "!@#$%",
+            Descripcion = "***",
+            Marca = "*",
+            Modelo = "##Modelo##",
+            Categoria = "!!Categoria!!"
+        };
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
+
+        Assert.AreEqual(
+            "El título y la descripción no puede quedar vacío tras normalizar.",
+            ex.Message
+        );
+    }
+
 
 
 }
