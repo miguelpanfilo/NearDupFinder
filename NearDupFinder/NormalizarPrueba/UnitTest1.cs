@@ -84,7 +84,7 @@ public class UnitTest1
         var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
 
         Assert.AreEqual(
-            "El título y la descripción no puede quedar vacío tras normalizar.",
+            "El título y la descripción no pueden quedar vacío tras normalizar.",
             ex.Message
         );
     }

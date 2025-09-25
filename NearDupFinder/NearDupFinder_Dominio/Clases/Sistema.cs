@@ -95,7 +95,22 @@ public class Sistema
     
     
     
+    public Item NormalizarItem(Item item)
+    {
+        // Normalizamos cada propiedad del item
+        string tituloNormalizado = Normalizar(item.Titulo);
+        string descripcionNormalizada = Normalizar(item.Descripcion);
+       
 
+        // Lanzar excepción si título o descripción quedan vacíos
+        if (string.IsNullOrEmpty(tituloNormalizado) || string.IsNullOrEmpty(descripcionNormalizada))
+        {
+            throw new InvalidOperationException("El título y la descripción no pueden quedar vacío tras normalizar.");
+        }
+
+        // Retornar un nuevo item con los valores normalizados
+        return null;
+    }
 
     public string Normalizar(string texto)
     {
