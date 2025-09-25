@@ -108,7 +108,7 @@ public class Sistema
             .Replace("ñ", "n")
             .Replace("ü", "u");
 
-        texto = "lap op";
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
         
         return texto; 
         
