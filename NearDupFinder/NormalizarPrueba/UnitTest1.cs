@@ -37,7 +37,7 @@ public class UnitTest1
         Assert.AreEqual("laptop", resultado);
     }
     [TestMethod]
-    public void Normalizar_TextoConTildes_SeNormalizaCorrectamente()
+    public void Normalizar_TextoConTildes_SeNormaliza()
     {
         var sistema = new Sistema();
         string textoOriginal = "ÁÉÍÓÚñÜ";
@@ -46,6 +46,17 @@ public class UnitTest1
 
         Assert.AreEqual("aeiounu", resultado);
     }
+    [TestMethod]
+    public void Normalizar_TextoConSimbolos_SeEliminan()
+    {
+        var sistema = new Sistema();
+        string textoOriginal = "lap{op";
+
+        var resultado = sistema.Normalizar(textoOriginal);
+
+        Assert.AreEqual("lap op", resultado);
+    }
+
 
 
 
