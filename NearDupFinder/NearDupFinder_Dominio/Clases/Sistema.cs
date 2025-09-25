@@ -93,8 +93,12 @@ public class Sistema
             .ToArray();
     }
 
-    public string? Normalizar(string textoOriginal)
+    public string Normalizar(string texto)
     {
-        return "";
+        if (string.IsNullOrEmpty(texto))
+            return string.Empty;
+
+        return texto; 
     }
+
 }
