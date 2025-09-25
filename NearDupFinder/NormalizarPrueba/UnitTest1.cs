@@ -57,6 +57,16 @@ public class UnitTest1
         Assert.AreEqual("lap op", resultado);
     }
 
+    [TestMethod]
+    public void Normalizar_TextoConEspaciosMultiples_ColapsaYRecorta()
+    {
+        var sistema = new Sistema();
+        string textoOriginal = " lapt op  ";
+
+        var resultado = sistema.Normalizar(textoOriginal);
+
+        Assert.AreEqual("lapt op", resultado);
+    }
 
 
 
