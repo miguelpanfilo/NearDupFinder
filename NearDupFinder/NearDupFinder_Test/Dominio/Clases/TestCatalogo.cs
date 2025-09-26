@@ -212,4 +212,13 @@ public class CatalogoTest
         
         Assert.AreEqual(0, _catalogo.CantidadItems());
     }
+
+    [TestMethod]
+    public void EliminarItemDeCatalogo_Null_Falla()
+    {
+        var ex = Assert.ThrowsException<ArgumentNullException>(()=> _catalogo.EliminarItem(null));
+        
+        Assert.AreEqual("item", ex.ParamName);
+        StringAssert.Contains(ex.Message, "El parametro no puede ser Null");
+    }
 }
