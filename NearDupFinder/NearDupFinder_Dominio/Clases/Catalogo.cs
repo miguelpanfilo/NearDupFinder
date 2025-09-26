@@ -71,6 +71,8 @@ public class Catalogo
 
     public void EliminarItem(Item item)
     {
+        if(item == null)
+            throw new ArgumentNullException(nameof(item), "El parametro no puede ser Null");
         _items.Remove(item);
     }
     public int CantidadItems()
