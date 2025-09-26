@@ -149,5 +149,22 @@ public class CatalogoTest
         var ex = Assert.ThrowsException<ArgumentException>(() => _catalogo.CambiarDescripcion(d));
         Assert.AreEqual("La descripcion debe tener entre 1 y 400 caracteres", ex.Message);
     }
-    
+
+    [TestMethod]
+    public void agregarItemACatalogo_ok()
+    {
+        Item item = new Item
+        {
+            Titulo = "Soy un titulo",
+            Descripcion = "Soy una descripcion",
+            Marca = "Marca",
+            Modelo = "Modelo",
+            Categoria = "Categoria"
+        };
+        
+        _catalogo.AgregarItem(item);
+        
+        Assert.AreEqual(1, _catalogo.CantidadDeItems());
+        CollectionAssert.Contains(_catalogo.Items().ToList(), item);
+    }
 }
