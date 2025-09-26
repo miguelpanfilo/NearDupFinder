@@ -7,6 +7,7 @@ public class Catalogo
     private const int descripcionMaxLength = 400;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
+    private readonly List<Item> _items = new();
     
     
 
@@ -54,5 +55,20 @@ public class Catalogo
     public override int GetHashCode()
     {
         return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
+    }
+    /* Lista Items*/
+    public IReadOnlyCollection<Item> Items()
+    {
+        return _items.AsReadOnly();
+    }
+
+    public void AgregarItem(Item item)
+    {
+        _items.Add(item);
+    }
+
+    public int CantidadItems()
+    {
+        return _items.Count;
     }
 }

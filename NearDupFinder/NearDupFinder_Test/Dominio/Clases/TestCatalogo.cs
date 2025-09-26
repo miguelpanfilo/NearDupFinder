@@ -164,7 +164,7 @@ public class CatalogoTest
         
         _catalogo.AgregarItem(item);
         
-        Assert.AreEqual(1, _catalogo.CantidadDeItems());
+        Assert.AreEqual(1, _catalogo.CantidadItems());
         CollectionAssert.Contains(_catalogo.Items().ToList(), item);
     }
 }
