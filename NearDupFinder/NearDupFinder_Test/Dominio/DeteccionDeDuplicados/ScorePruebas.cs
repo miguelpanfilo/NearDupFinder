@@ -83,4 +83,17 @@ public class ScorePruebas
         
         Assert.AreEqual(0.80f, score, 1e-6f);    
     }
+
+    [TestMethod]
+    public void CalcularScore_TodoUno_Retorna1_00()
+    {
+        float jaccardTitulo = 1f;
+        float jaccardDescripcion = 1f;
+        float marcaEq = 1f;
+        float modeloEq = 1f;
+        
+        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
+        
+        Assert.AreEqual(1.00f, score, 1e-6f);  
+    }
 }
