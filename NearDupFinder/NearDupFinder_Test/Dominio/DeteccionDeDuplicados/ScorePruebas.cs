@@ -109,4 +109,15 @@ public class ScorePruebas
         
         Assert.AreEqual(0.395f, score, 1e-6f);  
     }
+
+    [TestMethod]
+    public void CalcularScore_JaccardTitulo_Negativo_LanzaArgumentOutOfRangeException()
+    {
+        float jaccardTitulo = -0.01f;
+        float jaccardDescripcion = 0f;
+        float marcaEq = 0f;
+        float modeloEq = 0f;
+
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+    }
 }
