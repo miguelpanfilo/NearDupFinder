@@ -75,70 +75,6 @@ public class Sistema
     }
     /*Fin espacio usuario*/
     
-  
-  
-  
-  
-  //DETECCION DE DUPLICADOS
-  
-  //Normalizacion
-    public Item NormalizarItem(Item item)
-    {
-       
-        var titulo = Normalizar(item.Titulo);
-        var descripcion = Normalizar(item.Descripcion);
-
-        // Lanzar excepción solo si título o descripción quedan vacíos
-        if (string.IsNullOrWhiteSpace(titulo) || string.IsNullOrWhiteSpace(descripcion))
-            throw new InvalidOperationException("El título y la descripción no puede quedar vacío tras normalizar.");
-
-        // Normalizar propiedades no obligatorias
-        var marca = Normalizar(item.Marca);
-        var modelo = Normalizar(item.Modelo);
-        var categoria = Normalizar(item.Categoria);
-
-        return new Item
-        {
-            Titulo = titulo,
-            Descripcion = descripcion,
-            Marca = marca,
-            Modelo = modelo,
-            Categoria = categoria
-        };
-    }
-
-    private string Normalizar(string texto)
-    {
-        if (string.IsNullOrWhiteSpace(texto))
-            return string.Empty;
-
-        // Convertir a minúsculas
-        texto = texto.ToLowerInvariant();
-
-        // Reemplazo de tildes 
-        texto = texto.Replace("á", "a")
-            .Replace("é", "e")
-            .Replace("í", "i")
-            .Replace("ó", "o")
-            .Replace("ú", "u")
-            .Replace("ñ", "n")
-            .Replace("ü", "u");
-
-        // Reemplaza caracteres especiales por espacios 
-        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
-
-        // Colapsa múltiples espacios y recorta
-        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
-
-        
-
-        return texto;
-    }
-
-    
-    
-    
-    // Tokenizacion
     public ItemTokenizado TokenizarItem(Item item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
@@ -148,6 +84,68 @@ public class Sistema
             TokenTitulo = Tokenizar(item.Titulo),
             TokenDescripcion = Tokenizar(item.Descripcion)
         };
+    }
+
+    private static string[] Tokenizar(string texto)
+    {
+        return Regex.Split(texto, TokenPattern)
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .ToArray();
+    }
+    
+    
+    
+    public Item NormalizarItem(Item item)
+    {
+        // Normalizamos cada propiedad del item
+        string tituloNormalizado = Normalizar(item.Titulo);
+        string descripcionNormalizada = Normalizar(item.Descripcion);
+      
+       
+
+        // Lanzar excepción si título o descripción quedan vacíos
+        if (string.IsNullOrEmpty(tituloNormalizado) || string.IsNullOrEmpty(descripcionNormalizada))
+        {
+            throw new InvalidOperationException("El título y la descripción no pueden quedar vacío tras normalizar.");
+        }
+        
+        string marcaNormalizada = Normalizar(item.Marca);
+        string modeloNormalizada = Normalizar(item.Modelo);
+        string categoriaNormalizada = Normalizar(item.Categoria);
+
+        // Retornar un nuevo item con los valores normalizados
+        return new Item
+        {
+            Titulo = tituloNormalizado,
+            Descripcion = descripcionNormalizada,
+            Marca = marcaNormalizada,
+            Modelo = modeloNormalizada,
+            Categoria = categoriaNormalizada
+        };
+        
+   
+    }
+
+    public string Normalizar(string texto)
+    {
+        if (string.IsNullOrEmpty(texto))
+            return string.Empty;
+
+        texto = texto.ToLowerInvariant();
+
+        texto = texto.Replace("á", "a")
+            .Replace("é", "e")
+            .Replace("í", "i")
+            .Replace("ó", "o")
+            .Replace("ú", "u")
+            .Replace("ñ", "n")
+            .Replace("ü", "u");
+
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
+        return texto; 
+        
+        
     }
 
     private static string[] Tokenizar(string texto)
