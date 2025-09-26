@@ -175,5 +175,23 @@ public class CatalogoTest
         Assert.AreEqual("item", ex.ParamName);
         StringAssert.Contains(ex.Message,"El parametro no puede ser Null");
     }
-    
+
+    [TestMethod]
+    public void AgregarItem_MismaReferencia_Falla()
+    {
+        Item item = new Item
+        {
+            Titulo = "Soy un titulo",
+            Descripcion = "Soy una descripcion",
+            Marca = "Marca",
+            Modelo = "Modelo",
+            Categoria = "Categoria"
+        };
+        
+        _catalogo.AgregarItem(item);
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.AgregarItem(item));
+        
+        Assert.AreEqual("El item ya se encuentra en el catálogo", ex.Message);
+        Assert.AreEqual(1, _catalogo.CantidadItems());
+    }
 }
