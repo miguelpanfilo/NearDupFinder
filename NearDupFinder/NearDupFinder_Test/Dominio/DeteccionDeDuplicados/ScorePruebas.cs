@@ -70,4 +70,17 @@ public class ScorePruebas
         
         Assert.AreEqual(score, 0.10f);
     }
+
+    [TestMethod]
+    public void CalcularScore_TituloYDescripcionUno_SinMarcaModelo_Retorna0_80()
+    {
+        float jaccardTitulo = 1f;
+        float jaccardDescripcion = 1f;
+        float marcaEq = 0;
+        float modeloEq = 0;
+        
+        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
+        
+        Assert.AreEqual(0.80f, score, 1e-6f);    
+    }
 }
