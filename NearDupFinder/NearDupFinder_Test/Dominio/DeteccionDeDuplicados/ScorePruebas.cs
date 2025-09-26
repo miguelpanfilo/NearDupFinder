@@ -96,4 +96,17 @@ public class ScorePruebas
         
         Assert.AreEqual(1.00f, score, 1e-6f);  
     }
+
+    [TestMethod]
+    public void CalcularScore_ValoresParciales_RetornaValorEsperado()
+    {
+        float jaccardTitulo = 0.5f;
+        float jaccardDescripcion = 0.2f;
+        float marcaEq = 1f;
+        float modeloEq = 0f;
+        
+        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
+        
+        Assert.AreEqual(0.395f, score, 1e-6f);  
+    }
 }
