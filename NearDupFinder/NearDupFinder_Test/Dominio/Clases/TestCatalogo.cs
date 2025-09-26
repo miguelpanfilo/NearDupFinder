@@ -167,4 +167,13 @@ public class CatalogoTest
         Assert.AreEqual(1, _catalogo.CantidadItems());
         CollectionAssert.Contains(_catalogo.Items.ToList(), item);
     }
+    [TestMethod]
+    public void AgregarItem_Null_Falla()
+    {
+        var ex = Assert.ThrowsException<ArgumentNullException>(()=> _catalogo.AgregarItem(null)); ;
+        
+        Assert.AreEqual("item", ex.ParamName);
+        StringAssert.Contains(ex.Message,"El parametro no puede ser Null");
+    }
+    
 }
