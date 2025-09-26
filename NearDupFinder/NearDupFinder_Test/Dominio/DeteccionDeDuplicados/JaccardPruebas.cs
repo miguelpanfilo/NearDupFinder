@@ -41,14 +41,12 @@ public class JaccardPruebas
     }
     
     [TestMethod]
-    public void CalcularNumTokensUnion_UnoInvalido_RetornaMenosUno()
+    public void CalcularNumTokensUnion_UnoInvalido_LanzaArgumentNullException()
     {
         string[]? a = null;
         string[] b = ["x"];
-
-        int numTokens = _sis.CalcularNumTokensUnion(a, b);
-
-        Assert.AreEqual(-1, numTokens);
+        
+        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularNumTokensUnion(a!, b));
     }
     
     [TestMethod]
