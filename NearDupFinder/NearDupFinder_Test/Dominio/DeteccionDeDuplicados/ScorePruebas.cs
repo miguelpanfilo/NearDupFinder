@@ -5,16 +5,16 @@ namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 [TestClass]
 public class ScorePruebas
 {
+    private Sistema _sistema = new Sistema();
     [TestMethod]
     public void CalcularScore_TodosCeros_RetornaCero()
     {
-        Sistema sis = new Sistema();
-        float Jaccard_Titulo = 0;
-        float Jaccard_Descripcion = 0;
-        float Marca_Eq = 0;
-        float Modelo_Eq = 0;
+        float jaccardTitulo = 0;
+        float jaccardDescripcion = 0;
+        float marcaEq = 0;
+        float modeloEq = 0;
 
-        float score = sis.CalcularScore(Jaccard_Titulo, Jaccard_Descripcion, Marca_Eq,  Modelo_Eq);
+        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
         
         Assert.AreEqual(score, 0.0f);
     }
