@@ -18,4 +18,17 @@ public class ScorePruebas
         
         Assert.AreEqual(score, 0.0f);
     }
+
+    [TestMethod]
+    public void CalcularScore_SoloTituloUno_Retorna0_45()
+    {
+        float jaccardTitulo = 1f;
+        float jaccardDescripcion = 0;
+        float marcaEq = 0;
+        float modeloEq = 0;
+        
+        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
+        
+        Assert.AreEqual(score, 0.45f);
+    }
 }
