@@ -159,8 +159,8 @@ public class Sistema
 
     public int CalcularNumTokensUnion(string[]? tokens1, string[]? tokens2)
     {
-        if (tokens1 is null || tokens2 is null)
-            return -1;
+        ArgumentNullException.ThrowIfNull(tokens1);
+        ArgumentNullException.ThrowIfNull(tokens2);
 
         return tokens1.Union(tokens2).Count();
     }
