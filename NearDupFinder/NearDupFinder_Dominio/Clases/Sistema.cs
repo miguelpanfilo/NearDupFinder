@@ -93,8 +93,6 @@ public class Sistema
             .ToArray();
     }
     
-    
-    
     public Item NormalizarItem(Item item)
     {
         // Normalizamos cada propiedad del item
@@ -148,13 +146,6 @@ public class Sistema
         
     }
 
-    private static string[] Tokenizar(string texto)
-    {
-        return Regex.Split(texto, TokenPattern)
-            .Where(t => !string.IsNullOrWhiteSpace(t))
-            .ToArray();
-    }
-
     public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
     {
         ArgumentNullException.ThrowIfNull(tokens1);
@@ -184,5 +175,12 @@ public class Sistema
         float valorJaccard = numTokensInterseccion / numTokensUnion;
         
         return valorJaccard;
+    }
+
+    public float CalcularScore(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
+    {
+        float score = 0.45f * jaccardTitulo + 0.35f * jaccardDescripcion + 0.10f * marcaEq + 0.10f * modeloEq;
+        
+        return score;
     }
 }
