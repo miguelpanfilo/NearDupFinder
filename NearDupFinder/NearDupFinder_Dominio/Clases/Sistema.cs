@@ -157,7 +157,7 @@ public class Sistema
             .ToArray();
     }
 
-    public int CalcularNumTokensUnion(string[]? tokens1, string[]? tokens2)
+    public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
     {
         ArgumentNullException.ThrowIfNull(tokens1);
         ArgumentNullException.ThrowIfNull(tokens2);
@@ -165,7 +165,7 @@ public class Sistema
         return tokens1.Union(tokens2).Count();
     }
 
-    public int CalcularNumTokensInterseccion(string[]? tokens1, string[]? tokens2)
+    public int CalcularNumTokensInterseccion(string[] tokens1, string[] tokens2)
     {
         ArgumentNullException.ThrowIfNull(tokens1);
         ArgumentNullException.ThrowIfNull(tokens2);
@@ -173,16 +173,16 @@ public class Sistema
         return tokens1.Intersect(tokens2).Count();
     }
 
-    public float CalcularJaccard(string[]? tokens1, string[]? tokens2)
+    public float CalcularJaccard(string[] tokens1, string[] tokens2)
     {
+        ArgumentNullException.ThrowIfNull(tokens1);
+        ArgumentNullException.ThrowIfNull(tokens2);
+        
         float numTokensUnion = CalcularNumTokensUnion(tokens1, tokens2);
         if (numTokensUnion == 0)
             return 0;
 
         float numTokensInterseccion = CalcularNumTokensInterseccion(tokens1, tokens2);
-        if (numTokensInterseccion < 0 || numTokensUnion < 0)
-            return -1;
-
         float valorJaccard = numTokensInterseccion / numTokensUnion;
         
         return valorJaccard;

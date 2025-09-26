@@ -55,7 +55,7 @@ public class JaccardPruebas
         string[]? a = null;
         string[]? b = null;
 
-        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularNumTokensUnion(a!, b));
+        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularNumTokensUnion(a!, b!));
     }
     
     [TestMethod]
@@ -107,7 +107,7 @@ public class JaccardPruebas
         string[]? a = null;
         string[]? b = null;
 
-        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularNumTokensInterseccion(a!, b));
+        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularNumTokensInterseccion(a!, b!));
     }
     
     [TestMethod]
