@@ -92,14 +92,12 @@ public class JaccardPruebas
     }
     
     [TestMethod]
-    public void CalcularNumTokensInterseccion_UnoInvalido_RetornaMenosUno()
+    public void CalcularNumTokensInterseccion_UnoInvalido_LanzaArgumentNullException()
     {
         string[]? a = null;
         string[] b =["a"];
     
-        int numTokens = _sis.CalcularNumTokensInterseccion(a, b);
-
-        Assert.AreEqual(-1, numTokens);
+        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularNumTokensInterseccion(a!, b));
     }
     
     
