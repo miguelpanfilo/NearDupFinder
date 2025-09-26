@@ -153,13 +153,11 @@ public class JaccardPruebas
     }
     
     [TestMethod]
-    public void CalcularJaccard_AmbosInvalidos_RetornaMenosUno()
+    public void CalcularJaccard_AmbosInvalidos_LanzaArgumentNullException()
     {
         string[]? a = null;
         string[]? b = null;
 
-        float valor = _sis.CalcularJaccard(a, b);
-
-        Assert.AreEqual(-1f, valor);
+        Assert.ThrowsException<ArgumentNullException>(() => _sis.CalcularJaccard(a!, b!));
     }
 }
