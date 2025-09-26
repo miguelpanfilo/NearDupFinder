@@ -16,7 +16,7 @@ public class ScorePruebas
 
         float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
         
-        Assert.AreEqual(score, 0.0f);
+        Assert.AreEqual(0.0f, score);
     }
 
     [TestMethod]
@@ -29,7 +29,7 @@ public class ScorePruebas
         
         float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
         
-        Assert.AreEqual(score, 0.45f);
+        Assert.AreEqual(0.45f, score);
     }
 
     [TestMethod]
@@ -42,7 +42,7 @@ public class ScorePruebas
         
         float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
         
-        Assert.AreEqual(score, 0.35f);
+        Assert.AreEqual(0.35f, score);
     }
 
     [TestMethod]
@@ -55,7 +55,7 @@ public class ScorePruebas
         
         float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
         
-        Assert.AreEqual(score, 0.10f);
+        Assert.AreEqual(0.10f, score);
     }
 
     [TestMethod]
@@ -68,7 +68,7 @@ public class ScorePruebas
         
         float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
         
-        Assert.AreEqual(score, 0.10f);
+        Assert.AreEqual(0.10f, score);
     }
 
     [TestMethod]

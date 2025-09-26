@@ -182,9 +182,7 @@ public class Sistema
         if (jaccardTitulo < 0f || jaccardTitulo > 1f || jaccardDescripcion < 0f || jaccardDescripcion > 1f)
             throw new ArgumentOutOfRangeException();
         if ((marcaEq != 0f && marcaEq != 1f) || (modeloEq != 0f && modeloEq != 1f))
-        {
             throw new ArgumentOutOfRangeException();
-        }
 
         float score = 0.45f * jaccardTitulo + 0.35f * jaccardDescripcion + 0.10f * marcaEq + 0.10f * modeloEq;
         
