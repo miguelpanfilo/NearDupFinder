@@ -179,7 +179,7 @@ public class Sistema
 
     public float CalcularScore(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
     {
-        if (jaccardTitulo < 0f || jaccardTitulo > 1f || jaccardDescripcion < 0f)
+        if (jaccardTitulo < 0f || jaccardTitulo > 1f || jaccardDescripcion < 0f || jaccardDescripcion > 1f)
             throw new ArgumentOutOfRangeException();
         
         float score = 0.45f * jaccardTitulo + 0.35f * jaccardDescripcion + 0.10f * marcaEq + 0.10f * modeloEq;
