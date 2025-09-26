@@ -131,5 +131,16 @@ public class ScorePruebas
 
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
+    
+    [TestMethod]
+    public void CalcularScore_JaccardDescripcion_Negativo_LanzaArgumentOutOfRangeException()
+    {
+        float jaccardTitulo = 0.0f;
+        float jaccardDescripcion = -1.0f;
+        float marcaEq = 0f;
+        float modeloEq = 0f;
+
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+    }
 
 }
