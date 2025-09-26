@@ -194,4 +194,22 @@ public class CatalogoTest
         Assert.AreEqual("El item ya se encuentra en el catálogo", ex.Message);
         Assert.AreEqual(1, _catalogo.CantidadItems());
     }
+    
+    [TestMethod]
+    public void EliminarItemDeCatalogo_ok()
+    {
+        Item item = new Item
+        {
+            Titulo = "Soy un titulo",
+            Descripcion = "Soy una descripcion",
+            Marca = "Marca",
+            Modelo = "Modelo",
+            Categoria = "Categoria"
+        };
+        
+        _catalogo.AgregarItem(item);
+        _catalogo.EliminarItem(item);
+        
+        Assert.AreEqual(0, _catalogo.CantidadItems());
+    }
 }
