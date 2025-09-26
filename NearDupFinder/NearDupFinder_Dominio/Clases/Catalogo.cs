@@ -62,6 +62,8 @@ public class Catalogo
 
     public void AgregarItem(Item item)
     {
+        if(item == null)
+            throw new ArgumentNullException(nameof(item), "El parametro no puede ser Null");
         _items.Add(item);
     }
 
