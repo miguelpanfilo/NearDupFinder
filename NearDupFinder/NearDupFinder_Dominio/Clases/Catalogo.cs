@@ -57,10 +57,8 @@ public class Catalogo
         return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
     }
     /* Lista Items*/
-    public IReadOnlyCollection<Item> Items()
-    {
-        return _items.AsReadOnly();
-    }
+    public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
+
 
     public void AgregarItem(Item item)
     {
