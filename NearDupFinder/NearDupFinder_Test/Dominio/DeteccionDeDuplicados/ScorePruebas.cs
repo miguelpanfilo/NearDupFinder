@@ -44,4 +44,17 @@ public class ScorePruebas
         
         Assert.AreEqual(score, 0.35f);
     }
+
+    [TestMethod]
+    public void CalcularScore_SoloMarcaUno_Retorna0_10()
+    {
+        float jaccardTitulo = 0;
+        float jaccardDescripcion = 0;
+        float marcaEq = 1f;
+        float modeloEq = 0;
+        
+        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
+        
+        Assert.AreEqual(score, 0.10f);
+    }
 }
