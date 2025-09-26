@@ -69,8 +69,13 @@ public class Catalogo
         _items.Add(item);
     }
 
+    public void EliminarItem(Item item)
+    {
+        _items.Remove(item);
+    }
     public int CantidadItems()
     {
         return _items.Count;
     }
+    
 }
