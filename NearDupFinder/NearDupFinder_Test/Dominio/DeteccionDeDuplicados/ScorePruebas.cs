@@ -120,4 +120,16 @@ public class ScorePruebas
 
         Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
+    
+    [TestMethod]
+    public void CalcularScore_JaccardTitulo_MayorAUno_LanzaArgumentOutOfRangeException()
+    {
+        float jaccardTitulo = 2.0f;
+        float jaccardDescripcion = 0f;
+        float marcaEq = 0f;
+        float modeloEq = 0f;
+
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+    }
+
 }
