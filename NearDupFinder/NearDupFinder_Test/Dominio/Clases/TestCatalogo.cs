@@ -221,4 +221,21 @@ public class CatalogoTest
         Assert.AreEqual("item", ex.ParamName);
         StringAssert.Contains(ex.Message, "El parametro no puede ser Null");
     }
+    [TestMethod] 
+    public void EliminarItemDeCatalogo_ItemNoExiste_Falla()
+    {
+        Item item = new Item
+        {
+            Titulo = "Soy un titulo",
+            Descripcion = "Soy una descripcion",
+            Marca = "Marca",
+            Modelo = "Modelo",
+            Categoria = "Categoria"
+        };
+        
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.EliminarItem(item));
+
+        Assert.AreEqual("El item no se encuentra en el catálogo", ex.Message);
+    }
+    
 }
