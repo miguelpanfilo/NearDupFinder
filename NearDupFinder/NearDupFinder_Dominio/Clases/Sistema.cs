@@ -208,4 +208,23 @@ public class Sistema
         
         return score;
     }
+
+    public List<Duplicados> DetectarDuplicados(Item itemA, Catalogo catalogo)
+    {
+        List<Duplicados> resultado = new List<Duplicados>();
+
+        foreach (Item itemB in catalogo.Items)
+        {
+            if (itemB.Id == itemA.Id) 
+                continue;
+
+            resultado.Add(new Duplicados
+            {
+                ItemA = itemA,
+                ItemB = itemB
+            });
+        }
+
+        return resultado;
+    }
 }
