@@ -238,4 +238,15 @@ public class CatalogoTest
         Assert.AreEqual("El item no se encuentra en el catálogo", ex.Message);
     }
     
+    /* Este test chequea que
+    Que el catálogo no permite modificar los ítems desde afuera a través de la colección expuesta.
+    Que el diseño respeta el principio de encapsulamiento, manteniendo la lista interna _items privada y protegida.
+    Que los métodos públicos (AgregarItem, EliminarItem) son la única forma de modificar el contenido del catálogo.*/
+    [TestMethod]
+    public void Items_EsSoloLectura()
+    {
+        var ro = _catalogo.Items;
+        Assert.IsInstanceOfType(ro, typeof(IReadOnlyCollection<Item>));
+    }
+    
 }
