@@ -28,7 +28,7 @@ public class TestCrudCatalogo
         _sistema.AgregarCatalogo(c);
         
         Assert.AreEqual(1, _sistema.CantidadDeCatalogos());
-        
+        CollectionAssert.Contains(_sistema.Catalogos.ToList(), c);
     }
     
     [TestMethod]
