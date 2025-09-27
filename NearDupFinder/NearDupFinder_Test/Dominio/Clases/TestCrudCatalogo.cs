@@ -4,7 +4,7 @@ using NearDupFinder_Dominio.Clases;
 namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
-public class TestAgregarCatalogo
+public class TestCrudCatalogo
 {   
     
     private Sistema _sistema = null!;
@@ -69,5 +69,18 @@ public class TestAgregarCatalogo
         _sistema.AgregarCatalogo(c);
 
         Assert.AreSame(c, _sistema.ObtenerCatalogoPorTitulo(c.Titulo));
+    }
+    
+    [TestMethod]
+    public void EliminarCatalogo_OkTest()
+    {
+        Catalogo c = new Catalogo("Catálogo");
+        
+        _sistema.AgregarCatalogo(c);
+        
+        _sistema.EliminarCatalogo(c);
+        
+        Assert.AreEqual(0, _sistema.CantidadDeCatalogos());
+        
     }
 }
