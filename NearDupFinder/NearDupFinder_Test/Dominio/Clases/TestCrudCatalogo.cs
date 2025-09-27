@@ -36,8 +36,8 @@ public class TestCrudCatalogo
     {
 
         var ex = Assert.ThrowsException<ArgumentNullException>(() => _sistema.AgregarCatalogo(null));
-        Assert.AreEqual("c", ex.ParamName);
-        StringAssert.Contains(ex.Message, "El catálogo no puede ser null");
+        Assert.AreEqual("catalogo", ex.ParamName);
+        StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
     
     [TestMethod]

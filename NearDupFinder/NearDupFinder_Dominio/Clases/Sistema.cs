@@ -12,18 +12,18 @@ public class Sistema
     }
     
     /* Comienzo espacio Catalogo*/
-    public void AgregarCatalogo(Catalogo c)
+    public void AgregarCatalogo(Catalogo catalogo)
     {
-        if (c == null)
+        if (catalogo is null)
         {
-            throw new ArgumentNullException(nameof(c), "El catálogo no puede ser null");
+            throw new ArgumentNullException(nameof(catalogo), "El parametro no puede ser null");
         }
-        else if (_catalogos.Contains(c))
+        if (_catalogos.Contains(catalogo))
         {
             throw new InvalidOperationException("Ya existe un catálogo con ese título");
         }
 
-    _catalogos.Add(c);
+    _catalogos.Add(catalogo);
     }
 
     public void EliminarCatalogo(Catalogo catalogo)
