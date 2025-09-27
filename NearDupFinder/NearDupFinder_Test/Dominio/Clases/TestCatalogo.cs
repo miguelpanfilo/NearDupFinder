@@ -249,4 +249,31 @@ public class CatalogoTest
         Assert.IsInstanceOfType(ro, typeof(IReadOnlyCollection<Item>));
     }
     
+    [TestMethod]
+    public void CatalogosConIgualTitulo_SonIguales()
+    {
+        var c1 = new Catalogo("Stock");
+        var c2 = new Catalogo("stock"); // mismo texto, distinto casing
+
+        Assert.AreEqual(c1, c2); // usa Equals internamente
+        Assert.AreEqual(c1.GetHashCode(), c2.GetHashCode());
+    }
+
+    [TestMethod]
+    public void CatalogosConTituloDistinto_NoSonIguales()
+    {
+        var c1 = new Catalogo("Stock Tata");
+        var c2 = new Catalogo("Stock Disco");
+
+        Assert.AreNotEqual(c1, c2);
+    }
+
+    [TestMethod]
+    public void Catalogo_ComparadoConOtroTipo_NoEsIgual()
+    {
+        var c1 = new Catalogo("Stock");
+        var noCatalogo = "Stock";
+
+        Assert.IsFalse(c1.Equals(noCatalogo));
+    }
 }
