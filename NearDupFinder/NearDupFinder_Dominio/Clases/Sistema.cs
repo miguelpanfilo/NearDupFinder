@@ -30,6 +30,8 @@ public class Sistema
     {
         if(catalogo is null) 
             throw new ArgumentNullException(nameof(catalogo),"El parametro no puede ser null");
+        if (!_catalogos.Contains(catalogo))
+            throw new InvalidOperationException("No existe un catálogo con ese título");
         _catalogos.Remove(catalogo);
     }
     
