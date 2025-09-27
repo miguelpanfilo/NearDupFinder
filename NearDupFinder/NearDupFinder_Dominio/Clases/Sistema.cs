@@ -35,6 +35,7 @@ public class Sistema
         _catalogos.Remove(catalogo);
     }
     
+    public IReadOnlyCollection<Catalogo> Catalogos => _catalogos;
     public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
         => _catalogos.FirstOrDefault(c => c.Titulo == titulo);
 
