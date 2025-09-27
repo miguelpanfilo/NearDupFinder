@@ -3,6 +3,25 @@ using NearDupFinder_Dominio.Struct;
 
 namespace NearDupFinder_Dominio.Clases;
 
+public enum TipoDuplicado
+{
+    τ_alert,
+    τ_dup
+}
+
+public struct Duplicados
+{
+    public Item ItemA { get; set; }
+    public Item ItemB { get; set; }
+    public float Score { get; set; }
+    public TipoDuplicado Tipo { get; set; }
+    public float JaccardTitulo { get; set; }
+    public float JaccardDescripcion { get; set; }
+    public int ScoreMarca { get; set; }
+    public int ScoreModelo { get; set; }
+    public string [] TokensCompartidosTitulo { get; set; }
+    public string [] TokensCompartidosDescripcion { get; set; }
+}
 
 public class Sistema
 {
@@ -16,7 +35,7 @@ public class Sistema
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
     }
-    
+
     /* Comienzo espacio Catalogo*/
     public void AgregarCatalogo(Catalogo c)
     {
@@ -90,6 +109,7 @@ public class Sistema
     {
         return Regex.Split(texto, TokenPattern)
             .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Where(t => t.Length > 1)
             .ToArray();
     }
     
