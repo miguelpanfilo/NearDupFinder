@@ -99,4 +99,23 @@ public class TestCrudCatalogo
         var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.EliminarCatalogo(c));
         StringAssert.Contains(ex.Message,"No existe un catálogo con ese título");
     }
+    
+    [TestMethod]
+    public void EliminarCatalogo_CaseInsensitive_Ok()
+    {
+        _sistema.AgregarCatalogo(new Catalogo("Stock Tata"));
+        _sistema.EliminarCatalogo(new Catalogo("stock tata")); 
+        Assert.AreEqual(0, _sistema.CantidadDeCatalogos());
+    }
+    
+    [TestMethod]
+    public void EliminarCatalogo_DobleEliminacion_Falla()
+    {
+        var c = new Catalogo("Catálogo");
+        _sistema.AgregarCatalogo(c);
+        _sistema.EliminarCatalogo(c);
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.EliminarCatalogo(c));
+        StringAssert.Contains(ex.Message, "No existe un catálogo con ese título");
+    }
 }
