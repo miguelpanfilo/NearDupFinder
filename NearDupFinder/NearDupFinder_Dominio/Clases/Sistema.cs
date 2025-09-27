@@ -26,9 +26,11 @@ public class Sistema
     _catalogos.Add(c);
     }
 
-    public void EliminarCatalogo(Catalogo catalago)
+    public void EliminarCatalogo(Catalogo catalogo)
     {
-        _catalogos.Remove(catalago);
+        if(catalogo is null) 
+            throw new ArgumentNullException(nameof(catalogo),"El parametro no puede ser null");
+        _catalogos.Remove(catalogo);
     }
     
     public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
