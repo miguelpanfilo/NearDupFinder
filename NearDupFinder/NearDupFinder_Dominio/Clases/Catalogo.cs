@@ -7,6 +7,7 @@ public class Catalogo
     private const int descripcionMaxLength = 400;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
+    private readonly List<Item> _items = new();
     
     
 
@@ -55,4 +56,30 @@ public class Catalogo
     {
         return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
     }
+    /* Lista Items*/
+    public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
+
+
+    public void AgregarItem(Item item)
+    {
+        if(item == null)
+            throw new ArgumentNullException(nameof(item), "El parametro no puede ser Null");
+        if (_items.Contains(item))
+            throw new InvalidOperationException("El item ya se encuentra en el catálogo");
+        _items.Add(item);
+    }
+
+    public void EliminarItem(Item item)
+    {
+        if(item == null)
+            throw new ArgumentNullException(nameof(item), "El parametro no puede ser Null");
+        if (!_items.Contains(item))
+            throw new InvalidOperationException("El item no se encuentra en el catálogo");
+        _items.Remove(item);
+    }
+    public int CantidadItems()
+    {
+        return _items.Count;
+    }
+    
 }
