@@ -91,4 +91,12 @@ public class TestCrudCatalogo
         Assert.AreEqual("catalogo", ex.ParamName);
         StringAssert.Contains(ex.Message,"El parametro no puede ser null");
     }
+    
+    [TestMethod]
+    public void EliminarCatalogo_NoExisteCatalogo_Falla()
+    {
+        var c = new Catalogo("Stock Tata");
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.EliminarCatalogo(c));
+        StringAssert.Contains(ex.Message,"No existe un catálogo con ese título");
+    }
 }
