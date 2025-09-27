@@ -83,4 +83,12 @@ public class TestCrudCatalogo
         Assert.AreEqual(0, _sistema.CantidadDeCatalogos());
         
     }
+
+    [TestMethod]
+    public void EliminarCatalogo_Null_Falla()
+    {
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => _sistema.EliminarCatalogo(null));
+        Assert.AreEqual("catalogo", ex.ParamName);
+        StringAssert.Contains(ex.Message,"El parametro no puede ser null");
+    }
 }
