@@ -240,29 +240,25 @@ public class Sistema
 
             float score = CalcularScore(jaccardTitulo, jaccardDescripcion, scoreMarca, scoreModelo);
 
-            if (score >= 0.75f)
+            if (score >= 0.60f)
             {
-                listaDuplicados.Add(new Duplicados
-                {
-                    ItemA = itemA,
-                    ItemB = itemB,
-                    Score = score,
-                    Tipo  = TipoDuplicado.τ_dup,
-                    TokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray(),
-                    TokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray()
-                });
-            }
-            else if (score >= 0.60f)
-            {
-                listaDuplicados.Add(new Duplicados
+                string[] tokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
+                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
+
+                Duplicados duplicado = new Duplicados
                 {
                     ItemA = itemA,
                     ItemB = itemB,
                     Score = score,
                     Tipo = TipoDuplicado.τ_alert,
-                    TokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray(),
-                    TokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray()
-                });
+                    TokensCompartidosTitulo = tokensCompartidosTitulo,
+                    TokensCompartidosDescripcion = tokensCompartidosDescripcion
+                };
+
+                if (score >= 0.75f)
+                    duplicado.Tipo = TipoDuplicado.τ_dup;
+
+                listaDuplicados.Add(duplicado);
             }
         }
 
