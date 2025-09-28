@@ -34,6 +34,8 @@ public class Sistema
     {
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
+        PrecargarCatalogos();
+
     }
 
     /* Comienzo espacio Catalogo*/
@@ -69,6 +71,73 @@ public class Sistema
         return _catalogos.Count;
     }
     /* Fin espacio Catalogo*/
+    
+    
+    private void PrecargarCatalogos()
+    {
+        var catalogoTecno = new Catalogo("Tecnología");
+        catalogoTecno.AgregarItem(new Item
+        {
+            Titulo = "Laptop HP",
+            Descripcion = "Laptop 15 pulgadas",
+            Categoria = "Computadoras",
+            Marca = "HP",
+            Modelo = "Pavilion"
+        });
+        catalogoTecno.AgregarItem(new Item
+        {
+            Titulo = "Teléfono Samsung",
+            Descripcion = "Galaxy S24",
+            Categoria = "Celulares",
+            Marca = "Samsung",
+            Modelo = "S24"
+        });
+
+        var catalogoHogar = new Catalogo("Hogar");
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Silla de comedor",
+            Descripcion = "Silla de madera maciza",
+            Categoria = "Muebles",
+            Marca = "Ikea",
+            Modelo = "Nordic"
+        });
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Aspiradora",
+            Descripcion = "Aspiradora sin bolsa 1200W",
+            Categoria = "Electrodomésticos",
+            Marca = "Philips",
+            Modelo = "PowerPro"
+        });
+
+        var catalogoDeportes = new Catalogo("Deportes");
+        catalogoDeportes.AgregarItem(new Item
+        {
+            Titulo = "Bicicleta",
+            Descripcion = "Bicicleta de montaña 21 cambios",
+            Categoria = "Ciclismo",
+            Marca = "Trek",
+            Modelo = "X-Caliber"
+        });
+        catalogoDeportes.AgregarItem(new Item
+        {
+            Titulo = "Pelota de fútbol",
+            Descripcion = "Pelota oficial tamaño 5",
+            Categoria = "Fútbol",
+            Marca = "Adidas",
+            Modelo = "Al Rihla"
+        });
+
+        // Agregar catálogos al sistema
+        _catalogos.Add(catalogoTecno);
+        _catalogos.Add(catalogoHogar);
+        _catalogos.Add(catalogoDeportes);
+    }
+    
+    
+    
+    
     
     /* Comienzo espacio Usuario*/
     private Usuario CrearUsuarioAdmin()

@@ -92,6 +92,8 @@ public class Item
         }
     }
 
+    public String? EstadoDuplicado { get; set; }
+
     public override bool Equals(object obj)
     {
         if (obj is not Item other)
