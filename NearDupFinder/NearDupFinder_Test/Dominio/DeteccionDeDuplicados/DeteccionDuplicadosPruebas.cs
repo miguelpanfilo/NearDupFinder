@@ -194,4 +194,61 @@ public class DeteccionDuplicadosPruebas
         Assert.AreEqual(1, duplicados[0].ScoreMarca);
         Assert.AreEqual(0, duplicados[0].ScoreModelo);
     }
+    
+    [TestMethod]
+    public void DetectarDuplicados_Ordenamiento_ScoreDesc_IdBAscEnEmpate() 
+    { 
+        Item itemA = new Item 
+        { 
+            Titulo = "Notebook Lenovo L14", 
+            Descripcion = "uno dos", 
+            Marca = "Lenovo", 
+            Modelo = "L14", 
+            Categoria = "Notebooks"
+        };
+        
+        Item itemB1 = new Item 
+        { 
+            Titulo = "notebook lenovo l14", 
+            Descripcion = "uno dos", 
+            Marca = "lenovo", 
+            Modelo = "l14", 
+            Categoria = "notebooks"
+        };
+
+        Item itemB2 = new Item 
+        { 
+            Titulo = "Notebook Lenovo L14", 
+            Descripcion = "uno dos", 
+            Marca = "Lenovo", 
+            Modelo = "L14", 
+            Categoria = "Notebooks"
+        };
+        
+        Item itemC = new Item 
+        { 
+            Titulo = "notebook lenovo l14",
+            Descripcion = "uno", 
+            Marca = "", 
+            Modelo = "", 
+            Categoria = "notebooks"
+        };
+        
+        Catalogo catalogo = new Catalogo("Catalogo"); 
+        catalogo.AgregarItem(itemA); 
+        catalogo.AgregarItem(itemC); 
+        catalogo.AgregarItem(itemB1); 
+        catalogo.AgregarItem(itemB2);
+        
+        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        
+        int idB1 = itemB1.Id; 
+        int idB2 = itemB2.Id; 
+        int idC = itemC.Id;
+        
+        List<int> esperado = new List<int> { idB1, idB2, idC }; 
+        List<int> actual = duplicados.Select(d => d.ItemB.Id).ToList();
+        
+        CollectionAssert.AreEqual(esperado, actual);
+    }
 }
