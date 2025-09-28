@@ -79,5 +79,38 @@ public class ListaCRUDTests
         Assert.AreEqual(item.Marca, dto.Marca);
         Assert.AreEqual(item.Modelo, dto.Modelo);
     }
+    
+    [TestMethod]
+    public void ItemEditDataTransfer_CambiosNoModificanItemOriginal()
+    {
+        var item = new Item
+        {
+            
+            Titulo = "Original",
+            Descripcion = "Desc",
+            Categoria = "Cat",
+            Marca = "M",
+            Modelo = "Mod"
+        };
+
+        var dto = new ItemEditDataTransfer
+        {
+            Id = item.Id,
+            Titulo = item.Titulo,
+            Descripcion = item.Descripcion,
+            Categoria = item.Categoria,
+            Marca = item.Marca,
+            Modelo = item.Modelo
+        };
+
+        
+        dto.Titulo = "Modificado";
+        dto.Descripcion = "Nueva Desc";
+
+        
+        Assert.AreEqual("Original", item.Titulo);
+        Assert.AreEqual("Desc", item.Descripcion);
+    }
+
 
 }
