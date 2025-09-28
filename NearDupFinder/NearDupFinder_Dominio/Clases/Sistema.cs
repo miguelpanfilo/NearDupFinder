@@ -217,12 +217,39 @@ public class Sistema
         {
             if (itemB.Id == itemA.Id) 
                 continue;
+            
+            Item itemNormalizadoA = NormalizarItem(itemA);
+            Item itemNormalizadoB = NormalizarItem(itemB);
 
-            resultado.Add(new Duplicados
+            ItemTokenizado tokA = TokenizarItem(itemNormalizadoA);
+            ItemTokenizado tokB = TokenizarItem(itemNormalizadoB);
+
+            float jaccardTitulo = CalcularJaccard(tokA.TokenTitulo, tokB.TokenTitulo);
+            float jaccardDescripcion = CalcularJaccard(tokA.TokenDescripcion, tokB.TokenDescripcion);
+
+            int scoreMarca =
+                (!string.IsNullOrEmpty(itemNormalizadoA.Marca) &&
+                 !string.IsNullOrEmpty(itemNormalizadoB.Marca) &&
+                 string.Equals(itemNormalizadoA.Marca, itemNormalizadoB.Marca, StringComparison.Ordinal))
+                    ? 1 : 0;
+
+            int scoreModelo =
+                (!string.IsNullOrEmpty(itemNormalizadoA.Modelo) &&
+                 !string.IsNullOrEmpty(itemNormalizadoB.Modelo) &&
+                 string.Equals(itemNormalizadoA.Modelo, itemNormalizadoB.Modelo, StringComparison.Ordinal))
+                    ? 1 : 0;
+
+            float score = CalcularScore(jaccardTitulo, jaccardDescripcion, scoreMarca, scoreModelo);
+
+            if (score >= 0.60f)
             {
-                ItemA = itemA,
-                ItemB = itemB
-            });
+                resultado.Add(new Duplicados
+                {
+                    ItemA = itemA,
+                    ItemB = itemB,
+                    Score = score
+                });
+            }
         }
 
         return resultado;
