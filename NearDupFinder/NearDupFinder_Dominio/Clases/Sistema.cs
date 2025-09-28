@@ -247,7 +247,9 @@ public class Sistema
                     ItemA = itemA,
                     ItemB = itemB,
                     Score = score,
-                    Tipo  = TipoDuplicado.τ_dup
+                    Tipo  = TipoDuplicado.τ_dup,
+                    TokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray(),
+                    TokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray()
                 });
             }
             else if (score >= 0.60f)
@@ -257,7 +259,9 @@ public class Sistema
                     ItemA = itemA,
                     ItemB = itemB,
                     Score = score,
-                    Tipo = TipoDuplicado.τ_alert
+                    Tipo = TipoDuplicado.τ_alert,
+                    TokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray(),
+                    TokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray()
                 });
             }
         }
