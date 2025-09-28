@@ -50,5 +50,34 @@ public class ListaCRUDTests
         Assert.IsNotNull(itemEdit.Marca);
         Assert.IsNotNull(itemEdit.Modelo);
     }
+    [TestMethod]
+    public void ItemEditDataTransfer_ValidarIgualdades()
+    {
+        var item = new Item
+        { 
+            Titulo = "Laptop",
+            Descripcion = "15 pulgadas",
+            Categoria = "Computadoras",
+            Marca = "HP",
+            Modelo = "Pavilion"
+        };
+
+        var dto = new ItemEditDataTransfer
+        {
+            Id = item.Id,
+            Titulo = item.Titulo,
+            Descripcion = item.Descripcion,
+            Categoria = item.Categoria,
+            Marca = item.Marca,
+            Modelo = item.Modelo
+        };
+
+        Assert.AreEqual(item.Id, dto.Id);
+        Assert.AreEqual(item.Titulo, dto.Titulo);
+        Assert.AreEqual(item.Descripcion, dto.Descripcion);
+        Assert.AreEqual(item.Categoria, dto.Categoria);
+        Assert.AreEqual(item.Marca, dto.Marca);
+        Assert.AreEqual(item.Modelo, dto.Modelo);
+    }
 
 }
