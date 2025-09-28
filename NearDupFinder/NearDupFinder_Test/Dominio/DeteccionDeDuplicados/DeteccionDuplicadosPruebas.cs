@@ -251,4 +251,35 @@ public class DeteccionDuplicadosPruebas
         
         CollectionAssert.AreEqual(esperado, actual);
     }
+    
+    [TestMethod]
+    public void DetectarDuplicados_AsignaJaccardTituloYDescripcion_Correctos()
+    {
+        Item itemA = new Item
+        {
+            Titulo = "notebook lenovo l14",
+            Descripcion = "alpha beta",
+            Marca = "",
+            Modelo = "",
+            Categoria = "Notebooks"
+        };
+
+        Item itemB = new Item
+        {
+            Titulo = "Notebook Lenovo L14",
+            Descripcion = "alpha",
+            Marca = "",
+            Modelo = "",
+            Categoria = "notebooks"
+        };
+
+        Catalogo catalogo = new Catalogo("Catalogo");
+        catalogo.AgregarItem(itemA);
+        catalogo.AgregarItem(itemB);
+
+        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+
+        Assert.AreEqual(1.0f, duplicados[0].JaccardTitulo, 1e-6f);
+        Assert.AreEqual(0.5f,  duplicados[0].JaccardDescripcion, 1e-6f);
+    }    
 }
