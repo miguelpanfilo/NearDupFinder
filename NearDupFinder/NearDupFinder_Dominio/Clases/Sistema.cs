@@ -240,7 +240,17 @@ public class Sistema
 
             float score = CalcularScore(jaccardTitulo, jaccardDescripcion, scoreMarca, scoreModelo);
 
-            if (score >= 0.60f)
+            if (score >= 0.75f)
+            {
+                resultado.Add(new Duplicados
+                {
+                    ItemA = itemA,
+                    ItemB = itemB,
+                    Score = score,
+                    Tipo  = TipoDuplicado.τ_dup
+                });
+            }
+            else if (score >= 0.60f)
             {
                 resultado.Add(new Duplicados
                 {
