@@ -38,4 +38,17 @@ public class ListaCRUDTests
         Assert.AreEqual("MarcaX", itemEdit.Marca);
         Assert.AreEqual("ModeloY", itemEdit.Modelo);
     }
+    
+    [TestMethod]
+    public void ItemEditDataTransfer_ValoresPorDefectoNoSonNull()
+    {
+        var itemEdit = new ItemEditDataTransfer();
+
+        Assert.IsNotNull(itemEdit.Titulo);
+        Assert.IsNotNull(itemEdit.Descripcion);
+        Assert.IsNotNull(itemEdit.Categoria);
+        Assert.IsNotNull(itemEdit.Marca);
+        Assert.IsNotNull(itemEdit.Modelo);
+    }
+
 }
