@@ -67,4 +67,35 @@ public class DeteccionDuplicadosPruebas
 
         Assert.AreEqual(0, duplicados.Count);
     }
+    
+    [TestMethod]
+    public void DetectarDuplicados_ScoreIgual060_AgregaComoPosibleDuplicado()
+    {
+        Item itemA = new Item
+        {
+            Titulo = "Notebook Lenovo L14",
+            Descripcion = "alpha beta gamma delta epsilon zeta theta",
+            Marca = "Lenovo",
+            Modelo = "L14",
+            Categoria = "Notebooks"
+        };
+
+        Item itemB = new Item
+        {
+            Titulo = "notebook lenovo l14",
+            Descripcion = "alpha",
+            Marca = "lenovo",
+            Modelo = "",
+            Categoria = "notebooks"
+        };
+
+        Catalogo catalogo = new Catalogo("Catalogo");
+        catalogo.AgregarItem(itemA);
+        catalogo.AgregarItem(itemB);
+
+        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+
+        Assert.AreEqual(0.60f, duplicados[0].Score, 1e-5f);
+        Assert.AreEqual(TipoDuplicado.τ_alert, duplicados[0].Tipo);
+    }
 }
