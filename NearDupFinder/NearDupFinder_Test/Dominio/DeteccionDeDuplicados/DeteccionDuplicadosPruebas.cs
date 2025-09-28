@@ -163,4 +163,35 @@ public class DeteccionDuplicadosPruebas
         CollectionAssert.AreEquivalent(esperadoTitulo, duplicados[0].TokensCompartidosTitulo);
         CollectionAssert.AreEquivalent(esperadoDescripcion, duplicados[0].TokensCompartidosDescripcion);
     }
+    
+    [TestMethod]
+    public void DetectarDuplicados_MarcaYModelo_IgualdadBinaria_ExigeNoVacios()
+    {
+        Item itemA = new Item
+        {
+            Titulo = "Smartphone Samsung Galaxy S20",
+            Descripcion = "uno dos",
+            Marca = "Samsung",
+            Modelo = "S20",
+            Categoria = "Celulares"
+        };
+
+        Item itemB = new Item
+        {
+            Titulo = "smartphone samsung galaxy s20",
+            Descripcion = "uno tres",
+            Marca = "samsung",
+            Modelo = "",
+            Categoria = "celulares"
+        };
+
+        Catalogo catalogo = new Catalogo("Catalogo");
+        catalogo.AgregarItem(itemA);
+        catalogo.AgregarItem(itemB);
+
+        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+
+        Assert.AreEqual(1, duplicados[0].ScoreMarca);
+        Assert.AreEqual(0, duplicados[0].ScoreModelo);
+    }
 }
