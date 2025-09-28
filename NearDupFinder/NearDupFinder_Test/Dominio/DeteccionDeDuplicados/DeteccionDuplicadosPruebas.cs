@@ -129,4 +129,38 @@ public class DeteccionDuplicadosPruebas
         Assert.AreEqual(0.75f, duplicados[0].Score, 1e-5f);
         Assert.AreEqual(TipoDuplicado.τ_dup, duplicados[0].Tipo);
     }
+    
+    [TestMethod]
+    public void DetectarDuplicados_TokensCompartidos_InterseccionSinRepetidos()
+    {
+        Item itemA = new Item
+        {
+            Titulo = "alpha alpha beta",
+            Descripcion = "rojo rojo verde azul",
+            Marca = "Lenovo",
+            Modelo = "L14",
+            Categoria = "Notebooks"
+        };
+
+        Item itemB = new Item
+        {
+            Titulo = "beta alpha gamma alpha",
+            Descripcion = "verde verde rojo",
+            Marca = "lenovo",
+            Modelo = "l14",
+            Categoria = "notebooks"
+        };
+
+        Catalogo catalogo = new Catalogo("Catalogo");
+        catalogo.AgregarItem(itemA);
+        catalogo.AgregarItem(itemB);
+
+        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+
+        string[] esperadoTitulo = new[] { "alpha", "beta" };
+        string[] esperadoDescripcion = new[] { "rojo", "verde" };
+
+        CollectionAssert.AreEquivalent(esperadoTitulo, duplicados[0].TokensCompartidosTitulo);
+        CollectionAssert.AreEquivalent(esperadoDescripcion, duplicados[0].TokensCompartidosDescripcion);
+    }
 }
