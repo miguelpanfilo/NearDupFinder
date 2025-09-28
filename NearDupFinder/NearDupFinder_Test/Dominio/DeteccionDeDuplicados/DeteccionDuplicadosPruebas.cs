@@ -281,5 +281,74 @@ public class DeteccionDuplicadosPruebas
 
         Assert.AreEqual(1.0f, duplicados[0].JaccardTitulo, 1e-6f);
         Assert.AreEqual(0.5f,  duplicados[0].JaccardDescripcion, 1e-6f);
-    }    
+    } 
+    
+    [TestMethod]
+    public void DetectarDuplicados_VariosResultados_FiltraYOrdenaCorrectamente()
+    { 
+        Item itemA = new Item 
+        { 
+            Titulo = "Notebook Lenovo L14", 
+            Descripcion = "uno dos tres cuatro", 
+            Marca = "Lenovo", 
+            Modelo = "L14", 
+            Categoria = "Notebooks"
+        };
+        
+        // score < 0.60
+        Item itemB = new Item 
+        { 
+            Titulo = "notebook lenovo l14", 
+            Descripcion = "cinco seis", 
+            Marca = "", 
+            Modelo = "", 
+            Categoria = "notebooks"
+        };
+        
+        // τ_alert (≈0.6375): Jt=1.0, Jd=1/4, Marca=1, Modelo=0
+        Item itemC = new Item 
+        { 
+            Titulo = "notebook lenovo l14", 
+            Descripcion = "uno", 
+            Marca = "lenovo", 
+            Modelo = "", 
+            Categoria = "notebooks"
+        };
+        
+        // τ_alert (≈0.6375): Jt=1.0, Jd=1/4, Marca=1, Modelo=0
+        Item itemD = new Item 
+        { 
+            Titulo = "Notebook Lenovo L14", 
+            Descripcion = "dos", 
+            Marca = "Lenovo", 
+            Modelo = "", 
+            Categoria = "Notebooks"
+        };
+        
+        // τ_dup (0.80): Jt=1.0, Jd=1.0, Marca=0, Modelo=0
+        Item itemE = new Item 
+        { 
+            Titulo = "notebook lenovo l14", 
+            Descripcion = "uno dos tres cuatro", 
+            Marca = "", 
+            Modelo = "", 
+            Categoria = "notebooks"
+        };
+        
+        Catalogo catalogo = new Catalogo("Catalogo");
+        catalogo.AgregarItem(itemA);
+        catalogo.AgregarItem(itemD);
+        catalogo.AgregarItem(itemB);    
+        catalogo.AgregarItem(itemE);
+        catalogo.AgregarItem(itemC);
+
+        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+
+        List<int> esperado = new List<int> { itemE.Id, itemC.Id, itemD.Id };
+        List<int> actual = new List<int>();
+        foreach (Duplicados d in duplicados)
+            actual.Add(d.ItemB.Id);
+
+        CollectionAssert.AreEqual(esperado, actual);
+    }
 }
