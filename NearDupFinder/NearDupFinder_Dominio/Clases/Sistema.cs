@@ -246,7 +246,8 @@ public class Sistema
                 {
                     ItemA = itemA,
                     ItemB = itemB,
-                    Score = score
+                    Score = score,
+                    Tipo = TipoDuplicado.τ_alert
                 });
             }
         }
