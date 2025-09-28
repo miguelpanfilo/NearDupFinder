@@ -263,6 +263,13 @@ public class Sistema
                 listaDuplicados.Add(duplicado);
             }
         }
+        
+        listaDuplicados.Sort((x, y) =>
+        {
+            int c = y.Score.CompareTo(x.Score);
+            if (c != 0) return c;
+            return x.ItemB.Id.CompareTo(y.ItemB.Id);
+        });
 
         return listaDuplicados;
     }
