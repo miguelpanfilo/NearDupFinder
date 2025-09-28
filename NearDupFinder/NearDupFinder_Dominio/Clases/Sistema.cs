@@ -208,36 +208,35 @@ public class Sistema
         
         return score;
     }
+    
+    private static int IgualdadBinaria(string a, string b)
+    {
+        if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
+            return 0;
+
+        return string.Equals(a, b, StringComparison.Ordinal) ? 1 : 0;
+    }
 
     public List<Duplicados> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         List<Duplicados> resultado = new List<Duplicados>();
+        
+        Item itemNormalizadoA = NormalizarItem(itemA);
+        ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
 
         foreach (Item itemB in catalogo.Items)
         {
             if (itemB.Id == itemA.Id) 
                 continue;
             
-            Item itemNormalizadoA = NormalizarItem(itemA);
             Item itemNormalizadoB = NormalizarItem(itemB);
+            ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
-            ItemTokenizado tokA = TokenizarItem(itemNormalizadoA);
-            ItemTokenizado tokB = TokenizarItem(itemNormalizadoB);
+            float jaccardTitulo = CalcularJaccard(itemTokenizadoA.TokenTitulo, itemTokenizadoB.TokenTitulo);
+            float jaccardDescripcion = CalcularJaccard(itemTokenizadoA.TokenDescripcion, itemTokenizadoB.TokenDescripcion);
 
-            float jaccardTitulo = CalcularJaccard(tokA.TokenTitulo, tokB.TokenTitulo);
-            float jaccardDescripcion = CalcularJaccard(tokA.TokenDescripcion, tokB.TokenDescripcion);
-
-            int scoreMarca =
-                (!string.IsNullOrEmpty(itemNormalizadoA.Marca) &&
-                 !string.IsNullOrEmpty(itemNormalizadoB.Marca) &&
-                 string.Equals(itemNormalizadoA.Marca, itemNormalizadoB.Marca, StringComparison.Ordinal))
-                    ? 1 : 0;
-
-            int scoreModelo =
-                (!string.IsNullOrEmpty(itemNormalizadoA.Modelo) &&
-                 !string.IsNullOrEmpty(itemNormalizadoB.Modelo) &&
-                 string.Equals(itemNormalizadoA.Modelo, itemNormalizadoB.Modelo, StringComparison.Ordinal))
-                    ? 1 : 0;
+            int scoreMarca = IgualdadBinaria(itemNormalizadoA.Marca, itemNormalizadoB.Marca);
+            int scoreModelo = IgualdadBinaria(itemNormalizadoA.Modelo, itemNormalizadoB.Modelo);
 
             float score = CalcularScore(jaccardTitulo, jaccardDescripcion, scoreMarca, scoreModelo);
 
