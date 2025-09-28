@@ -219,7 +219,7 @@ public class Sistema
 
     public List<Duplicados> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
-        List<Duplicados> resultado = new List<Duplicados>();
+        List<Duplicados> listaDuplicados = new List<Duplicados>();
         
         Item itemNormalizadoA = NormalizarItem(itemA);
         ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
@@ -242,7 +242,7 @@ public class Sistema
 
             if (score >= 0.75f)
             {
-                resultado.Add(new Duplicados
+                listaDuplicados.Add(new Duplicados
                 {
                     ItemA = itemA,
                     ItemB = itemB,
@@ -252,7 +252,7 @@ public class Sistema
             }
             else if (score >= 0.60f)
             {
-                resultado.Add(new Duplicados
+                listaDuplicados.Add(new Duplicados
                 {
                     ItemA = itemA,
                     ItemB = itemB,
@@ -262,6 +262,6 @@ public class Sistema
             }
         }
 
-        return resultado;
+        return listaDuplicados;
     }
 }
