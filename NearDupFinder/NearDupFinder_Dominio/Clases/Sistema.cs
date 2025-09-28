@@ -251,6 +251,8 @@ public class Sistema
                     ItemB = itemB,
                     Score = score,
                     Tipo = TipoDuplicado.τ_alert,
+                    JaccardTitulo = jaccardTitulo,
+                    JaccardDescripcion = jaccardDescripcion,
                     ScoreMarca = scoreMarca,
                     ScoreModelo = scoreModelo,
                     TokensCompartidosTitulo = tokensCompartidosTitulo,
