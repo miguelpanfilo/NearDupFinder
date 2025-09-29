@@ -1,0 +1,103 @@
+@page "/alta-item"
+@rendermode InteractiveServer
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@inject Sistema sistema
+@inject NavigationManager Nav
+
+<h3>Alta de Item</h3>
+
+@if (!string.IsNullOrEmpty(_mensajeError))
+{
+    <div class="alert alert-danger">@_mensajeError</div>
+}
+
+<!-- Select de catálogo -->
+<div class="mb-3">
+    <label for="catalogoSelect">Seleccionar Catálogo:</label>
+    <select id="catalogoSelect" class="form-select" @bind="_catalogoSeleccionadoTitulo">
+        <option value="">-- Seleccione un catálogo --</option>
+        @foreach (var cat in sistema.Catalogos)
+        {
+            <option value="@cat.Titulo">@cat.Titulo</option>
+        }
+    </select>
+</div>
+<!-- Fin de select de catálogo -->
+
+
+<div class="mb-3">
+    <label>Título:</label>
+    <input class="form-control" @bind="_titulo" />
+</div>
+
+<div class="mb-3">
+    <label>Descripción:</label>
+    <input class="form-control" @bind="_descripcion" />
+</div>
+
+<div class="mb-3">
+    <label>Categoría:</label>
+    <input class="form-control" @bind="_categoria" />
+</div>
+
+<div class="mb-3">
+    <label>Marca:</label>
+    <input class="form-control" @bind="_marca" />
+</div>
+
+<div class="mb-3">
+    <label>Modelo:</label>
+    <input class="form-control" @bind="_modelo" />
+</div>
+
+<button class="btn btn-primary" @onclick="GuardarItem">Guardar</button>
+<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+
+@code {
+    private string _titulo = "";
+    private string _descripcion = "";
+    private string _categoria = "";
+    private string _marca = "";
+    private string _modelo = "";
+    private string _catalogoSeleccionadoTitulo = "";
+    private string _mensajeError = "";
+
+    private void GuardarItem()
+    {
+        if (string.IsNullOrWhiteSpace(_titulo) || string.IsNullOrWhiteSpace(_descripcion))
+        {
+            _mensajeError = "Título y Descripción son obligatorios.";
+            return;
+        }
+
+        var catalogo = sistema.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
+        if (catalogo == null)
+        {
+            _mensajeError = "Debe seleccionar un catálogo válido.";
+            return;
+        }
+
+        var nuevoItem = new Item
+        {
+            Titulo = _titulo,
+            Descripcion = _descripcion,
+            Categoria = string.IsNullOrWhiteSpace(_categoria) ? "" : _categoria,
+            Marca = string.IsNullOrWhiteSpace(_marca) ? "" : _marca,
+            Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
+        };
+        catalogo.AgregarItem(nuevoItem);
+
+
+       
+
+
+        Nav.NavigateTo("/lista-CRUD");
+    }
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/lista-CRUD");
+    }
+}
+
