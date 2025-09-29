@@ -9,7 +9,7 @@ public class Catalogo
     public string Descripcion { get; private set; } = "";
     private readonly List<Item> _items = new();
     
-    
+
 
     public Catalogo(string titulo)
     {
@@ -81,5 +81,9 @@ public class Catalogo
     {
         return _items.Count;
     }
+    
+    
+
+
     
 }

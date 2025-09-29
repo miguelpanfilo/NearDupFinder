@@ -118,4 +118,23 @@ public class TestCrudCatalogo
         var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.EliminarCatalogo(c));
         StringAssert.Contains(ex.Message, "No existe un catálogo con ese título");
     }
+    [TestMethod]
+    public void RegistrarDetecciones_AgregaDuplicadosAlCatalogo()
+    {
+        var catalogo = new Catalogo("Catalogo Test");
+        var item1 = new Item("Item 1", "Descripcion 1");
+        var item2 = new Item("Item 2", "Descripcion 2");
+
+        var duplicado = new Duplicados();
+        duplicado.ItemsInvolucrados.Add(item1);
+        duplicado.ItemsInvolucrados.Add(item2);
+
+        
+        catalogo.RegistrarDetecciones(new List<Duplicados> { duplicado });
+        var detecciones = catalogo.ObtenerDetecciones();
+
+        Assert.AreEqual(1, detecciones.Count);
+        CollectionAssert.Contains(detecciones.ToList(), duplicado);
+        Assert.AreEqual(2, detecciones.First().ItemsInvolucrados.Count);
+    }
 }
