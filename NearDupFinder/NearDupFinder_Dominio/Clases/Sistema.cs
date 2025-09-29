@@ -37,40 +37,6 @@ public class Sistema
         PrecargarCatalogos();
 
     }
-
-    /* Comienzo espacio Catalogo*/
-    public void AgregarCatalogo(Catalogo catalogo)
-    {
-        if (catalogo is null)
-        {
-            throw new ArgumentNullException(nameof(catalogo), "El parametro no puede ser null");
-        }
-        if (_catalogos.Contains(catalogo))
-        {
-            throw new InvalidOperationException("Ya existe un catálogo con ese título");
-        }
-
-    _catalogos.Add(catalogo);
-    }
-
-    public void EliminarCatalogo(Catalogo catalogo)
-    {
-        if(catalogo is null) 
-            throw new ArgumentNullException(nameof(catalogo),"El parametro no puede ser null");
-        if (!_catalogos.Contains(catalogo))
-            throw new InvalidOperationException("No existe un catálogo con ese título");
-        _catalogos.Remove(catalogo);
-    }
-    
-    public IReadOnlyCollection<Catalogo> Catalogos => _catalogos;
-    public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
-        => _catalogos.FirstOrDefault(c => c.Titulo == titulo);
-
-    public int CantidadDeCatalogos()
-    {
-        return _catalogos.Count;
-    }
-    /* Fin espacio Catalogo*/
     
     
     private void PrecargarCatalogos()
@@ -134,6 +100,42 @@ public class Sistema
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
     }
+
+
+
+    /* Comienzo espacio Catalogo*/
+    public void AgregarCatalogo(Catalogo catalogo)
+    {
+        if (catalogo is null)
+        {
+            throw new ArgumentNullException(nameof(catalogo), "El parametro no puede ser null");
+        }
+        if (_catalogos.Contains(catalogo))
+        {
+            throw new InvalidOperationException("Ya existe un catálogo con ese título");
+        }
+
+    _catalogos.Add(catalogo);
+    }
+
+    public void EliminarCatalogo(Catalogo catalogo)
+    {
+        if(catalogo is null) 
+            throw new ArgumentNullException(nameof(catalogo),"El parametro no puede ser null");
+        if (!_catalogos.Contains(catalogo))
+            throw new InvalidOperationException("No existe un catálogo con ese título");
+        _catalogos.Remove(catalogo);
+    }
+    
+    public IReadOnlyCollection<Catalogo> Catalogos => _catalogos;
+    public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
+        => _catalogos.FirstOrDefault(c => c.Titulo == titulo);
+
+    public int CantidadDeCatalogos()
+    {
+        return _catalogos.Count;
+    }
+    /* Fin espacio Catalogo*/
     
     
     

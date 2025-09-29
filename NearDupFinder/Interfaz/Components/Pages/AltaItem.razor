@@ -86,16 +86,12 @@
             Marca = string.IsNullOrWhiteSpace(_marca) ? "" : _marca,
             Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
         };
-
-        @*
-
- catalogo.AgregarItem(nuevoItem);
-        var duplicadosDetectados = sistema.DetectarDuplicados(nuevoItem, catalogo);
-        catalogo.RegistrarDetecciones(duplicadosDetectados);
-*@
+        catalogo.AgregarItem(nuevoItem);
 
 
-        // Redirige a la lista de items
+       
+
+
         Nav.NavigateTo("/lista-CRUD");
     }
 
