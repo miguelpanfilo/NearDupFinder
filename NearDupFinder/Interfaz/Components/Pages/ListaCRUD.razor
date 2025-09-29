@@ -239,6 +239,8 @@
                 original.Categoria = _itemEditado.Categoria;
                 original.Marca = _itemEditado.Marca;
                 original.Modelo = _itemEditado.Modelo;
+                ReconstruirCategorias();
+
             }
 
             AplicarFiltros();
@@ -253,5 +255,17 @@
         {
             _mensajeErrorModal = ex.Message;
         }
+        
+        
+    }
+    private void ReconstruirCategorias()
+    {
+        if (_catalogoSeleccionado == null) return;
+
+        _categorias = _catalogoSeleccionado.Items
+            .Select(i => i.Categoria)
+            .Where(c => !string.IsNullOrEmpty(c))
+            .Distinct()
+            .ToList();
     }
 }
