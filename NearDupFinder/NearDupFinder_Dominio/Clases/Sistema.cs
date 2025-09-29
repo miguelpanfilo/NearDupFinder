@@ -40,7 +40,8 @@ public class Sistema
     
     
     private void PrecargarCatalogos()
-    {
+    { 
+        /*
         var catalogoTecno = new Catalogo("Tecnología");
         catalogoTecno.AgregarItem(new Item
         {
@@ -99,6 +100,9 @@ public class Sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
+        
+        
+        */
     }
 
 
