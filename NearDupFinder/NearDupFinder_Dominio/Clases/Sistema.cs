@@ -144,6 +144,7 @@ public class Sistema
     }
     /* Fin espacio Catalogo*/
 
+    // Inicio funciones de interfaz 
     public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
     {
         var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
@@ -156,10 +157,19 @@ public class Sistema
         original.Marca = dto.Marca;
         original.Modelo = dto.Modelo;
     }
+    public void AltaItem(string catalogoTitulo, Item nuevoItem)
+    {
+        var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
+        if (catalogo == null)
+            throw new ItemException("Debe seleccionar un catálogo válido.");
 
+        if (string.IsNullOrWhiteSpace(nuevoItem.Titulo) || string.IsNullOrWhiteSpace(nuevoItem.Descripcion))
+            throw new ItemException("Título y Descripción son obligatorios.");
 
+        catalogo.AgregarItem(nuevoItem);
+    }
 
-
+//Fin de funciones de interfaz 
 
     /* Comienzo espacio Usuario*/
     private Usuario CrearUsuarioAdmin()
