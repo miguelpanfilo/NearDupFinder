@@ -58,4 +58,12 @@ public class FechaPruebas
 
         Assert.IsFalse(fecha.Igual(null));
     }
+    
+    [TestMethod]
+    public void ToDateTime_RetornaFechaEnFormatoValido()
+    {
+        var fecha = Fecha.Crear(2001, 5, 7);
+        DateTime fechaEnFormatoDateTime = new DateTime(2001,5,7);
+        Assert.AreEqual(fechaEnFormatoDateTime, fecha.ToDateTime());
+    }
 }
