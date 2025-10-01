@@ -33,6 +33,11 @@ public sealed class Fecha
     {
         return new DateTime(_anio, _mes, _dia).ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
     }
+
+    public DateTime ToDateTime()
+    {
+        return new DateTime(_anio, _mes, _dia);
+    }
     
     public bool Igual(Fecha? otraFecha)
     {
