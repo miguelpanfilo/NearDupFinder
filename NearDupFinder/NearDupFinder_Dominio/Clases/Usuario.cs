@@ -10,10 +10,12 @@ public enum Rol
 
 public class Usuario
 {
-    public string Nombre { get; }
-    public string Apellido { get; }
-    public Email Email { get; }
-    public Fecha FechaNacimiento { get; }
+    private static int _nextId = 1;
+    public int Id { get; }
+    public string Nombre { get; set; }
+    public string Apellido { get; set; }
+    public Email Email { get; set; }
+    public Fecha FechaNacimiento { get; set; }
 
     private readonly HashSet<Rol> _roles = new();
     
@@ -26,6 +28,7 @@ public class Usuario
         Email = email;
         FechaNacimiento = fechaNacimiento;
         _contrasena = new Contrasena();
+        Id = _nextId++;
     }
     
     public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
