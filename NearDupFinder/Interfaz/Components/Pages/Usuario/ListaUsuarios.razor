@@ -1,0 +1,67 @@
+@page "/usuarios"
+@rendermode InteractiveServer
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@attribute [Authorize(Roles = "Administrador")]
+@inject Sistema Sistema
+
+<PageTitle>Usuarios</PageTitle>
+
+<h1>Usuarios</h1>
+
+<a href="/crear-usuario"  class="btn btn-success btn-sm" style="float: right;margin-right: 40px;">Crear +</a>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Email</th>
+        <th>Fecha De Nacimiento</th>
+        <th>Roles</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var usuario in _usuarios!)
+    {
+        var roles = usuario.ObtenerRoles();
+        <tr>
+            <td>@usuario.Nombre</td>
+            <td>@usuario.Apellido</td>
+            <td>@usuario.Email.ToString()</td>
+            <td>@usuario.FechaNacimiento.ToString()</td>
+            <td>
+                @if (roles.Any())
+                {
+                    @string.Join(", ", roles.Select(r => r.ToString()))
+                }
+                else
+                {
+                    <em class="text-muted">Sin roles</em>
+                }
+            </td>
+            <td>
+        
+                <a class="btn btn-success btn-sm" href="usuarios/@usuario.Id/editar/">Editar</a>
+                <button class="btn btn-danger btn-sm" @onclick="(() => EliminarUsuario(usuario.Email))">Eliminar</button>
+        
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private List<Usuario>? _usuarios;
+
+    protected override void OnInitialized()
+    {
+        _usuarios = Sistema.ObtenerUsuarios();
+    }
+
+    private void EliminarUsuario(Email correo)
+    {
+        Sistema.EliminarUsuario(correo.ToString());
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,121 @@
+@page "/usuarios/{id:int}/editar/"
+@rendermode InteractiveServer
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@attribute [Authorize(Roles = "Administrador")]
+@inject Sistema Sistema
+@inject NavigationManager Nav
+
+<h3>EditarUsuario</h3>
+
+@if(_error)
+{
+    <div class="alert alert-danger" role="alert">
+        @_mensajeDeError
+    </div>
+}
+
+<form>
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" class="form-control" id="nombre" @bind="_nombre" />
+    </div>
+
+    <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input type="text" class="form-control" id="apellido" @bind="_apellido" />
+    </div>
+
+    <div class="form-group">
+        <label for="fecha">Fecha de nacimiento</label>
+        <input type="date" class="form-control" id="fecha" @bind="_fecha" />
+    </div>
+    
+    <div class="form-group">
+        <label>Roles</label>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rolAdmin" @bind="_rolAdmin" />
+            <label class="form-check-label" for="rolAdmin">Administrador</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rolRevisor" @bind="_rolRevisor" />
+            <label class="form-check-label" for="rolRevisor">Revisor</label>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="clave">Contraseña</label>
+        <input type="password" class="form-control" id="clave" @bind="_clave" />
+    </div>
+
+    <button type="button" class="btn btn-primary" @onclick="Editar">Guardar cambios</button>
+    <button type="button" class="btn btn-primary" @onclick="CancelarCambios">Cancelar</button>
+</form>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Usuario? _usuarioActual;
+    
+    private string _nombre = string.Empty;
+    private string _apellido = string.Empty;
+    private string _email = string.Empty;
+    private DateTime? _fecha;
+    private string _clave = string.Empty;
+    
+    private bool _rolAdmin;
+    private bool _rolRevisor;
+    
+    private bool _error;
+    private string _mensajeDeError = string.Empty;
+    
+    protected override void OnInitialized()
+    {
+        _usuarioActual = Sistema.BuscarUsuarioPorId(Id);
+        _nombre = _usuarioActual.Nombre;
+        _apellido = _usuarioActual.Apellido;
+        _email = _usuarioActual.Email.ToString();
+        _fecha = _usuarioActual.FechaNacimiento.ToDateTime();
+        _rolAdmin = _usuarioActual.TieneRol(Rol.Administrador);
+        _rolRevisor = _usuarioActual.TieneRol(Rol.Revisor);
+    }
+    
+    private void Editar()
+    {
+        List<Rol> roles = [];
+        if (_rolAdmin)   
+            roles.Add(Rol.Administrador);
+        if (_rolRevisor)
+            roles.Add(Rol.Revisor);  
+        
+        if (_fecha is null)
+        {
+            NotificarError("Alguno de los datos no es correcto. Volvé a ingresarlos.");
+            return;
+        }
+        
+        bool modificacionOk = Sistema.ModificarUsuario(_nombre, _apellido, _email, _fecha.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
+        
+        if (modificacionOk)
+        {
+            Nav.NavigateTo("/usuarios");
+        }
+        else
+        {
+            NotificarError("Alguno de los datos no es correcto.");
+            StateHasChanged();
+        }
+    }
+
+    private void NotificarError(string mensaje)
+    {
+        _error = true;
+        _mensajeDeError = mensaje;
+    }
+
+    private void CancelarCambios()
+    {
+        Nav.NavigateTo("/usuarios");
+    }
+}
