@@ -152,7 +152,11 @@ public class Sistema
 
         original.Titulo = dto.Titulo;
         original.Descripcion = dto.Descripcion;
+        original.Categoria = dto.Categoria;
+        original.Marca = dto.Marca;
+        original.Modelo = dto.Modelo;
     }
+
 
 
 
