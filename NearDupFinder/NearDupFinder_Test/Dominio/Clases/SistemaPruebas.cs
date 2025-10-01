@@ -162,7 +162,28 @@ public class SistemaPruebas
 
             Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
         }
+        [TestMethod]
+        public void AltaItem_AgregaItemAlCatalogo()
+        {
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+            sistema.AgregarCatalogo(catalogo);
 
+            var nuevoItem = new Item("Item 1", "Descripción 1");
+
+            sistema.AltaItem("Catálogo Test", nuevoItem);
+            var items = catalogo.Items;
+
+            Assert.AreEqual(1, items.Count);
+            Assert.AreEqual("Item 1", items.First().Titulo);
+            Assert.AreEqual("Descripción 1", items.First().Descripcion);
+        }
+        
+        
+        
+        
+        
+        
 
     }
 

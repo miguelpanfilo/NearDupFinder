@@ -156,9 +156,7 @@ public class Sistema
         original.Marca = dto.Marca;
         original.Modelo = dto.Modelo;
     }
-
-
-
+  
 
 
     /* Comienzo espacio Usuario*/

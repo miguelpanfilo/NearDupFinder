@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
+@using NearDupFinder_Dominio.Excepciones
 @inject Sistema sistema
 @inject NavigationManager Nav
 
@@ -65,35 +66,27 @@
 
     private void GuardarItem()
     {
-        if (string.IsNullOrWhiteSpace(_titulo) || string.IsNullOrWhiteSpace(_descripcion))
+        try
         {
-            _mensajeError = "Título y Descripción son obligatorios.";
-            return;
+            var nuevoItem = new Item
+            {
+                Titulo = _titulo,
+                Descripcion = _descripcion,
+                Categoria = string.IsNullOrWhiteSpace(_categoria) ? "" : _categoria,
+                Marca = string.IsNullOrWhiteSpace(_marca) ? "" : _marca,
+                Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
+            };
+
+            sistema.AltaItem(_catalogoSeleccionadoTitulo, nuevoItem);
+
+            Nav.NavigateTo("/lista-CRUD");
         }
-
-        var catalogo = sistema.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
-        if (catalogo == null)
+        catch (ItemException ex)
         {
-            _mensajeError = "Debe seleccionar un catálogo válido.";
-            return;
+            _mensajeError = ex.Message;
         }
-
-        var nuevoItem = new Item
-        {
-            Titulo = _titulo,
-            Descripcion = _descripcion,
-            Categoria = string.IsNullOrWhiteSpace(_categoria) ? "" : _categoria,
-            Marca = string.IsNullOrWhiteSpace(_marca) ? "" : _marca,
-            Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
-        };
-        catalogo.AgregarItem(nuevoItem);
-
-
-       
-
-
-        Nav.NavigateTo("/lista-CRUD");
     }
+
 
     private void Cancelar()
     {
