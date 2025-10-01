@@ -144,6 +144,7 @@ public class Sistema
     }
     /* Fin espacio Catalogo*/
 
+    // Inicio funciones de interfaz 
     public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
     {
         var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
@@ -156,8 +157,9 @@ public class Sistema
         original.Marca = dto.Marca;
         original.Modelo = dto.Modelo;
     }
-  
+   
 
+//Fin de funciones de interfaz 
 
     /* Comienzo espacio Usuario*/
     private Usuario CrearUsuarioAdmin()

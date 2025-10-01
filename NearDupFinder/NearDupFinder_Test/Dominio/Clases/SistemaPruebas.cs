@@ -178,7 +178,42 @@ public class SistemaPruebas
             Assert.AreEqual("Item 1", items.First().Titulo);
             Assert.AreEqual("Descripción 1", items.First().Descripcion);
         }
-        
+        [TestMethod]
+        [ExpectedException(typeof(ItemException))]
+        public void AltaItem_SinCatalogo_Excepcion()
+        {
+            
+            var sistema = new Sistema();
+            var nuevoItem = new Item("Item 1", "Desc");
+
+            sistema.AltaItem("Inexistente", nuevoItem);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ItemException))]
+        public void AltaItem_LanzaExcepcionSiTituloOVacio()
+        {
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+            sistema.AgregarCatalogo(catalogo);
+
+            var nuevoItem = new Item("", "Descripción 1"); 
+            sistema.AltaItem("Catálogo Test", nuevoItem);
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ItemException))]
+        public void AltaItem_DescripcionVacia_Excepcion()
+        {
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+            sistema.AgregarCatalogo(catalogo);
+
+            var nuevoItem = new Item("Titulo", ""); 
+            sistema.AltaItem("Catálogo Test", nuevoItem);
+        }
         
         
         
