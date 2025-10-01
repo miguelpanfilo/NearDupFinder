@@ -230,19 +230,9 @@
                 return;
             }
 
-            // 🔄 Actualizar dentro del catálogo seleccionado
-            var original = _catalogoSeleccionado.Items.FirstOrDefault(i => i.Id == _itemEditado.Id);
-            if (original != null)
-            {
-                original.Titulo = _itemEditado.Titulo;
-                original.Descripcion = _itemEditado.Descripcion;
-                original.Categoria = _itemEditado.Categoria;
-                original.Marca = _itemEditado.Marca;
-                original.Modelo = _itemEditado.Modelo;
-                ReconstruirCategorias();
+            sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
 
-            }
-
+            ReconstruirCategorias();
             AplicarFiltros();
 
             _mostrarModalEditar = false;
@@ -255,9 +245,8 @@
         {
             _mensajeErrorModal = ex.Message;
         }
-        
-        
     }
+
     private void ReconstruirCategorias()
     {
         if (_catalogoSeleccionado == null) return;

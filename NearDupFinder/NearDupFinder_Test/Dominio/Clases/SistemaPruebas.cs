@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Test.Dominio;
 
@@ -78,4 +79,91 @@ public class SistemaPruebas
     }
     
     
-}
+        [TestMethod]
+        public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
+        {
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+            var item = new Item("Original", "Descripcion original")
+            {
+                Categoria = "Cat 1",
+                Marca = "Marca 1",
+                Modelo = "Modelo 1"
+            };
+            catalogo.AgregarItem(item);
+
+            var dto = new ItemEditDataTransfer
+            {
+                Id = item.Id,
+                Titulo = "Nuevo Título",
+                Descripcion = "Nueva Descripción",
+                Categoria = "Cat 1",
+                Marca = "Marca 1",
+                Modelo = "Modelo 1"
+            };
+
+            sistema.ActualizarItemEnCatalogo(catalogo, dto);
+
+            Assert.AreEqual("Nuevo Título", item.Titulo);
+            Assert.AreEqual("Nueva Descripción", item.Descripcion);
+        }
+        
+        [TestMethod]
+        public void ActualizarItemEnCatalogo_ModificaCategoriaMarcaModelo()
+        {
+            
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+            var item = new Item("Original", "Descripcion original")
+            {
+                Categoria = "Cat 1",
+                Marca = "Marca 1",
+                Modelo = "Modelo 1"
+            };
+            catalogo.AgregarItem(item);
+
+            var dto = new ItemEditDataTransfer
+            {
+                Id = item.Id,
+                Titulo = "Original",
+                Descripcion = "Descripcion original",
+                Categoria = "Cat 2",
+                Marca = "Marca 2",
+                Modelo = "Modelo 2"
+            };
+
+            sistema.ActualizarItemEnCatalogo(catalogo, dto);
+
+            
+            Assert.AreEqual("Cat 2", item.Categoria);
+            Assert.AreEqual("Marca 2", item.Marca);
+            Assert.AreEqual("Modelo 2", item.Modelo);
+        }
+        [TestMethod]
+        public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
+        {
+            
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+
+            var dto = new ItemEditDataTransfer
+            {
+                Id = 999, // Id inexistente
+                Titulo = "Título",
+                Descripcion = "Descripcion",
+                Categoria = "Cat",
+                Marca = "Marca",
+                Modelo = "Modelo"
+            };
+
+            var ex = Assert.ThrowsException<ItemException>(
+                () => sistema.ActualizarItemEnCatalogo(catalogo, dto)
+            );
+
+            Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
+        }
+
+
+    }
+
+    

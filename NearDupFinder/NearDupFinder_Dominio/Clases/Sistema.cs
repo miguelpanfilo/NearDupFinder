@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Struct;
 
 namespace NearDupFinder_Dominio.Clases;
@@ -26,7 +27,7 @@ public struct Duplicados
 public class Sistema
 {
     private const string TokenPattern = @"\W+";
-    
+
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
 
@@ -37,11 +38,11 @@ public class Sistema
         PrecargarCatalogos();
 
     }
-    
-    
+
+
     private void PrecargarCatalogos()
-    { 
-        /*
+    {
+        
         var catalogoTecno = new Catalogo("Tecnología");
         catalogoTecno.AgregarItem(new Item
         {
@@ -100,13 +101,13 @@ public class Sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
+
+
         
-        
-        */
     }
 
 
-
+    //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
     public void AgregarCatalogo(Catalogo catalogo)
     {
@@ -114,24 +115,26 @@ public class Sistema
         {
             throw new ArgumentNullException(nameof(catalogo), "El parametro no puede ser null");
         }
+
         if (_catalogos.Contains(catalogo))
         {
             throw new InvalidOperationException("Ya existe un catálogo con ese título");
         }
 
-    _catalogos.Add(catalogo);
+        _catalogos.Add(catalogo);
     }
 
     public void EliminarCatalogo(Catalogo catalogo)
     {
-        if(catalogo is null) 
-            throw new ArgumentNullException(nameof(catalogo),"El parametro no puede ser null");
+        if (catalogo is null)
+            throw new ArgumentNullException(nameof(catalogo), "El parametro no puede ser null");
         if (!_catalogos.Contains(catalogo))
             throw new InvalidOperationException("No existe un catálogo con ese título");
         _catalogos.Remove(catalogo);
     }
-    
+
     public IReadOnlyCollection<Catalogo> Catalogos => _catalogos;
+
     public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
         => _catalogos.FirstOrDefault(c => c.Titulo == titulo);
 
@@ -140,21 +143,34 @@ public class Sistema
         return _catalogos.Count;
     }
     /* Fin espacio Catalogo*/
-    
-    
-    
-    
-    
+
+    public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
+    {
+        var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
+        if (original == null)
+            throw new ItemException("No se encontró el item a actualizar.");
+
+        original.Titulo = dto.Titulo;
+        original.Descripcion = dto.Descripcion;
+        original.Categoria = dto.Categoria;
+        original.Marca = dto.Marca;
+        original.Modelo = dto.Modelo;
+    }
+
+
+
+
+
     /* Comienzo espacio Usuario*/
     private Usuario CrearUsuarioAdmin()
     {
         Email email = Email.Crear("admin@gmail.com");
-        Fecha fecha = Fecha.Crear(1997,12,27);
-        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
+        Fecha fecha = Fecha.Crear(1997, 12, 27);
+        Usuario adminUsuario = Usuario.Crear("admin", "admin", email, fecha);
         adminUsuario.AgregarRol(Rol.Administrador);
         Contrasena contrasena = Contrasena.Crear("123QWEasdzxc@");
         adminUsuario.CambiarContrasena(contrasena);
-        
+
         return adminUsuario;
     }
 
@@ -175,14 +191,18 @@ public class Sistema
             if (usuario.Email.Igual(emailAValidar) && usuario.VerificarContrasena(clave))
                 return usuario;
         }
+
         return null;
     }
     /*Fin espacio usuario*/
-    
+    //------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------
+    // Inicio de deteccion de duplicados 
     public ItemTokenizado TokenizarItem(Item item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
-        
+
         return new ItemTokenizado
         {
             TokenTitulo = Tokenizar(item.Titulo),
@@ -197,21 +217,21 @@ public class Sistema
             .Where(t => t.Length > 1)
             .ToArray();
     }
-    
+
     public Item NormalizarItem(Item item)
     {
         // Normalizamos cada propiedad del item
         string tituloNormalizado = Normalizar(item.Titulo);
         string descripcionNormalizada = Normalizar(item.Descripcion);
-      
-       
+
+
 
         // Lanzar excepción si título o descripción quedan vacíos
         if (string.IsNullOrEmpty(tituloNormalizado) || string.IsNullOrEmpty(descripcionNormalizada))
         {
             throw new InvalidOperationException("El título y la descripción no pueden quedar vacío tras normalizar.");
         }
-        
+
         string marcaNormalizada = Normalizar(item.Marca);
         string modeloNormalizada = Normalizar(item.Modelo);
         string categoriaNormalizada = Normalizar(item.Categoria);
@@ -225,8 +245,8 @@ public class Sistema
             Modelo = modeloNormalizada,
             Categoria = categoriaNormalizada
         };
-        
-   
+
+
     }
 
     public string Normalizar(string texto)
@@ -246,9 +266,9 @@ public class Sistema
 
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
-        return texto; 
-        
-        
+        return texto;
+
+
     }
 
     public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
@@ -271,14 +291,14 @@ public class Sistema
     {
         ArgumentNullException.ThrowIfNull(tokens1);
         ArgumentNullException.ThrowIfNull(tokens2);
-        
+
         float numTokensUnion = CalcularNumTokensUnion(tokens1, tokens2);
         if (numTokensUnion == 0)
             return 0;
 
         float numTokensInterseccion = CalcularNumTokensInterseccion(tokens1, tokens2);
         float valorJaccard = numTokensInterseccion / numTokensUnion;
-        
+
         return valorJaccard;
     }
 
@@ -290,10 +310,10 @@ public class Sistema
             throw new ArgumentOutOfRangeException();
 
         float score = 0.45f * jaccardTitulo + 0.35f * jaccardDescripcion + 0.10f * marcaEq + 0.10f * modeloEq;
-        
+
         return score;
     }
-    
+
     private static int IgualdadBinaria(string a, string b)
     {
         if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
@@ -305,20 +325,21 @@ public class Sistema
     public List<Duplicados> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         List<Duplicados> listaDuplicados = new List<Duplicados>();
-        
+
         Item itemNormalizadoA = NormalizarItem(itemA);
         ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
 
         foreach (Item itemB in catalogo.Items)
         {
-            if (itemB.Id == itemA.Id) 
+            if (itemB.Id == itemA.Id)
                 continue;
-            
+
             Item itemNormalizadoB = NormalizarItem(itemB);
             ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
             float jaccardTitulo = CalcularJaccard(itemTokenizadoA.TokenTitulo, itemTokenizadoB.TokenTitulo);
-            float jaccardDescripcion = CalcularJaccard(itemTokenizadoA.TokenDescripcion, itemTokenizadoB.TokenDescripcion);
+            float jaccardDescripcion =
+                CalcularJaccard(itemTokenizadoA.TokenDescripcion, itemTokenizadoB.TokenDescripcion);
 
             int scoreMarca = IgualdadBinaria(itemNormalizadoA.Marca, itemNormalizadoB.Marca);
             int scoreModelo = IgualdadBinaria(itemNormalizadoA.Modelo, itemNormalizadoB.Modelo);
@@ -327,8 +348,10 @@ public class Sistema
 
             if (score >= 0.60f)
             {
-                string[] tokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
-                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
+                string[] tokensCompartidosTitulo =
+                    itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
+                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion
+                    .Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
 
                 Duplicados duplicado = new Duplicados
                 {
@@ -350,7 +373,7 @@ public class Sistema
                 listaDuplicados.Add(duplicado);
             }
         }
-        
+
         listaDuplicados.Sort((x, y) =>
         {
             int c = y.Score.CompareTo(x.Score);
@@ -360,6 +383,8 @@ public class Sistema
 
         return listaDuplicados;
     }
-    
-    
+//--------------------------------------------------------------
+//Fin de deteccion de duplicados 
+
+
 }
