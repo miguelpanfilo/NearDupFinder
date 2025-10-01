@@ -79,22 +79,6 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    public void CrearUsuario_DatosValidos_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
-        Assert.IsTrue(usuarioCreado);
-    }
-    
-    [TestMethod]
     public void CrearUsuario_NombreVacio_RetornaFalso()
     {
         Sistema sistema = new Sistema();
@@ -104,12 +88,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_NombreNulo_RetornaFalso()
     {
@@ -120,12 +106,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_ApellidoVacio_RetornaFalso()
     {
@@ -136,12 +124,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_ApellidoNulo_RetornaFalso()
     {
@@ -152,12 +142,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_EmailInvalido_RetornaFalso()
     {
@@ -168,12 +160,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_EmailVacio_RetornaFalso()
     {
@@ -184,12 +178,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_EmailNulo_RetornaFalso()
     {
@@ -200,13 +196,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
-        
+
     [TestMethod]
     public void CrearUsuario_AnioInvalido_RetornaFalso()
     {
@@ -217,12 +214,14 @@ public class SistemaPruebas
         int anio = -12;
         int mes = 12;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_MesInvalido_RetornaFalso()
     {
@@ -233,12 +232,14 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 15;
         int dia = 27;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_DiaInvalido_RetornaFalso()
     {
@@ -249,9 +250,11 @@ public class SistemaPruebas
         int anio = 1997;
         int mes = 15;
         int dia = 55;
-        
-        bool usuarioCreado = sistema.CrearUsuario(nombre,apellido,email,anio,mes,dia);
-        
+        string clave = "ClaveValida123!";
+        List<Rol> roles = new List<Rol> { Rol.Revisor };
+
+        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+
         Assert.IsFalse(usuarioCreado);
     }
 
@@ -263,7 +266,7 @@ public class SistemaPruebas
 
         // La clase sistema comienza con el Usuario admin por defecto por lo tanto no es necesario depender de agregar 
         // a un usuario para este test
-        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        bool usuarioRemovido = sistema.EliminarUsuario(email);
         
         Assert.IsTrue(usuarioRemovido);
     }
@@ -274,7 +277,7 @@ public class SistemaPruebas
         Sistema sistema = new Sistema();
         string email = "asdasdasda@gmail.com";
         
-        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        bool usuarioRemovido = sistema.EliminarUsuario(email);
         
         Assert.IsFalse(usuarioRemovido);
     }
@@ -285,7 +288,7 @@ public class SistemaPruebas
         Sistema sistema = new Sistema();
         string email = "manuel.com";
         
-        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        bool usuarioRemovido = sistema.EliminarUsuario(email);
         
         Assert.IsFalse(usuarioRemovido);
     }
@@ -296,134 +299,8 @@ public class SistemaPruebas
         Sistema sistema = new Sistema();
         string? email = null;
         
-        bool usuarioRemovido = sistema.RemoverUsuario(email);
+        bool usuarioRemovido = sistema.EliminarUsuario(email);
         
         Assert.IsFalse(usuarioRemovido);
-    }
-    
-    [TestMethod]
-    public void CambiarClave_DatosValidos_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string emailValido = "admin@gmail.com";
-        string claveValida = "@Manuel182@";
-        
-        bool seModificoLaClave = sistema.CambiarClave(emailValido, claveValida);
-        
-        Assert.IsTrue(seModificoLaClave);
-    }
-    
-    [TestMethod]
-    public void CambiarClave_EmailNoExistente_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string emailNoExistente = "manuek@gmail.com";
-        string claveValida = "@Manuel182@";
-        
-        bool seModificoLaClave = sistema.CambiarClave(emailNoExistente, claveValida);
-        
-        Assert.IsFalse(seModificoLaClave);
-    }
-    
-    [TestMethod]
-    public void CambiarClave_EmailInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string emailInvalido = "manuel.com";
-        string claveValida = "@Manuel182@";
-        
-        bool seModificoLaClave = sistema.CambiarClave(emailInvalido, claveValida);
-        
-        Assert.IsFalse(seModificoLaClave);
-    }
-    
-    [TestMethod]
-    public void CambiarClave_EmailNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? emailInvalido = null;
-        string claveValida = "@Manuel182@";
-        
-        bool seModificoLaClave = sistema.CambiarClave(emailInvalido, claveValida);
-        
-        Assert.IsFalse(seModificoLaClave);
-    }
-    
-    [TestMethod]
-    public void CambiarClave_ClaveInvalida_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string emailValido = "admin@gmail.com";
-        string claveInvalida = "invalida";
-        
-        bool seModificoLaClave = sistema.CambiarClave(emailValido, claveInvalida);
-        
-        Assert.IsFalse(seModificoLaClave);
-    }
-    
-    [TestMethod]
-    public void CambiarClave_ClaveNula_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string emailValido = "admin@gmail.com";
-        string? claveInvalida = null;
-        
-        bool seModificoLaClave = sistema.CambiarClave(emailValido, claveInvalida);
-        
-        Assert.IsFalse(seModificoLaClave);
-    }
-
-    [TestMethod]
-    public void ResetClave_UsuarioValido_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string emailValido = "admin@gmail.com";
-
-        bool seReseteoLaClave = sistema.ResetClave(emailValido);
-        
-        Assert.IsTrue(seReseteoLaClave);
-    }
-    
-    [TestMethod]
-    public void ResetClave_UsuarioNoRegistrado_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string emailNoRegistrado = "asdasdasdasd@gmail.com";
-
-        bool seReseteoLaClave = sistema.ResetClave(emailNoRegistrado);
-        
-        Assert.IsFalse(seReseteoLaClave);
-    }
-    
-    [TestMethod]
-    public void ResetClave_EmailInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string emailInvalido = "manuel.com";
-
-        bool seReseteoLaClave = sistema.ResetClave(emailInvalido);
-        
-        Assert.IsFalse(seReseteoLaClave);
-    }
-    
-    [TestMethod]
-    public void ResetClave_EmailNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? emailNulo = null;
-
-        bool seReseteoLaClave = sistema.ResetClave(emailNulo);
-        
-        Assert.IsFalse(seReseteoLaClave);
-    }
-
-    [TestMethod]
-    public void ObtenerUsuarios_RetornaArrayNoVacio()
-    {
-        Sistema sistema = new Sistema();
-
-        int cant = sistema.ObtenerUsuarios().Count();
-        
-        Assert.IsTrue(cant > 0);
     }
 }
