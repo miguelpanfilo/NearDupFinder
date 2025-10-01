@@ -147,8 +147,7 @@ public class Sistema
     public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
     {
         var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
-        if (original == null)
-            throw new ItemException("No se encontró el item a actualizar.");
+        
 
         original.Titulo = dto.Titulo;
         original.Descripcion = dto.Descripcion;

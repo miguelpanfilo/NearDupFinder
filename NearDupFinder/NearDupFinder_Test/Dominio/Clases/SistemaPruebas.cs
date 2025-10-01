@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Test.Dominio;
 
@@ -138,6 +139,30 @@ public class SistemaPruebas
             Assert.AreEqual("Marca 2", item.Marca);
             Assert.AreEqual("Modelo 2", item.Modelo);
         }
+        [TestMethod]
+        public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
+        {
+            
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+
+            var dto = new ItemEditDataTransfer
+            {
+                Id = 999, // Id inexistente
+                Titulo = "Título",
+                Descripcion = "Descripcion",
+                Categoria = "Cat",
+                Marca = "Marca",
+                Modelo = "Modelo"
+            };
+
+            var ex = Assert.ThrowsException<ItemException>(
+                () => sistema.ActualizarItemEnCatalogo(catalogo, dto)
+            );
+
+            Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
+        }
+
 
     }
 
