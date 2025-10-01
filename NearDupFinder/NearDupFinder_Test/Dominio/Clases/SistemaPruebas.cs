@@ -78,4 +78,35 @@ public class SistemaPruebas
     }
     
     
+        [TestMethod]
+        public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
+        {
+            var sistema = new Sistema();
+            var catalogo = new Catalogo("Catálogo Test");
+            var item = new Item("Original", "Descripcion original")
+            {
+                Categoria = "Cat 1",
+                Marca = "Marca 1",
+                Modelo = "Modelo 1"
+            };
+            catalogo.AgregarItem(item);
+
+            var dto = new ItemEditDataTransfer
+            {
+                Id = item.Id,
+                Titulo = "Nuevo Título",
+                Descripcion = "Nueva Descripción",
+                Categoria = "Cat 1",
+                Marca = "Marca 1",
+                Modelo = "Modelo 1"
+            };
+
+            sistema.ActualizarItemEnCatalogo(catalogo, dto);
+
+            Assert.AreEqual("Nuevo Título", item.Titulo);
+            Assert.AreEqual("Nueva Descripción", item.Descripcion);
+        }
+    }
+
+    
 }
