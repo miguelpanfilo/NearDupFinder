@@ -19,6 +19,23 @@ public class UsuarioPruebas
     }
     
     [TestMethod]
+    public void Crear_ConDatosValidos_DevuelveInstancia_ConIdValido()
+    {
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997,12,27);
+        Usuario usuario = Usuario.Crear("Manuel","Perez",email,fecha);
+        Email email2 = Email.Crear("juanperezmartirene@gmail.com");
+        Fecha fecha2 = Fecha.Crear(200,12,18);
+        Usuario usuario2 = Usuario.Crear("Juan","Perez",email2,fecha2);
+
+        int id = usuario.Id;
+        int id2 = usuario2.Id;
+        int diferencia = id2 - id;
+        
+        Assert.AreEqual(1,diferencia);
+    }
+    
+    [TestMethod]
     public void Crear_EmailNulo_LanzaArgumentNullException()
     {
         Fecha fecha = Fecha.Crear(1997, 12, 27);
