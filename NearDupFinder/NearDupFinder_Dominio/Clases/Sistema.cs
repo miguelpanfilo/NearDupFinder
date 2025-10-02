@@ -37,7 +37,9 @@ public class Sistema
         _usuarios.Add(CrearUsuarioAdmin());
         PrecargarCatalogos();
     }
-    // USUARIOS
+
+    //------------------------------------------------------------------------//
+    /* Comienzo espacio Usuarios*/
     private Usuario CrearUsuarioAdmin()
     {
         Email email = Email.Crear("admin@gmail.com");
@@ -102,12 +104,12 @@ public class Sistema
         return null;
     }
 
-    // La contraseña es opcional, en caso que no se ingrese no se cambia.
     public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol>? roles)
     {
         Email correo;
         Fecha fecha;
         Usuario? usuarioAModificar;
+        // La contraseña es opcional, en caso que no se ingrese no se cambia.
         Contrasena? contrasena = null;
         try
         {
@@ -200,10 +202,14 @@ public class Sistema
         
         return true;
     }
+    //------------------------------------------------------------------------
+    /* Fin espacio Usuario */
+
+    //------------------------------------------------------------------------
+    /* Comienzo espacio Catalogo*/
     
     private void PrecargarCatalogos()
     {
-        
         var catalogoTecno = new Catalogo("Tecnología");
         catalogoTecno.AgregarItem(new Item
         {
@@ -262,14 +268,7 @@ public class Sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
-
-
-        
     }
-
-
-    //------------------------------------------------------------------------
-    /* Comienzo espacio Catalogo*/
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (catalogo is null)
@@ -303,9 +302,11 @@ public class Sistema
     {
         return _catalogos.Count;
     }
+    //------------------------------------------------------------------------
     /* Fin espacio Catalogo*/
-
-    // Inicio funciones de interfaz 
+    
+    //------------------------------------------------------------------------
+    // Inicio espacio Item 
     public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
     {
         var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
@@ -329,10 +330,11 @@ public class Sistema
 
         catalogo.AgregarItem(nuevoItem);
     }
-
-//Fin de funciones de interfaz 
 //------------------------------------------------------------------------
-    // Inicio de deteccion de duplicados 
+/* Fin espacio Items */
+
+//------------------------------------------------------------------------
+/* Inicio de deteccion de duplicados */
     public ItemTokenizado TokenizarItem(Item item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
@@ -358,8 +360,6 @@ public class Sistema
         string tituloNormalizado = Normalizar(item.Titulo);
         string descripcionNormalizada = Normalizar(item.Descripcion);
 
-
-
         // Lanzar excepción si título o descripción quedan vacíos
         if (string.IsNullOrEmpty(tituloNormalizado) || string.IsNullOrEmpty(descripcionNormalizada))
         {
@@ -379,8 +379,6 @@ public class Sistema
             Modelo = modeloNormalizada,
             Categoria = categoriaNormalizada
         };
-
-
     }
 
     public string Normalizar(string texto)
@@ -401,8 +399,6 @@ public class Sistema
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
         return texto;
-
-
     }
 
     public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
@@ -518,6 +514,6 @@ public class Sistema
         return listaDuplicados;
     }
 //--------------------------------------------------------------
-//Fin de deteccion de duplicados 
+/* Fin de deteccion de duplicados */
 
 }
