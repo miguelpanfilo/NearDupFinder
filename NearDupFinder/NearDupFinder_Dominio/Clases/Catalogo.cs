@@ -37,7 +37,8 @@ public class Catalogo
         if (string.IsNullOrWhiteSpace(titulo))
         {
             throw new ArgumentException("El titulo es obligatorio");
-        }else if (titulo.Length > tituloMaxLength)
+        }
+        if (titulo.Length > tituloMaxLength)
         {
             throw new ArgumentException($"El titulo debe tener entre 1 y {tituloMaxLength} caracteres");
         }
