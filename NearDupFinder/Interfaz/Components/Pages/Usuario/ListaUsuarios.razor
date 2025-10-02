@@ -9,7 +9,10 @@
 
 <div class="d-flex align-items-center mb-3">
     <h1 class="h1 mb-0">Usuarios</h1>
-    <a href="/crear-usuario" class="btn btn-success btn-sm ms-auto">Crear usuario</a>
+    <a href="/crear-usuario" class="btn btn-success btn-sm ms-auto">
+        <i class="bi bi-person-plus me-1"></i>
+        Crear usuario
+    </a>
 </div>
 
 <div class="table-responsive">
@@ -45,8 +48,17 @@
                 </td>
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
-                        <a class="btn btn-primary btn-sm" href="usuarios/@usuario.Id/editar">Editar</a>
-                        <button class="btn btn-danger btn-sm" @onclick="(() => EliminarUsuario(usuario.Email))">Eliminar</button>
+                        <a class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
+                           href="usuarios/@usuario.Id/editar"
+                           aria-label="Editar" title="Editar">
+                            <i class="bi bi-pencil-square fs-6 lh-1"></i>
+                        </a>
+
+                        <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                @onclick="(() => EliminarUsuario(usuario.Email))"
+                                aria-label="Eliminar" title="Eliminar">
+                            <i class="bi bi-trash3 fs-6 lh-1"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
