@@ -118,4 +118,56 @@ public class TestCrudCatalogo
         var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.EliminarCatalogo(c));
         StringAssert.Contains(ex.Message, "No existe un catálogo con ese título");
     }
+    
+    [TestMethod]
+    public void CambiarTituloCatalogo_Ok()
+    {
+        var c = new Catalogo("Original");
+        _sistema.AgregarCatalogo(c);
+        
+        _sistema.CambiarTituloCatalogo(c, "NuevoTitulo");
+        
+        Assert.AreEqual("NuevoTitulo", c.Titulo);
+    }
+    
+    [TestMethod]
+    public void CambiarTituloCatalogo_TituloYaExiste_Falla()
+    {
+        // Arrange
+        var c1 = new Catalogo("Cat1");
+        var c2 = new Catalogo("Cat2");
+        _sistema.AgregarCatalogo(c1);
+        _sistema.AgregarCatalogo(c2);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<InvalidOperationException>(
+            () => _sistema.CambiarTituloCatalogo(c1, "Cat2")
+        );
+        StringAssert.Contains(ex.Message, "El Título del catálogo ya existe");
+    }
+    
+    [TestMethod]
+    public void CambiarTituloCatalogo_TituloMismoCatalogo_NoFalla()
+    {
+        
+        var c = new Catalogo("Cat1");
+        _sistema.AgregarCatalogo(c);
+
+        _sistema.CambiarTituloCatalogo(c, "Cat1"); 
+        
+        Assert.AreEqual("Cat1", c.Titulo); 
+    }
+    
+    [TestMethod]
+    public void CambiarTituloCatalogo_NoExisteCatalogo_Falla()
+    {
+        
+        var c = new Catalogo("CatDesconocido");
+        
+        var ex = Assert.ThrowsException<InvalidOperationException>(
+            () => _sistema.CambiarTituloCatalogo(c, "NuevoTitulo")
+        );
+
+        StringAssert.Contains(ex.Message, "No existe un catálogo con ese título");
+    }
 }
