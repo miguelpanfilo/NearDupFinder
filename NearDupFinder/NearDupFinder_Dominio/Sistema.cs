@@ -76,12 +76,13 @@ public class Sistema
         return null;
     }
 
+    // La contraseña es opcional, en caso que no se ingrese no se cambia.
     public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol>? roles)
     {
         Email correo;
         Fecha fecha;
         Usuario? usuarioAModificar;
-        Contrasena contrasena;
+        Contrasena? contrasena = null;
         try
         {
             correo = Email.Crear(email);
@@ -90,7 +91,8 @@ public class Sistema
                 return false;
             
             fecha = Fecha.Crear(anio,mes,dia);
-            contrasena = Contrasena.Crear(clave);
+            if(!string.IsNullOrWhiteSpace(clave))
+                contrasena = Contrasena.Crear(clave);
         }
         catch
         {
@@ -103,11 +105,33 @@ public class Sistema
         usuarioAModificar.Nombre = nombre;
         usuarioAModificar.Apellido = apellido;
         usuarioAModificar.FechaNacimiento = fecha;
-        usuarioAModificar.CambiarContrasena(contrasena);
         usuarioAModificar.ObtenerRoles().Except(roles).ToList().ForEach(r => usuarioAModificar.RemoverRol(r));
         roles.Except(usuarioAModificar.ObtenerRoles()).ToList().ForEach(r => usuarioAModificar.AgregarRol(r));
         
+        if(!string.IsNullOrWhiteSpace(clave))
+            usuarioAModificar.CambiarContrasena(contrasena);
+        
         return true;
+    }
+    
+    public bool ModificarClave(string? email, string? clave)
+    {
+        Email correo;
+        Contrasena contrasena;
+        try
+        {
+            correo = Email.Crear(email);
+            contrasena = Contrasena.Crear(clave);
+        }
+        catch
+        {
+            return false;
+        }
+        Usuario? usuario = BuscarUsuarioPorEmail(correo);
+        if (usuario is null)
+            return false;
+
+        return usuario.CambiarContrasena(contrasena);
     }
     
     public Usuario? AutenticarUsuario(string? email, string? clave)
