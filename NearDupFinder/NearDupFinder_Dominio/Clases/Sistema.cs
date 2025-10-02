@@ -211,6 +211,7 @@ public class Sistema
     private void PrecargarCatalogos()
     {
         var catalogoTecno = new Catalogo("Tecnología");
+        catalogoTecno.CambiarDescripcion("Componentes eletronicos");
         catalogoTecno.AgregarItem(new Item
         {
             Titulo = "Laptop HP",
@@ -229,6 +230,7 @@ public class Sistema
         });
 
         var catalogoHogar = new Catalogo("Hogar");
+        catalogoHogar.CambiarDescripcion("Electrodomesticos de Hogar");
         catalogoHogar.AgregarItem(new Item
         {
             Titulo = "Silla de comedor",
@@ -247,6 +249,7 @@ public class Sistema
         });
 
         var catalogoDeportes = new Catalogo("Deportes");
+        catalogoDeportes.CambiarDescripcion("Actividades deportivas, y equipo para hacer deporte");
         catalogoDeportes.AgregarItem(new Item
         {
             Titulo = "Bicicleta",
@@ -292,11 +295,27 @@ public class Sistema
             throw new InvalidOperationException("No existe un catálogo con ese título");
         _catalogos.Remove(catalogo);
     }
+    //agregue CambiarTituloCatalogo Testearlo falta 
+    public void CambiarTituloCatalogo(Catalogo catalogo, string titulo)
+    {
+        var candidatoCata = ObtenerCatalogoPorTitulo(titulo);
+        if (candidatoCata != null && !ReferenceEquals(candidatoCata, catalogo))
+        {
+            throw new InvalidOperationException("El Título del catálogo ya existe");
+        }
 
-    public IReadOnlyCollection<Catalogo> Catalogos => _catalogos;
+        if (candidatoCata == null)
+        {
+            throw new InvalidOperationException("No existe un catálogo con ese título");
+        }
 
+        catalogo.CambiarTitulo(titulo);
+    }
+    public IReadOnlyCollection<Catalogo> Catalogos => _catalogos.AsReadOnly();
+
+    //refactor en obtenerCatalogoPorTitulo
     public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
-        => _catalogos.FirstOrDefault(c => c.Titulo == titulo);
+        => _catalogos.FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
 
     public int CantidadDeCatalogos()
     {
