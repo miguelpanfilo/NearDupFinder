@@ -1,0 +1,124 @@
+@page "/CrearCatalogo"
+@rendermode InteractiveServer
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@inject Sistema Sistema
+
+
+<PageTitle>Alta de Catalogo</PageTitle>
+
+
+
+<h3 class="mt-3">Crear nuevo catalogo</h3>
+
+@if(_error)
+{
+    <div class="alert alert-danger" role="alert">
+        @_mensajeDeError
+    </div>
+}
+
+<form>
+    <div class="form-group">
+        <label for="titulo">Titulo</label>
+        <input type="text" class="form-control" id="titulo" @bind="_titulo"/>
+    </div>
+
+    <div class="form-group">
+        <label for="Descripcion">Descripcion</label>
+        <textarea type="text" class="form-control" id="descripcion" @bind="_descripcion" rows="5"></textarea>
+    </div>
+    
+    <button type="button" class="btn btn-primary mt-3" @onclick="(() => OnCrearCatalogoClick())">Guardar cambios</button>
+    <button type="button" class="btn btn-secondary mt-3" @onclick="CancelarCambios">Limpiar Campos</button>
+</form>
+
+<h3 class="mt-3">Catalogos</h3>
+
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Titulo</th>
+        <th>Descripcion</th>
+        <th style="width:160px;">Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var catalogo in _catalogos!)
+    {
+        <tr>
+            <td>@catalogo.Titulo</td>
+            <td>@catalogo.Descripcion</td>
+            <td>
+        
+                <a class="btn btn-primary btn-sm mt-1" href="catalogos/@catalogo.Titulo/editar/">Editar</a>
+                
+                <button class="btn btn-danger btn-sm mt-1" @onclick="(() => EliminarCatalogo(catalogo))">Eliminar</button>
+        
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    
+    private IReadOnlyCollection<Catalogo>? _catalogos;
+    private string _titulo = string.Empty;
+    private string _descripcion = string.Empty;
+    
+   
+    private bool _error;
+    private string _mensajeDeError = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _catalogos = Sistema.Catalogos;
+    }
+
+    public void EliminarCatalogo(Catalogo catalogo)
+    {
+        Sistema.EliminarCatalogo(catalogo);
+        StateHasChanged();
+    }
+
+    private void OnCrearCatalogoClick()
+    {
+        try
+        {
+            var catalogo = new Catalogo(_titulo);
+            catalogo.CambiarDescripcion(_descripcion);
+            Sistema.AgregarCatalogo(catalogo);
+            _error = false;
+            LimpiarCampos();
+            StateHasChanged();
+        }catch (InvalidOperationException ex)
+        {
+            NotificarError(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            NotificarError(ex.Message);
+        }
+    }
+
+    public void CancelarCambios()
+    {
+        LimpiarCampos();
+    }
+    
+    private void LimpiarCampos()
+    {
+        _titulo = string.Empty;
+        _descripcion = string.Empty;
+    }
+    private void NotificarError(string mensaje)
+    {
+        _error = true;
+        _mensajeDeError = mensaje;
+    }
+
+
+
+}
