@@ -544,6 +544,131 @@ public class SistemaPruebas
 
         Assert.IsFalse(modificado);
     }
+    
+    [TestMethod]
+    public void ModificarClave_CamposValidos_RetornaVerdadero()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsTrue(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_UsuarioInexistente_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "noexiste@gmail.com";
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_EmailInvalido_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin.gmail.com";
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_EmailVacio_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "";
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_EmailNulo_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string? email = null;
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_ClaveInvalida_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+        string claveNueva = "invalida";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_ClaveVacia_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+        string claveNueva = "";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_ClaveNula_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+        string? claveNueva = null;
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+
+        Assert.IsFalse(modificado);
+    }
+
+    [TestMethod]
+    public void ModificarClave_CambiaClave_PermiteAutenticarConNuevaClave()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+        Usuario? admin = sistema.AutenticarUsuario(email, claveNueva);
+
+        Assert.IsTrue(modificado);
+        Assert.IsNotNull(admin);
+    }
+
+    [TestMethod]
+    public void ModificarClave_CambiaClave_NoPermiteAutenticarConClaveVieja()
+    {
+        Sistema sistema = new Sistema();
+        string email = "admin@gmail.com";
+        string claveVieja = "123QWEasdzxc@";
+        string claveNueva = "NuevaClaveValida123!";
+
+        bool modificado = sistema.ModificarClave(email, claveNueva);
+        Usuario? conVieja = sistema.AutenticarUsuario(email, claveVieja);
+
+        Assert.IsTrue(modificado);
+        Assert.IsNull(conVieja);
+    }
 
     [TestMethod]
     public void AutenticoUsuario_Correto_RetornaUsuario()
