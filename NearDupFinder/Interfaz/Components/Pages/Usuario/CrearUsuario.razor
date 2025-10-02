@@ -6,40 +6,41 @@
 @attribute [Authorize(Roles = "Administrador")]
 @inject NavigationManager Nav
 
-<PageTitle>Alta de Usuario</PageTitle>
+<PageTitle>Crear Usuario</PageTitle>
 
 @if(_error)
 {
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
         @_mensajeDeError
+        <button type="button" class="btn-close" @onclick="CerrarAlerta" aria-label="Cerrar"></button>
     </div>
 }
 
-<h1>Crear nuevo usuario</h1>
+<h1 class="mb-3">Crear usuario</h1>
 
 <form>
-    <div class="form-group">
-        <label for="nombre">Nombre</label>
+    <div class="mb-3">
+        <label class="form-label" for="nombre">Nombre</label>
         <input type="text" class="form-control" id="nombre" @bind="_nombre" />
     </div>
 
-    <div class="form-group">
-        <label for="apellido">Apellido</label>
+    <div class="mb-3">
+        <label class="form-label" for="apellido">Apellido</label>
         <input type="text" class="form-control" id="apellido" @bind="_apellido" />
     </div>
     
-    <div class="form-group">
-        <label for="email">Email</label>
+    <div class="mb-3">
+        <label class="form-label" for="email">Email</label>
         <input type="email" class="form-control" id="email" @bind="_email" />
     </div>
 
-    <div class="form-group">
-        <label for="fecha">Fecha de nacimiento</label>
+    <div class="mb-3">
+        <label class="form-label" for="fecha">Fecha de nacimiento</label>
         <input type="date" class="form-control" id="fecha" @bind="_fecha" />
     </div>
     
-    <div class="form-group">
-        <label>Roles</label>
+    <div class="mb-3">
+        <label class="form-label">Roles</label>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="rolAdmin" @bind="_rolAdmin" />
             <label class="form-check-label" for="rolAdmin">Administrador</label>
@@ -51,13 +52,15 @@
         </div>
     </div>
     
-    <div class="form-group">
-        <label for="clave">Contraseña</label>
+    <div class="mb-3">
+        <label class="form-label" for="clave">Contraseña</label>
         <input type="password" class="form-control" id="clave" @bind="_clave" />
     </div>
-
-    <button type="button" class="btn btn-primary" @onclick="CrearNuevoUsuario">Guardar cambios</button>
-    <button type="button" class="btn btn-primary" @onclick="CancelarCambios">Cancelar</button>
+    
+    <div class="mt-3 d-flex gap-2">
+        <button type="button" class="btn btn-primary" @onclick="CrearNuevoUsuario">Guardar cambios</button>
+        <button type="button" class="btn btn-secondary" @onclick="CancelarCambios">Cancelar</button>
+    </div>
 </form>
 
 @code {
@@ -78,7 +81,6 @@
         if (_fecha is null)
         {
             NotificarError("Alguno de los datos no es correcto. Volvé a ingresarlos.");
-            LimpiarCampos();
             return;
         }
         
@@ -97,7 +99,6 @@
         else
         {
             NotificarError("Alguno de los datos no es correcto.");
-            LimpiarCampos();
             StateHasChanged();
         }
     }
@@ -108,19 +109,14 @@
         _mensajeDeError = mensaje;
     }
 
-    private void LimpiarCampos()
-    {
-        _nombre = string.Empty;
-        _apellido = string.Empty;
-        _email = string.Empty;
-        _fecha = null;
-        _clave = string.Empty;
-        _rolAdmin = false; 
-        _rolRevisor = false;
-    }
-
     private void CancelarCambios()
     {
         Nav.NavigateTo("/usuarios");
+    }
+    
+    private void CerrarAlerta()
+    {
+        _error = false;
+        _mensajeDeError = string.Empty;
     }
 }
