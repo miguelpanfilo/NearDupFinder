@@ -1,0 +1,260 @@
+@page "/lista-CRUD"
+@using NearDupFinder_Dominio
+@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_Dominio.Excepciones
+@inject NavigationManager Nav
+@inject Sistema sistema
+@rendermode InteractiveServer
+
+<h3>Lista de Items por Catálogo</h3>
+
+<!-- Selector de Catálogo -->
+<div class="mb-3">
+    <label for="catalogoSelect">Seleccionar Catálogo:</label>
+    <select id="catalogoSelect" class="form-select mb-2" 
+            @bind="_catalogoSeleccionadoTitulo" 
+            @bind:after="CargarItemsDeCatalogo">
+        <option value="">-- Seleccione un catálogo --</option>
+        @foreach (var cat in sistema.Catalogos)
+        {
+            <option value="@cat.Titulo">@cat.Titulo</option>
+        }
+    </select>
+</div>
+
+@if (_catalogoSeleccionado != null)
+{
+    <!-- Filtros -->
+    <div class="mb-3">
+        <input type="text" @bind="_textoBusqueda" placeholder="Buscar por título o descripción" class="form-control mb-2" />
+
+        <select class="form-select mb-2" @bind="_categoriaAFiltrar">
+            <option value="">-- Todas las categorías --</option>
+            @foreach (var cat in _categorias)
+            {
+                <option value="@cat">@cat</option>
+            }
+        </select>
+
+        <button class="btn btn-primary me-2" @onclick="AplicarFiltros">Filtrar</button>
+        <button class="btn btn-secondary" @onclick="LimpiarFiltros">Limpiar</button>
+    </div>
+
+    <!-- Tabla -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Estado Duplicado</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in _itemsFiltradosEnTabla)
+        {
+            <tr>
+                <td>@item.Titulo</td>
+                <td>@item.Descripcion</td>
+                <td>@item.Categoria</td>
+                <td>@(item.EstadoDuplicado ?? "No disponible")</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => AbrirModalEditar(item)">Editar</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<!-- Modal para editar item -->
+@if (_mostrarModalEditar)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Item</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(_mensajeErrorModal))
+                    {
+                        <div class="alert alert-danger">@_mensajeErrorModal</div>
+                    }
+                    <div class="mb-3">
+                        <label>Título:</label>
+                        <input class="form-control" @bind="_itemEditado.Titulo"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Descripción:</label>
+                        <input class="form-control" @bind="_itemEditado.Descripcion"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Categoría:</label>
+                        <input class="form-control" @bind="_itemEditado.Categoria"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Marca:</label>
+                        <input class="form-control" @bind="_itemEditado.Marca"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Modelo:</label>
+                        <input class="form-control" @bind="_itemEditado.Modelo"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @onclick="GuardarCambios">Guardar</button>
+                    <button class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    //----------------------------------------------------------------------------------------------
+    // Variables
+    private string _mensajeErrorModal = "";
+    private bool _mostrarModalEditar = false;
+    private ItemEditDataTransfer _itemEditado;
+
+    public Catalogo? _catalogoSeleccionado;
+    private string _catalogoSeleccionadoTitulo = "";
+
+    private List<Item> _itemsFiltradosEnTabla = new();
+    private List<string> _categorias = new();
+
+    private string _textoBusqueda = string.Empty;
+    private string _categoriaAFiltrar = string.Empty;
+
+    //----------------------------------------------------------------------------------------------
+    // Lógica
+    private void CargarItemsDeCatalogo()
+    {
+        _catalogoSeleccionado = sistema.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
+
+        if (_catalogoSeleccionado != null)
+        {
+            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.ToList();
+
+            _categorias = _itemsFiltradosEnTabla
+                .Select(i => i.Categoria)
+                .Where(c => !string.IsNullOrEmpty(c))
+                .Distinct()
+                .ToList();
+        }
+        else
+        {
+            _itemsFiltradosEnTabla.Clear();
+            _categorias.Clear();
+        }
+    }
+
+    private void AplicarFiltros()
+    {
+        if (_catalogoSeleccionado == null) return;
+
+        _itemsFiltradosEnTabla = _catalogoSeleccionado.Items
+            .Where(item =>
+                (string.IsNullOrWhiteSpace(_textoBusqueda) ||
+                 Normalizar(item.Titulo).Contains(Normalizar(_textoBusqueda)) ||
+                 Normalizar(item.Descripcion).Contains(Normalizar(_textoBusqueda)))
+                &&
+                (string.IsNullOrWhiteSpace(_categoriaAFiltrar) ||
+                 item.Categoria == _categoriaAFiltrar)
+            )
+            .ToList();
+    }
+
+    private void LimpiarFiltros()
+    {
+        _textoBusqueda = string.Empty;
+        _categoriaAFiltrar = string.Empty;
+
+        if (_catalogoSeleccionado != null)
+            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.ToList();
+    }
+
+    private string Normalizar(string texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
+
+        return texto.ToLowerInvariant()
+            .Replace("á", "a")
+            .Replace("é", "e")
+            .Replace("í", "i")
+            .Replace("ó", "o")
+            .Replace("ú", "u")
+            .Replace("ü", "u")
+            .Replace("ñ", "n");
+    }
+
+    private void AgregarItem()
+    {
+        Nav.NavigateTo("/alta-item");
+    }
+
+    // Modal
+    private void CerrarModal()
+    {
+        _mostrarModalEditar = false;
+        _itemEditado = null;
+    }
+
+    private void AbrirModalEditar(Item item)
+    {
+        _itemEditado = new ItemEditDataTransfer()
+        {
+            Id = item.Id,
+            Titulo = item.Titulo,
+            Descripcion = item.Descripcion,
+            Categoria = item.Categoria,
+            Marca = item.Marca,
+            Modelo = item.Modelo
+        };
+        _mostrarModalEditar = true;
+        _mensajeErrorModal = null;
+    }
+
+    private void GuardarCambios()
+    {
+        if (_itemEditado == null || _catalogoSeleccionado == null) return;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(_itemEditado.Titulo) || string.IsNullOrWhiteSpace(_itemEditado.Descripcion))
+            {
+                _mensajeErrorModal = "Título y Descripción son obligatorios.";
+                return;
+            }
+
+            sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
+
+            ReconstruirCategorias();
+            AplicarFiltros();
+
+            _mostrarModalEditar = false;
+            _itemEditado = null;
+            _mensajeErrorModal = null;
+
+            StateHasChanged();
+        }
+        catch (ItemException ex)
+        {
+            _mensajeErrorModal = ex.Message;
+        }
+    }
+
+    private void ReconstruirCategorias()
+    {
+        if (_catalogoSeleccionado == null) return;
+
+        _categorias = _catalogoSeleccionado.Items
+            .Select(i => i.Categoria)
+            .Where(c => !string.IsNullOrEmpty(c))
+            .Distinct()
+            .ToList();
+    }
+}

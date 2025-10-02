@@ -2,7 +2,7 @@ using Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using NearDupFinder_Dominio;
+using NearDupFinder_Dominio.Clases;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,7 +47,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // POST /login: procesa formulario HTML, emite cookie y redirige
-app.MapPost("/auth/login", async (HttpContext http, Sistema sistema) =>
+app.MapPost("/auth/login", async (HttpContext http, Sistema sistemaTemp) =>
     {
         // 1) Leer campos enviados por <form>
         var form = await http.Request.ReadFormAsync();
@@ -55,7 +55,7 @@ app.MapPost("/auth/login", async (HttpContext http, Sistema sistema) =>
         var clave = form["Password"].ToString();
 
         // 2) Validación
-        var usuario = sistema.AutenticarUsuario(email, clave);
+        var usuario = sistemaTemp.AutenticarUsuario(email, clave);
         if (usuario is null)
             // credenciales inválidas → marcar error y volver al login
             return Results.Redirect("/login?error=1");
