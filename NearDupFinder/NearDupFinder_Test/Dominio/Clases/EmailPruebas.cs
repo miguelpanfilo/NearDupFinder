@@ -35,9 +35,9 @@ public class EmailPruebas
     }
     
     [DataTestMethod]
-    public void Crear_Nulo_LanzaArgumentNullException()
+    public void Crear_Nulo_LanzaException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => Email.Crear(null!));
+        Assert.ThrowsException<ArgumentException>(() => Email.Crear(null!));
     }
     
     [DataTestMethod]

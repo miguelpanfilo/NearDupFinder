@@ -8,10 +8,10 @@ public sealed class Email
     
     private Email(string email) => _valor = email;
 
-    public static Email Crear(string email)
+    public static Email Crear(string? email)
     {
-        if (email is null)
-            throw new ArgumentNullException(nameof(email));
+        if (String.IsNullOrWhiteSpace(email))
+            throw new ArgumentException(nameof(email));
         
         var emailNormalizado = email.Trim().ToLowerInvariant();
         

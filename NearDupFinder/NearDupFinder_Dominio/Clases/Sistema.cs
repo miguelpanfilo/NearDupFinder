@@ -36,13 +36,180 @@ public class Sistema
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
         PrecargarCatalogos();
-
     }
 
+    //------------------------------------------------------------------------//
+    /* Comienzo espacio Usuarios*/
+    private Usuario CrearUsuarioAdmin()
+    {
+        Email email = Email.Crear("admin@gmail.com");
+        Fecha fecha = Fecha.Crear(1997,12,27);
+        Contrasena contrasena = Contrasena.Crear("123QWEasdzxc@");
+        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
+        adminUsuario.AgregarRol(Rol.Administrador);
+        adminUsuario.CambiarContrasena(contrasena);
+        
+        return adminUsuario;
+    }
+    
+    public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol>? roles)
+    {
+        Email correo;
+        Fecha fecha;
+        Usuario nuevoUsuario;
+        Contrasena contrasena;
+        try
+        {
+            correo = Email.Crear(email);
+            if (BuscarUsuarioPorEmail(correo) is not null)
+                return false;
 
+            fecha = Fecha.Crear(anio,mes,dia);
+            contrasena = Contrasena.Crear(clave);
+            nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
+        }
+        catch
+        {
+            return false;
+        }
+        
+        nuevoUsuario.CambiarContrasena(contrasena);
+        if(roles is null)
+            return false;
+        foreach (var rol in roles)
+            nuevoUsuario.AgregarRol(rol);
+        _usuarios.Add(nuevoUsuario);
+        
+        return true;
+    }
+    
+    public List<Usuario> ObtenerUsuarios()
+    {
+        return _usuarios;
+    }
+
+    public Usuario? BuscarUsuarioPorId(int id)
+    {
+        foreach (Usuario usuario in _usuarios)
+            if (usuario.Id == id)
+                return usuario;
+        return null;    
+    }
+    
+    private Usuario? BuscarUsuarioPorEmail(Email email)
+    {
+        foreach (Usuario usuario in _usuarios)
+            if (usuario.Email.Igual(email))
+                return usuario;
+        return null;
+    }
+
+    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol>? roles)
+    {
+        Email correo;
+        Fecha fecha;
+        Usuario? usuarioAModificar;
+        // La contraseña es opcional, en caso que no se ingrese no se cambia.
+        Contrasena? contrasena = null;
+        try
+        {
+            correo = Email.Crear(email);
+            usuarioAModificar = BuscarUsuarioPorEmail(correo);
+            if(usuarioAModificar is null)
+                return false;
+            
+            fecha = Fecha.Crear(anio,mes,dia);
+            if(!string.IsNullOrWhiteSpace(clave))
+                contrasena = Contrasena.Crear(clave);
+        }
+        catch
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellido) || roles is null)
+            return false;
+        
+        usuarioAModificar.Nombre = nombre;
+        usuarioAModificar.Apellido = apellido;
+        usuarioAModificar.FechaNacimiento = fecha;
+        usuarioAModificar.ObtenerRoles().Except(roles).ToList().ForEach(r => usuarioAModificar.RemoverRol(r));
+        roles.Except(usuarioAModificar.ObtenerRoles()).ToList().ForEach(r => usuarioAModificar.AgregarRol(r));
+        
+        if(!string.IsNullOrWhiteSpace(clave))
+            usuarioAModificar.CambiarContrasena(contrasena);
+        
+        return true;
+    }
+    
+    public bool ModificarClave(string? email, string? clave)
+    {
+        Email correo;
+        Contrasena contrasena;
+        try
+        {
+            correo = Email.Crear(email);
+            contrasena = Contrasena.Crear(clave);
+        }
+        catch
+        {
+            return false;
+        }
+        Usuario? usuario = BuscarUsuarioPorEmail(correo);
+        if (usuario is null)
+            return false;
+
+        return usuario.CambiarContrasena(contrasena);
+    }
+    
+    public Usuario? AutenticarUsuario(string? email, string? clave)
+    {
+        Email emailAValidar;
+        try
+        {
+            emailAValidar = Email.Crear(email);
+        }
+        catch
+        {
+            return null;
+        }
+        Usuario? usuario = BuscarUsuarioPorEmail(emailAValidar);
+        if (usuario is null)
+            return null;
+        
+        if (usuario.VerificarContrasena(clave))
+            return usuario;
+        
+        return null;
+    }
+
+    public bool EliminarUsuario(string? email)
+    {
+        Email emailUsuario;
+        try
+        {
+            emailUsuario = Email.Crear(email);
+        }
+        catch
+        {
+            return false;
+        }
+        Usuario? usuario = BuscarUsuarioPorEmail(emailUsuario);
+        if (usuario is null)
+            return false;
+        
+        _usuarios.Remove(usuario);
+        
+        return true;
+    }
+    //------------------------------------------------------------------------
+    /* Fin espacio Usuario */
+
+    //------------------------------------------------------------------------
+    /* Comienzo espacio Catalogo*/
+    
     private void PrecargarCatalogos()
     {
-        
         var catalogoTecno = new Catalogo("Tecnología");
         catalogoTecno.AgregarItem(new Item
         {
@@ -101,14 +268,7 @@ public class Sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
-
-
-        
     }
-
-
-    //------------------------------------------------------------------------
-    /* Comienzo espacio Catalogo*/
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (catalogo is null)
@@ -142,9 +302,11 @@ public class Sistema
     {
         return _catalogos.Count;
     }
+    //------------------------------------------------------------------------
     /* Fin espacio Catalogo*/
-
-    // Inicio funciones de interfaz 
+    
+    //------------------------------------------------------------------------
+    // Inicio espacio Item 
     public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
     {
         var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
@@ -168,47 +330,11 @@ public class Sistema
 
         catalogo.AgregarItem(nuevoItem);
     }
+//------------------------------------------------------------------------
+/* Fin espacio Items */
 
-//Fin de funciones de interfaz 
-
-    /* Comienzo espacio Usuario*/
-    private Usuario CrearUsuarioAdmin()
-    {
-        Email email = Email.Crear("admin@gmail.com");
-        Fecha fecha = Fecha.Crear(1997, 12, 27);
-        Usuario adminUsuario = Usuario.Crear("admin", "admin", email, fecha);
-        adminUsuario.AgregarRol(Rol.Administrador);
-        Contrasena contrasena = Contrasena.Crear("123QWEasdzxc@");
-        adminUsuario.CambiarContrasena(contrasena);
-
-        return adminUsuario;
-    }
-
-    public Usuario? AutenticarUsuario(string? email, string? clave)
-    {
-        Email emailAValidar;
-        try
-        {
-            emailAValidar = Email.Crear(email);
-        }
-        catch
-        {
-            return null;
-        }
-
-        foreach (var usuario in _usuarios)
-        {
-            if (usuario.Email.Igual(emailAValidar) && usuario.VerificarContrasena(clave))
-                return usuario;
-        }
-
-        return null;
-    }
-    /*Fin espacio usuario*/
-    //------------------------------------------------------------------------
-
-    //------------------------------------------------------------------------
-    // Inicio de deteccion de duplicados 
+//------------------------------------------------------------------------
+/* Inicio de deteccion de duplicados */
     public ItemTokenizado TokenizarItem(Item item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
@@ -234,8 +360,6 @@ public class Sistema
         string tituloNormalizado = Normalizar(item.Titulo);
         string descripcionNormalizada = Normalizar(item.Descripcion);
 
-
-
         // Lanzar excepción si título o descripción quedan vacíos
         if (string.IsNullOrEmpty(tituloNormalizado) || string.IsNullOrEmpty(descripcionNormalizada))
         {
@@ -255,8 +379,6 @@ public class Sistema
             Modelo = modeloNormalizada,
             Categoria = categoriaNormalizada
         };
-
-
     }
 
     public string Normalizar(string texto)
@@ -277,8 +399,6 @@ public class Sistema
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9]", " ");
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"\s+", " ").Trim();
         return texto;
-
-
     }
 
     public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
@@ -394,7 +514,6 @@ public class Sistema
         return listaDuplicados;
     }
 //--------------------------------------------------------------
-//Fin de deteccion de duplicados 
-
+/* Fin de deteccion de duplicados */
 
 }

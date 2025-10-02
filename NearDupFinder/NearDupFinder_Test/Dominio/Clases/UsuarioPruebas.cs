@@ -19,6 +19,23 @@ public class UsuarioPruebas
     }
     
     [TestMethod]
+    public void Crear_ConDatosValidos_DevuelveInstancia_ConIdValido()
+    {
+        Email email = Email.Crear("manuelperezmartirene@gmail.com");
+        Fecha fecha = Fecha.Crear(1997,12,27);
+        Usuario usuario = Usuario.Crear("Manuel","Perez",email,fecha);
+        Email email2 = Email.Crear("juanperezmartirene@gmail.com");
+        Fecha fecha2 = Fecha.Crear(200,12,18);
+        Usuario usuario2 = Usuario.Crear("Juan","Perez",email2,fecha2);
+
+        int id = usuario.Id;
+        int id2 = usuario2.Id;
+        int diferencia = id2 - id;
+        
+        Assert.AreEqual(1,diferencia);
+    }
+    
+    [TestMethod]
     public void Crear_EmailNulo_LanzaArgumentNullException()
     {
         Fecha fecha = Fecha.Crear(1997, 12, 27);
@@ -213,23 +230,12 @@ public class UsuarioPruebas
     [TestMethod]
     public void CambioLaContrasenaYReseteo_RetornaVerdadero()
     {
-        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-        Usuario usuario2 = Usuario.Crear("Juan", "Perez", Email.Crear("juan@ejemplo.com"), Fecha.Crear(2000, 12, 18));
+        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
         Contrasena nuevaContra =  Contrasena.Crear("123QWEasdzxc@do");
         
-        usuario2.CambiarContrasena(nuevaContra);
-        usuario1.ResetiarContrasena(usuario2);
+        usuario.CambiarContrasena(nuevaContra);
+        usuario.ResetearContrasena();
         
-        Assert.IsTrue(usuario2.VerificarContrasena("Encr1pt@do"));
-    }
-    
-    [TestMethod]
-    public void ResetiarContrasena_UsuarioNulo_RetornaFalso()
-    {
-        Usuario usuario1 = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-
-        bool exito = usuario1.ResetiarContrasena(null);
-        
-        Assert.IsFalse(exito);
+        Assert.IsTrue(usuario.VerificarContrasena("Encr1pt@do"));
     }
 }

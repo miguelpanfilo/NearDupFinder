@@ -66,6 +66,7 @@ app.MapPost("/auth/login", async (HttpContext http, Sistema sistemaTemp) =>
         {
             new Claim(ClaimTypes.Name, usuario!.Nombre),
             new Claim(ClaimTypes.Email, usuario.Email.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString())
         };
         // Un claim por cada rol
         foreach (var rol in usuario.ObtenerRoles())
