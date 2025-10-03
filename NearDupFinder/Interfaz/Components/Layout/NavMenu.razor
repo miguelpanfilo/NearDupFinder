@@ -11,47 +11,59 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        
         <AuthorizeView Roles="Administrador">
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="usuarios">
                         <i class="bi bi-people-fill fs-5 lh-1" aria-hidden="true"></i>
-                        <span>Gestión de Usuarios</span>
+                        <span>Usuarios</span>
                     </NavLink>
                 </div>
             </Authorized>
         </AuthorizeView>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link d-flex align-items-center gap-1" href="cambiar-clave-usuario">
-                <i class="bi bi-key-fill fs-5 lh-1" aria-hidden="true"></i>
-                <span>Cambiar Contraseña</span>
-            </NavLink>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-1" href="cambiar-clave-usuario">
+                        <i class="bi bi-key-fill fs-5 lh-1" aria-hidden="true"></i>
+                        <span>Cambiar Contraseña</span>
+                    </NavLink>
+                </div>     
+            </Authorized>
+        </AuthorizeView>
         
+        <AuthorizeView Roles="Administrador">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-1" href="CrearCatalogo">
+                        <i class="bi bi-book-fill fs-5 lh-1" aria-hidden="true"></i>
+                        <span>Catalogos</span>
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="CrearCatalogo">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Catalogos
-            </NavLink>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-1" href="lista-items">
+                        <i class="bi bi-bookmark-dash-fill fs-5 lh-1" aria-hidden="true"></i>
+                        <span>Items</span>
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="lista-CRUD">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Lista crud
-            </NavLink>
-        </div>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="alta-item">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Alta item
-            </NavLink>
-        </div>
     </nav>
 </div>
