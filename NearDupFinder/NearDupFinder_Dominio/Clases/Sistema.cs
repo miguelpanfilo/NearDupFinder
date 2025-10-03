@@ -358,7 +358,12 @@ public class Sistema
         DuplicadosGlobales.AddRange(duplicadosDelItem);
 
     }
+    public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
+    {
+        if (catalogo == null || itemEditado == null)
+            throw new ArgumentNullException();
 
+    }
     
 //------------------------------------------------------------------------
 /* Fin espacio Items */
