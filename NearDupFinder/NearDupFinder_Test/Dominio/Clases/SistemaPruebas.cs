@@ -892,7 +892,7 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
 
         
-        Assert.IsTrue(_sistema.DuplicadosGlobales.Count == 1);
+        Assert.IsTrue(_sistema._duplicadosGlobales.Count == 1);
     }
 
     
@@ -915,18 +915,19 @@ public class SistemaPruebas
         var item1 = new Item("Item 1", "Desc 1");
         var item2 = new Item("Item 2", "Desc 2");
 
-        _sistema.AltaItemConAltaDuplicados("Desc 1",item1);
-        _sistema.AltaItemConAltaDuplicados("Desc 2",item2);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
 
+        Assert.AreEqual(1, _sistema._duplicadosGlobales.Count);
 
-        Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
         item1.Titulo = "Titulo Editado";
         item1.Descripcion = "Descripcion Editada";
-        
+
         _sistema.ActualizarDuplicadosPara(_catalogo, item1);
 
-        Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
+        Assert.AreEqual(0, _sistema._duplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
     }
+
 }
     
     

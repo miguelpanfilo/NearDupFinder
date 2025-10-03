@@ -33,7 +33,7 @@ public class Sistema
 
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
-    public List<Duplicados> DuplicadosGlobales { get; } = new List<Duplicados>();
+    public List<Duplicados> _duplicadosGlobales { get; } = new List<Duplicados>();
 
 
     public Sistema()
@@ -355,7 +355,7 @@ public class Sistema
         if (duplicadosDelItem.Count >= 1)
             nuevoItem.EstadoDuplicado = true;
 
-        DuplicadosGlobales.AddRange(duplicadosDelItem);
+        _duplicadosGlobales.AddRange(duplicadosDelItem);
 
     }
     public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
@@ -363,7 +363,38 @@ public class Sistema
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
 
+        EliminarDuplicadosPrevios(itemEditado);
+        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+        AgregarDuplicados(nuevosDuplicados);
+        
     }
+    
+    
+    private void EliminarDuplicadosPrevios(Item item)
+    {
+        var duplicadosABorrar = _duplicadosGlobales
+            .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
+            .ToList();
+
+        foreach (var duplicado in duplicadosABorrar)
+            _duplicadosGlobales.Remove(duplicado);
+    }
+
+    private void AgregarDuplicados(IEnumerable<Duplicados>? duplicados)
+    {
+        if (duplicados == null) return;
+
+        foreach (var dup in duplicados)
+        {
+            _duplicadosGlobales.Add(dup);
+
+            // marcar en true a los dos items involucrados
+            dup.ItemA.EstadoDuplicado = true;
+            dup.ItemB.EstadoDuplicado = true;
+        }
+    }
+
+
     
 //------------------------------------------------------------------------
 /* Fin espacio Items */
