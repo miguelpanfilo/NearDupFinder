@@ -253,21 +253,16 @@
                 return;
             }
 
-            // 1️⃣ Actualizar los datos del item
             sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
 
-            // 2️⃣ Actualizar duplicados
             var itemOriginal = _catalogoSeleccionado.Items.First(i => i.Id == _itemEditado.Id);
             sistema.ActualizarDuplicadosPara(_catalogoSeleccionado, itemOriginal);
 
-            // 3️⃣ Refrescar estado duplicado en la tabla
             ActualizarEstadoDuplicados();
 
-            // 4️⃣ Refrescar categorías y filtros
             ReconstruirCategorias();
             AplicarFiltros();
 
-            // 5️⃣ Cerrar modal
             _mostrarModalEditar = false;
             _itemEditado = null;
             _mensajeErrorModal = null;
