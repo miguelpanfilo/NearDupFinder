@@ -966,6 +966,17 @@ public class SistemaPruebas
 
         Assert.AreEqual(0, _sistema._duplicadosGlobales.Count);
     }
+  [TestMethod]
+        public void EliminarItem_ItemSinDuplicados_RemueveItemYNoFalla()
+        {
+            var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+            _catalogo.AgregarItem(item1);
+            
+            _sistema.EliminarItemYActualizarDuplicados(_catalogo, item1);
+
+            Assert.IsFalse(_catalogo.Items.Contains(item1), "El item no fue eliminado del catálogo");
+            Assert.AreEqual(0, _sistema._duplicadosGlobales.Count, "No debe haber duplicados globales");
+        }
 
 }
     

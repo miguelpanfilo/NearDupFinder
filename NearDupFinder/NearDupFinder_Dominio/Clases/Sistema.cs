@@ -364,10 +364,19 @@ public class Sistema
             throw new ArgumentNullException();
 
         EliminarDuplicadosPrevios(itemEditado);
+
         var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+
         AgregarDuplicados(nuevosDuplicados);
-        
+
+        foreach (var item in catalogo.Items)
+        {
+            bool tieneDuplicados = _duplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
+            item.EstadoDuplicado = tieneDuplicados;
+        }
     }
+
+
     
     
     private void EliminarDuplicadosPrevios(Item item)
@@ -393,6 +402,8 @@ public class Sistema
             dup.ItemB.EstadoDuplicado = true;
         }
     }
+ 
+
 
 
     
