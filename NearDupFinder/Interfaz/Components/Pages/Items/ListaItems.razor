@@ -68,20 +68,23 @@
                 <td>@item.Titulo</td>
                 <td>@item.Descripcion</td>
                 <td>@item.Categoria</td>
-                <td>No disponible</td>
+                <td>@(item.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
                 <td>No disponible</td>
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
                         <button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
-                                @onclick="() => AbrirModalEditar(item)">
+                                @onclick="() => AbrirModalEditar(item)"
+                                title="Editar">
                             <i class="bi bi-pencil-square fs-6 lh-1"></i>
                         </button>
 
+
                         <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
-                                @onclick="(() => EliminarItem(item))"
-                                aria-label="Eliminar" title="Eliminar">
+                                @onclick="() => EliminarItem(item)"
+                                title="Eliminar">
                             <i class="bi bi-trash3 fs-6 lh-1"></i>
                         </button>
+
                     </div>
                 </td>
             </tr>
@@ -160,12 +163,10 @@
         if (_catalogoSeleccionado != null)
         {
             _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.ToList();
+            _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
+            
 
-            _categorias = _itemsFiltradosEnTabla
-                .Select(i => i.Categoria)
-                .Where(c => !string.IsNullOrEmpty(c))
-                .Distinct()
-                .ToList();
+            ActualizarEstadoDuplicados();
         }
         else
         {
@@ -173,6 +174,8 @@
             _categorias.Clear();
         }
     }
+
+
 
     private void AplicarFiltros()
     {
@@ -188,7 +191,11 @@
                  item.Categoria == _categoriaAFiltrar)
             )
             .ToList();
+        
+        ActualizarEstadoDuplicados();
     }
+
+
 
     private void LimpiarFiltros()
     {
@@ -248,6 +255,11 @@
 
             sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
 
+            var itemOriginal = _catalogoSeleccionado.Items.First(i => i.Id == _itemEditado.Id);
+            sistema.ActualizarDuplicadosPara(_catalogoSeleccionado, itemOriginal);
+
+            ActualizarEstadoDuplicados();
+
             ReconstruirCategorias();
             AplicarFiltros();
 
@@ -263,22 +275,45 @@
         }
     }
 
+
+
     private void ReconstruirCategorias()
     {
         if (_catalogoSeleccionado == null) return;
 
-        _categorias = _catalogoSeleccionado.Items
+        _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
+    }
+
+    private void ActualizarEstadoDuplicados()
+    {
+        if (_catalogoSeleccionado == null) return;
+
+        foreach (var item in _itemsFiltradosEnTabla)
+        {
+            var original = _catalogoSeleccionado.Items.FirstOrDefault(i => i.Id == item.Id);
+            if (original != null)
+                item.EstadoDuplicado = original.EstadoDuplicado;
+        }
+    }
+    private List<string> ObtenerCategoriasUnicas(Catalogo catalogo)
+    {
+        return catalogo.Items
             .Select(i => i.Categoria)
             .Where(c => !string.IsNullOrEmpty(c))
             .Distinct()
             .ToList();
     }
 
+
     private void EliminarItem(Item item)
     {
-        _catalogoSeleccionado!.EliminarItem(item);
+        if (_catalogoSeleccionado == null || item == null) return;
+
+        sistema.EliminarItemYActualizarDuplicados(_catalogoSeleccionado, item);
+
         ReconstruirCategorias();
         AplicarFiltros();
         StateHasChanged();
     }
+
 }
