@@ -17,6 +17,7 @@ public class SistemaPruebas
         _sistema = new Sistema();
         _catalogo = new Catalogo("Catálogo Test");
         _sistema.AgregarCatalogo(_catalogo);
+        _sistema._duplicadosGlobales.Clear();
     }
 
     // Inicio Pruebas Usuario
@@ -927,6 +928,19 @@ public class SistemaPruebas
 
         Assert.AreEqual(0, _sistema._duplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
     }
+    
+    [TestMethod]
+    public void AltaItemConAltaDuplicados_NoGeneraDuplicadosSiItemsDistintos()
+    {
+        var item1 = new Item("Titulo diferente ", "Descripcion diferente");
+        var item2 = new Item("Titulo distinto", "Descripcion nueva 2"); // distinto
+
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+
+        Assert.AreEqual(0, _sistema._duplicadosGlobales.Count, "No debería generar duplicados si los items son distintos");
+    }
+
 
 }
     
