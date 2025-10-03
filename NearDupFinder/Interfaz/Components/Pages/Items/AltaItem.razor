@@ -78,9 +78,8 @@
                 Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
             };
 
-            sistema.AltaItem(_catalogoSeleccionadoTitulo, nuevoItem);
 
-            Nav.NavigateTo("/lista-items");
+            Nav.NavigateTo("/lista-CRUD");
         }
         catch (ItemException ex)
         {
@@ -91,7 +90,7 @@
 
     private void Cancelar()
     {
-        Nav.NavigateTo("/lista-items");
+        Nav.NavigateTo("/lista-CRUD");
     }
-}
 
+}
