@@ -78,6 +78,7 @@
                 Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
             };
 
+            sistema.AltaItemConAltaDuplicados(_catalogoSeleccionadoTitulo, nuevoItem);
 
             Nav.NavigateTo("/lista-CRUD");
         }

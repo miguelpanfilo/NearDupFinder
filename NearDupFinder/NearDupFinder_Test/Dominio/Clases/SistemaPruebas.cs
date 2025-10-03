@@ -16,9 +16,9 @@ public class SistemaPruebas
     {
         _sistema = new Sistema();
         _catalogo = new Catalogo("Catálogo Test");
-        _sistema.AgregarCatalogo(_catalogo); 
+        _sistema.AgregarCatalogo(_catalogo);
     }
-    
+
     // Inicio Pruebas Usuario
     [TestMethod]
     public void CrearUsuario_NombreVacio_RetornaFalso()
@@ -206,7 +206,7 @@ public class SistemaPruebas
 
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_ClaveVacia_RetornaFalso()
     {
@@ -223,7 +223,7 @@ public class SistemaPruebas
 
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_ClaveNula_RetornaFalso()
     {
@@ -240,7 +240,7 @@ public class SistemaPruebas
 
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_SinRoles_RetornaVerdadero()
     {
@@ -251,13 +251,13 @@ public class SistemaPruebas
         int mes = 12;
         int dia = 27;
         string? clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> {};
+        List<Rol> roles = new List<Rol> { };
 
         bool usuarioCreado = _sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
 
         Assert.IsTrue(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_RolesNulo_RetornaFalso()
     {
@@ -274,7 +274,7 @@ public class SistemaPruebas
 
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_UsuarioYaExistente_RetornaFalso()
     {
@@ -285,16 +285,16 @@ public class SistemaPruebas
         int mes = 12;
         int dia = 27;
         string? clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> {Rol.Administrador};
+        List<Rol> roles = new List<Rol> { Rol.Administrador };
         string nombre2 = "Juan";
         string? apellido2 = "Perez";
-        
+
         _sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         bool usuarioCreado = _sistema.CrearUsuario(nombre2, apellido2, email, anio, mes, dia, clave, roles);
 
         Assert.IsFalse(usuarioCreado);
     }
-    
+
     [TestMethod]
     public void CrearUsuario_CamposValidos_RetornaVerdadero()
     {
@@ -305,7 +305,7 @@ public class SistemaPruebas
         int mes = 12;
         int dia = 27;
         string? clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> {Rol.Administrador};
+        List<Rol> roles = new List<Rol> { Rol.Administrador };
 
         bool usuarioCreado = _sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
 
@@ -318,19 +318,19 @@ public class SistemaPruebas
         int idInexistente = Int32.MaxValue;
 
         Usuario? usuarioABuscar = _sistema.BuscarUsuarioPorId(idInexistente);
-        
+
         Assert.IsNull(usuarioABuscar);
     }
-    
+
     [TestMethod]
     public void BuscarUsuarioPorId_IDExsite_RetornaUsuarioValido()
     {
         Usuario? admin = _sistema.ObtenerUsuarios().FirstOrDefault();
         int idValido = admin!.Id;
-        
+
         Usuario? usuarioABuscar = _sistema.BuscarUsuarioPorId(idValido);
-        
-        Assert.AreEqual(admin,usuarioABuscar);
+
+        Assert.AreEqual(admin, usuarioABuscar);
     }
 
     [TestMethod]
@@ -444,7 +444,8 @@ public class SistemaPruebas
     {
         string? email = "admin@gmail.com";
         string claveNueva = "ClaveMuySegura123@";
-        bool modificado = _sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, claveNueva, new List<Rol> { Rol.Administrador });
+        bool modificado = _sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, claveNueva,
+            new List<Rol> { Rol.Administrador });
         Usuario? autenticado = _sistema.AutenticarUsuario(email, claveNueva);
 
         Assert.IsTrue(modificado);
@@ -456,7 +457,8 @@ public class SistemaPruebas
     {
         string? email = "admin@gmail.com";
         List<Rol> rolesNuevos = new List<Rol> { Rol.Revisor };
-        bool modificado = _sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, "ClaveValida123!", rolesNuevos);
+        bool modificado =
+            _sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, "ClaveValida123!", rolesNuevos);
         Usuario? usuario = _sistema.AutenticarUsuario(email, "ClaveValida123!");
 
         var rolesUsuario = usuario!.ObtenerRoles().ToList();
@@ -469,14 +471,15 @@ public class SistemaPruebas
     {
         string? email = "admin@gmail.com";
         List<Rol> rolesVacios = new List<Rol>();
-        bool modificado = _sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, "ClaveValida123!", rolesVacios);
+        bool modificado =
+            _sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, "ClaveValida123!", rolesVacios);
         Usuario? usuario = _sistema.AutenticarUsuario(email, "ClaveValida123!");
 
         var rolesUsuario = usuario!.ObtenerRoles().ToList();
         Assert.AreEqual(0, rolesUsuario.Count);
         Assert.IsTrue(modificado);
     }
-    
+
     [TestMethod]
     public void ModificarUsuario_RolesNulo_RetornaFalso()
     {
@@ -493,7 +496,7 @@ public class SistemaPruebas
 
         Assert.IsFalse(modificado);
     }
-    
+
     [TestMethod]
     public void ModificarUsuario_CamposValidos_RetornaVerdadero()
     {
@@ -510,7 +513,7 @@ public class SistemaPruebas
 
         Assert.IsTrue(modificado);
     }
-    
+
     [TestMethod]
     public void ModificarUsuario_UsuarioInexistente_RetornaFalso()
     {
@@ -527,7 +530,7 @@ public class SistemaPruebas
 
         Assert.IsFalse(modificado);
     }
-    
+
     [TestMethod]
     public void ModificarClave_CamposValidos_RetornaVerdadero()
     {
@@ -648,67 +651,67 @@ public class SistemaPruebas
     {
         string emailAdmin = "admin@gmail.com";
         string claveAdmin = "123QWEasdzxc@";
-        
+
         Usuario? admin = _sistema.AutenticarUsuario(emailAdmin, claveAdmin);
-        
+
         Assert.IsNotNull(admin);
     }
-    
+
     [TestMethod]
     public void AutenticoUsuario_Incorrecto_RetornaNulo()
     {
         string emailIncorrecto = "incorrecto@gmail.com";
-        string claveIncorrecta= "mal";
-        
+        string claveIncorrecta = "mal";
+
         Usuario? admin = _sistema.AutenticarUsuario(emailIncorrecto, claveIncorrecta);
-        
+
         Assert.IsNull(admin);
     }
-    
+
     [TestMethod]
     public void AutenticoUsuario_EmailIncorrecto_RetornaNulo()
     {
         string emailIncorrecto = "incorrecto@gmail.com";
         string claveAdmin = "123QWEasdzxc@";
-        
+
         Usuario? admin = _sistema.AutenticarUsuario(emailIncorrecto, claveAdmin);
-        
+
         Assert.IsNull(admin);
     }
-    
+
     [TestMethod]
     public void AutenticoUsuario_ClaveIncorrecta_RetornaNulo()
     {
         string emailAdmin = "admin@gmail.com";
-        string claveIncorrecta= "mal";
-        
+        string claveIncorrecta = "mal";
+
         Usuario? admin = _sistema.AutenticarUsuario(emailAdmin, claveIncorrecta);
-        
+
         Assert.IsNull(admin);
     }
-    
+
     [TestMethod]
     public void AutenticoUsuario_EmailNulo_RetornaNulo()
     {
         string? emailNulo = null;
         string claveAdmin = "123QWEasdzxc@";
-        
+
         Usuario? admin = _sistema.AutenticarUsuario(emailNulo, claveAdmin);
-        
+
         Assert.IsNull(admin);
     }
-    
+
     [TestMethod]
     public void AutenticoUsuario_ClaveNula_RetornaNulo()
     {
         string emailAdmin = "admin@gmail.com";
-        string? claveNula= null;
-        
+        string? claveNula = null;
+
         Usuario? admin = _sistema.AutenticarUsuario(emailAdmin, claveNula);
-        
+
         Assert.IsNull(admin);
     }
-    
+
     [TestMethod]
     public void RemoverUsuario_Existente_RetornaVerdadero()
     {
@@ -717,43 +720,43 @@ public class SistemaPruebas
         // La clase sistema comienza con el Usuario admin por defecto por lo tanto no es necesario depender de agregar 
         // a un usuario para este test
         bool usuarioRemovido = _sistema.EliminarUsuario(email);
-        
+
         Assert.IsTrue(usuarioRemovido);
     }
-    
+
     [TestMethod]
     public void RemoverUsuario_Inexistente_RetornaFalso()
     {
         string email = "asdasdasda@gmail.com";
-        
+
         bool usuarioRemovido = _sistema.EliminarUsuario(email);
-        
+
         Assert.IsFalse(usuarioRemovido);
     }
-    
+
     [TestMethod]
     public void RemoverUsuario_EmailInvalido_RetornaFalso()
     {
         string email = "manuel.com";
-        
+
         bool usuarioRemovido = _sistema.EliminarUsuario(email);
-        
+
         Assert.IsFalse(usuarioRemovido);
     }
-    
+
     [TestMethod]
     public void RemoverUsuario_EmailNulo_RetornaFalso()
     {
         string? email = null;
-        
+
         bool usuarioRemovido = _sistema.EliminarUsuario(email);
-        
+
         Assert.IsFalse(usuarioRemovido);
     }
     // Fin Pruebas Usuario
 
     // Inicio Pruebas Items
-    
+
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
     {
@@ -780,11 +783,11 @@ public class SistemaPruebas
         Assert.AreEqual("Nuevo Título", item.Titulo);
         Assert.AreEqual("Nueva Descripción", item.Descripcion);
     }
-    
+
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaCategoriaMarcaModelo()
     {
-        
+
         var item = new Item("Original", "Descripcion original")
         {
             Categoria = "Cat 1",
@@ -805,15 +808,16 @@ public class SistemaPruebas
 
         _sistema.ActualizarItemEnCatalogo(_catalogo, dto);
 
-        
+
         Assert.AreEqual("Cat 2", item.Categoria);
         Assert.AreEqual("Marca 2", item.Marca);
         Assert.AreEqual("Modelo 2", item.Modelo);
     }
+
     [TestMethod]
     public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
     {
-        
+
 
 
         var dto = new ItemEditDataTransfer
@@ -826,12 +830,12 @@ public class SistemaPruebas
             Modelo = "Modelo"
         };
 
-        var ex = Assert.ThrowsException<ItemException>(
-            () => _sistema.ActualizarItemEnCatalogo(_catalogo, dto)
+        var ex = Assert.ThrowsException<ItemException>(() => _sistema.ActualizarItemEnCatalogo(_catalogo, dto)
         );
 
         Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
     }
+
     [TestMethod]
     public void AltaItem_AgregaItemAlCatalogo()
     {
@@ -845,14 +849,15 @@ public class SistemaPruebas
         Assert.AreEqual("Item 1", items.First().Titulo);
         Assert.AreEqual("Descripción 1", items.First().Descripcion);
     }
+
     [TestMethod]
     [ExpectedException(typeof(ItemException))]
     public void AltaItem_SinCatalogo_Excepcion()
     {
-        
+
         var nuevoItem = new Item("Item 1", "Desc");
 
-       _sistema.AltaItem("Inexistente", nuevoItem);
+        _sistema.AltaItem("Inexistente", nuevoItem);
 
     }
 
@@ -860,9 +865,9 @@ public class SistemaPruebas
     [ExpectedException(typeof(ItemException))]
     public void AltaItem_LanzaExcepcionSiTituloOVacio()
     {
-    
 
-        var nuevoItem = new Item("", "Descripción 1"); 
+
+        var nuevoItem = new Item("", "Descripción 1");
         _sistema.AltaItem("Catálogo Test", nuevoItem);
     }
 
@@ -876,6 +881,15 @@ public class SistemaPruebas
         var nuevoItem = new Item("Titulo", "");
         _sistema.AltaItem("Catálogo Test", nuevoItem);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void AltaItemConAltaDuplicados_ExcepcionSiCatalogoNoExiste()
+    {
+        var item = new Item("Titulo 1", "Descripcion 1");
+        _sistema.AltaItemConAltaDuplicados("Inexistente", item);
+    }
+
 
 }
     

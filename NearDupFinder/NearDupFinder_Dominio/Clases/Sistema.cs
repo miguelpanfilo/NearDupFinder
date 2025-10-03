@@ -344,6 +344,8 @@ public class Sistema
 
         catalogo.AgregarItem(nuevoItem);
     }
+    
+    
 //------------------------------------------------------------------------
 /* Fin espacio Items */
 
