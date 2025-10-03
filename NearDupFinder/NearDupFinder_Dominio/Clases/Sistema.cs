@@ -33,6 +33,8 @@ public class Sistema
 
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
+    public List<Duplicados> DuplicadosGlobales { get; } = new List<Duplicados>();
+
 
     public Sistema()
     {
@@ -353,7 +355,8 @@ public class Sistema
         if (duplicadosDelItem.Count >= 1)
             nuevoItem.EstadoDuplicado = true;
 
-       
+        DuplicadosGlobales.AddRange(duplicadosDelItem);
+
     }
 
     

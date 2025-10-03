@@ -892,8 +892,7 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
 
         
-        Assert.IsTrue(_sistema._duplicadosGlobales.Count >= 1, 
-            "La lista de duplicados globales debería tener al menos un registro.");
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count >= 1);
     }
 
 
