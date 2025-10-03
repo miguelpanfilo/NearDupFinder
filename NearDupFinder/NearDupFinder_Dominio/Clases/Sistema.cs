@@ -351,13 +351,16 @@ public class Sistema
         catalogo.AgregarItem(nuevoItem);
 
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
-
-        if (duplicadosDelItem.Count >= 1)
-            nuevoItem.EstadoDuplicado = true;
-
+    
         _duplicadosGlobales.AddRange(duplicadosDelItem);
 
+        foreach (var dup in duplicadosDelItem)
+        {
+            dup.ItemA.EstadoDuplicado = true;
+            dup.ItemB.EstadoDuplicado = true;
+        }
     }
+
     public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
     {
         if (catalogo == null || itemEditado == null)
