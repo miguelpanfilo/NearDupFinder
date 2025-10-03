@@ -4,6 +4,9 @@ using NearDupFinder_Dominio.Struct;
 
 namespace NearDupFinder_Dominio.Clases;
 
+
+
+
 public enum TipoDuplicado
 {
     τ_alert,
@@ -36,6 +39,7 @@ public class Sistema
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
         PrecargarCatalogos();
+        
     }
 
     //------------------------------------------------------------------------//
@@ -333,18 +337,25 @@ public class Sistema
         original.Marca = dto.Marca;
         original.Modelo = dto.Modelo;
     }
-    public void AltaItem(string catalogoTitulo, Item nuevoItem)
+    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
     {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
         if (catalogo == null)
-            throw new ItemException("Debe seleccionar un catálogo válido.");
+            throw new InvalidOperationException("Debe seleccionar un catálogo válido.");
 
         if (string.IsNullOrWhiteSpace(nuevoItem.Titulo) || string.IsNullOrWhiteSpace(nuevoItem.Descripcion))
             throw new ItemException("Título y Descripción son obligatorios.");
 
         catalogo.AgregarItem(nuevoItem);
+
+        var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
+
+        if (duplicadosDelItem.Count >= 1)
+            nuevoItem.EstadoDuplicado = true;
+
+       
     }
-    
+
     
 //------------------------------------------------------------------------
 /* Fin espacio Items */

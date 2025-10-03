@@ -842,7 +842,7 @@ public class SistemaPruebas
 
         var nuevoItem = new Item("Item 1", "Descripción 1");
 
-        _sistema.AltaItem("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
         var items = _catalogo.Items;
 
         Assert.AreEqual(1, items.Count);
@@ -851,13 +851,13 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(InvalidOperationException))]
     public void AltaItem_SinCatalogo_Excepcion()
     {
 
         var nuevoItem = new Item("Item 1", "Desc");
 
-        _sistema.AltaItem("Inexistente", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Inexistente", nuevoItem);
 
     }
 
@@ -868,7 +868,7 @@ public class SistemaPruebas
 
 
         var nuevoItem = new Item("", "Descripción 1");
-        _sistema.AltaItem("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
 
 
@@ -879,15 +879,21 @@ public class SistemaPruebas
 
 
         var nuevoItem = new Item("Titulo", "");
-        _sistema.AltaItem("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
     
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void AltaItemConAltaDuplicados_ExcepcionSiCatalogoNoExiste()
+    public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
     {
-        var item = new Item("Titulo 1", "Descripcion 1");
-        _sistema.AltaItemConAltaDuplicados("Inexistente", item);
+        var item1 = new Item("Titulo 1", "Descripcion 1");
+        var item2 = new Item("Titulo 1", "Descripcion 1"); 
+
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+
+        
+        Assert.IsTrue(_sistema._duplicadosGlobales.Count >= 1, 
+            "La lista de duplicados globales debería tener al menos un registro.");
     }
 
 
