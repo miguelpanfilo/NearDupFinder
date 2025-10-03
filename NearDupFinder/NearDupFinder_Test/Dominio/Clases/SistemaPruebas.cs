@@ -941,6 +941,31 @@ public class SistemaPruebas
         Assert.AreEqual(0, _sistema._duplicadosGlobales.Count, "No debería generar duplicados si los items son distintos");
     }
 
+    [TestMethod]
+    public void ActualizarDuplicados_MarcaEstadoDuplicadoEnItems()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion");
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsTrue(item2.EstadoDuplicado);
+    }
+    [TestMethod]
+    public void ActualizarDuplicados_NoAgregaDuplicadosSiNoCoinciden()
+    {
+        var item1 = new Item("Titulo nuevo", "Desc nueva");
+        var item2 = new Item("Titulo diferente", "Desc otra");
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.AreEqual(0, _sistema._duplicadosGlobales.Count);
+    }
 
 }
     
