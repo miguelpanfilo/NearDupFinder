@@ -402,7 +402,24 @@ public class Sistema
             dup.ItemB.EstadoDuplicado = true;
         }
     }
- 
+    public void EliminarItemYActualizarDuplicados(Catalogo catalogo, Item item)
+    {
+        if (catalogo == null || item == null) return;
+
+        catalogo.EliminarItem(item);
+
+        var duplicadosABorrar = _duplicadosGlobales
+            .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
+            .ToList();
+
+        foreach (var dup in duplicadosABorrar)
+            _duplicadosGlobales.Remove(dup);
+
+        foreach (var itm in catalogo.Items)
+        {
+            itm.EstadoDuplicado = _duplicadosGlobales.Any(d => d.ItemA.Id == itm.Id || d.ItemB.Id == itm.Id);
+        }
+    }
 
 
 
