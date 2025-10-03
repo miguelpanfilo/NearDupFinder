@@ -1,12 +1,13 @@
 @page "/alta-item"
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @inject Sistema sistema
 @inject NavigationManager Nav
 
-<h3>Alta de Item</h3>
+<PageTitle>Crear Item</PageTitle>
+
+<h3>Crear Item</h3>
 
 @if (!string.IsNullOrEmpty(_mensajeError))
 {
@@ -79,7 +80,7 @@
 
             sistema.AltaItem(_catalogoSeleccionadoTitulo, nuevoItem);
 
-            Nav.NavigateTo("/lista-CRUD");
+            Nav.NavigateTo("/lista-items");
         }
         catch (ItemException ex)
         {
@@ -90,7 +91,7 @@
 
     private void Cancelar()
     {
-        Nav.NavigateTo("/lista-CRUD");
+        Nav.NavigateTo("/lista-items");
     }
 }
 

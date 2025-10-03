@@ -4,12 +4,9 @@
 @using NearDupFinder_Dominio.Clases
 @inject Sistema Sistema
 
+<PageTitle>Catalogos</PageTitle>
 
-<PageTitle>Alta de Catalogo</PageTitle>
-
-
-
-<h3 class="mt-3">Crear nuevo catalogo</h3>
+<h1 class="mt-3">Crear catalogo</h1>
 
 @if(_error)
 {
@@ -30,7 +27,7 @@
     </div>
     
     <button type="button" class="btn btn-primary mt-3" @onclick="(() => OnCrearCatalogoClick())">Guardar cambios</button>
-    <button type="button" class="btn btn-secondary mt-3" @onclick="CancelarCambios">Limpiar Campos</button>
+    <button type="button" class="btn btn-secondary mt-3" @onclick="CancelarCambios">Limpiar campos</button>
 </form>
 
 <h3 class="mt-3">Catalogos</h3>
@@ -50,12 +47,20 @@
         <tr>
             <td>@catalogo.Titulo</td>
             <td>@catalogo.Descripcion</td>
-            <td>
-        
-                <a class="btn btn-primary btn-sm mt-1" href="catalogos/@catalogo.Titulo/editar/">Editar</a>
-                
-                <button class="btn btn-danger btn-sm mt-1" @onclick="(() => EliminarCatalogo(catalogo))">Eliminar</button>
-        
+            <td class="text-end text-nowrap">
+                <div class="d-inline-flex gap-2">
+                    <a class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
+                       href="catalogos/@catalogo.Titulo/editar/"
+                       aria-label="Editar" title="Editar">
+                        <i class="bi bi-pencil-square fs-6 lh-1"></i>
+                    </a>
+
+                    <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                            @onclick="(() => EliminarCatalogo(catalogo))"
+                            aria-label="Eliminar" title="Eliminar">
+                        <i class="bi bi-trash3 fs-6 lh-1"></i>
+                    </button>
+                </div>
             </td>
         </tr>
     }

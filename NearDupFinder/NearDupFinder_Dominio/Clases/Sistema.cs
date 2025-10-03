@@ -304,11 +304,6 @@ public class Sistema
             throw new InvalidOperationException("El Título del catálogo ya existe");
         }
 
-        if (candidatoCata == null)
-        {
-            throw new InvalidOperationException("No existe un catálogo con ese título");
-        }
-
         catalogo.CambiarTitulo(titulo);
     }
     public IReadOnlyCollection<Catalogo> Catalogos => _catalogos.AsReadOnly();

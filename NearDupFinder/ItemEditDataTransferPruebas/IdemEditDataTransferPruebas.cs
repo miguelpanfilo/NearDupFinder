@@ -3,7 +3,7 @@ using NearDupFinder_Dominio.Clases;
 
 namespace ItemEditDataTransferPruebas;
 [TestClass]
-public class ListaCRUDTests
+public class ListaItemsTests
 {
     [TestMethod]
     public void CrearItemEditDataTransfer_ConPropiedades()

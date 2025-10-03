@@ -10,8 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<Sistema>();
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -57,7 +56,7 @@ app.MapPost("/auth/login", async (HttpContext http, Sistema sistemaTemp) =>
         // 2) Validación
         var usuario = sistemaTemp.AutenticarUsuario(email, clave);
         if (usuario is null)
-            // credenciales inválidas → marcar error y volver al login
+            // credenciales inválidas  marcar error y volver al login
             return Results.Redirect("/login?error=1");
 
 

@@ -3,7 +3,6 @@
 @code {
     protected override void OnInitialized()
     {
-        // Redirige al login. forceLoad salta el enrutador y recarga la página
         Nav.NavigateTo($"/login", forceLoad: true);
     }
 }
