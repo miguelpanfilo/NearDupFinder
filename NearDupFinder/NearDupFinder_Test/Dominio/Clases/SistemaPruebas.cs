@@ -964,8 +964,7 @@ public class SistemaPruebas
         Assert.IsTrue(item1.EstadoDuplicado);
         Assert.IsTrue(item2.EstadoDuplicado);
     }
-
-
+    
 
 
 

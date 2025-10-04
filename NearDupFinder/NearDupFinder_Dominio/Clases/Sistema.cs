@@ -351,6 +351,22 @@ public class Sistema
         DuplicadosGlobales.AddRange(duplicadosDelItem);
 
     }
+    
+    public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
+    {
+      
+
+        if (catalogo.Items.Count > 1)
+        {
+            foreach (var item in catalogo.Items)
+            {
+                item.EstadoDuplicado = true;
+            }
+        }
+    }
+
+
+
 //------------------------------------------------------------------------
 /* Fin espacio Items */
 
