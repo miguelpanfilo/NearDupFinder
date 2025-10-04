@@ -354,7 +354,7 @@ public class Sistema
     
     public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
     {
-        if (catalogo == null )
+        if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
 
 
