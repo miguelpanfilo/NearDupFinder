@@ -982,5 +982,23 @@ public class SistemaPruebas
         _sistema.ActualizarDuplicadosPara(_catalogo, null);
     }
     
-    
+    [TestMethod]
+    public void ActualizarDuplicados_EliminaDuplicadosPreviosDelItem()
+    {
+        var item1 = new Item("Item 1", "Desc 1");
+        var item2 = new Item("Item 2", "Desc 2");
+
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+
+        Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
+
+        item1.Titulo = "Titulo Editado";
+        item1.Descripcion = "Descripcion Editada";
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
+    }
+
 }
