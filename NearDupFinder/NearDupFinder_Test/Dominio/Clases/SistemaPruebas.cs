@@ -6,7 +6,15 @@ namespace NearDupFinder_Test.Dominio;
 [TestClass]
 public class SistemaPruebas
 {
-    // Inicio Pruebas Usuario
+    private Sistema _sistema;
+    private Catalogo _catalogo;
+    [TestInitialize]
+    public void Setup()
+    {
+        _sistema = new Sistema();
+        _catalogo = new Catalogo("Catalogo Test"); 
+        _sistema.AgregarCatalogo(_catalogo);
+    }
     [TestMethod]
     public void CrearUsuario_NombreVacio_RetornaFalso()
     {
@@ -926,4 +934,26 @@ public class SistemaPruebas
         var nuevoItem = new Item("Titulo", ""); 
         sistema.AltaItem("Catálogo Test", nuevoItem);
     }
+    
+  
+    [TestMethod]
+    public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
+    {
+        var item1 = new Item("Titulo 1", "Descripcion 1");
+        var item2 = new Item("Titulo 1", "Descripcion 1");
+
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+
+
+        Assert.IsTrue(_sistema._duplicadosGlobales.Count == 1);
+    }
+
+
+
+
+    
+    
+    
+    
 }
