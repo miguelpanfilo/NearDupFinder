@@ -30,12 +30,14 @@ public class Sistema
 
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
+    public List<Duplicados> _duplicadosGlobales { get; set; }
 
     public Sistema()
     {
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
         PrecargarCatalogos();
+        _duplicadosGlobales = new List<Duplicados>();
     }
 
     //------------------------------------------------------------------------//
@@ -333,7 +335,7 @@ public class Sistema
         original.Marca = dto.Marca;
         original.Modelo = dto.Modelo;
     }
-    public void AltaItem(string catalogoTitulo, Item nuevoItem)
+    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
     {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
         if (catalogo == null)
@@ -343,6 +345,11 @@ public class Sistema
             throw new ItemException("Título y Descripción son obligatorios.");
 
         catalogo.AgregarItem(nuevoItem);
+        
+        var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
+    
+        _duplicadosGlobales.AddRange(duplicadosDelItem);
+
     }
 //------------------------------------------------------------------------
 /* Fin espacio Items */

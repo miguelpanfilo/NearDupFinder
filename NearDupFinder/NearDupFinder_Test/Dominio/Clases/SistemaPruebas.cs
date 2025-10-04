@@ -891,7 +891,7 @@ public class SistemaPruebas
 
         var nuevoItem = new Item("Item 1", "Descripción 1");
 
-        sistema.AltaItem("Catálogo Test", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
         var items = catalogo.Items;
 
         Assert.AreEqual(1, items.Count);
@@ -906,7 +906,7 @@ public class SistemaPruebas
         var sistema = new Sistema();
         var nuevoItem = new Item("Item 1", "Desc");
 
-        sistema.AltaItem("Inexistente", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Inexistente", nuevoItem);
 
     }
 
@@ -919,7 +919,7 @@ public class SistemaPruebas
         sistema.AgregarCatalogo(catalogo);
 
         var nuevoItem = new Item("", "Descripción 1"); 
-        sistema.AltaItem("Catálogo Test", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
 
 
@@ -932,22 +932,27 @@ public class SistemaPruebas
         sistema.AgregarCatalogo(catalogo);
 
         var nuevoItem = new Item("Titulo", ""); 
-        sistema.AltaItem("Catálogo Test", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
     
   
     [TestMethod]
     public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
     {
+        
+        var catalogo = new Catalogo("Catálogo Test");
+        _sistema.AgregarCatalogo(catalogo); // Necesitás este método en tu sistema
+
         var item1 = new Item("Titulo 1", "Descripcion 1");
         var item2 = new Item("Titulo 1", "Descripcion 1");
 
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
 
-
-        Assert.IsTrue(_sistema._duplicadosGlobales.Count == 1);
+        Assert.AreEqual(1, _sistema._duplicadosGlobales.Count);
     }
+
+
 
 
 
