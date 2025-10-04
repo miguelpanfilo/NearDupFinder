@@ -354,7 +354,9 @@ public class Sistema
     
     public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
     {
-      
+        if (catalogo == null )
+            throw new ArgumentNullException();
+
 
         if (catalogo.Items.Count > 1)
         {
