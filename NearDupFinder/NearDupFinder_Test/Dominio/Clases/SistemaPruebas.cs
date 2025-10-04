@@ -951,7 +951,19 @@ public class SistemaPruebas
 
         Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
     }
+    [TestMethod]
+    public void ActualizarDuplicados_MarcaEstadoDuplicadoEnItems()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion");
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
 
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsTrue(item2.EstadoDuplicado);
+    }
 
 
 
