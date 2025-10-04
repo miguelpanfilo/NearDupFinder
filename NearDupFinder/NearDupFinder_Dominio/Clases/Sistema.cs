@@ -30,14 +30,14 @@ public class Sistema
 
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios = [];
-    public List<Duplicados> _duplicadosGlobales { get; set; }
+    public List<Duplicados> DuplicadosGlobales { get; set; }
 
     public Sistema()
     {
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
         PrecargarCatalogos();
-        _duplicadosGlobales = new List<Duplicados>();
+        DuplicadosGlobales = new List<Duplicados>();
     }
 
     //------------------------------------------------------------------------//
@@ -348,7 +348,7 @@ public class Sistema
         
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
     
-        _duplicadosGlobales.AddRange(duplicadosDelItem);
+        DuplicadosGlobales.AddRange(duplicadosDelItem);
 
     }
 //------------------------------------------------------------------------

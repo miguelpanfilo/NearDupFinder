@@ -949,7 +949,7 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
 
-        Assert.AreEqual(1, _sistema._duplicadosGlobales.Count);
+        Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
     }
 
 
