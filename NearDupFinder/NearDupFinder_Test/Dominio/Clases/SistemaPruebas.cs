@@ -968,7 +968,13 @@ public class SistemaPruebas
 
 
 
-    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void ActualizarDuplicadosPara_ExcepcionSiCatalogoEsNull()
+    {
+        var item = new Item("Titulo", "Descripcion");
+        _sistema.ActualizarDuplicadosPara(null, item);
+    }
     
     
     
