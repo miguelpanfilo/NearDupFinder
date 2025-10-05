@@ -133,6 +133,8 @@ public class Catalogo
     
     public void QuitarItemDeCluster(Item item)
     {
+        if (item == null) throw new ArgumentNullException(nameof(item), "El parámetro no puede ser null");
+        
         var cluster = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
         if (cluster == null)
             return;
