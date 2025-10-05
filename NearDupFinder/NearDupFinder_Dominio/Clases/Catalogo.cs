@@ -134,7 +134,8 @@ public class Catalogo
     public void QuitarItemDeCluster(Item item)
     {
         var cluster = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
-        
+        if (cluster == null)
+            return;
         cluster.Remover(item);
         
         if (cluster.PertenecientesCluster.Count() <= 1)
