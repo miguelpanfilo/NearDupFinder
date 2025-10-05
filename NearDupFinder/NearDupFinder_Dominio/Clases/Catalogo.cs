@@ -96,8 +96,11 @@ public class Catalogo
         if (b == null) throw new ArgumentNullException(nameof(b), "El parametro no puede ser null");
         if (!_items.Contains(a) || !_items.Contains(b))
             throw new InvalidOperationException("Uno o ambos ítems no pertenecen al catalogo");
+        if (_clusters.Values.Any(c => c.Contiene(a) && c.Contiene(b)))
+            return;
         
         var nuevoId = _nextClusterId++;
+        
         _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });;
     }
 }
