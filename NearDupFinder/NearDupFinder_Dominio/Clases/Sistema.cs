@@ -37,6 +37,7 @@ public class Sistema
         _catalogos = new List<Catalogo>();
         _usuarios.Add(CrearUsuarioAdmin());
         DuplicadosGlobales = new List<Duplicados>();
+        PrecargarCatalogos();
     }
 
     
