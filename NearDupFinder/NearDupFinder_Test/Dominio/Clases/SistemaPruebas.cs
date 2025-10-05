@@ -6,7 +6,15 @@ namespace NearDupFinder_Test.Dominio;
 [TestClass]
 public class SistemaPruebas
 {
-    // Inicio Pruebas Usuario
+    private Sistema _sistema;
+    private Catalogo _catalogo;
+    [TestInitialize]
+    public void Setup()
+    {
+        _sistema = new Sistema();
+        _catalogo = new Catalogo("Catalogo Test"); 
+        _sistema.AgregarCatalogo(_catalogo);
+    }
     [TestMethod]
     public void CrearUsuario_NombreVacio_RetornaFalso()
     {
@@ -883,24 +891,14 @@ public class SistemaPruebas
 
         var nuevoItem = new Item("Item 1", "Descripción 1");
 
-        sistema.AltaItem("Catálogo Test", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
         var items = catalogo.Items;
 
         Assert.AreEqual(1, items.Count);
         Assert.AreEqual("Item 1", items.First().Titulo);
         Assert.AreEqual("Descripción 1", items.First().Descripcion);
     }
-    [TestMethod]
-    [ExpectedException(typeof(ItemException))]
-    public void AltaItem_SinCatalogo_Excepcion()
-    {
-        
-        var sistema = new Sistema();
-        var nuevoItem = new Item("Item 1", "Desc");
-
-        sistema.AltaItem("Inexistente", nuevoItem);
-
-    }
+   
 
     [TestMethod]
     [ExpectedException(typeof(ItemException))]
@@ -911,7 +909,7 @@ public class SistemaPruebas
         sistema.AgregarCatalogo(catalogo);
 
         var nuevoItem = new Item("", "Descripción 1"); 
-        sistema.AltaItem("Catálogo Test", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
 
 
@@ -924,6 +922,215 @@ public class SistemaPruebas
         sistema.AgregarCatalogo(catalogo);
 
         var nuevoItem = new Item("Titulo", ""); 
-        sistema.AltaItem("Catálogo Test", nuevoItem);
+        sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
+    [TestMethod]
+    [ExpectedException(typeof(ItemException))]
+    public void AltaItem_Nulo_Excepcion()
+    {
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);
+    }
+
+  
+    [TestMethod]
+    public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
+    {
+        
+        var catalogo = new Catalogo("Catálogo Test");
+        _sistema.AgregarCatalogo(catalogo); // Necesitás este método en tu sistema
+
+        var item1 = new Item("Titulo 1", "Descripcion 1");
+        var item2 = new Item("Titulo 1", "Descripcion 1");
+
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+
+        Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
+    }
+    [TestMethod]
+    public void ActualizarDuplicados_MarcaEstadoDuplicadoEnItems()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion");
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsTrue(item2.EstadoDuplicado);
+    }
+    
+
+
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void ActualizarDuplicadosPara_ExcepcionSiCatalogoEsNull()
+    {
+        var item = new Item("Titulo", "Descripcion");
+        _sistema.ActualizarDuplicadosPara(null, item);
+    }
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void ActualizarDuplicadosPara_LanzaExcepcionSiItemEsNull()
+    {
+        _sistema.ActualizarDuplicadosPara(_catalogo, null);
+    }
+    
+    [TestMethod]
+    public void ActualizarDuplicados_EliminaDuplicadosPreviosDelItem()
+    {
+        var item1 = new Item("Item 1", "Desc 1");
+        var item2 = new Item("Item 2", "Desc 2");
+
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
+
+        item1.Titulo = " Editado";
+        item1.Descripcion = "Editada";
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
+    }
+    [TestMethod]
+    public void AltaItemConDuplicados_ItemTieneDuplicado_EstadoDuplicadoEsTrue()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion");
+
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
+
+      
+        Assert.IsTrue(item1.EstadoDuplicado, "Item1 debería estar marcado como duplicado");
+        Assert.IsTrue(item2.EstadoDuplicado, "Item2 debería estar marcado como duplicado");
+
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir al menos un duplicado global");
+    }
+
+    
+    [TestMethod]
+    public void ActualizarDuplicados_ItemEditado_RecalculaDuplicadosGlobales()
+    {
+        var item1 = new Item("Titulo 1", "Desc");
+        var item2 = new Item("Titulo 1", "Desc");
+        var item3 = new Item("TituloNuevo", "DescNueva");
+    
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+        _catalogo.AgregarItem(item3);
+
+        item1.Titulo = "TituloNuevo"; 
+        item1.Descripcion = "DescNueva";
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir el duplicado tras editar item 1 con item 3");
+
+    }
+
+   
+    [TestMethod]
+    public void ActualizarDuplicados_RecalculaDuplicadosParaOtrosItems()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion"); 
+        var item3 = new Item("TituloDiferente", "DescripcionDiferente"); 
+        
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+        _catalogo.AgregarItem(item3);
+
+        item1.Titulo = "TituloDiferente";
+        item1.Descripcion = "DescripcionDiferente";
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item3);
+
+       Assert.IsTrue(item3.EstadoDuplicado, "Item3 debería estar marcado como duplicado");
+    }
+    
+    [TestMethod]
+    public void ActualizarDuplicados_MarcaDuplicadosCorrectamente()
+    {
+        
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion"); 
+        var item3 = new Item("Otro Titulo", "Otra Descripcion"); 
+        var item4 = new Item("Titulo", "Descripcion"); 
+
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item4);
+
+        item1.Titulo = "nosoyuntitle1111111111";
+        item1.Descripcion = "nosoydescripcion11111111";
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        
+        Assert.IsFalse(item1.EstadoDuplicado, "Item1 debe estar marcado como no duplicado");
+        Assert.IsTrue(item2.EstadoDuplicado, "Item2 debe estar marcado como  duplicado");
+        
+
+
+       
+    }
+    
+    [TestMethod]
+    public void EliminarItem_EliminaItemDelCatalogo()
+    {
+        var item1 = new Item("Item 1", "Desc 1");
+        var item2 = new Item("Item 2", "Desc 2");
+
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        
+        _sistema.EliminarItem("Catalogo Test", item1);
+
+        
+        Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
+        Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe permanecer en el catálogo");
+    }
+    
+    [TestMethod]
+    public void EliminarItemYActualizarDuplicados_EliminaDuplicadosGlobalesDelItem()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion"); 
+        var item3 = new Item("Otro", "Desc");
+
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
+
+        _sistema.EliminarItem("Catalogo Test", item1);
+
+        Assert.IsFalse(item2.EstadoDuplicado);
+    }
+    [TestMethod]
+    [ExpectedException(typeof(ItemException))]
+    public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
+    {
+        var item = new Item("ItemInexistente", "Desc");
+        _sistema.EliminarItem("Catalogo Test", item);
+        
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void EliminarItem_CatalogoNoExistente_LanzaExcepcion()
+    {
+        var item = new Item("ItemInexistente", "Desc");
+
+        _sistema.EliminarItem("Catalogo Inexistente", item);
+    }
+
+    
+
+
+   
+
+
 }

@@ -10,9 +10,12 @@ public class Item
     private string _marca;
     private string _modelo;
     private string _categoria;
-   
+    public bool EstadoDuplicado = false;
     public int Id { get; private set; }
-
+    
+    
+    
+   
     public Item()
     {
         Id = _nextId++;
@@ -92,7 +95,6 @@ public class Item
         }
     }
 
-    public String? EstadoDuplicado { get; set; }
 
     public override bool Equals(object obj)
     {
