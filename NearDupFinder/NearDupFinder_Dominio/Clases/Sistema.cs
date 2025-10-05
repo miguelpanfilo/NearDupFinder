@@ -337,8 +337,8 @@ public class Sistema
     public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
     {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
-        ValidarCatalogoYItem(catalogo, nuevoItem);
 
+        ValidarCatalogoYItem(catalogo, nuevoItem);
 
         catalogo.AgregarItem(nuevoItem);
         
@@ -362,7 +362,9 @@ public class Sistema
             throw new ArgumentNullException();
 
        EliminarDuplicadosPrevios(itemEditado);
+       
        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+       
        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
        
        

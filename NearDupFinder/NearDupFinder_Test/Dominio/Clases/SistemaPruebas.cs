@@ -1054,6 +1054,29 @@ public class SistemaPruebas
        Assert.IsTrue(item3.EstadoDuplicado, "Item3 debería estar marcado como duplicado");
     }
     
+    [TestMethod]
+    public void ActualizarDuplicados_MarcaDuplicadosCorrectamente()
+    {
+        
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion"); 
+        var item3 = new Item("Otro Titulo", "Otra Descripcion"); 
+        var item4 = new Item("Titulo", "Descripcion"); 
+
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+        _catalogo.AgregarItem(item3);
+        _catalogo.AgregarItem(item4);
+
+        item1.Titulo = "nosoyuntitle1111111111";
+        item1.Descripcion = "nosoydescripcion11111111";
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        
+        Assert.IsFalse(item1.EstadoDuplicado, "Item1 debe estar marcado como no duplicado");
+        Assert.IsTrue(item2.EstadoDuplicado, "Item2 debe estar marcado como  duplicado");
+        Assert.IsFalse(item3.EstadoDuplicado, "Item3 no debe estar marcado como duplicado");
+    }
    
 
 
