@@ -345,6 +345,7 @@ public class Sistema
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
     
         DuplicadosGlobales.AddRange(duplicadosDelItem);
+        nuevoItem.EstadoDuplicado = true;
 
     }
     private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
