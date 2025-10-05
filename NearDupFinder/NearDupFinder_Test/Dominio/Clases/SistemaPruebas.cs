@@ -1035,6 +1035,24 @@ public class SistemaPruebas
     }
 
    
+    [TestMethod]
+    public void ActualizarDuplicados_RecalculaDuplicadosParaOtrosItems()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion"); 
+        var item3 = new Item("TituloDiferente", "DescripcionDiferente"); 
+        
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+        _catalogo.AgregarItem(item3);
+
+        item1.Titulo = "TituloDiferente";
+        item1.Descripcion = "DescripcionDiferente";
+
+        _sistema.ActualizarDuplicadosPara(_catalogo, item3);
+
+       Assert.IsTrue(item3.EstadoDuplicado, "Item3 debería estar marcado como duplicado");
+    }
 
 
 }

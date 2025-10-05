@@ -367,21 +367,25 @@ public class Sistema
             throw new ArgumentNullException();
 
        EliminarDuplicadosPrevios(itemEditado);
-
+       var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+       AgregarDuplicados(nuevosDuplicados);
        
-        
-        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-        foreach (var dup in nuevosDuplicados)
-        {
-            DuplicadosGlobales.Add(dup);
-            dup.ItemA.EstadoDuplicado = true;
-            dup.ItemB.EstadoDuplicado = true;
-
-            
-        }
+       
 
 
     }
+    private void AgregarDuplicados(IEnumerable<Duplicados>? duplicados)
+    {
+      
+        foreach (var dup in duplicados)
+        {
+            DuplicadosGlobales.Add(dup);
+
+            dup.ItemA.EstadoDuplicado = true;
+            dup.ItemB.EstadoDuplicado = true;
+        }
+    }
+
     
     private void EliminarDuplicadosPrevios(Item item)
     {
