@@ -155,4 +155,23 @@ public class ClusterPruebas
 
         Assert.AreEqual(0, cat.Clusters.Count(), "No debe crearse un cluster cuando el par es (a,a).");
     }
+    
+    [TestMethod]
+    public void QuitarDeCluster_DejaSinClusterSiQuedaUnSoloItem()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d1" };
+        var b = new Item { Titulo = "B", Descripcion = "d2" };
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+
+        cat.ConfirmarDuplicado(a, b);
+        Assert.AreEqual(1, cat.Clusters.Count(), "Setup: debe existir 1 clúster.");
+
+        
+        cat.QuitarItemDeCluster(b);
+
+        
+        Assert.AreEqual(0, cat.Clusters.Count());
+    }
 }
