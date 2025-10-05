@@ -934,7 +934,13 @@ public class SistemaPruebas
         var nuevoItem = new Item("Titulo", ""); 
         sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
-    
+    [TestMethod]
+    [ExpectedException(typeof(ItemException))]
+    public void AltaItem_Nulo_Excepcion()
+    {
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);
+    }
+
   
     [TestMethod]
     public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()

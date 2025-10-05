@@ -349,8 +349,7 @@ public class Sistema
     }
     private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
     {
-        if (catalogo == null)
-            throw new ItemException("Debe seleccionar un catálogo válido.");
+       
         if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
             throw new ItemException("Título y Descripción son obligatorios.");
     }
