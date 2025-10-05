@@ -28,4 +28,15 @@ public class ClusterPruebas
             new[] { a, b },
             pertenecientesCluster);
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_ItemB_Null_LanzaArgumentNullException()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        cat.AgregarItem(a);
+        
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => cat.ConfirmarDuplicado(a, null));
+        StringAssert.Contains(ex.Message, "El parametro no puede ser null");
+    }
 }
