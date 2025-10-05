@@ -1119,7 +1119,7 @@ public class SistemaPruebas
     }
     
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void EliminarItem_CatalogoNoExistente_LanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");

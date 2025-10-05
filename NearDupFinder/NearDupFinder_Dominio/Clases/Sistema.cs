@@ -399,7 +399,10 @@ public class Sistema
     {
         
         Catalogo catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
-
+        
+        if (catalogoBuscado == null)
+            throw new ArgumentException("El catálogo no existe.");
+        
         if (!catalogoBuscado.Items.Contains(item))
             throw new ItemException("El item no existe en el catálogo.");
         
