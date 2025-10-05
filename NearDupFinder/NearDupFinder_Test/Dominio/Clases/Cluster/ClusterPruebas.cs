@@ -170,7 +170,18 @@ public class ClusterPruebas
 
         
         cat.QuitarItemDeCluster(b);
+        
+        Assert.AreEqual(0, cat.Clusters.Count());
+    }
+    
+    [TestMethod]
+    public void QuitarItemDeCluster_ItemSinCluster_NoCambiaNada()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A" };
+        cat.AgregarItem(a);
 
+        cat.QuitarItemDeCluster(a);
         
         Assert.AreEqual(0, cat.Clusters.Count());
     }
