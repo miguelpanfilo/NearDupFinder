@@ -226,13 +226,33 @@ public class ClusterPruebas
     public void QuitarItemDeCluster_ItemFueraDelCatalogo_LanzaInvalidOperationException()
     {
         var cat = new Catalogo("Stock Tata");
-        var a = new Item { Titulo = "A" };
-        var b = new Item { Titulo = "B" };
+        var a = new Item { Titulo = "A", Descripcion = "d1" };
+        var b = new Item { Titulo = "B", Descripcion = "d1" };
 
         cat.AgregarItem(a);
         cat.ConfirmarDuplicado(a, a);
         
         var ex = Assert.ThrowsException<InvalidOperationException>(() => cat.QuitarItemDeCluster(b));
         StringAssert.Contains(ex.Message, "El item no pertenece al catalogo");
+    }
+    
+    [TestMethod]
+    public void ObtenerClusterDe_ItemConCluster_RetornaEseCluster()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d1" };
+        var b = new Item { Titulo = "B", Descripcion = "d1" };
+        cat.AgregarItem(a); 
+        cat.AgregarItem(b);
+
+        cat.ConfirmarDuplicado(a, b);
+
+        var cluster = cat.ObtenerClusterDe(a);
+
+        Assert.IsNotNull(cluster);
+        CollectionAssert.AreEquivalent(
+            new[] { a, b },
+            cluster.PertenecientesCluster.ToList()
+        );
     }
 }
