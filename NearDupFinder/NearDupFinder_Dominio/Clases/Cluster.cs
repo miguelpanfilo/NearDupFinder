@@ -12,4 +12,6 @@ public class Cluster
         Id = id;
         _pertenecientesCluster = pertenecientesCluster;
     }
+    
+    public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
 }

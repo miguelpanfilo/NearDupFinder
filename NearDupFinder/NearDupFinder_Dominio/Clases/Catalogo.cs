@@ -10,10 +10,10 @@ public class Catalogo
     private readonly List<Item> _items = new();
     
     
-    private readonly Dictionary<int, HashSet<Item>> _clusters = new();
+    private readonly Dictionary<int, Cluster> _clusters = new();
     private static int _nextClusterId = 1;
     
-    public IEnumerable<Cluster> Clusters => _clusters.Select(kv => new Cluster(kv.Key, kv.Value));
+    public IEnumerable<Cluster> Clusters => _clusters.Values;
     
 
     public Catalogo(string titulo)
@@ -98,6 +98,6 @@ public class Catalogo
             throw new InvalidOperationException("Uno o ambos ítems no pertenecen al catalogo");
         
         var nuevoId = _nextClusterId++;
-        _clusters[nuevoId] = new HashSet<Item> { a, b };
+        _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });;
     }
 }
