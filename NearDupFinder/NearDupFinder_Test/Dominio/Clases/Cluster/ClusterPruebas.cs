@@ -178,7 +178,7 @@ public class ClusterPruebas
     public void QuitarItemDeCluster_ItemSinCluster_NoCambiaNada()
     {
         var cat = new Catalogo("Stock Tata");
-        var a = new Item { Titulo = "A" };
+        var a = new Item { Titulo = "A", Descripcion = "d1"  };
         cat.AgregarItem(a);
 
         cat.QuitarItemDeCluster(a);
@@ -193,5 +193,32 @@ public class ClusterPruebas
 
         var ex = Assert.ThrowsException<ArgumentNullException>(() => cat.QuitarItemDeCluster(null));
         StringAssert.Contains(ex.Message, "El parámetro no puede ser null");
+    }
+    
+    [TestMethod]
+    public void QuitarItemDeCluster_ConTresMiembros_QuedaClusterConDos()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d1" };
+        var b = new Item { Titulo = "B", Descripcion = "d2" };
+        var c = new Item { Titulo = "C", Descripcion = "d3" };
+        
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        cat.AgregarItem(c);
+
+        cat.ConfirmarDuplicado(a, b);
+        cat.ConfirmarDuplicado(b, c);
+
+        Assert.AreEqual(1, cat.Clusters.Count());
+        
+        cat.QuitarItemDeCluster(b);
+        
+        Assert.AreEqual(1, cat.Clusters.Count());
+        var cluster = cat.Clusters.First();
+        CollectionAssert.AreEquivalent(
+            new[] { a, c },
+            cluster.PertenecientesCluster.ToList()
+        );
     }
 }
