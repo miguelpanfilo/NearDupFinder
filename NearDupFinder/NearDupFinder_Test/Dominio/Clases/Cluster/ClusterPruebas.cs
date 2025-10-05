@@ -122,5 +122,25 @@ public class ClusterPruebas
             clusterUnico.PertenecientesCluster.ToList()
         );
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_MismoParEnOrdenInverso_NoCreaNuevoCluster()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        var b = new Item { Titulo = "B", Descripcion = "d" };
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        
+        cat.ConfirmarDuplicado(a, b);
+        cat.ConfirmarDuplicado(b, a);
 
+        
+        Assert.AreEqual(1, cat.Clusters.Count());
+        var cluster = cat.Clusters.First();
+        CollectionAssert.AreEquivalent(
+            new[] { a, b },
+            cluster.PertenecientesCluster.ToList()
+        );
+    }
 }
