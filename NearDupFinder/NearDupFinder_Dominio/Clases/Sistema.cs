@@ -366,16 +366,11 @@ public class Sistema
        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
        
        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
-       
-       foreach (var item in catalogo.Items)
-       {
-           bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
-           item.EstadoDuplicado = tieneDuplicados;
-       }
 
-
+       ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
     }
+    
     private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<Duplicados>? duplicados)
     {
         if (duplicados == null) return;
@@ -401,7 +396,7 @@ public class Sistema
             DuplicadosGlobales.Remove(duplicado);
     }
 
-    public void EliminarItemYActualizarDuplicados(string catalogo, Item item)
+    public void EliminarItem(string catalogo, Item item)
     {
         Catalogo catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
         
@@ -413,14 +408,19 @@ public class Sistema
 
         foreach (var dup in duplicadosABorrar)
             DuplicadosGlobales.Remove(dup);
-        
-        foreach (var it in catalogoBuscado.Items)
-        {
-            bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == it.Id || d.ItemB.Id == it.Id);
-            it.EstadoDuplicado = tieneDuplicados;
-        }
-        
+
+        ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
+
     }
+    private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
+    {
+        foreach (var item in catalogo.Items) 
+        {
+            bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
+            item.EstadoDuplicado = tieneDuplicados;
+        }
+    }
+
 
 
 

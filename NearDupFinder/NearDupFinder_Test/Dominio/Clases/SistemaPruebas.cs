@@ -1091,7 +1091,7 @@ public class SistemaPruebas
         _catalogo.AgregarItem(item2);
 
         
-        _sistema.EliminarItemYActualizarDuplicados("Catalogo Test", item1);
+        _sistema.EliminarItem("Catalogo Test", item1);
 
         
         Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
@@ -1109,7 +1109,7 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
 
-        _sistema.EliminarItemYActualizarDuplicados("Catalogo Test", item1);
+        _sistema.EliminarItem("Catalogo Test", item1);
 
         Assert.IsFalse(item2.EstadoDuplicado);
     }
