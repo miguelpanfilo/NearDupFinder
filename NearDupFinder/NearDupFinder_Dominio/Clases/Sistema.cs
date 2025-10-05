@@ -361,10 +361,19 @@ public class Sistema
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
 
-        DuplicadosGlobales.Clear();
+       EliminarDuplicadosPrevios(itemEditado);
 
         foreach (var item in catalogo.Items)
             item.EstadoDuplicado = true;
+    }
+    private void EliminarDuplicadosPrevios(Item item)
+    {
+        var duplicadosABorrar = DuplicadosGlobales
+            .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
+            .ToList();
+
+        foreach (var duplicado in duplicadosABorrar)
+            DuplicadosGlobales.Remove(duplicado);
     }
 
 
