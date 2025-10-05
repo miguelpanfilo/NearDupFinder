@@ -368,15 +368,11 @@ public void EliminarItem(string catalogo, Item item)
     
     catalogoBuscado.EliminarItem(item);
 
-    var duplicadosABorrar = DuplicadosGlobales
-        .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
-        .ToList();
-
-    foreach (var dup in duplicadosABorrar)
-        DuplicadosGlobales.Remove(dup);
+    EliminarDuplicadosPrevios(item);
 
     ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
 }
+
 
 
 private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
@@ -421,6 +417,7 @@ private void EliminarDuplicadosPrevios(Item item)
     foreach (var duplicado in duplicadosABorrar)
         DuplicadosGlobales.Remove(duplicado);
 }
+
 
 private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
 {
