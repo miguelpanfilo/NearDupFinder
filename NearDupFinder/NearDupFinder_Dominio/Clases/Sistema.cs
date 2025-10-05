@@ -344,12 +344,7 @@ public class Sistema
         
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
     
-        DuplicadosGlobales.AddRange(duplicadosDelItem);
-        foreach (var dup in duplicadosDelItem)
-        {
-            dup.ItemA.EstadoDuplicado = true;
-            dup.ItemB.EstadoDuplicado = true;
-        }
+        AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
 
     }
     private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
@@ -368,13 +363,13 @@ public class Sistema
 
        EliminarDuplicadosPrevios(itemEditado);
        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-       AgregarDuplicados(nuevosDuplicados);
+       AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
        
        
 
 
     }
-    private void AgregarDuplicados(IEnumerable<Duplicados>? duplicados)
+    private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<Duplicados>? duplicados)
     {
       
         foreach (var dup in duplicados)
