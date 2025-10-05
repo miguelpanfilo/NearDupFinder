@@ -367,21 +367,29 @@ public class Sistema
        
        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
        
-       
+       foreach (var item in catalogo.Items)
+       {
+           bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
+           item.EstadoDuplicado = tieneDuplicados;
+       }
+
 
 
     }
     private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<Duplicados>? duplicados)
     {
-      
+        if (duplicados == null) return;
+
         foreach (var dup in duplicados)
         {
             DuplicadosGlobales.Add(dup);
 
+            // marcar en true a los dos items involucrados
             dup.ItemA.EstadoDuplicado = true;
             dup.ItemB.EstadoDuplicado = true;
         }
     }
+
 
     
     private void EliminarDuplicadosPrevios(Item item)

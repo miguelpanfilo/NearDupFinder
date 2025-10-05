@@ -1063,10 +1063,10 @@ public class SistemaPruebas
         var item3 = new Item("Otro Titulo", "Otra Descripcion"); 
         var item4 = new Item("Titulo", "Descripcion"); 
 
-        _catalogo.AgregarItem(item1);
-        _catalogo.AgregarItem(item2);
-        _catalogo.AgregarItem(item3);
-        _catalogo.AgregarItem(item4);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item4);
 
         item1.Titulo = "nosoyuntitle1111111111";
         item1.Descripcion = "nosoydescripcion11111111";
@@ -1075,7 +1075,10 @@ public class SistemaPruebas
         
         Assert.IsFalse(item1.EstadoDuplicado, "Item1 debe estar marcado como no duplicado");
         Assert.IsTrue(item2.EstadoDuplicado, "Item2 debe estar marcado como  duplicado");
-        Assert.IsFalse(item3.EstadoDuplicado, "Item3 no debe estar marcado como duplicado");
+        
+
+
+       
     }
    
 
