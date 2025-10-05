@@ -98,6 +98,20 @@ public class Catalogo
             throw new InvalidOperationException("Uno o ambos ítems no pertenecen al catalogo");
         if (_clusters.Values.Any(c => c.Contiene(a) && c.Contiene(b)))
             return;
+        var clusterDeA = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(a));
+        var clusterDeB = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(b));
+        
+        if (clusterDeA != null && clusterDeB == null)
+        {
+            clusterDeA.Agregar(b);
+            return;
+        }
+
+        if (clusterDeA == null && clusterDeB != null)
+        {
+            clusterDeB.Agregar(a);
+            return;
+        }
         
         var nuevoId = _nextClusterId++;
         

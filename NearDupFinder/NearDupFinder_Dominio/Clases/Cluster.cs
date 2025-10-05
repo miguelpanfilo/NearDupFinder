@@ -5,7 +5,7 @@ public class Cluster
     public int Id { get; }
     private readonly HashSet<Item> _pertenecientesCluster;
 
-    public IEnumerable<Item> PertenecientesCluster => _pertenecientesCluster;
+    public  IEnumerable<Item> PertenecientesCluster => _pertenecientesCluster;
 
     public  Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
@@ -13,5 +13,6 @@ public class Cluster
         _pertenecientesCluster = pertenecientesCluster;
     }
     
+    public void Agregar(Item item) => _pertenecientesCluster.Add(item);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
 }
