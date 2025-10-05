@@ -1091,12 +1091,29 @@ public class SistemaPruebas
         _catalogo.AgregarItem(item2);
 
         
-        _sistema.EliminarItemYActualizarDuplicados(_catalogo, item1);
+        _sistema.EliminarItemYActualizarDuplicados("Catalogo Test", item1);
 
         
         Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
         Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe permanecer en el catálogo");
     }
+    
+    [TestMethod]
+    public void EliminarItemYActualizarDuplicados_EliminaDuplicadosGlobalesDelItem()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion"); // duplicado
+        var item3 = new Item("Otro", "Desc");
+
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
+
+        _sistema.EliminarItemYActualizarDuplicados("Catalogo Test", item1);
+
+        Assert.IsFalse(item2.EstadoDuplicado);
+    }
+
 
    
 

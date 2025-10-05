@@ -402,6 +402,13 @@ public class Sistema
             DuplicadosGlobales.Remove(duplicado);
     }
 
+    public void EliminarItemYActualizarDuplicados(string catalogo, Item item)
+    {
+        Catalogo catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
+        
+        catalogoBuscado.EliminarItem(item);
+        
+    }
 
 
 
