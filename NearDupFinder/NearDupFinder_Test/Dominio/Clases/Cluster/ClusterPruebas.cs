@@ -221,4 +221,18 @@ public class ClusterPruebas
             cluster.PertenecientesCluster.ToList()
         );
     }
+    
+    [TestMethod]
+    public void QuitarItemDeCluster_ItemFueraDelCatalogo_LanzaInvalidOperationException()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A" };
+        var b = new Item { Titulo = "B" };
+
+        cat.AgregarItem(a);
+        cat.ConfirmarDuplicado(a, a);
+        
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => cat.QuitarItemDeCluster(b));
+        StringAssert.Contains(ex.Message, "El item no pertenece al catalogo");
+    }
 }
