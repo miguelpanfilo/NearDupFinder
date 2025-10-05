@@ -370,6 +370,15 @@ public class Sistema
 
         foreach (var item in catalogo.Items)
             item.EstadoDuplicado = true;
+        
+        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+        foreach (var dup in nuevosDuplicados)
+        {
+            DuplicadosGlobales.Add(dup);
+            
+        }
+
+
     }
     
     private void EliminarDuplicadosPrevios(Item item)
