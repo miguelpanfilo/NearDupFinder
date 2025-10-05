@@ -345,7 +345,11 @@ public class Sistema
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
     
         DuplicadosGlobales.AddRange(duplicadosDelItem);
-        nuevoItem.EstadoDuplicado = true;
+        foreach (var dup in duplicadosDelItem)
+        {
+            dup.ItemA.EstadoDuplicado = true;
+            dup.ItemB.EstadoDuplicado = true;
+        }
 
     }
     private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
