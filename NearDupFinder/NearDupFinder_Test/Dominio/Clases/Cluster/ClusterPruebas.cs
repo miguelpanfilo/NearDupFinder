@@ -143,4 +143,16 @@ public class ClusterPruebas
             cluster.PertenecientesCluster.ToList()
         );
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_MismoItem_NoCreaCluster()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        cat.AgregarItem(a);
+
+        cat.ConfirmarDuplicado(a, a);
+
+        Assert.AreEqual(0, cat.Clusters.Count(), "No debe crearse un cluster cuando el par es (a,a).");
+    }
 }
