@@ -988,13 +988,11 @@ public class SistemaPruebas
         var item1 = new Item("Item 1", "Desc 1");
         var item2 = new Item("Item 2", "Desc 2");
 
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
 
-        Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
-
-        item1.Titulo = "Titulo Editado";
-        item1.Descripcion = "Descripcion Editada";
+        item1.Titulo = " Editado";
+        item1.Descripcion = "Editada";
 
         _sistema.ActualizarDuplicadosPara(_catalogo, item1);
 

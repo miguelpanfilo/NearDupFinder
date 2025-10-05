@@ -10,7 +10,7 @@ public enum TipoDuplicado
     τ_dup
 }
 
-public struct Duplicados
+public record struct Duplicados
 {
     public Item ItemA { get; set; }
     public Item ItemB { get; set; }
@@ -297,7 +297,7 @@ public class Sistema
             throw new InvalidOperationException("No existe un catálogo con ese título");
         _catalogos.Remove(catalogo);
     }
-    //agregue CambiarTituloCatalogo Testearlo falta 
+
     public void CambiarTituloCatalogo(Catalogo catalogo, string titulo)
     {
         var candidatoCata = ObtenerCatalogoPorTitulo(titulo);
@@ -310,7 +310,6 @@ public class Sistema
     }
     public IReadOnlyCollection<Catalogo> Catalogos => _catalogos.AsReadOnly();
 
-    //refactor en obtenerCatalogoPorTitulo
     public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
         => _catalogos.FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
 
@@ -357,15 +356,12 @@ public class Sistema
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
 
+        DuplicadosGlobales.Clear();
 
-        if (catalogo.Items.Count > 1)
-        {
-            foreach (var item in catalogo.Items)
-            {
-                item.EstadoDuplicado = true;
-            }
-        }
+        foreach (var item in catalogo.Items)
+            item.EstadoDuplicado = true;
     }
+
 
 
 
