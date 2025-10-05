@@ -14,5 +14,7 @@ public class Cluster
     }
     
     public void Agregar(Item item) => _pertenecientesCluster.Add(item);
+    
+    public void Remover(Item item) => _pertenecientesCluster.Remove(item);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
 }

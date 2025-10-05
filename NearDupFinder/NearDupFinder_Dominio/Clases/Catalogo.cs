@@ -130,4 +130,16 @@ public class Catalogo
         
         _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });;
     }
+    
+    public void QuitarItemDeCluster(Item item)
+    {
+        var cluster = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
+        
+        cluster.Remover(item);
+        
+        if (cluster.PertenecientesCluster.Count() <= 1)
+        {
+            _clusters.Remove(cluster.Id);
+        }
+    }
 }
