@@ -92,6 +92,9 @@ public class Catalogo
     
     public void ConfirmarDuplicado(Item a, Item b)
     {
+        if (a == null) throw new ArgumentNullException(nameof(a), "El parametro no puede ser null");
+        if (b == null) throw new ArgumentNullException(nameof(b), "El parametro no puede ser null");
+        
         var nuevoId = _nextClusterId++;
         _clusters[nuevoId] = new HashSet<Item> { a, b };
     }
