@@ -337,11 +337,8 @@ public class Sistema
     public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
     {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
-        if (catalogo == null)
-            throw new ItemException("Debe seleccionar un catálogo válido.");
+        ValidarCatalogoYItem(catalogo, nuevoItem);
 
-        if (string.IsNullOrWhiteSpace(nuevoItem.Titulo) || string.IsNullOrWhiteSpace(nuevoItem.Descripcion))
-            throw new ItemException("Título y Descripción son obligatorios.");
 
         catalogo.AgregarItem(nuevoItem);
         
@@ -350,6 +347,14 @@ public class Sistema
         DuplicadosGlobales.AddRange(duplicadosDelItem);
 
     }
+    private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
+    {
+        if (catalogo == null)
+            throw new ItemException("Debe seleccionar un catálogo válido.");
+        if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
+            throw new ItemException("Título y Descripción son obligatorios.");
+    }
+
     
     public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
     {
