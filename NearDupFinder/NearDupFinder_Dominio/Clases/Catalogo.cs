@@ -134,6 +134,7 @@ public class Catalogo
     public void QuitarItemDeCluster(Item item)
     {
         if (item == null) throw new ArgumentNullException(nameof(item), "El parámetro no puede ser null");
+        if (!_items.Contains(item)) throw new InvalidOperationException("El item no pertenece al catalogo");
         
         var cluster = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
         if (cluster == null)
