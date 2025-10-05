@@ -397,7 +397,11 @@ public class Sistema
 
     public void EliminarItem(string catalogo, Item item)
     {
+        
         Catalogo catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
+
+        if (!catalogoBuscado.Items.Contains(item))
+            throw new ItemException("El item no existe en el catálogo.");
         
         catalogoBuscado.EliminarItem(item);
 

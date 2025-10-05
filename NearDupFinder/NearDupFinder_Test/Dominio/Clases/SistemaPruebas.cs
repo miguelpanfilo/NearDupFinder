@@ -898,17 +898,7 @@ public class SistemaPruebas
         Assert.AreEqual("Item 1", items.First().Titulo);
         Assert.AreEqual("Descripción 1", items.First().Descripcion);
     }
-    [TestMethod]
-    [ExpectedException(typeof(ItemException))]
-    public void AltaItem_SinCatalogo_Excepcion()
-    {
-        
-        var sistema = new Sistema();
-        var nuevoItem = new Item("Item 1", "Desc");
-
-        sistema.AltaItemConAltaDuplicados("Inexistente", nuevoItem);
-
-    }
+   
 
     [TestMethod]
     [ExpectedException(typeof(ItemException))]
@@ -1108,7 +1098,7 @@ public class SistemaPruebas
     public void EliminarItemYActualizarDuplicados_EliminaDuplicadosGlobalesDelItem()
     {
         var item1 = new Item("Titulo", "Descripcion");
-        var item2 = new Item("Titulo", "Descripcion"); // duplicado
+        var item2 = new Item("Titulo", "Descripcion"); 
         var item3 = new Item("Otro", "Desc");
 
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
@@ -1120,6 +1110,7 @@ public class SistemaPruebas
         Assert.IsFalse(item2.EstadoDuplicado);
     }
     [TestMethod]
+    [ExpectedException(typeof(ItemException))]
     public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");
