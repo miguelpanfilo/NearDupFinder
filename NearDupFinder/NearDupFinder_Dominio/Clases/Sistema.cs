@@ -407,7 +407,15 @@ public class Sistema
         Catalogo catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
         
         catalogoBuscado.EliminarItem(item);
-        
+
+        foreach (var dup in DuplicadosGlobales)
+        {
+            if (dup.ItemA.Id != item.Id)
+                dup.ItemA.EstadoDuplicado = false;
+            if (dup.ItemB.Id != item.Id)
+                dup.ItemB.EstadoDuplicado = false;
+        }
+
     }
 
 
