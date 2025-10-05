@@ -1014,5 +1014,25 @@ public class SistemaPruebas
         Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir al menos un duplicado global");
     }
 
+    
+    [TestMethod]
+    public void ActualizarDuplicados_ItemEditado_RecalculaDuplicadosGlobales()
+    {
+        var item1 = new Item("Titulo 1", "Desc");
+        var item2 = new Item("Titulo 1", "Desc");
+        var item3 = new Item("TituloNuevo", "DescNueva");
+    
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+        _catalogo.AgregarItem(item3);
+
+        item1.Titulo = "TituloNuevo"; 
+        item1.Descripcion = "DescNueva";
+        _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir el duplicado tras editar item 1 con item 3");
+
+    }
+
 
 }
