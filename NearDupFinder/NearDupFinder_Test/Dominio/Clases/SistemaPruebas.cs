@@ -1119,6 +1119,13 @@ public class SistemaPruebas
 
         Assert.IsFalse(item2.EstadoDuplicado);
     }
+    [TestMethod]
+    public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
+    {
+        var item = new Item("ItemInexistente", "Desc");
+        _sistema.EliminarItem("Catalogo Test", item);
+        
+    }
 
 
    
