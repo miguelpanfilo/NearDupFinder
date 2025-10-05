@@ -94,6 +94,8 @@ public class Catalogo
     {
         if (a == null) throw new ArgumentNullException(nameof(a), "El parametro no puede ser null");
         if (b == null) throw new ArgumentNullException(nameof(b), "El parametro no puede ser null");
+        if (!_items.Contains(a) || !_items.Contains(b))
+            throw new InvalidOperationException("Uno o ambos ítems no pertenecen al catalogo");
         
         var nuevoId = _nextClusterId++;
         _clusters[nuevoId] = new HashSet<Item> { a, b };
