@@ -146,4 +146,9 @@ public class Catalogo
             _clusters.Remove(cluster.Id);
         }
     }
+    
+    public Cluster ObtenerClusterDe(Item item)
+    {
+        return _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
+    }
 }
