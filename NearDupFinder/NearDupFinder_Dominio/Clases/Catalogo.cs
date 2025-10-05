@@ -113,6 +113,15 @@ public class Catalogo
             return;
         }
         
+        if (clusterDeA != null && clusterDeB != null && clusterDeA.Id != clusterDeB.Id)
+        {
+            foreach (var item in clusterDeB.PertenecientesCluster.ToList())
+                clusterDeA.Agregar(item);
+
+            _clusters.Remove(clusterDeB.Id);
+            return;
+        }
+        
         var nuevoId = _nextClusterId++;
         
         _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });;
