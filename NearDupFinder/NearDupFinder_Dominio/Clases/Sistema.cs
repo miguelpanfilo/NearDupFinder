@@ -366,6 +366,7 @@ public class Sistema
         foreach (var item in catalogo.Items)
             item.EstadoDuplicado = true;
     }
+    
     private void EliminarDuplicadosPrevios(Item item)
     {
         var duplicadosABorrar = DuplicadosGlobales

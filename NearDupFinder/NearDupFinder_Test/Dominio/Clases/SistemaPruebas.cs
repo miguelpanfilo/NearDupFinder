@@ -998,5 +998,21 @@ public class SistemaPruebas
 
         Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
     }
+    [TestMethod]
+    public void AltaItemConDuplicados_ItemTieneDuplicado_EstadoDuplicadoEsTrue()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion");
+
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
+
+      
+        Assert.IsTrue(item1.EstadoDuplicado, "Item1 debería estar marcado como duplicado");
+        Assert.IsTrue(item2.EstadoDuplicado, "Item2 debería estar marcado como duplicado");
+
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir al menos un duplicado global");
+    }
+
 
 }
