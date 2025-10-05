@@ -1117,6 +1117,17 @@ public class SistemaPruebas
         _sistema.EliminarItem("Catalogo Test", item);
         
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ItemException))]
+    public void EliminarItem_CatalogoNoExistente_LanzaExcepcion()
+    {
+        var item = new Item("ItemInexistente", "Desc");
+
+        _sistema.EliminarItem("Catalogo Inexistente", item);
+    }
+
+    
 
 
    
