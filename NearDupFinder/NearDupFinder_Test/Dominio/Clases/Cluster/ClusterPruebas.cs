@@ -53,4 +53,21 @@ public class ClusterPruebas
         var ex = Assert.ThrowsException<InvalidOperationException>(() => cat.ConfirmarDuplicado(a, b));
         StringAssert.Contains(ex.Message, "Uno o ambos ítems no pertenecen al catalogo");
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_RepiteMismoPar_NoCreaNuevoCluster()
+    {
+        
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        var b = new Item { Titulo = "B", Descripcion = "d" };
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        
+        cat.ConfirmarDuplicado(a, b);
+        var cantidadClauster = cat.Clusters.Count();
+        cat.ConfirmarDuplicado(a, b); 
+        
+        Assert.AreEqual(cantidadClauster, cat.Clusters.Count());
+    }
 }
