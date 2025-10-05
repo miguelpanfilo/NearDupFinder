@@ -384,7 +384,6 @@ public class Sistema
         {
             DuplicadosGlobales.Add(dup);
 
-            // marcar en true a los dos items involucrados
             dup.ItemA.EstadoDuplicado = true;
             dup.ItemB.EstadoDuplicado = true;
         }
@@ -408,14 +407,19 @@ public class Sistema
         
         catalogoBuscado.EliminarItem(item);
 
-        foreach (var dup in DuplicadosGlobales)
-        {
-            if (dup.ItemA.Id != item.Id)
-                dup.ItemA.EstadoDuplicado = false;
-            if (dup.ItemB.Id != item.Id)
-                dup.ItemB.EstadoDuplicado = false;
-        }
+        var duplicadosABorrar = DuplicadosGlobales
+            .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
+            .ToList();
 
+        foreach (var dup in duplicadosABorrar)
+            DuplicadosGlobales.Remove(dup);
+        
+        foreach (var it in catalogoBuscado.Items)
+        {
+            bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == it.Id || d.ItemB.Id == it.Id);
+            it.EstadoDuplicado = tieneDuplicados;
+        }
+        
     }
 
 
