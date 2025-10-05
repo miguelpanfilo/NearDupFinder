@@ -92,4 +92,35 @@ public class ClusterPruebas
             cluster.PertenecientesCluster.ToList()
         );
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_ConectaDosClusters_DebeUnirlos()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d1" };
+        var b = new Item { Titulo = "B", Descripcion = "d2" };
+        var c = new Item { Titulo = "C", Descripcion = "d3" };
+        var d = new Item { Titulo = "D", Descripcion = "d4" };
+
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        cat.AgregarItem(c);
+        cat.AgregarItem(d);
+        
+        cat.ConfirmarDuplicado(a, b);
+        
+        cat.ConfirmarDuplicado(c, d);
+        
+        Assert.AreEqual(2, cat.Clusters.Count());
+        
+        cat.ConfirmarDuplicado(b, d);
+        
+        Assert.AreEqual(1, cat.Clusters.Count());
+        var clusterUnico = cat.Clusters.First();
+        CollectionAssert.AreEquivalent(
+            new[] { a, b, c, d },
+            clusterUnico.PertenecientesCluster.ToList()
+        );
+    }
+
 }
