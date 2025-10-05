@@ -70,4 +70,26 @@ public class ClusterPruebas
         
         Assert.AreEqual(cantidadClauster, cat.Clusters.Count());
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_Transitivo_AgregaTerceroAlMismoCluster()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "d1" };
+        var b = new Item { Titulo = "B", Descripcion = "d2" };
+        var c = new Item { Titulo = "C", Descripcion = "d3" };
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        cat.AgregarItem(c);
+        
+        cat.ConfirmarDuplicado(a, b); 
+        cat.ConfirmarDuplicado(b, c); 
+        
+        Assert.AreEqual(1, cat.Clusters.Count());
+        var cluster = cat.Clusters.First();
+        CollectionAssert.AreEquivalent(
+            new[] { a, b, c },
+            cluster.PertenecientesCluster.ToList()
+        );
+    }
 }
