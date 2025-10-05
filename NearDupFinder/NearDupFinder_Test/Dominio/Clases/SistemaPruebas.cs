@@ -1080,6 +1080,24 @@ public class SistemaPruebas
 
        
     }
+    
+    [TestMethod]
+    public void EliminarItem_EliminaItemDelCatalogo()
+    {
+        var item1 = new Item("Item 1", "Desc 1");
+        var item2 = new Item("Item 2", "Desc 2");
+
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        
+        _sistema.EliminarItemYActualizarDuplicados(_catalogo, item1);
+
+        
+        Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
+        Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe permanecer en el catálogo");
+    }
+
    
 
 
