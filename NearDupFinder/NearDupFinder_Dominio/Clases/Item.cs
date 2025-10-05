@@ -98,9 +98,14 @@ public class Item
     {
         if (obj is not Item other)
             return false;
-        return this.Id == other.Id;
+        return Id == other.Id;
     }
-
+    
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+    
     public static void ResetIdCounter()
     {
       _nextId = 1;

@@ -10,6 +10,11 @@ public class Catalogo
     private readonly List<Item> _items = new();
     
     
+    private readonly Dictionary<int, HashSet<Item>> _clusters = new();
+    private static int _nextClusterId = 1;
+    
+    public IEnumerable<Cluster> Clusters => _clusters.Select(kv => new Cluster(kv.Key, kv.Value));
+    
 
     public Catalogo(string titulo)
     {
@@ -83,4 +88,11 @@ public class Catalogo
         return _items.Count;
     }
     
+    /* Espacio Cluster*/
+    
+    public void ConfirmarDuplicado(Item a, Item b)
+    {
+        var nuevoId = _nextClusterId++;
+        _clusters[nuevoId] = new HashSet<Item> { a, b };
+    }
 }
