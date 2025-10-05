@@ -39,4 +39,18 @@ public class ClusterPruebas
         var ex = Assert.ThrowsException<ArgumentNullException>(() => cat.ConfirmarDuplicado(a, null));
         StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_ItemNoPerteneceAlCatalogo_LanzaInvalidOperationException()
+    {
+        var cat = new Catalogo("Stock Tata");
+
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        var b = new Item { Titulo = "B", Descripcion = "d" };
+
+        cat.AgregarItem(a);
+        
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => cat.ConfirmarDuplicado(a, b));
+        StringAssert.Contains(ex.Message, "Uno o ambos ítems no pertenecen al catalogo");
+    }
 }
