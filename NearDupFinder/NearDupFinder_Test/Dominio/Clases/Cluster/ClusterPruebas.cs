@@ -185,4 +185,13 @@ public class ClusterPruebas
         
         Assert.AreEqual(0, cat.Clusters.Count());
     }
+    
+    [TestMethod]
+    public void QuitarItemDeCluster_ItemNull_LanzaArgumentNullException()
+    {
+        var cat = new Catalogo("Stock Tata");
+
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => cat.QuitarItemDeCluster(null));
+        StringAssert.Contains(ex.Message, "El parámetro no puede ser null");
+    }
 }
