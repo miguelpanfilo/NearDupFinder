@@ -330,4 +330,25 @@ public class ClusterPruebas
         Assert.IsFalse(c.EsCanonico);
     }
     
+    [TestMethod]
+    public void QuitarItemDeCluster_RemueveCanonico_EnClusterDeTres_YActualizaCanonico()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "corta" };
+        var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
+        var c = new Item { Titulo = "C", Descripcion = "descripcion media" }; 
+        cat.AgregarItem(a); 
+        cat.AgregarItem(b);
+        cat.AgregarItem(c);
+
+        cat.ConfirmarDuplicado(a, b); 
+        cat.ConfirmarDuplicado(c, b);
+        
+        cat.QuitarItemDeCluster(b);
+
+        Assert.AreEqual(1, cat.Clusters.Count());
+        Assert.IsTrue(c.EsCanonico);
+        Assert.IsFalse(a.EsCanonico);
+    }
+    
 }
