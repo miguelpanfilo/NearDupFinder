@@ -14,7 +14,11 @@ public class Cluster
         ActualizarCanonico();
     }
     
-    public void Agregar(Item item) => _pertenecientesCluster.Add(item);
+    public void Agregar(Item item)
+    {
+        if (_pertenecientesCluster.Add(item))
+            ActualizarCanonico();
+    }
     
     public void Remover(Item item) => _pertenecientesCluster.Remove(item);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
