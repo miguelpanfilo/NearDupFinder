@@ -255,4 +255,19 @@ public class ClusterPruebas
             cluster.PertenecientesCluster.ToList()
         );
     }
+    
+    [TestMethod]
+    public void Cluster_Canonico_EsElDeDescripcionMasLarga()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "corta" };
+        var b = new Item { Titulo = "B", Descripcion = "mucho mas larga" };
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+
+        cat.ConfirmarDuplicado(a, b);
+        var cluster = cat.Clusters.First();
+
+        Assert.AreSame(b, cluster.Canonico);
+    }
 }
