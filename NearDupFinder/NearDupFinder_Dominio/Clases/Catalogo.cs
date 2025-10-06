@@ -143,6 +143,8 @@ public class Catalogo
         
         if (cluster.PertenecientesCluster.Count() <= 1)
         {
+            foreach (var it in cluster.PertenecientesCluster)
+                it.EsCanonico = true;
             _clusters.Remove(cluster.Id);
         }
     }

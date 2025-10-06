@@ -26,5 +26,18 @@ public class Cluster
             .ThenByDescending(i => i.Titulo.Length)
             .ThenBy(i => i.Id)
             .First();
+        ActualizarBanderaCanonica();
     }
+
+    private void ActualizarBanderaCanonica()
+    {
+        foreach (var it in _pertenecientesCluster)
+        {
+            if (it == Canonico)
+                it.EsCanonico = true;
+            else
+                it.EsCanonico = false;
+        }
+    }
+    
 }
