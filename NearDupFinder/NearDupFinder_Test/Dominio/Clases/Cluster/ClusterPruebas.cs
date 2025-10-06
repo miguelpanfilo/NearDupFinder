@@ -351,4 +351,20 @@ public class ClusterPruebas
         Assert.IsFalse(a.EsCanonico);
     }
     
+    [TestMethod]
+    public void FusionarCampos_IgnoraVaciosYTrim()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo="X", Descripcion="Descripcion larga",Categoria="No soy vacio" };
+        var b  = new Item { Titulo="Y", Descripcion="corta", Marca="alguna", Modelo="otro",Categoria="No importa si tengo" };
+
+        cat.AgregarItem(a); 
+        cat.AgregarItem(b);
+        cat.ConfirmarDuplicado(a, b);
+
+        var c = cat.Clusters.First().Canonico;
+        Assert.AreEqual("alguna",  c.Marca);
+        Assert.AreEqual("otro", c.Modelo);
+        Assert.AreEqual("No soy vacio", c.Categoria);
+        }
 }
