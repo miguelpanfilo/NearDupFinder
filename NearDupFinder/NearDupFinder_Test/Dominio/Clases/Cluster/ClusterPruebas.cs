@@ -304,4 +304,30 @@ public class ClusterPruebas
         Assert.AreEqual(0, cat.Clusters.Count());
         Assert.IsTrue(a.EsCanonico);
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_AgregaTercerItem_ActualizaBanderasCanonico()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "corta" };
+        var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" };
+        var c = new Item { Titulo = "C", Descripcion = "descripcion media" };
+        cat.AgregarItem(a); cat.AgregarItem(b); cat.AgregarItem(c);
+        
+        cat.ConfirmarDuplicado(a, b);
+        var cluster = cat.Clusters.First();
+        Assert.AreSame(b, cluster.Canonico);
+        Assert.IsTrue(b.EsCanonico);
+        Assert.IsFalse(a.EsCanonico);
+
+        cat.ConfirmarDuplicado(c, b);
+        
+        cluster = cat.Clusters.First();
+        
+        Assert.AreSame(b, cluster.Canonico);
+        Assert.IsTrue(b.EsCanonico);
+        Assert.IsFalse(a.EsCanonico);
+        Assert.IsFalse(c.EsCanonico);
+    }
+    
 }
