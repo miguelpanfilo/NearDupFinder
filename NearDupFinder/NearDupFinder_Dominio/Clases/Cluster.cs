@@ -20,7 +20,11 @@ public class Cluster
             ActualizarCanonico();
     }
     
-    public void Remover(Item item) => _pertenecientesCluster.Remove(item);
+    public void Remover(Item item)
+    {
+        if (_pertenecientesCluster.Remove(item))
+            ActualizarCanonico();
+    }
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
 
     private void ActualizarCanonico()
