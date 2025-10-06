@@ -388,4 +388,36 @@ public class ClusterPruebas
         Assert.AreEqual("M1", canon.Modelo);
         Assert.AreEqual("X", canon.Categoria);
     }
+    
+    
+    [TestMethod]
+    public void FusionarCampos_QuitarCanonico_RecalculaYFusionaConRestantes()
+    {
+        var cat = new Catalogo("Stock Tata");
+
+        var a = new Item { Titulo="A", Descripcion="mucho mas larga", Marca="", Modelo="", Categoria="" };
+        var b = new Item { Titulo="B", Descripcion="media", Marca="AC",  Modelo="M1",   Categoria="X" };
+        var c = new Item { Titulo="C", Descripcion="mediaa", Marca="ACME CORPORATION", Modelo="MODEL-2025" };
+
+        cat.AgregarItem(a); 
+        cat.AgregarItem(b); 
+        cat.AgregarItem(c);
+        
+        cat.ConfirmarDuplicado(a, b);
+        cat.ConfirmarDuplicado(a, c);
+
+        Assert.AreSame(a, cat.Clusters.First().Canonico);
+
+        cat.QuitarItemDeCluster(a);
+
+        var cluster = cat.Clusters.First();
+        
+        var nuevo = cluster.Canonico;
+        
+        Assert.AreSame(c, nuevo);
+        
+        Assert.AreEqual("ACME CORPORATION", nuevo.Marca);
+        Assert.AreEqual("MODEL-2025",       nuevo.Modelo);
+        Assert.AreEqual("X", nuevo.Categoria);
+    }
 }
