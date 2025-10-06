@@ -459,4 +459,6 @@ public class ClusterPruebas
         Assert.AreEqual("X", nuevo.Categoria);
     }
     
+    
+    
 }

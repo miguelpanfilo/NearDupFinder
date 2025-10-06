@@ -29,6 +29,11 @@ public class Cluster
 
     private void ActualizarCanonico()
     {
+        if (_pertenecientesCluster.Count == 0)
+        {
+            Canonico = null!;
+            return;
+        }
         Canonico = _pertenecientesCluster
             .OrderByDescending(i => i.Descripcion.Length)
             .ThenByDescending(i => i.Titulo.Length)
