@@ -482,4 +482,24 @@ public class ClusterPruebas
         Assert.AreEqual(c, nuevo);
         Assert.AreEqual("Beta", nuevo.Marca);
     }
+    
+    [TestMethod]
+    public void EliminarItem_QuePerteneceACluster_LoQuitaDelCluster()
+    {
+        var catalogo = new Catalogo("Catálogo Prueba");
+        var a = new Item { Titulo = "A", Descripcion = "desc" };
+        var b = new Item { Titulo = "B", Descripcion = "desc" };
+        catalogo.AgregarItem(a);
+        catalogo.AgregarItem(b);
+        catalogo.ConfirmarDuplicado(a, b);
+
+        var cluster = catalogo.Clusters.First();
+        Assert.IsTrue(cluster.PertenecientesCluster.Contains(a));
+        Assert.IsTrue(cluster.PertenecientesCluster.Contains(b));
+        
+        catalogo.EliminarItem(a);
+        
+        Assert.IsFalse(catalogo.Items.Contains(a));
+        Assert.IsFalse(cluster.PertenecientesCluster.Contains(a));
+    }
 }
