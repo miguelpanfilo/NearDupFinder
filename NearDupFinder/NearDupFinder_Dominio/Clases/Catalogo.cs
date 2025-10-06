@@ -81,6 +81,7 @@ public class Catalogo
             throw new ArgumentNullException(nameof(item), "El parametro no puede ser Null");
         if (!_items.Contains(item))
             throw new InvalidOperationException("El item no se encuentra en el catálogo");
+        QuitarItemDeCluster(item);
         _items.Remove(item);
     }
     public int CantidadItems()
