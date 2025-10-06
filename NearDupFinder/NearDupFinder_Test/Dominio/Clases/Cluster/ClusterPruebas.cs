@@ -270,4 +270,38 @@ public class ClusterPruebas
 
         Assert.AreSame(b, cluster.Canonico);
     }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_MarcaEsCanonico_SoloEnElItemCanonico()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "corta" };
+        var b = new Item { Titulo = "B", Descripcion = "descripcion larga" };
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        
+        cat.ConfirmarDuplicado(a, b);
+        var cluster = cat.Clusters.First();
+        
+        Assert.AreSame(b, cluster.Canonico);
+        Assert.IsTrue(b.EsCanonico);
+        Assert.IsFalse(a.EsCanonico);
+    }
+    
+    
+    [TestMethod]
+    public void QuitarItemDeCluster_RemueveNoCanonico_EnClusterDeDos_EliminaCluster_YRestanteEsCanonico()
+    {
+        var cat = new Catalogo("Stock Tata");
+        var a = new Item { Titulo = "A", Descripcion = "corta" };
+        var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
+        cat.AgregarItem(a); cat.AgregarItem(b);
+
+        cat.ConfirmarDuplicado(a, b); 
+
+        cat.QuitarItemDeCluster(b);
+
+        Assert.AreEqual(0, cat.Clusters.Count());
+        Assert.IsTrue(a.EsCanonico);
+    }
 }
