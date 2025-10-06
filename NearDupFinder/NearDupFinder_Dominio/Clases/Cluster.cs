@@ -34,6 +34,7 @@ public class Cluster
             .ThenByDescending(i => i.Titulo.Length)
             .ThenBy(i => i.Id)
             .First();
+        FusionarCampos(Canonico, _pertenecientesCluster);
         ActualizarBanderaCanonica();
     }
 
@@ -46,6 +47,29 @@ public class Cluster
             else
                 it.EsCanonico = false;
         }
+    }
+    
+    private void FusionarCampos(Item can, IEnumerable<Item> miembros)
+    {
+        can.Marca     = ElegirMejorCampo(can.Marca,     miembros.Select(m => m.Marca));
+        can.Modelo    = ElegirMejorCampo(can.Modelo,    miembros.Select(m => m.Modelo));
+        can.Categoria = ElegirMejorCampo(can.Categoria, miembros.Select(m => m.Categoria));
+    }
+
+    private static string AseguraLargo(string? s) => string.IsNullOrWhiteSpace(s) ? "" : s.Trim();
+
+    private static string ElegirMejorCampo(string actualCanonico, IEnumerable<string?> candidatos)
+    {
+        if (!string.IsNullOrWhiteSpace(actualCanonico)) return actualCanonico;
+
+        string? mejor = null;
+        foreach (var c in candidatos)
+        {
+            var v = AseguraLargo(c);
+            if (v.Length == 0) continue;
+            if (mejor == null || v.Length > mejor.Length) mejor = v;
+        }
+        return mejor ?? actualCanonico;
     }
     
 }
