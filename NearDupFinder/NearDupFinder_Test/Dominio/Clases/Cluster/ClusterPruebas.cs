@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_Test.Dominio.Clases.Cluster;
+namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class ClusterPruebas
@@ -154,6 +154,18 @@ public class ClusterPruebas
         cat.ConfirmarDuplicado(a, a);
 
         Assert.AreEqual(0, cat.Clusters.Count(), "No debe crearse un cluster cuando el par es (a,a).");
+    }
+    
+    [TestMethod]
+    public void ActualizarCanonico_ClusterQuedaVacio_NoLanzaExcepcion()
+    {
+        var a = new Item { Titulo = "A", Descripcion = "desc corta" };
+        var cluster = new Cluster(1, new HashSet<Item> { a });
+        
+        cluster.Remover(a);
+
+        Assert.IsNotNull(cluster);
+        Assert.IsTrue(!cluster.PertenecientesCluster.Any());
     }
     
     [TestMethod]
