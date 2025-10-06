@@ -389,6 +389,32 @@ public class ClusterPruebas
         Assert.AreEqual("X", canon.Categoria);
     }
     
+    [TestMethod]
+    public void FusionarCampos_CambiaDeCanonicoYCampos_ConTresItems()
+    {
+        var cat = new Catalogo("Stock Tata");
+
+        var a = new Item { Titulo="A", Descripcion="mucho mas larga", Marca="", Modelo="", Categoria="" };
+        var b = new Item { Titulo="B", Descripcion="larga", Marca="AC", Modelo="M1",  Categoria="X" };
+        var c = new Item { Titulo="C", Descripcion="nuevo mas largooo"};
+
+        cat.AgregarItem(a); 
+        cat.AgregarItem(b); 
+        cat.AgregarItem(c);
+        
+        cat.ConfirmarDuplicado(a, b);
+        var canon = cat.Clusters.First().Canonico;
+        Assert.AreSame(a, canon);
+        
+        cat.ConfirmarDuplicado(b, c);
+        
+        var canonDespues = cat.Clusters.First().Canonico;
+        Assert.AreSame(c, canonDespues);
+        
+        Assert.AreEqual("AC", canon.Marca);
+        Assert.AreEqual("M1", canon.Modelo);
+        Assert.AreEqual("X", canon.Categoria);
+    }
     
     [TestMethod]
     public void FusionarCampos_QuitarCanonico_RecalculaYFusionaConRestantes()
@@ -420,4 +446,5 @@ public class ClusterPruebas
         Assert.AreEqual("MODEL-2025",       nuevo.Modelo);
         Assert.AreEqual("X", nuevo.Categoria);
     }
+    
 }
