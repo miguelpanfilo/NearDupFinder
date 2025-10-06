@@ -366,5 +366,26 @@ public class ClusterPruebas
         Assert.AreEqual("alguna",  c.Marca);
         Assert.AreEqual("otro", c.Modelo);
         Assert.AreEqual("No soy vacio", c.Categoria);
-        }
+    }
+    
+    [TestMethod]
+    public void FusionarCampos_TomaMasLargo_YNoPisaSiCanonicoYaTiene()
+    {
+        var cat = new Catalogo("Stock Tata");
+
+        var a = new Item { Titulo="A", Descripcion="larga", Marca="",     Modelo="",     Categoria="" };
+        var b = new Item { Titulo="B", Descripcion="mucho mas larga", Marca="AC",    Modelo="M1",  Categoria="X" };
+        var c = new Item { Titulo="C", Descripcion="media",            Marca="ACMECO", Modelo="M123", Categoria="Categoria Larguísima" };
+
+        cat.AgregarItem(a); cat.AgregarItem(b); cat.AgregarItem(c);
+        cat.ConfirmarDuplicado(a, b);
+        cat.ConfirmarDuplicado(b, c);
+
+        var canon = cat.Clusters.First().Canonico;
+        
+        Assert.AreEqual("AC", canon.Marca);
+        
+        Assert.AreEqual("M1", canon.Modelo);
+        Assert.AreEqual("X", canon.Categoria);
+    }
 }
