@@ -67,13 +67,13 @@ public class Cluster
     {
         if (!string.IsNullOrWhiteSpace(actualCanonico)) return actualCanonico;
 
-        string? mejor = null;
-        foreach (var c in candidatos)
-        {
-            var v = AseguraLargo(c);
-            if (v.Length == 0) continue;
-            if (mejor == null || v.Length > mejor.Length) mejor = v;
-        }
+        var mejor = candidatos
+            .Select(AseguraLargo)
+            .Where(v => v.Length > 0)
+            .OrderByDescending(v => v.Length)
+            .ThenBy(v => v, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+        
         return mejor ?? actualCanonico;
     }
     
