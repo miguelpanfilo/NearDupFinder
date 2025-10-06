@@ -459,6 +459,27 @@ public class ClusterPruebas
         Assert.AreEqual("X", nuevo.Categoria);
     }
     
+    [TestMethod]
+    public void Merge_MarcaEmpateLongitud_EligeLexicograficoAsc()
+    {
+        var cat = new Catalogo("X");
+        
+        var a = new Item { Titulo = "AAAAAA",      Descripcion = "ZZZZ", Marca = "Zeta" };
+        var b = new Item { Titulo = "BBBB",        Descripcion = "YYYY", Marca = "Beta" };
+        
+        var c = new Item { Titulo = "BBBBBBBBBBB", Descripcion = "YYYY" };
     
-    
+        cat.AgregarItem(a);
+        cat.AgregarItem(b);
+        cat.AgregarItem(c);
+        
+        cat.ConfirmarDuplicado(a, b);
+        cat.ConfirmarDuplicado(a, c);
+        
+        var cluster = cat.Clusters.First();
+        var nuevo = cluster.Canonico;
+        
+        Assert.AreEqual(c, nuevo);
+        Assert.AreEqual("Beta", nuevo.Marca);
+    }
 }
