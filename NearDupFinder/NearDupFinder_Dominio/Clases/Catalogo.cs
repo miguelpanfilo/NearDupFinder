@@ -91,7 +91,7 @@ public class Catalogo
     
     /* Espacio Cluster*/
     
-    public void ConfirmarDuplicado(Item a, Item b)
+    public void ConfirmarClusters(Item a, Item b)
     {
         if (a == null) throw new ArgumentNullException(nameof(a), "El parametro no puede ser null");
         if (b == null) throw new ArgumentNullException(nameof(b), "El parametro no puede ser null");

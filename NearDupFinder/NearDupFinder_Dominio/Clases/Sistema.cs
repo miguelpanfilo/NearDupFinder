@@ -247,6 +247,14 @@ public class Sistema
             Marca = "Philips",
             Modelo = "PowerPro"
         });
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Aspiradoraaaaaa",
+            Descripcion = "Aspiradora sin bolsa 1200W",
+            Categoria = "Electrodomésticos",
+            Marca = "Philips",
+            Modelo = "PowerPro"
+        });
 
         var catalogoDeportes = new Catalogo("Deportes");
         catalogoDeportes.CambiarDescripcion("Actividades deportivas, y equipo para hacer deporte");
@@ -258,19 +266,29 @@ public class Sistema
             Marca = "Trek",
             Modelo = "X-Caliber"
         });
-        catalogoDeportes.AgregarItem(new Item
+        Item nuevoItem1 = new Item
         {
             Titulo = "Pelota de fútbol",
             Descripcion = "Pelota oficial tamaño 5",
             Categoria = "Fútbol",
             Marca = "Adidas",
             Modelo = "Al Rihla"
-        });
+        };
+        catalogoDeportes.AgregarItem(nuevoItem1);
+        Item nuevoItem = new Item
+        {
+            Titulo = "Pelota de fútbollll",
+            Descripcion = "Pelota oficial tamaño 5",
+            Categoria = "Fútbol",
+        };
+        catalogoDeportes.AgregarItem(nuevoItem);
 
         // Agregar catálogos al sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
+        
+        catalogoDeportes.ConfirmarClusters(nuevoItem1,nuevoItem);
     }
     public void AgregarCatalogo(Catalogo catalogo)
     {
