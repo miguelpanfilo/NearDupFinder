@@ -116,6 +116,8 @@ public class Item
 
     public void EditarCategoria(string nuevaCategoria) => Categoria = nuevaCategoria;
 
-
-
+    public void ModificarId(int id)
+    {
+        Id = id;
+    }
 }
