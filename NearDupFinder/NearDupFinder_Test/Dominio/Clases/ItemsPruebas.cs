@@ -459,4 +459,19 @@ public class ItemsPruebas
         Assert.AreNotEqual(idViejo, item.Id);
         Assert.AreEqual(idNuevo, item.Id);
     }
+    
+    [TestMethod]
+    public void TestItem_ModificarId_Id_Cero_Fallo()
+    {
+        Item item = new Item("Titulo", "Descripcion");
+        int idNuevo = 0;
+
+        
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.ModificarId(idNuevo);
+        });
+
+        Assert.AreEqual("El id no es valido", exception.Message);
+    }
 }
