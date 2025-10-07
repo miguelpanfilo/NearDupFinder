@@ -129,7 +129,7 @@ public class Catalogo
         
         var nuevoId = _nextClusterId++;
         
-        _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });;
+        _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });
     }
     
     public void QuitarItemDeCluster(Item item)
