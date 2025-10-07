@@ -40,18 +40,6 @@ public class Cluster
             .ThenBy(i => i.Id)
             .First();
         FusionarCampos(Canonico, _pertenecientesCluster);
-        ActualizarBanderaCanonica();
-    }
-
-    private void ActualizarBanderaCanonica()
-    {
-        foreach (var it in _pertenecientesCluster)
-        {
-            if (it == Canonico)
-                it.EsCanonico = true;
-            else
-                it.EsCanonico = false;
-        }
     }
     
     private void FusionarCampos(Item can, IEnumerable<Item> miembros)

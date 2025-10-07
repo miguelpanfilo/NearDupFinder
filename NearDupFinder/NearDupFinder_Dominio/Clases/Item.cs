@@ -11,8 +11,6 @@ public class Item
     private string _modelo;
     private string _categoria;
     
-    public bool EsCanonico { get; internal set; } = true;
-   
     public int Id { get; private set; }
 
     public Item()

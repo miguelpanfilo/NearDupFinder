@@ -279,24 +279,7 @@ public class ClusterPruebas
     }
     
     [TestMethod]
-    public void ConfirmarDuplicado_MarcaEsCanonico_SoloEnElItemCanonico()
-    {
-        var a = new Item { Titulo = "A", Descripcion = "corta" };
-        var b = new Item { Titulo = "B", Descripcion = "descripcion larga" };
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
-        
-        _catalogo.ConfirmarClusters(a, b);
-        var cluster = _catalogo.Clusters.First();
-        
-        Assert.AreSame(b, cluster.Canonico);
-        Assert.IsTrue(b.EsCanonico);
-        Assert.IsFalse(a.EsCanonico);
-    }
-    
-    
-    [TestMethod]
-    public void QuitarItemDeCluster_RemueveNoCanonico_EnClusterDeDos_EliminaCluster_YRestanteEsCanonico()
+    public void QuitarItemDeCluster_RemueveNoCanonico_EnClusterDeDos_EliminaCluster()
     {
         var a = new Item { Titulo = "A", Descripcion = "corta" };
         var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
@@ -304,39 +287,12 @@ public class ClusterPruebas
         _catalogo.AgregarItem(b);
 
         _catalogo.ConfirmarClusters(a, b); 
-
+        
+        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        
         _catalogo.QuitarItemDeCluster(b);
 
         Assert.AreEqual(0, _catalogo.Clusters.Count());
-        Assert.IsTrue(a.EsCanonico);
-    }
-    
-    [TestMethod]
-    public void ConfirmarDuplicado_AgregaTercerItem_ActualizaBanderasCanonico()
-    {
-        
-        var a = new Item { Titulo = "A", Descripcion = "corta" };
-        var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" };
-        var c = new Item { Titulo = "C", Descripcion = "descripcion media" };
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b); 
-        _catalogo.AgregarItem(c);
-        
-        _catalogo.ConfirmarClusters(a, b);
-        var cluster = _catalogo.Clusters.First();
-        
-        Assert.AreSame(b, cluster.Canonico);
-        Assert.IsTrue(b.EsCanonico);
-        Assert.IsFalse(a.EsCanonico);
-
-        _catalogo.ConfirmarClusters(c, b);
-        
-        cluster = _catalogo.Clusters.First();
-        
-        Assert.AreSame(b, cluster.Canonico);
-        Assert.IsTrue(b.EsCanonico);
-        Assert.IsFalse(a.EsCanonico);
-        Assert.IsFalse(c.EsCanonico);
     }
     
     [TestMethod]
@@ -352,12 +308,12 @@ public class ClusterPruebas
 
         _catalogo.ConfirmarClusters(a, b); 
         _catalogo.ConfirmarClusters(c, b);
+        Assert.AreSame(b,_catalogo.Clusters.First().Canonico);
         
         _catalogo.QuitarItemDeCluster(b);
 
         Assert.AreEqual(1, _catalogo.Clusters.Count());
-        Assert.IsTrue(c.EsCanonico);
-        Assert.IsFalse(a.EsCanonico);
+        Assert.AreSame(c,_catalogo.Clusters.First().Canonico);
     }
     
     [TestMethod]

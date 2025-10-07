@@ -159,8 +159,7 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.Where(i => i.EsCanonico)
-                .ToList();;
+            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.ToList();;
 
             _categorias = _itemsFiltradosEnTabla
                 .Select(i => i.Categoria)

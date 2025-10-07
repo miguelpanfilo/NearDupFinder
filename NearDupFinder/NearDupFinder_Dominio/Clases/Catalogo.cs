@@ -140,14 +140,10 @@ public class Catalogo
         var cluster = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
         if (cluster == null)
             return;
+        
         cluster.Remover(item);
         
-        if (cluster.PertenecientesCluster.Count() <= 1)
-        {
-            foreach (var it in cluster.PertenecientesCluster)
-                it.EsCanonico = true;
-            _clusters.Remove(cluster.Id);
-        }
+        if (cluster.PertenecientesCluster.Count() <= 1) { _clusters.Remove(cluster.Id); }
     }
     
     public Cluster ObtenerClusterDe(Item item)
