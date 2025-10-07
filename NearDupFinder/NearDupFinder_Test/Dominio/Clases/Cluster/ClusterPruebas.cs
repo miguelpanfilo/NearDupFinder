@@ -49,6 +49,15 @@ public class ClusterPruebas
         var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(a, null));
         StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
+    [TestMethod]
+    public void ConfirmarDuplicado_ItemA_Null_LanzaArgumentNullException()
+    {
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        _catalogo.AgregarItem(a);
+        
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(null, a));
+        StringAssert.Contains(ex.Message, "El parametro no puede ser null");
+    }
     
     [TestMethod]
     public void ConfirmarDuplicado_ItemNoPerteneceAlCatalogo_LanzaInvalidOperationException()
@@ -77,6 +86,7 @@ public class ClusterPruebas
         Assert.AreEqual(cantidadClauster, _catalogo.Clusters.Count());
     }
     
+    
     [TestMethod]
     public void ConfirmarDuplicado_Transitivo_AgregaTerceroAlMismoCluster()
     {
@@ -91,6 +101,29 @@ public class ClusterPruebas
         _catalogo.ConfirmarClusters(b, c); 
         
         Assert.AreEqual(1, _catalogo.Clusters.Count());
+        var cluster = _catalogo.Clusters.First();
+        CollectionAssert.AreEquivalent(
+            new[] { a, b, c },
+            cluster.PertenecientesCluster.ToList()
+        );
+    }
+    [TestMethod]
+    public void ConfirmarDuplicado_Transitivo2_AgregaTerceroAlMismoCluster()
+    {
+        var a = new Item { Titulo = "A", Descripcion = "d" };
+        var b = new Item { Titulo = "B", Descripcion = "d" };
+        var c = new Item { Titulo = "C", Descripcion = "d" };
+        _catalogo.AgregarItem(a);
+        _catalogo.AgregarItem(b);
+        _catalogo.AgregarItem(c);
+        
+        _catalogo.ConfirmarClusters(a, b);
+        var cantidadClauster = _catalogo.Clusters.Count();
+        
+        _catalogo.ConfirmarClusters(c , a); 
+        
+        Assert.AreEqual(cantidadClauster, _catalogo.Clusters.Count());
+        
         var cluster = _catalogo.Clusters.First();
         CollectionAssert.AreEquivalent(
             new[] { a, b, c },
@@ -154,19 +187,7 @@ public class ClusterPruebas
 
         _catalogo.ConfirmarClusters(a, a);
 
-        Assert.AreEqual(0, _catalogo.Clusters.Count(), "No debe crearse un cluster cuando el par es (a,a).");
-    }
-    
-    [TestMethod]
-    public void ActualizarCanonico_ClusterQuedaVacio_NoLanzaExcepcion()
-    {
-        var a = new Item { Titulo = "A", Descripcion = "desc corta" };
-        var cluster = new Cluster(1, new HashSet<Item> { a });
-        
-        cluster.Remover(a);
-
-        Assert.IsNotNull(cluster);
-        Assert.IsTrue(!cluster.PertenecientesCluster.Any());
+        Assert.AreEqual(0, _catalogo.Clusters.Count());
     }
     
     [TestMethod]

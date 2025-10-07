@@ -11,7 +11,7 @@ public class Catalogo
     
     
     private readonly Dictionary<int, Cluster> _clusters = new();
-    private static int _nextClusterId = 1;
+    private int _nextClusterId = 1;
     
     public IEnumerable<Cluster> Clusters => _clusters.Values;
     
@@ -146,7 +146,7 @@ public class Catalogo
         if (cluster.PertenecientesCluster.Count() <= 1) { _clusters.Remove(cluster.Id); }
     }
     
-    public Cluster ObtenerClusterDe(Item item)
+    public Cluster? ObtenerClusterDe(Item item)
     {
         return _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
     }
