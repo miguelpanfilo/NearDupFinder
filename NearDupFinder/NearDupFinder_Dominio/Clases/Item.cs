@@ -118,6 +118,9 @@ public class Item
 
     public void ModificarId(int id)
     {
+        if (id == 0)
+            throw new ItemException("El id no es valido");
+
         Id = id;
     }
 }
