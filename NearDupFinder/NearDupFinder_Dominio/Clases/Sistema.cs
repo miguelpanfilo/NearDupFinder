@@ -33,13 +33,15 @@ public class Sistema
     private readonly List<Usuario> _usuarios;
     private readonly List<int> _idsItemsGlobal;
     private readonly LectorCsv _lectorCsv;
+    private readonly GestorUsuarios _gestorUsuarios;
     public List<Duplicados> DuplicadosGlobales { get; set; }
 
 
     public Sistema()
     {
         _usuarios = new List<Usuario>();
-        _usuarios.Add(CrearUsuarioAdmin());
+        _gestorUsuarios = new GestorUsuarios(this);
+        _usuarios.Add(_gestorUsuarios.CrearUsuarioAdmin());
         _catalogos = new List<Catalogo>();
         DuplicadosGlobales = new List<Duplicados>();
         _idsItemsGlobal = new List<int>();
@@ -48,47 +50,20 @@ public class Sistema
 
     //------------------------------------------------------------------------//
     /* Comienzo espacio Usuarios*/
-    private Usuario CrearUsuarioAdmin()
+    
+    public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
-        Email email = Email.Crear("admin@gmail.com");
-        Fecha fecha = Fecha.Crear(1997,12,27);
-        Contrasena contrasena = Contrasena.Crear("123QWEasdzxc@");
-        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
-        adminUsuario.AgregarRol(Rol.Administrador);
-        adminUsuario.CambiarContrasena(contrasena);
-        
-        return adminUsuario;
+        return _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
     }
     
-    public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol>? roles)
+    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
-        Email correo;
-        Fecha fecha;
-        Usuario nuevoUsuario;
-        Contrasena contrasena;
-        try
-        {
-            correo = Email.Crear(email);
-            if (BuscarUsuarioPorEmail(correo) is not null)
-                return false;
-
-            fecha = Fecha.Crear(anio,mes,dia);
-            contrasena = Contrasena.Crear(clave);
-            nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
-        }
-        catch
-        {
-            return false;
-        }
-        
-        nuevoUsuario.CambiarContrasena(contrasena);
-        if(roles is null)
-            return false;
-        foreach (var rol in roles)
-            nuevoUsuario.AgregarRol(rol);
-        _usuarios.Add(nuevoUsuario);
-        
-        return true;
+        return _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+    }
+    
+    public bool EliminarUsuario(string email)
+    {
+        return _gestorUsuarios.BorrarUsuario(email);
     }
     
     public List<Usuario> ObtenerUsuarios()
@@ -104,112 +79,27 @@ public class Sistema
         return null;    
     }
     
-    private Usuario? BuscarUsuarioPorEmail(Email email)
+    public Usuario? BuscarUsuarioPorEmail(Email email)
     {
         foreach (Usuario usuario in _usuarios)
             if (usuario.Email.Igual(email))
                 return usuario;
         return null;
     }
-
-    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol>? roles)
+    
+    public bool ModificarClave(string email,string claveActual, string? claveNueva)
     {
-        Email correo;
-        Fecha fecha;
-        Usuario? usuarioAModificar;
-        // La contraseña es opcional, en caso que no se ingrese no se cambia.
-        Contrasena? contrasena = null;
-        try
-        {
-            correo = Email.Crear(email);
-            usuarioAModificar = BuscarUsuarioPorEmail(correo);
-            if(usuarioAModificar is null)
-                return false;
-            
-            fecha = Fecha.Crear(anio,mes,dia);
-            if(!string.IsNullOrWhiteSpace(clave))
-                contrasena = Contrasena.Crear(clave);
-        }
-        catch
-        {
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellido) || roles is null)
-            return false;
-        
-        usuarioAModificar.Nombre = nombre;
-        usuarioAModificar.Apellido = apellido;
-        usuarioAModificar.FechaNacimiento = fecha;
-        usuarioAModificar.ObtenerRoles().Except(roles).ToList().ForEach(r => usuarioAModificar.RemoverRol(r));
-        roles.Except(usuarioAModificar.ObtenerRoles()).ToList().ForEach(r => usuarioAModificar.AgregarRol(r));
-        
-        if(!string.IsNullOrWhiteSpace(clave))
-            usuarioAModificar.CambiarContrasena(contrasena);
-        
-        return true;
+        Usuario? usuarioValidado = ValidarUsuario(email, claveActual);
+        if( usuarioValidado is not null)
+            return _gestorUsuarios.ModificarClave(usuarioValidado, claveNueva);
+        return false;
     }
     
-    public bool ModificarClave(string? email, string? clave)
+    public Usuario? ValidarUsuario(string? email, string? clave)
     {
-        Email correo;
-        Contrasena contrasena;
-        try
-        {
-            correo = Email.Crear(email);
-            contrasena = Contrasena.Crear(clave);
-        }
-        catch
-        {
-            return false;
-        }
-        Usuario? usuario = BuscarUsuarioPorEmail(correo);
-        if (usuario is null)
-            return false;
-
-        return usuario.CambiarContrasena(contrasena);
+        return _gestorUsuarios.AutenticarUsuario(email, clave);
     }
     
-    public Usuario? AutenticarUsuario(string? email, string? clave)
-    {
-        Email emailAValidar;
-        try
-        {
-            emailAValidar = Email.Crear(email);
-        }
-        catch
-        {
-            return null;
-        }
-        Usuario? usuario = BuscarUsuarioPorEmail(emailAValidar);
-        if (usuario is null)
-            return null;
-        
-        if (usuario.VerificarContrasena(clave))
-            return usuario;
-        
-        return null;
-    }
-
-    public bool EliminarUsuario(string? email)
-    {
-        Email emailUsuario;
-        try
-        {
-            emailUsuario = Email.Crear(email);
-        }
-        catch
-        {
-            return false;
-        }
-        Usuario? usuario = BuscarUsuarioPorEmail(emailUsuario);
-        if (usuario is null)
-            return false;
-        
-        _usuarios.Remove(usuario);
-        
-        return true;
-    }
     //------------------------------------------------------------------------
     /* Fin espacio Usuario */
 

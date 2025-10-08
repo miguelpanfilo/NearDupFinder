@@ -1,6 +1,5 @@
 @page "/crear-usuario"
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
 @inject Sistema Sistema
 @attribute [Authorize(Roles = "Administrador")]
@@ -78,27 +77,24 @@
     
     private void CrearNuevoUsuario()
     {
-        if (_fecha is null)
-        {
-            NotificarError("Alguno de los datos no es correcto. Volvé a ingresarlos.");
+        if (!ValidarCampos(_nombre, _apellido, _email, _fecha))
             return;
-        }
-        
+
         var roles = new List<Rol>();
         if (_rolAdmin)   
             roles.Add(Rol.Administrador);
         if (_rolRevisor)
             roles.Add(Rol.Revisor);     
         
-        bool creacionok = Sistema.CrearUsuario(_nombre, _apellido, _email, _fecha.Value.Year, _fecha.Value.Month,_fecha.Value.Day, _clave, roles);
+        bool seCreoUsuario = Sistema.AltaUsuario(_nombre, _apellido, _email, _fecha!.Value.Year, _fecha.Value.Month,_fecha.Value.Day, _clave, roles);
         
-        if (creacionok)
+        if (seCreoUsuario)
         {
             Nav.NavigateTo("/usuarios");
         }
         else
         {
-            NotificarError("Alguno de los datos no es correcto.");
+            NotificarError("El email o la contraseña no son validos, por favor vuelva a ingresar los datos.");
             StateHasChanged();
         }
     }
@@ -119,4 +115,34 @@
         _error = false;
         _mensajeDeError = string.Empty;
     }
+
+    private bool ValidarCampos(string nombre, string apellido, string email, DateTime? fecha)
+    {
+        if (string.IsNullOrWhiteSpace(nombre))
+        {
+            NotificarError("El nombre ingresado es incorrecto");
+            return false;
+        }
+        
+        if (string.IsNullOrWhiteSpace(apellido))
+        {
+            NotificarError("El apellido ingresado es incorrecto");
+            return false;
+        }
+        
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            NotificarError("El email ingresado es incorrecto");
+            return false;
+        }
+        
+        if (fecha is null)
+        {
+            NotificarError("La fecha ingresada es incorrecta");
+            return false;
+        }
+
+        return true;
+    }
+
 }
