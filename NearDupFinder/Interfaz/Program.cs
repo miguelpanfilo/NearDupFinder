@@ -54,7 +54,7 @@ app.MapPost("/auth/login", async (HttpContext http, Sistema sistemaTemp) =>
         var clave = form["Password"].ToString();
 
         // 2) Validación
-        var usuario = sistemaTemp.AutenticarUsuario(email, clave);
+        var usuario = sistemaTemp.ValidarUsuario(email, clave);
         if (usuario is null)
             // credenciales inválidas  marcar error y volver al login
             return Results.Redirect("/login?error=1");
