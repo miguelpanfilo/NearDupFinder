@@ -382,12 +382,12 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
         return _idsItemsGlobal.Count;
     }
 
-    public void DescartarParDuplicado(ParDuplicado d)
+    public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
     {
-        DuplicadosGlobales.Remove(d);
+        DuplicadosGlobales.Remove(duplicadoADescartar);
 
-        d.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(dup => dup.ItemA.Id == d.ItemA.Id || dup.ItemB.Id == d.ItemA.Id);
-        d.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(dup => dup.ItemA.Id == d.ItemB.Id || dup.ItemB.Id == d.ItemB.Id);
+        duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
+        duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
     }
 
   
