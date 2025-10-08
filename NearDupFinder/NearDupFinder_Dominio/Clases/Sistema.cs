@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Struct;
+using NearDupFinder_Dominio.Controladores;
 
 namespace NearDupFinder_Dominio.Clases;
 
@@ -29,18 +30,22 @@ public class Sistema
     private const string TokenPattern = @"\W+";
 
     private readonly List<Catalogo> _catalogos;
-    private readonly List<Usuario> _usuarios = [];
+    private readonly List<Usuario> _usuarios;
+    private readonly List<int> _idsItemsGlobal;
+    private readonly LectorCsv _lectorCsv;
     public List<Duplicados> DuplicadosGlobales { get; set; }
+
 
     public Sistema()
     {
-        _catalogos = new List<Catalogo>();
+        _usuarios = new List<Usuario>();
         _usuarios.Add(CrearUsuarioAdmin());
+        _catalogos = new List<Catalogo>();
         DuplicadosGlobales = new List<Duplicados>();
-        PrecargarCatalogos();
+        _idsItemsGlobal = new List<int>();
+        _lectorCsv = new LectorCsv(this);
     }
 
-    
     //------------------------------------------------------------------------//
     /* Comienzo espacio Usuarios*/
     private Usuario CrearUsuarioAdmin()
@@ -54,8 +59,6 @@ public class Sistema
         
         return adminUsuario;
     }
-    
-    
     
     public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol>? roles)
     {
@@ -212,71 +215,6 @@ public class Sistema
 
     //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
-    
-    private void PrecargarCatalogos()
-    {
-        var catalogoTecno = new Catalogo("Tecnología");
-        catalogoTecno.CambiarDescripcion("Componentes eletronicos");
-        catalogoTecno.AgregarItem(new Item
-        {
-            Titulo = "Laptop HP",
-            Descripcion = "Laptop 15 pulgadas",
-            Categoria = "Computadoras",
-            Marca = "HP",
-            Modelo = "Pavilion"
-        });
-        catalogoTecno.AgregarItem(new Item
-        {
-            Titulo = "Teléfono Samsung",
-            Descripcion = "Galaxy S24",
-            Categoria = "Celulares",
-            Marca = "Samsung",
-            Modelo = "S24"
-        });
-
-        var catalogoHogar = new Catalogo("Hogar");
-        catalogoHogar.CambiarDescripcion("Electrodomesticos de Hogar");
-        catalogoHogar.AgregarItem(new Item
-        {
-            Titulo = "Silla de comedor",
-            Descripcion = "Silla de madera maciza",
-            Categoria = "Muebles",
-            Marca = "Ikea",
-            Modelo = "Nordic"
-        });
-        catalogoHogar.AgregarItem(new Item
-        {
-            Titulo = "Aspiradora",
-            Descripcion = "Aspiradora sin bolsa 1200W",
-            Categoria = "Electrodomésticos",
-            Marca = "Philips",
-            Modelo = "PowerPro"
-        });
-
-        var catalogoDeportes = new Catalogo("Deportes");
-        catalogoDeportes.CambiarDescripcion("Actividades deportivas, y equipo para hacer deporte");
-        catalogoDeportes.AgregarItem(new Item
-        {
-            Titulo = "Bicicleta",
-            Descripcion = "Bicicleta de montaña 21 cambios",
-            Categoria = "Ciclismo",
-            Marca = "Trek",
-            Modelo = "X-Caliber"
-        });
-        catalogoDeportes.AgregarItem(new Item
-        {
-            Titulo = "Pelota de fútbol",
-            Descripcion = "Pelota oficial tamaño 5",
-            Categoria = "Fútbol",
-            Marca = "Adidas",
-            Modelo = "Al Rihla"
-        });
-
-        // Agregar catálogos al sistema
-        _catalogos.Add(catalogoTecno);
-        _catalogos.Add(catalogoHogar);
-        _catalogos.Add(catalogoDeportes);
-    }
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (catalogo is null)
@@ -331,6 +269,7 @@ public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
 
         ValidarCatalogoYItem(catalogo, nuevoItem);
 
+        AsegurarIdUnico(nuevoItem);
         catalogo.AgregarItem(nuevoItem);
     
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
@@ -349,10 +288,6 @@ public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto
     original.Marca = dto.Marca;
     original.Modelo = dto.Modelo;
 }
-
-
-
-
 
 public void EliminarItem(string catalogo, Item item)
 {
@@ -428,10 +363,27 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     }
 }
 
+    private void AsegurarIdUnico(Item item)
+    {
+        int idApropiado = item.Id;
+        while (_idsItemsGlobal.Contains(idApropiado))
+            idApropiado++;
+        item.ModificarId(idApropiado);
+        _idsItemsGlobal.Add(idApropiado);
+    }
+    
+    public bool IdExisteEnListaDeIdGlobal(int id)
+    {
+        return _idsItemsGlobal.Contains(id);
+    }
+
+    public int CantidadDeItemsGlobal()
+    {
+        return _idsItemsGlobal.Count;
+    }
+
 //------------------------------------------------------------------------
 // Fin espacio Item
-
-
 
 //------------------------------------------------------------------------
 /* Inicio de deteccion de duplicados */
@@ -615,5 +567,18 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     }
 //--------------------------------------------------------------
 /* Fin de deteccion de duplicados */
+
+//--------------------------------------------------------------
+/* Inicio Lectura de CSV */
+
+    public void ImportarItemsDesdeCsv(List<string> titulos, int cantidad, List<Fila> filas)
+    {
+        _lectorCsv.LeerCsv(titulos, cantidad, filas);
+        _lectorCsv.ImportarItems();
+        _lectorCsv.Limpiar();
+    }
+
+//--------------------------------------------------------------
+/* Fin de Lectura de CSV */
 
 }

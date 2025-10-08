@@ -117,6 +117,11 @@ public class Item
 
     public void EditarCategoria(string nuevaCategoria) => Categoria = nuevaCategoria;
 
+    public void ModificarId(int id)
+    {
+        if (id == 0)
+            throw new ItemException("El id no es valido");
 
-
+        Id = id;
+    }
 }
