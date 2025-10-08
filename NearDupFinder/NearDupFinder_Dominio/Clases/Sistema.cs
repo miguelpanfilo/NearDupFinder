@@ -4,9 +4,6 @@ using NearDupFinder_Dominio.Struct;
 
 namespace NearDupFinder_Dominio.Clases;
 
-
-
-
 public enum TipoDuplicado
 {
     τ_alert,
@@ -32,16 +29,17 @@ public class Sistema
     private const string TokenPattern = @"\W+";
 
     private readonly List<Catalogo> _catalogos;
-    private readonly List<Usuario> _usuarios = [];
+    private readonly List<Usuario> _usuarios;
+    private readonly List<int> _idsItemsGlobal;
     public List<Duplicados> _duplicadosGlobales { get; } = new List<Duplicados>();
 
 
     public Sistema()
     {
-        _catalogos = new List<Catalogo>();
+        _usuarios = new List<Usuario>();
         _usuarios.Add(CrearUsuarioAdmin());
-        PrecargarCatalogos();
-        
+        _catalogos = new List<Catalogo>();
+        _idsItemsGlobal = new List<int>();
     }
 
     //------------------------------------------------------------------------//
@@ -213,71 +211,6 @@ public class Sistema
 
     //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
-    
-    private void PrecargarCatalogos()
-    {
-        var catalogoTecno = new Catalogo("Tecnología");
-        catalogoTecno.CambiarDescripcion("Componentes eletronicos");
-        catalogoTecno.AgregarItem(new Item
-        {
-            Titulo = "Laptop HP",
-            Descripcion = "Laptop 15 pulgadas",
-            Categoria = "Computadoras",
-            Marca = "HP",
-            Modelo = "Pavilion"
-        });
-        catalogoTecno.AgregarItem(new Item
-        {
-            Titulo = "Teléfono Samsung",
-            Descripcion = "Galaxy S24",
-            Categoria = "Celulares",
-            Marca = "Samsung",
-            Modelo = "S24"
-        });
-
-        var catalogoHogar = new Catalogo("Hogar");
-        catalogoHogar.CambiarDescripcion("Electrodomesticos de Hogar");
-        catalogoHogar.AgregarItem(new Item
-        {
-            Titulo = "Silla de comedor",
-            Descripcion = "Silla de madera maciza",
-            Categoria = "Muebles",
-            Marca = "Ikea",
-            Modelo = "Nordic"
-        });
-        catalogoHogar.AgregarItem(new Item
-        {
-            Titulo = "Aspiradora",
-            Descripcion = "Aspiradora sin bolsa 1200W",
-            Categoria = "Electrodomésticos",
-            Marca = "Philips",
-            Modelo = "PowerPro"
-        });
-
-        var catalogoDeportes = new Catalogo("Deportes");
-        catalogoDeportes.CambiarDescripcion("Actividades deportivas, y equipo para hacer deporte");
-        catalogoDeportes.AgregarItem(new Item
-        {
-            Titulo = "Bicicleta",
-            Descripcion = "Bicicleta de montaña 21 cambios",
-            Categoria = "Ciclismo",
-            Marca = "Trek",
-            Modelo = "X-Caliber"
-        });
-        catalogoDeportes.AgregarItem(new Item
-        {
-            Titulo = "Pelota de fútbol",
-            Descripcion = "Pelota oficial tamaño 5",
-            Categoria = "Fútbol",
-            Marca = "Adidas",
-            Modelo = "Al Rihla"
-        });
-
-        // Agregar catálogos al sistema
-        _catalogos.Add(catalogoTecno);
-        _catalogos.Add(catalogoHogar);
-        _catalogos.Add(catalogoDeportes);
-    }
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (catalogo is null)
@@ -345,9 +278,7 @@ public class Sistema
         if (catalogo == null)
             throw new InvalidOperationException("Debe seleccionar un catálogo válido.");
 
-        if (string.IsNullOrWhiteSpace(nuevoItem.Titulo) || string.IsNullOrWhiteSpace(nuevoItem.Descripcion))
-            throw new ItemException("Título y Descripción son obligatorios.");
-
+        AsegurarIdUnico(nuevoItem);
         catalogo.AgregarItem(nuevoItem);
 
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
@@ -378,9 +309,6 @@ public class Sistema
             item.EstadoDuplicado = tieneDuplicados;
         }
     }
-
-
-    
     
     private void EliminarDuplicadosPrevios(Item item)
     {
@@ -424,9 +352,25 @@ public class Sistema
         }
     }
 
-
-
+    private void AsegurarIdUnico(Item item)
+    {
+        int idApropiado = item.Id;
+        while (_idsItemsGlobal.Contains(idApropiado))
+            idApropiado++;
+        item.ModificarId(idApropiado);
+        _idsItemsGlobal.Add(idApropiado);
+    }
     
+    public bool IdExisteEnListaDeIdGlobal(int id)
+    {
+        return _idsItemsGlobal.Contains(id);
+    }
+
+    public int CantidadDeItemsGlobal()
+    {
+        return _idsItemsGlobal.Count;
+    }
+
 //------------------------------------------------------------------------
 /* Fin espacio Items */
 
@@ -612,5 +556,4 @@ public class Sistema
     }
 //--------------------------------------------------------------
 /* Fin de deteccion de duplicados */
-
 }
