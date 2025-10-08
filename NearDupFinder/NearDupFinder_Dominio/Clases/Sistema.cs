@@ -382,7 +382,14 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
         return _idsItemsGlobal.Count;
     }
 
-    
+    public void MarcarNoDuplicado(ParDuplicado d)
+    {
+        DuplicadosGlobales.Remove(d);
+
+        d.ItemA.EstadoDuplicado = false;
+        d.ItemB.EstadoDuplicado = false;
+    }
+
   
 //------------------------------------------------------------------------
 // Fin espacio Item

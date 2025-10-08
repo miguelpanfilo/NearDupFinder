@@ -1126,8 +1126,8 @@ public class SistemaPruebas
         var item2 = new Item("Titulo 2", "Descripcion 2");
         item2.ModificarId(item1.Id);
 
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
 
 
         bool losIdsNoSonIguales = item1.Id != item2.Id;
@@ -1151,7 +1151,7 @@ public class SistemaPruebas
     public void CantidadDeItemsGlobal_ConItems_RetornaDistintoDeCero()
     {
         var nuevoItem = new Item("Item 1", "Descripción 1");
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", nuevoItem);
         
         int numeroDeItems = _sistema.CantidadDeItemsGlobal();
         
@@ -1173,7 +1173,7 @@ public class SistemaPruebas
     public void IdExisteEnListaDeIdGlobal_ConItemExistente_RetornaVerdadero()
     {
         var nuevoItem = new Item("Item 1", "Descripción 1");
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", nuevoItem);
         
         bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
         
@@ -1222,4 +1222,3 @@ public class SistemaPruebas
     }
 }
     
-}
