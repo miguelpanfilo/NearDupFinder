@@ -11,16 +11,18 @@
             <span style="flex:1"></span>
             <AuthorizeView>
                 <Authorized>
-                    Hola, @context.User.Identity?.Name
-                    <form method="post" action="/logout" style="display:inline;">
-                        <AntiforgeryToken />
-                        <button type="submit">Salir</button>
-                    </form>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-body-secondary">Hola, @context.User.Identity?.Name</span>
+                        <form method="post" action="/auth/logout" class="d-inline m-0">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">Salir</button>
+                        </form>
+                    </div>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/login">Entrar</a>
+                    <a href="/login" class="btn btn-primary btn-sm">Entrar</a>
                 </NotAuthorized>
             </AuthorizeView>
+
         </div>
 
         <article class="content px-4">

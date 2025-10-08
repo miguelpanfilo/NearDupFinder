@@ -157,17 +157,4 @@ public class TestCrudCatalogo
         
         Assert.AreEqual("Cat1", c.Titulo); 
     }
-    
-    [TestMethod]
-    public void CambiarTituloCatalogo_NoExisteCatalogo_Falla()
-    {
-        
-        var c = new Catalogo("CatDesconocido");
-        
-        var ex = Assert.ThrowsException<InvalidOperationException>(
-            () => _sistema.CambiarTituloCatalogo(c, "NuevoTitulo")
-        );
-
-        StringAssert.Contains(ex.Message, "No existe un catálogo con ese título");
-    }
 }

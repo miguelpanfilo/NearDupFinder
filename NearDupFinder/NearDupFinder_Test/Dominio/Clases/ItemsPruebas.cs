@@ -218,11 +218,6 @@ public class ItemsPruebas
         Assert.AreEqual(2, item2.Id);
         Assert.AreNotEqual(item1.Id, item2.Id);
     }
-
-  
-
-  
-   
     
     [TestMethod]
     public void TestItem_Equals_ComparaPorId()
@@ -249,7 +244,7 @@ public class ItemsPruebas
         Assert.AreEqual(1, item3.Id); // vuelve a empezar en 1
     }
    
- [TestMethod]
+    [TestMethod]
     public void TestItem_Equals_ConObjetoDeOtroTipo_DevuelveFalse()
     {
         Item item = new Item { Titulo = "A", Descripcion = "B", Marca = "Marca", Modelo = "Modelo", Categoria = "Categoria" };
@@ -363,97 +358,120 @@ public class ItemsPruebas
     }
 
 
-[TestMethod]
-public void TestItem_Editar_Modelo_Fallo()
-{
-    // Arrange
-    Item item = new Item("Titulo", "Descripcion");
-
-    // Asignar un valor válido primero para cubrir el setter completo
-    item.EditarModelo("ModeloValido");
-    Assert.AreEqual("ModeloValido", item.Modelo);
-
-    // Act & Assert: asignar modelo demasiado largo para provocar la excepción
-    ItemException exception = Assert.ThrowsException<ItemException>(() =>
+    [TestMethod]
+    public void TestItem_Editar_Modelo_Fallo()
     {
-        item.EditarModelo(new string('B', 61));
-    });
+        // Arrange
+        Item item = new Item("Titulo", "Descripcion");
 
-    Assert.AreEqual("El modelo no puede superar 60 caracteres.", exception.Message);
-}
+        // Asignar un valor válido primero para cubrir el setter completo
+        item.EditarModelo("ModeloValido");
+        Assert.AreEqual("ModeloValido", item.Modelo);
 
-[TestMethod]
-public void TestItem_Editar_Categoria_Fallo()
-{
-    // Arrange
-    Item item = new Item("Titulo", "Descripcion");
+        // Act & Assert: asignar modelo demasiado largo para provocar la excepción
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarModelo(new string('B', 61));
+        });
 
-    // Asignar un valor válido primero
-    item.EditarCategoria("CategoriaValida");
-    Assert.AreEqual("CategoriaValida", item.Categoria);
+        Assert.AreEqual("El modelo no puede superar 60 caracteres.", exception.Message);
+    }
 
-    // Act & Assert: asignar categoria demasiado larga para provocar la excepción
-    ItemException exception = Assert.ThrowsException<ItemException>(() =>
+    [TestMethod]
+    public void TestItem_Editar_Categoria_Fallo()
     {
-        item.EditarCategoria(new string('C', 41));
-    });
+        // Arrange
+        Item item = new Item("Titulo", "Descripcion");
 
-    Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
-}
+        // Asignar un valor válido primero
+        item.EditarCategoria("CategoriaValida");
+        Assert.AreEqual("CategoriaValida", item.Categoria);
 
+        // Act & Assert: asignar categoria demasiado larga para provocar la excepción
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.EditarCategoria(new string('C', 41));
+        });
 
+        Assert.AreEqual("La categoria no puede superar 40 caracteres.", exception.Message);
+    }
+    
+    [TestMethod]
+    public void TestItem_Editar_Titulo_Correcto()
+    {
+        Item item = new Item("Titulo original", "Descripcion original");
 
+        // Editar correctamente
+        item.EditarTitulo("Nuevo Titulo");
 
-[TestMethod]
-public void TestItem_Editar_Titulo_Correcto()
-{
-    Item item = new Item("Titulo original", "Descripcion original");
+        Assert.AreEqual("Nuevo Titulo", item.Titulo);
+    }
 
-    // Editar correctamente
-    item.EditarTitulo("Nuevo Titulo");
+    [TestMethod]
+    public void TestItem_Editar_Descripcion_Correcto()
+    {
+        Item item = new Item("Titulo", "Descripcion original");
 
-    Assert.AreEqual("Nuevo Titulo", item.Titulo);
-}
+        item.EditarDescripcion("Nueva Descripcion");
 
-[TestMethod]
-public void TestItem_Editar_Descripcion_Correcto()
-{
-    Item item = new Item("Titulo", "Descripcion original");
+        Assert.AreEqual("Nueva Descripcion", item.Descripcion);
+    }
 
-    item.EditarDescripcion("Nueva Descripcion");
+    [TestMethod]
+    public void TestItem_Editar_Marca_Correcto()
+    {
+        Item item = new Item("Titulo", "Descripcion");
 
-    Assert.AreEqual("Nueva Descripcion", item.Descripcion);
-}
+        item.EditarMarca("NuevaMarca");
 
-[TestMethod]
-public void TestItem_Editar_Marca_Correcto()
-{
-    Item item = new Item("Titulo", "Descripcion");
+        Assert.AreEqual("NuevaMarca", item.Marca);
+    }
 
-    item.EditarMarca("NuevaMarca");
+    [TestMethod]
+    public void TestItem_Editar_Modelo_Correcto()
+    {
+        Item item = new Item("Titulo", "Descripcion");
 
-    Assert.AreEqual("NuevaMarca", item.Marca);
-}
+        item.EditarModelo("NuevoModelo");
 
-[TestMethod]
-public void TestItem_Editar_Modelo_Correcto()
-{
-    Item item = new Item("Titulo", "Descripcion");
+        Assert.AreEqual("NuevoModelo", item.Modelo);
+    }
 
-    item.EditarModelo("NuevoModelo");
+    [TestMethod]
+    public void TestItem_Editar_Categoria_Correcto()
+    {
+        Item item = new Item("Titulo", "Descripcion");
 
-    Assert.AreEqual("NuevoModelo", item.Modelo);
-}
+        item.EditarCategoria("NuevaCategoria");
 
-[TestMethod]
-public void TestItem_Editar_Categoria_Correcto()
-{
-    Item item = new Item("Titulo", "Descripcion");
+        Assert.AreEqual("NuevaCategoria", item.Categoria);
+    }
 
-    item.EditarCategoria("NuevaCategoria");
+    [TestMethod]
+    public void TestItem_ModificarId_Correcto()
+    {
+        Item item = new Item("Titulo", "Descripcion");
+        int idViejo = item.Id;
+        int idNuevo = idViejo + 100;
 
-    Assert.AreEqual("NuevaCategoria", item.Categoria);
-}
+        item.ModificarId(idNuevo);
+        
+        Assert.AreNotEqual(idViejo, item.Id);
+        Assert.AreEqual(idNuevo, item.Id);
+    }
+    
+    [TestMethod]
+    public void TestItem_ModificarId_Id_Cero_Fallo()
+    {
+        Item item = new Item("Titulo", "Descripcion");
+        int idNuevo = 0;
 
+        
+        ItemException exception = Assert.ThrowsException<ItemException>(() =>
+        {
+            item.ModificarId(idNuevo);
+        });
 
+        Assert.AreEqual("El id no es valido", exception.Message);
+    }
 }

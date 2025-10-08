@@ -1,6 +1,5 @@
 @page "/usuarios/{id:int}/editar/"
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
 @attribute [Authorize(Roles = "Administrador")]
 @inject Sistema Sistema
@@ -78,7 +77,7 @@
     protected override void OnInitialized()
     {
         _usuarioActual = Sistema.BuscarUsuarioPorId(Id);
-        _nombre = _usuarioActual.Nombre;
+        _nombre = _usuarioActual!.Nombre;
         _apellido = _usuarioActual.Apellido;
         _email = _usuarioActual.Email.ToString();
         _fecha = _usuarioActual.FechaNacimiento.ToDateTime();
@@ -92,23 +91,20 @@
         if (_rolAdmin)   
             roles.Add(Rol.Administrador);
         if (_rolRevisor)
-            roles.Add(Rol.Revisor);  
-        
-        if (_fecha is null)
-        {
-            NotificarError("Alguno de los datos no es correcto. Volvé a ingresarlos.");
+            roles.Add(Rol.Revisor);
+
+        if (!ValidarCampos(_nombre, _apellido, _fecha))
             return;
-        }
         
-        bool modificacionOk = Sistema.ModificarUsuario(_nombre, _apellido, _email, _fecha.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
+        bool seModificoUsuarioCorrectamente = Sistema.ModificarUsuario(_nombre, _apellido, _email, _fecha!.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
         
-        if (modificacionOk)
+        if (seModificoUsuarioCorrectamente)
         {
             Nav.NavigateTo("/usuarios");
         }
         else
         {
-            NotificarError("Alguno de los datos no es correcto.");
+            NotificarError("La contraseña ingresada es incorrecta.");
             StateHasChanged();
         }
     }
@@ -128,5 +124,28 @@
     {
         _error = false;
         _mensajeDeError = string.Empty;
+    }
+    
+    private bool ValidarCampos(string nombre, string apellido, DateTime? fecha)
+    {
+        if (string.IsNullOrWhiteSpace(nombre))
+        {
+            NotificarError("El nombre ingresado es incorrecto");
+            return false;
+        }
+        
+        if (string.IsNullOrWhiteSpace(apellido))
+        {
+            NotificarError("El apellido ingresado es incorrecto");
+            return false;
+        }
+        
+        if (fecha is null)
+        {
+            NotificarError("La fecha ingresada es incorrecta");
+            return false;
+        }
+
+        return true;
     }
 }

@@ -1,13 +1,15 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Controladores;
 using NearDupFinder_Dominio.Excepciones;
 
-namespace NearDupFinder_Test.Dominio;
+namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class SistemaPruebas
 {
     private Sistema _sistema;
     private Catalogo _catalogo;
+
     [TestInitialize]
     public void Setup()
     {
@@ -15,315 +17,7 @@ public class SistemaPruebas
         _catalogo = new Catalogo("Catalogo Test"); 
         _sistema.AgregarCatalogo(_catalogo);
     }
-    [TestMethod]
-    public void CrearUsuario_NombreVacio_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "";
-        string apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_NombreNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = null;
-        string apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_ApellidoVacio_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_ApellidoNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = null;
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_EmailInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string email = "manuelperezmartirene.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_EmailVacio_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string email = "";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_EmailNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string? email = null;
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_AnioInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string? email = null;
-        int anio = -12;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_MesInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string? email = null;
-        int anio = 1997;
-        int mes = 15;
-        int dia = 27;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_DiaInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string apellido = "Perez";
-        string? email = null;
-        int anio = 1997;
-        int mes = 15;
-        int dia = 55;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-
-    [TestMethod]
-    public void CrearUsuario_ClaveInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "ClaveInvalida";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
     
-    [TestMethod]
-    public void CrearUsuario_ClaveVacia_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string clave = "";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-    
-    [TestMethod]
-    public void CrearUsuario_ClaveNula_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string? clave = null;
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-    
-    [TestMethod]
-    public void CrearUsuario_SinRoles_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string? clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> {};
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsTrue(usuarioCreado);
-    }
-    
-    [TestMethod]
-    public void CrearUsuario_RolesNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string? clave = "ClaveValida123!";
-        List<Rol>? roles = null;
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-    
-    [TestMethod]
-    public void CrearUsuario_UsuarioYaExistente_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string? clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> {Rol.Administrador};
-        string nombre2 = "Juan";
-        string? apellido2 = "Perez";
-        
-        sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-        bool usuarioCreado = sistema.CrearUsuario(nombre2, apellido2, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(usuarioCreado);
-    }
-    
-    [TestMethod]
-    public void CrearUsuario_CamposValidos_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string nombre = "Manuel";
-        string? apellido = "Perez";
-        string email = "manuelperezmartirene@gmail.com";
-        int anio = 1997;
-        int mes = 12;
-        int dia = 27;
-        string? clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> {Rol.Administrador};
-
-        bool usuarioCreado = sistema.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsTrue(usuarioCreado);
-    }
-
     [TestMethod]
     public void BuscarUsuarioPorId_IDNoExsite_RetornaNulo()
     {
@@ -346,458 +40,7 @@ public class SistemaPruebas
         
         Assert.AreEqual(admin,usuarioABuscar);
     }
-
-    [TestMethod]
-    public void ModificarUsuario_NombreVacio_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "";
-        string? apellido = "Pérez";
-        string? email = "admin@gmail.com";
-        int anio = 1995;
-        int mes = 5;
-        int dia = 10;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_ApellidoVacio_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "";
-        string? email = "admin@gmail.com";
-        int anio = 1995;
-        int mes = 5;
-        int dia = 10;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_EmailInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "Pérez";
-        string? email = "admin.gmail.com";
-        int anio = 1995;
-        int mes = 5;
-        int dia = 10;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_FechaInvalida_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "Pérez";
-        string? email = "admin@gmail.com";
-        int anio = 1995;
-        int mes = 15;
-        int dia = 40;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_ClaveInvalida_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "Pérez";
-        string? email = "admin@gmail.com";
-        int anio = 1995;
-        int mes = 5;
-        int dia = 10;
-        string clave = "invalida";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_CambiaNombreYApellido_RetornaVerdaderoYActualizaCampos()
-    {
-        Sistema sistema = new Sistema();
-        Usuario? admin = sistema.ObtenerUsuarios().FirstOrDefault();
-        string? email = admin!.Email.ToString();
-        string? nombre = "NuevoNombre";
-        string? apellido = "NuevoApellido";
-        int anio = 1994;
-        int mes = 7;
-        int dia = 21;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Administrador };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-        Usuario? actualizado = sistema.BuscarUsuarioPorId(admin.Id);
-
-        Assert.IsTrue(modificado);
-        Assert.AreEqual(nombre, actualizado!.Nombre);
-        Assert.AreEqual(apellido, actualizado!.Apellido);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_CambiaClave_PermiteAutenticarConNuevaClave()
-    {
-        Sistema sistema = new Sistema();
-        string? email = "admin@gmail.com";
-        string claveNueva = "ClaveMuySegura123@";
-        bool modificado = sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, claveNueva, new List<Rol> { Rol.Administrador });
-        Usuario? autenticado = sistema.AutenticarUsuario(email, claveNueva);
-
-        Assert.IsTrue(modificado);
-        Assert.IsNotNull(autenticado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_RemplazaRoles_SoloQuedaListaNueva()
-    {
-        Sistema sistema = new Sistema();
-        string? email = "admin@gmail.com";
-        List<Rol> rolesNuevos = new List<Rol> { Rol.Revisor };
-        bool modificado = sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, "ClaveValida123!", rolesNuevos);
-        Usuario? usuario = sistema.AutenticarUsuario(email, "ClaveValida123!");
-
-        var rolesUsuario = usuario!.ObtenerRoles().ToList();
-        CollectionAssert.AreEquivalent(rolesNuevos, rolesUsuario);
-        Assert.IsTrue(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarUsuario_RolesVacio_EliminaTodosLosRoles()
-    {
-        Sistema sistema = new Sistema();
-        string? email = "admin@gmail.com";
-        List<Rol> rolesVacios = new List<Rol>();
-        bool modificado = sistema.ModificarUsuario("Admin", "Admin", email, 1990, 1, 1, "ClaveValida123!", rolesVacios);
-        Usuario? usuario = sistema.AutenticarUsuario(email, "ClaveValida123!");
-
-        var rolesUsuario = usuario!.ObtenerRoles().ToList();
-        Assert.AreEqual(0, rolesUsuario.Count);
-        Assert.IsTrue(modificado);
-    }
     
-    [TestMethod]
-    public void ModificarUsuario_RolesNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "Perez";
-        string? email = "admin@gmail.com";
-        int anio = 1995;
-        int mes = 5;
-        int dia = 10;
-        string clave = "ClaveValida123!";
-        List<Rol>? roles = null;
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-    
-    [TestMethod]
-    public void ModificarUsuario_CamposValidos_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "Pérez";
-        string? email = "admin@gmail.com";
-        int anio = 1995;
-        int mes = 5;
-        int dia = 10;
-        string clave = "NuevaClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsTrue(modificado);
-    }
-    
-    [TestMethod]
-    public void ModificarUsuario_UsuarioInexistente_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? nombre = "Manu";
-        string? apellido = "Pérez";
-        string? email = "noexiste@gmail.com";
-        int anio = 1990;
-        int mes = 1;
-        int dia = 1;
-        string clave = "ClaveValida123!";
-        List<Rol> roles = new List<Rol> { Rol.Revisor };
-
-        bool modificado = sistema.ModificarUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-
-        Assert.IsFalse(modificado);
-    }
-    
-    [TestMethod]
-    public void ModificarClave_CamposValidos_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsTrue(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_UsuarioInexistente_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "noexiste@gmail.com";
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_EmailInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin.gmail.com";
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_EmailVacio_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "";
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_EmailNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? email = null;
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_ClaveInvalida_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-        string claveNueva = "invalida";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_ClaveVacia_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-        string claveNueva = "";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_ClaveNula_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-        string? claveNueva = null;
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-
-        Assert.IsFalse(modificado);
-    }
-
-    [TestMethod]
-    public void ModificarClave_CambiaClave_PermiteAutenticarConNuevaClave()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-        Usuario? admin = sistema.AutenticarUsuario(email, claveNueva);
-
-        Assert.IsTrue(modificado);
-        Assert.IsNotNull(admin);
-    }
-
-    [TestMethod]
-    public void ModificarClave_CambiaClave_NoPermiteAutenticarConClaveVieja()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-        string claveVieja = "123QWEasdzxc@";
-        string claveNueva = "NuevaClaveValida123!";
-
-        bool modificado = sistema.ModificarClave(email, claveNueva);
-        Usuario? conVieja = sistema.AutenticarUsuario(email, claveVieja);
-
-        Assert.IsTrue(modificado);
-        Assert.IsNull(conVieja);
-    }
-
-    [TestMethod]
-    public void AutenticoUsuario_Correto_RetornaUsuario()
-    {
-        Sistema sistema = new Sistema();
-        string emailAdmin = "admin@gmail.com";
-        string claveAdmin = "123QWEasdzxc@";
-        
-        Usuario? admin = sistema.AutenticarUsuario(emailAdmin, claveAdmin);
-        
-        Assert.IsNotNull(admin);
-    }
-    
-    [TestMethod]
-    public void AutenticoUsuario_Incorrecto_RetornaNulo()
-    {
-        Sistema sistema = new Sistema();
-        string emailIncorrecto = "incorrecto@gmail.com";
-        string claveIncorrecta= "mal";
-        
-        Usuario? admin = sistema.AutenticarUsuario(emailIncorrecto, claveIncorrecta);
-        
-        Assert.IsNull(admin);
-    }
-    
-    [TestMethod]
-    public void AutenticoUsuario_EmailIncorrecto_RetornaNulo()
-    {
-        Sistema sistema = new Sistema();
-        string emailIncorrecto = "incorrecto@gmail.com";
-        string claveAdmin = "123QWEasdzxc@";
-        
-        Usuario? admin = sistema.AutenticarUsuario(emailIncorrecto, claveAdmin);
-        
-        Assert.IsNull(admin);
-    }
-    
-    [TestMethod]
-    public void AutenticoUsuario_ClaveIncorrecta_RetornaNulo()
-    {
-        Sistema sistema = new Sistema();
-        string emailAdmin = "admin@gmail.com";
-        string claveIncorrecta= "mal";
-        
-        Usuario? admin = sistema.AutenticarUsuario(emailAdmin, claveIncorrecta);
-        
-        Assert.IsNull(admin);
-    }
-    
-    [TestMethod]
-    public void AutenticoUsuario_EmailNulo_RetornaNulo()
-    {
-        Sistema sistema = new Sistema();
-        string? emailNulo = null;
-        string claveAdmin = "123QWEasdzxc@";
-        
-        Usuario? admin = sistema.AutenticarUsuario(emailNulo, claveAdmin);
-        
-        Assert.IsNull(admin);
-    }
-    
-    [TestMethod]
-    public void AutenticoUsuario_ClaveNula_RetornaNulo()
-    {
-        Sistema sistema = new Sistema();
-        string emailAdmin = "admin@gmail.com";
-        string? claveNula= null;
-        
-        Usuario? admin = sistema.AutenticarUsuario(emailAdmin, claveNula);
-        
-        Assert.IsNull(admin);
-    }
-    
-    [TestMethod]
-    public void RemoverUsuario_Existente_RetornaVerdadero()
-    {
-        Sistema sistema = new Sistema();
-        string email = "admin@gmail.com";
-
-        // La clase sistema comienza con el Usuario admin por defecto por lo tanto no es necesario depender de agregar 
-        // a un usuario para este test
-        bool usuarioRemovido = sistema.EliminarUsuario(email);
-        
-        Assert.IsTrue(usuarioRemovido);
-    }
-    
-    [TestMethod]
-    public void RemoverUsuario_Inexistente_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "asdasdasda@gmail.com";
-        
-        bool usuarioRemovido = sistema.EliminarUsuario(email);
-        
-        Assert.IsFalse(usuarioRemovido);
-    }
-    
-    [TestMethod]
-    public void RemoverUsuario_EmailInvalido_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string email = "manuel.com";
-        
-        bool usuarioRemovido = sistema.EliminarUsuario(email);
-        
-        Assert.IsFalse(usuarioRemovido);
-    }
-    
-    [TestMethod]
-    public void RemoverUsuario_EmailNulo_RetornaFalso()
-    {
-        Sistema sistema = new Sistema();
-        string? email = null;
-        
-        bool usuarioRemovido = sistema.EliminarUsuario(email);
-        
-        Assert.IsFalse(usuarioRemovido);
-    }
-    // Fin Pruebas Usuario
-
     // Inicio Pruebas Items
     
     [TestMethod]
@@ -853,16 +96,15 @@ public class SistemaPruebas
         };
 
         sistema.ActualizarItemEnCatalogo(catalogo, dto);
-
         
         Assert.AreEqual("Cat 2", item.Categoria);
         Assert.AreEqual("Marca 2", item.Marca);
         Assert.AreEqual("Modelo 2", item.Modelo);
     }
+
     [TestMethod]
     public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
     {
-        
         var sistema = new Sistema();
         var catalogo = new Catalogo("Catálogo Test");
 
@@ -882,6 +124,7 @@ public class SistemaPruebas
 
         Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
     }
+    
     [TestMethod]
     public void AltaItem_AgregaItemAlCatalogo()
     {
@@ -898,7 +141,6 @@ public class SistemaPruebas
         Assert.AreEqual("Item 1", items.First().Titulo);
         Assert.AreEqual("Descripción 1", items.First().Descripcion);
     }
-   
 
     [TestMethod]
     [ExpectedException(typeof(ItemException))]
@@ -912,7 +154,6 @@ public class SistemaPruebas
         sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
 
-
     [TestMethod]
     [ExpectedException(typeof(ItemException))]
     public void AltaItem_DescripcionVacia_Excepcion()
@@ -924,13 +165,13 @@ public class SistemaPruebas
         var nuevoItem = new Item("Titulo", ""); 
         sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
     }
+    
     [TestMethod]
     [ExpectedException(typeof(ItemException))]
     public void AltaItem_Nulo_Excepcion()
     {
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);
     }
-
   
     [TestMethod]
     public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
@@ -961,9 +202,6 @@ public class SistemaPruebas
         Assert.IsTrue(item2.EstadoDuplicado);
     }
     
-
-
-
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void ActualizarDuplicadosPara_ExcepcionSiCatalogoEsNull()
@@ -971,6 +209,7 @@ public class SistemaPruebas
         var item = new Item("Titulo", "Descripcion");
         _sistema.ActualizarDuplicadosPara(null, item);
     }
+
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void ActualizarDuplicadosPara_LanzaExcepcionSiItemEsNull()
@@ -994,6 +233,7 @@ public class SistemaPruebas
 
         Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
     }
+
     [TestMethod]
     public void AltaItemConDuplicados_ItemTieneDuplicado_EstadoDuplicadoEsTrue()
     {
@@ -1009,7 +249,6 @@ public class SistemaPruebas
 
         Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir al menos un duplicado global");
     }
-
     
     [TestMethod]
     public void ActualizarDuplicados_ItemEditado_RecalculaDuplicadosGlobales()
@@ -1030,7 +269,6 @@ public class SistemaPruebas
 
     }
 
-   
     [TestMethod]
     public void ActualizarDuplicados_RecalculaDuplicadosParaOtrosItems()
     {
@@ -1067,14 +305,9 @@ public class SistemaPruebas
         item1.Titulo = "nosoyuntitle1111111111";
         item1.Descripcion = "nosoydescripcion11111111";
         _sistema.ActualizarDuplicadosPara(_catalogo, item1);
-
         
         Assert.IsFalse(item1.EstadoDuplicado, "Item1 debe estar marcado como no duplicado");
         Assert.IsTrue(item2.EstadoDuplicado, "Item2 debe estar marcado como  duplicado");
-        
-
-
-       
     }
     
     [TestMethod]
@@ -1085,10 +318,8 @@ public class SistemaPruebas
 
         _catalogo.AgregarItem(item1);
         _catalogo.AgregarItem(item2);
-
         
         _sistema.EliminarItem("Catalogo Test", item1);
-
         
         Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
         Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe permanecer en el catálogo");
@@ -1126,11 +357,145 @@ public class SistemaPruebas
 
         _sistema.EliminarItem("Catalogo Inexistente", item);
     }
+    
+    [TestMethod]
+    public void AltaItemConDuplicados_AgregaItemConIdNoValido_CambiandoleElId()
+    {
+        var item1 = new Item("Titulo", "Descripcion");
+        var item2 = new Item("Titulo", "Descripcion");
+        int idItem1 = item1.Id;
+        item2.ModificarId(idItem1);
+        
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
+        
+        bool losIdsNoSonIguales = item1.Id != item2.Id;
+        bool item1Existe = _sistema.IdExisteEnListaDeIdGlobal(item1.Id);
+        bool item2Existe = _sistema.IdExisteEnListaDeIdGlobal(item2.Id);
+        
+        Assert.IsTrue(losIdsNoSonIguales);
+        Assert.IsTrue(item1Existe);
+        Assert.IsTrue(item2Existe);
+    }
+
+    [TestMethod]
+    public void CantidadDeItemsGlobal_SinItems_RetornaCero()
+    {
+        int numeroDeItems = _sistema.CantidadDeItemsGlobal();
+        
+        Assert.AreEqual(0, numeroDeItems);
+    }
+    
+    [TestMethod]
+    public void CantidadDeItemsGlobal_ConItems_RetornaDistintoDeCero()
+    {
+        var nuevoItem = new Item("Item 1", "Descripción 1");
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, nuevoItem);
+        
+        int numeroDeItems = _sistema.CantidadDeItemsGlobal();
+        
+        Assert.AreNotEqual(0, numeroDeItems);
+        Assert.AreEqual(1, numeroDeItems);
+    }
+    
+    [TestMethod]
+    public void IdExisteEnListaDeIdGlobal_ConItemNoExistente_RetornaFalso()
+    {
+        var nuevoItem = new Item("Item 1", "Descripción 1");
+        
+        bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
+        
+        Assert.IsFalse(existeItem);
+    }
+    
+    [TestMethod]
+    public void IdExisteEnListaDeIdGlobal_ConItemExistente_RetornaVerdadero()
+    {
+        var nuevoItem = new Item("Item 1", "Descripción 1");
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, nuevoItem);
+        
+        bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
+        
+        Assert.IsTrue(existeItem);
+    }
+
+    [TestMethod]
+    public void ImportarItemsDesdeCsv_AgregaItems()
+    {
+        var titulos = new List<string> { "id", "titulo" };
+        var filas = new List<Fila> { new Fila("1","t","m","x","d","c","Cat 1") };
+        
+        _sistema.ImportarItemsDesdeCsv(titulos, 1, filas);
+
+        bool itemExiste = _sistema.IdExisteEnListaDeIdGlobal(1);
+        
+        Assert.IsTrue(itemExiste);
+    }
+    
+    [TestMethod]
+    public void DescratarDuplicado_DeberiaEliminarDuplicadoYActualizarEstado()
+    {
+
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+
+        var duplicado = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        _sistema.DuplicadosGlobales.Add(duplicado);
+
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+
+        _sistema.DescartarParDuplicado(duplicado);
+
+        
+        Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado), "El duplicado debería haberse eliminado");
+        Assert.IsFalse(item1.EstadoDuplicado, "ItemA ya no debería estar marcado como duplicado");
+        Assert.IsFalse(item2.EstadoDuplicado, "ItemB ya no debería estar marcado como duplicado");
+    }
 
     
+    [TestMethod]
+    public void MarcarNoDuplicado_ItemConOtroDuplicado_EstadoDuplicadoPermaneceTrue()
+    {
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+        var item3 = new Item { Titulo = "Item3", Descripcion = "Desc3" };
 
+        var duplicado1 = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.τ_dup
+        };
 
-   
+        var duplicado2 = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item3,
+            Score = 0.8f,
+            Tipo = TipoDuplicado.τ_dup
+        };
 
+        _sistema.DuplicadosGlobales.Add(duplicado1);
+        _sistema.DuplicadosGlobales.Add(duplicado2);
 
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+        item3.EstadoDuplicado = true;
+        
+        _sistema.DescartarParDuplicado(duplicado1);
+       
+        Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado1));
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsFalse(item2.EstadoDuplicado);
+        Assert.IsTrue(item3.EstadoDuplicado);
+    }
 }

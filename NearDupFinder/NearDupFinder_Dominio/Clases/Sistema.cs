@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Struct;
+using NearDupFinder_Dominio.Controladores;
 
 namespace NearDupFinder_Dominio.Clases;
 
@@ -10,7 +11,7 @@ public enum TipoDuplicado
     τ_dup
 }
 
-public record struct Duplicados
+public record struct ParDuplicado 
 {
     public Item ItemA { get; set; }
     public Item ItemB { get; set; }
@@ -29,70 +30,57 @@ public class Sistema
     private const string TokenPattern = @"\W+";
 
     private readonly List<Catalogo> _catalogos;
-    private readonly List<Usuario> _usuarios = [];
-    public List<Duplicados> DuplicadosGlobales { get; set; }
+    private readonly List<Usuario> _usuarios;
+    private readonly List<int> _idsItemsGlobal;
+    private readonly LectorCsv _lectorCsv;
+    public List<ParDuplicado > DuplicadosGlobales { get; set; }
+    private readonly GestorUsuarios _gestorUsuarios;
+
 
     public Sistema()
     {
+        _usuarios = new List<Usuario>();
+        _gestorUsuarios = new GestorUsuarios(this);
+        _usuarios.Add(_gestorUsuarios.CrearUsuarioAdmin());
         _catalogos = new List<Catalogo>();
-        _usuarios.Add(CrearUsuarioAdmin());
-        DuplicadosGlobales = new List<Duplicados>();
-        PrecargarCatalogos();
+        DuplicadosGlobales = new List<ParDuplicado >();
+        _idsItemsGlobal = new List<int>();
+        _lectorCsv = new LectorCsv(this);
     }
 
-    
     //------------------------------------------------------------------------//
     /* Comienzo espacio Usuarios*/
-    private Usuario CrearUsuarioAdmin()
+    
+    public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
-        Email email = Email.Crear("admin@gmail.com");
-        Fecha fecha = Fecha.Crear(1997,12,27);
-        Contrasena contrasena = Contrasena.Crear("123QWEasdzxc@");
-        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
-        adminUsuario.AgregarRol(Rol.Administrador);
-        adminUsuario.CambiarContrasena(contrasena);
-        
-        return adminUsuario;
+        return _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
     }
     
-    
-    
-    public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol>? roles)
+    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
-        Email correo;
-        Fecha fecha;
-        Usuario nuevoUsuario;
-        Contrasena contrasena;
-        try
-        {
-            correo = Email.Crear(email);
-            if (BuscarUsuarioPorEmail(correo) is not null)
-                return false;
-
-            fecha = Fecha.Crear(anio,mes,dia);
-            contrasena = Contrasena.Crear(clave);
-            nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
-        }
-        catch
-        {
-            return false;
-        }
-        
-        nuevoUsuario.CambiarContrasena(contrasena);
-        if(roles is null)
-            return false;
-        foreach (var rol in roles)
-            nuevoUsuario.AgregarRol(rol);
-        _usuarios.Add(nuevoUsuario);
-        
-        return true;
+        return _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
     }
     
-    public List<Usuario> ObtenerUsuarios()
+    public bool EliminarUsuario(string email)
     {
-        return _usuarios;
+        return _gestorUsuarios.BorrarUsuario(email);
     }
 
+    public IReadOnlyList<Usuario> ObtenerUsuarios()
+    {
+        return _usuarios.AsReadOnly(); 
+    }
+
+    internal void AgregarUsuarioDeLaLista(Usuario usuario)
+    {
+        _usuarios.Add(usuario);
+    }
+
+    internal void RemoverUsuarioDeLaLista(Usuario usuario)
+    {
+        _usuarios.Remove(usuario);
+    }
+    
     public Usuario? BuscarUsuarioPorId(int id)
     {
         foreach (Usuario usuario in _usuarios)
@@ -101,112 +89,27 @@ public class Sistema
         return null;    
     }
     
-    private Usuario? BuscarUsuarioPorEmail(Email email)
+    public Usuario? BuscarUsuarioPorEmail(Email email)
     {
         foreach (Usuario usuario in _usuarios)
             if (usuario.Email.Igual(email))
                 return usuario;
         return null;
     }
-
-    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol>? roles)
+    
+    public bool ModificarClave(string email,string claveActual, string? claveNueva)
     {
-        Email correo;
-        Fecha fecha;
-        Usuario? usuarioAModificar;
-        // La contraseña es opcional, en caso que no se ingrese no se cambia.
-        Contrasena? contrasena = null;
-        try
-        {
-            correo = Email.Crear(email);
-            usuarioAModificar = BuscarUsuarioPorEmail(correo);
-            if(usuarioAModificar is null)
-                return false;
-            
-            fecha = Fecha.Crear(anio,mes,dia);
-            if(!string.IsNullOrWhiteSpace(clave))
-                contrasena = Contrasena.Crear(clave);
-        }
-        catch
-        {
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellido) || roles is null)
-            return false;
-        
-        usuarioAModificar.Nombre = nombre;
-        usuarioAModificar.Apellido = apellido;
-        usuarioAModificar.FechaNacimiento = fecha;
-        usuarioAModificar.ObtenerRoles().Except(roles).ToList().ForEach(r => usuarioAModificar.RemoverRol(r));
-        roles.Except(usuarioAModificar.ObtenerRoles()).ToList().ForEach(r => usuarioAModificar.AgregarRol(r));
-        
-        if(!string.IsNullOrWhiteSpace(clave))
-            usuarioAModificar.CambiarContrasena(contrasena);
-        
-        return true;
+        Usuario? usuarioValidado = ValidarUsuario(email, claveActual);
+        if( usuarioValidado is not null)
+            return _gestorUsuarios.ModificarClave(usuarioValidado, claveNueva);
+        return false;
     }
     
-    public bool ModificarClave(string? email, string? clave)
+    public Usuario? ValidarUsuario(string? email, string? clave)
     {
-        Email correo;
-        Contrasena contrasena;
-        try
-        {
-            correo = Email.Crear(email);
-            contrasena = Contrasena.Crear(clave);
-        }
-        catch
-        {
-            return false;
-        }
-        Usuario? usuario = BuscarUsuarioPorEmail(correo);
-        if (usuario is null)
-            return false;
-
-        return usuario.CambiarContrasena(contrasena);
+        return _gestorUsuarios.AutenticarUsuario(email, clave);
     }
     
-    public Usuario? AutenticarUsuario(string? email, string? clave)
-    {
-        Email emailAValidar;
-        try
-        {
-            emailAValidar = Email.Crear(email);
-        }
-        catch
-        {
-            return null;
-        }
-        Usuario? usuario = BuscarUsuarioPorEmail(emailAValidar);
-        if (usuario is null)
-            return null;
-        
-        if (usuario.VerificarContrasena(clave))
-            return usuario;
-        
-        return null;
-    }
-
-    public bool EliminarUsuario(string? email)
-    {
-        Email emailUsuario;
-        try
-        {
-            emailUsuario = Email.Crear(email);
-        }
-        catch
-        {
-            return false;
-        }
-        Usuario? usuario = BuscarUsuarioPorEmail(emailUsuario);
-        if (usuario is null)
-            return false;
-        
-        _usuarios.Remove(usuario);
-        
-        return true;
-    }
     //------------------------------------------------------------------------
     /* Fin espacio Usuario */
 
@@ -349,6 +252,7 @@ public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
 
         ValidarCatalogoYItem(catalogo, nuevoItem);
 
+        AsegurarIdUnico(nuevoItem);
         catalogo.AgregarItem(nuevoItem);
     
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
@@ -367,10 +271,6 @@ public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto
     original.Marca = dto.Marca;
     original.Modelo = dto.Modelo;
 }
-
-
-
-
 
 public void EliminarItem(string catalogo, Item item)
 {
@@ -413,7 +313,7 @@ public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
     ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 }
 
-private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<Duplicados>? duplicados)
+private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado>? duplicados)
 {
     if (duplicados == null) return;
 
@@ -446,10 +346,36 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     }
 }
 
+    private void AsegurarIdUnico(Item item)
+    {
+        int idApropiado = item.Id;
+        while (_idsItemsGlobal.Contains(idApropiado))
+            idApropiado++;
+        item.ModificarId(idApropiado);
+        _idsItemsGlobal.Add(idApropiado);
+    }
+    
+    public bool IdExisteEnListaDeIdGlobal(int id)
+    {
+        return _idsItemsGlobal.Contains(id);
+    }
+
+    public int CantidadDeItemsGlobal()
+    {
+        return _idsItemsGlobal.Count;
+    }
+
+    public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
+    {
+        DuplicadosGlobales.Remove(duplicadoADescartar);
+
+        duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
+        duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
+    }
+
+  
 //------------------------------------------------------------------------
 // Fin espacio Item
-
-
 
 //------------------------------------------------------------------------
 /* Inicio de deteccion de duplicados */
@@ -570,9 +496,9 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
         return string.Equals(a, b, StringComparison.Ordinal) ? 1 : 0;
     }
 
-    public List<Duplicados> DetectarDuplicados(Item itemA, Catalogo catalogo)
+    public List<ParDuplicado > DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
-        List<Duplicados> listaDuplicados = new List<Duplicados>();
+        List<ParDuplicado > listaDuplicados = new List<ParDuplicado >();
 
         Item itemNormalizadoA = NormalizarItem(itemA);
         ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
@@ -601,7 +527,7 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
                 string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion
                     .Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
 
-                Duplicados duplicado = new Duplicados
+                ParDuplicado  duplicado = new ParDuplicado 
                 {
                     ItemA = itemA,
                     ItemB = itemB,
@@ -633,5 +559,18 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     }
 //--------------------------------------------------------------
 /* Fin de deteccion de duplicados */
+
+//--------------------------------------------------------------
+/* Inicio Lectura de CSV */
+
+    public void ImportarItemsDesdeCsv(List<string> titulos, int cantidad, List<Fila> filas)
+    {
+        _lectorCsv.LeerCsv(titulos, cantidad, filas);
+        _lectorCsv.ImportarItems();
+        _lectorCsv.Limpiar();
+    }
+
+//--------------------------------------------------------------
+/* Fin de Lectura de CSV */
 
 }

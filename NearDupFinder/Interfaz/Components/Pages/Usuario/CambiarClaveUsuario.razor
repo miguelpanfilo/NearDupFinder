@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
-@using NearDupFinder_Dominio
 @using NearDupFinder_Dominio.Clases
 @inject AuthenticationStateProvider Auth
 @inject Sistema Sistema
@@ -60,22 +59,27 @@
 
     private void CambiarClave()
     {
-        Usuario? usuarioAutenticado = Sistema.AutenticarUsuario(_email, _claveVieja);
+        Usuario? usuarioAutenticado = Sistema.ValidarUsuario(_email, _claveVieja);
         if (usuarioAutenticado is null)
         {        
-            NotificarError("Alguno de los datos no es correcto. Volvé a ingresarlos.");
+            NotificarError("La contraseña actual no es la correcta.");
             LimpiarCampos();
             StateHasChanged();
             return;
         }
         
-        bool seModificoLaClave = Sistema.ModificarClave(_email, _claveNueva);
+        bool seModificoLaClave = Sistema.ModificarClave(_email!,_claveVieja!, _claveNueva);
         if (seModificoLaClave)
         {
-            NotificarExito("La contraseña fue cambiada con exito."); 
-            LimpiarCampos(); 
-            StateHasChanged();
+            NotificarExito("La contraseña fue cambiada correctamente.");
         }
+        else
+        {
+            NotificarError("La contraseña nueva no es valida.");
+        }
+
+        LimpiarCampos();
+        StateHasChanged();
     }
     
     private void LimpiarCampos()
@@ -87,12 +91,14 @@
     private void NotificarExito(string mensaje)
     {
         _exito = true;
+        _error = false;
         _mensaje = mensaje;
     }
     
     private void NotificarError(string mensaje)
     {
         _error = true;
+        _exito = false;
         _mensaje = mensaje;
     }
     
