@@ -1222,7 +1222,43 @@ public class SistemaPruebas
     }
 
     
-    
+    [TestMethod]
+    public void MarcarNoDuplicado_ItemConOtroDuplicado_EstadoDuplicadoPermaneceTrue()
+    {
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+        var item3 = new Item { Titulo = "Item3", Descripcion = "Desc3" };
+
+        var duplicado1 = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        var duplicado2 = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item3,
+            Score = 0.8f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        _sistema.DuplicadosGlobales.Add(duplicado1);
+        _sistema.DuplicadosGlobales.Add(duplicado2);
+
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+        item3.EstadoDuplicado = true;
+        
+        _sistema.DescartarParDuplicado(duplicado1);
+       
+        Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado1));
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsFalse(item2.EstadoDuplicado);
+        Assert.IsTrue(item3.EstadoDuplicado);
+    }
     
     
     
