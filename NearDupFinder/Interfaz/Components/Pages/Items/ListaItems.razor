@@ -309,7 +309,7 @@
     {
         if (_catalogoSeleccionado == null || item == null) return;
 
-        sistema.EliminarItemYActualizarDuplicados(_catalogoSeleccionado, item);
+        sistema.EliminarItem(_catalogoSeleccionado.Titulo, item);
 
         ReconstruirCategorias();
         AplicarFiltros();

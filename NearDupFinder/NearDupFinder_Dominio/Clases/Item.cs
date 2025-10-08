@@ -11,10 +11,11 @@ public class Item
     private string _modelo;
     private string _categoria;
     public bool EstadoDuplicado = false;
-
-   
     public int Id { get; private set; }
-
+    
+    
+    
+   
     public Item()
     {
         Id = _nextId++;
