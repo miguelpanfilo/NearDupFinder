@@ -115,6 +115,89 @@ public class Sistema
 
     //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
+    
+    private void PrecargarCatalogos()
+    {
+        var catalogoTecno = new Catalogo("Tecnología");
+        catalogoTecno.CambiarDescripcion("Componentes eletronicos");
+        catalogoTecno.AgregarItem(new Item
+        {
+            Titulo = "Laptop HP",
+            Descripcion = "Laptop 15 pulgadas",
+            Categoria = "Computadoras",
+            Marca = "HP",
+            Modelo = "Pavilion"
+        });
+        catalogoTecno.AgregarItem(new Item
+        {
+            Titulo = "Teléfono Samsung",
+            Descripcion = "Galaxy S24",
+            Categoria = "Celulares",
+            Marca = "Samsung",
+            Modelo = "S24"
+        });
+
+        var catalogoHogar = new Catalogo("Hogar");
+        catalogoHogar.CambiarDescripcion("Electrodomesticos de Hogar");
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Silla de comedor",
+            Descripcion = "Silla de madera maciza",
+            Categoria = "Muebles",
+            Marca = "Ikea",
+            Modelo = "Nordic"
+        });
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Aspiradora",
+            Descripcion = "Aspiradora sin bolsa 1200W",
+            Categoria = "Electrodomésticos",
+            Marca = "Philips",
+            Modelo = "PowerPro"
+        });
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Aspiradoraaaaaa",
+            Descripcion = "Aspiradora sin bolsa 1200W",
+            Categoria = "Electrodomésticos",
+            Marca = "Philips",
+            Modelo = "PowerPro"
+        });
+
+        var catalogoDeportes = new Catalogo("Deportes");
+        catalogoDeportes.CambiarDescripcion("Actividades deportivas, y equipo para hacer deporte");
+        catalogoDeportes.AgregarItem(new Item
+        {
+            Titulo = "Bicicleta",
+            Descripcion = "Bicicleta de montaña 21 cambios",
+            Categoria = "Ciclismo",
+            Marca = "Trek",
+            Modelo = "X-Caliber"
+        });
+        Item nuevoItem1 = new Item
+        {
+            Titulo = "Pelota de fútbol",
+            Descripcion = "Pelota oficial tamaño 5",
+            Categoria = "Fútbol",
+            Marca = "Adidas",
+            Modelo = "Al Rihla"
+        };
+        catalogoDeportes.AgregarItem(nuevoItem1);
+        Item nuevoItem = new Item
+        {
+            Titulo = "Pelota de fútbollll",
+            Descripcion = "Pelota oficial tamaño 5",
+            Categoria = "Fútbol",
+        };
+        catalogoDeportes.AgregarItem(nuevoItem);
+
+        // Agregar catálogos al sistema
+        _catalogos.Add(catalogoTecno);
+        _catalogos.Add(catalogoHogar);
+        _catalogos.Add(catalogoDeportes);
+        
+        catalogoDeportes.ConfirmarClusters(nuevoItem1,nuevoItem);
+    }
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (catalogo is null)

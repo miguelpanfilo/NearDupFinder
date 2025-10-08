@@ -10,6 +10,11 @@ public class Catalogo
     private readonly List<Item> _items = new();
     
     
+    private readonly Dictionary<int, Cluster> _clusters = new();
+    private int _nextClusterId = 1;
+    
+    public IEnumerable<Cluster> Clusters => _clusters.Values;
+    
 
     public Catalogo(string titulo)
     {
@@ -76,6 +81,7 @@ public class Catalogo
             throw new ArgumentNullException(nameof(item), "El parametro no puede ser Null");
         if (!_items.Contains(item))
             throw new InvalidOperationException("El item no se encuentra en el catálogo");
+        QuitarItemDeCluster(item);
         _items.Remove(item);
     }
     public int CantidadItems()
@@ -83,4 +89,65 @@ public class Catalogo
         return _items.Count;
     }
     
+    /* Espacio Cluster*/
+    
+    public void ConfirmarClusters(Item a, Item b)
+    {
+        if (a == null) throw new ArgumentNullException(nameof(a), "El parametro no puede ser null");
+        if (b == null) throw new ArgumentNullException(nameof(b), "El parametro no puede ser null");
+        if (!_items.Contains(a) || !_items.Contains(b))
+            throw new InvalidOperationException("Uno o ambos ítems no pertenecen al catalogo");
+        if (_clusters.Values.Any(c => c.Contiene(a) && c.Contiene(b)))
+            return;
+        
+        if (a.Id == b.Id)
+            return;
+        
+        var clusterDeA = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(a));
+        var clusterDeB = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(b));
+        
+        if (clusterDeA != null && clusterDeB == null)
+        {
+            clusterDeA.Agregar(b);
+            return;
+        }
+
+        if (clusterDeA == null && clusterDeB != null)
+        {
+            clusterDeB.Agregar(a);
+            return;
+        }
+        
+        if (clusterDeA != null && clusterDeB != null && clusterDeA.Id != clusterDeB.Id)
+        {
+            foreach (var item in clusterDeB.PertenecientesCluster.ToList())
+                clusterDeA.Agregar(item);
+
+            _clusters.Remove(clusterDeB.Id);
+            return;
+        }
+        
+        var nuevoId = _nextClusterId++;
+        
+        _clusters[nuevoId] = new Cluster(nuevoId, new HashSet<Item> { a, b });
+    }
+    
+    public void QuitarItemDeCluster(Item item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item), "El parámetro no puede ser null");
+        if (!_items.Contains(item)) throw new InvalidOperationException("El item no pertenece al catalogo");
+        
+        var cluster = _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
+        if (cluster == null)
+            return;
+        
+        cluster.Remover(item);
+        
+        if (cluster.PertenecientesCluster.Count() <= 1) { _clusters.Remove(cluster.Id); }
+    }
+    
+    public Cluster? ObtenerClusterDe(Item item)
+    {
+        return _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
+    }
 }
