@@ -64,7 +64,7 @@ else
                         </svg>
                     </button>
 
-                    <button class="btn btn-danger btn-sm me-1" @onclick="() => MarcarNoDuplicado(d)" title="Descartar">
+                    <button class="btn btn-danger btn-sm me-1" @onclick="() => DesacrtarDuplicado(d)" title="Descartar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-x-lg" viewBox="0 0 16 16">
                             <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
@@ -135,19 +135,13 @@ else
             .OrderByDescending(d => d.Score)
             .ToList();
     }
-
-
-
-
     private void ConfirmarDuplicado(ParDuplicado d) => _duplicados.Remove(d);
 
-    private void MarcarNoDuplicado(ParDuplicado d)
+    private void DesacrtarDuplicado(ParDuplicado d)
     {
         sistema.DescartarParDuplicado(d);
         _duplicados.Remove(d);
-        StateHasChanged();
     }
-
 
     private void AbrirModalComparar(ParDuplicado d)
     {
@@ -160,8 +154,7 @@ else
         _duplicadoSeleccionado = null;
         _mostrarModalComparar = false;
     }
-
-    // Función para resaltar tokens compartidos
+    
     private MarkupString ResaltarTokens(string textoOriginal, string[] tokensCompartidos)
     {
         if (string.IsNullOrEmpty(textoOriginal) || tokensCompartidos == null || tokensCompartidos.Length == 0)
