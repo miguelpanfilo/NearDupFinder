@@ -158,12 +158,12 @@ public class GestorUsuarios(Sistema sistema)
 
     private void AgregarALaListaDeUsuarios(Usuario usuario)
     {
-        sistema.ObtenerUsuarios().Add(usuario);
+        sistema.AgregarUsuarioDeLaLista(usuario);
     }
 
     private void RemoverDeLaListaDeUsuarios(Usuario usuario)
     {
-        sistema.ObtenerUsuarios().Remove(usuario);
+        sistema.RemoverUsuarioDeLaLista(usuario);
     }
 
     private bool ValidarNombreYApellido(string nombre, string apellido)

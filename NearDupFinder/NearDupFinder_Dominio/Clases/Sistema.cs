@@ -66,11 +66,19 @@ public class Sistema
         return _gestorUsuarios.BorrarUsuario(email);
     }
     
-    public List<Usuario> ObtenerUsuarios()
+    // Sistema
+    public IReadOnlyList<Usuario> ObtenerUsuarios() => _usuarios.AsReadOnly();
+
+    internal void AgregarUsuarioDeLaLista(Usuario usuario)
     {
-        return _usuarios;
+        _usuarios.Add(usuario);
     }
 
+    internal void RemoverUsuarioDeLaLista(Usuario usuario)
+    {
+        _usuarios.Remove(usuario);
+    }
+    
     public Usuario? BuscarUsuarioPorId(int id)
     {
         foreach (Usuario usuario in _usuarios)

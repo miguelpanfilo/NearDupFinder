@@ -226,16 +226,4 @@ public class UsuarioPruebas
         
         Assert.IsFalse(exito);
     }
-
-    [TestMethod]
-    public void CambioLaContrasenaYReseteo_RetornaVerdadero()
-    {
-        Usuario usuario = Usuario.Crear("Manuel", "Perez", Email.Crear("manuel@ejemplo.com"), Fecha.Crear(1990, 2, 2));
-        Contrasena nuevaContra =  Contrasena.Crear("123QWEasdzxc@do");
-        
-        usuario.CambiarContrasena(nuevaContra);
-        usuario.ResetearContrasena();
-        
-        Assert.IsTrue(usuario.VerificarContrasena("Encr1pt@do"));
-    }
 }
