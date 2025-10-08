@@ -76,7 +76,7 @@
 </div>
 
 @code {
-    private List<Usuario>? _usuarios;
+    private IReadOnlyList<Usuario>? _usuarios;
     private bool _error;
     private string _mensajeDeError = string.Empty;
 
@@ -91,6 +91,7 @@
         bool seEliminoElUsuario = Sistema.EliminarUsuario(correo.ToString());
         if(!seEliminoElUsuario)
             NotificarError("Error al intentar eliminar el usuario.");
+        _usuarios = Sistema.ObtenerUsuarios();
         StateHasChanged();
     }
     

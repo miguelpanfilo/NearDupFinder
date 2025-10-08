@@ -43,7 +43,7 @@
             </Authorized>
         </AuthorizeView>
         
-        <AuthorizeView Roles="Administrador">
+        <AuthorizeView Roles="Revisor, Administrador">
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="CrearCatalogo">
@@ -54,7 +54,7 @@
             </Authorized>
         </AuthorizeView>
         
-        <AuthorizeView>
+        <AuthorizeView Roles="Revisor, Administrador">
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="lista-items">
@@ -65,7 +65,7 @@
             </Authorized>
         </AuthorizeView>
         
-        <AuthorizeView>
+        <AuthorizeView Roles="Revisor, Administrador">
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="importar-csv">
@@ -76,7 +76,7 @@
             </Authorized>
         </AuthorizeView>
         
-        <AuthorizeView>
+        <AuthorizeView Roles="Revisor, Administrador">
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="duplicados">

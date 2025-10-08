@@ -14,7 +14,7 @@ public class Usuario
     public int Id { get; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
-    public Email Email { get; set; }
+    public Email Email { get; }
     public Fecha FechaNacimiento { get; set; }
 
     private readonly HashSet<Rol> _roles = new();
@@ -62,7 +62,7 @@ public class Usuario
 
     public IReadOnlyCollection<Rol> ObtenerRoles()
     {
-        return _roles.ToArray();
+        return _roles.ToList().AsReadOnly();
     }
     
     public bool Igual(Usuario? otroUsuario)
@@ -85,12 +85,5 @@ public class Usuario
     public bool VerificarContrasena(string? contra)
     {
         return _contrasena.Verificar(contra);
-    }
-
-    public bool ResetearContrasena()
-    {
-        Contrasena contrasenaDefault = new Contrasena();
-        this.CambiarContrasena(contrasenaDefault);
-        return true;
     }
 }
