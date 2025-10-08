@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Controladores;
 using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Test.Dominio;
@@ -1076,5 +1077,18 @@ public class SistemaPruebas
         bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
         
         Assert.IsTrue(existeItem);
+    }
+
+    [TestMethod]
+    public void ImportarItemsDesdeCsv_AgregaItems()
+    {
+        var titulos = new List<string> { "id", "titulo" };
+        var filas = new List<Fila> { new Fila("1","t","m","x","d","c","Cat 1") };
+        
+        _sistema.ImportarItemsDesdeCsv(titulos, 1, filas);
+
+        bool itemExiste = _sistema.IdExisteEnListaDeIdGlobal(1);
+
+        Assert.IsTrue(itemExiste);
     }
 }
