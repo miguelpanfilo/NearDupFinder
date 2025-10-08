@@ -1192,4 +1192,34 @@ public class SistemaPruebas
         
         Assert.IsTrue(itemExiste);
     }
+    
+    [TestMethod]
+    public void DescratarDuplicado_DeberiaEliminarDuplicadoYActualizarEstado()
+    {
+
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+
+        var duplicado = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        _sistema.DuplicadosGlobales.Add(duplicado);
+
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+
+        _sistema.MarcarNoDuplicado(duplicado);
+
+        
+        Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado), "El duplicado debería haberse eliminado");
+        Assert.IsFalse(item1.EstadoDuplicado, "ItemA ya no debería estar marcado como duplicado");
+        Assert.IsFalse(item2.EstadoDuplicado, "ItemB ya no debería estar marcado como duplicado");
+    }
+}
+    
 }
