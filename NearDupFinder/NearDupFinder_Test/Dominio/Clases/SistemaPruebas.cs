@@ -5,8 +5,6 @@ namespace NearDupFinder_Test.Dominio;
 
 [TestClass]
 public class SistemaPruebas
-
-
 {
     private Sistema _sistema;
     private Catalogo _catalogo;
@@ -808,8 +806,7 @@ public class SistemaPruebas
         };
 
         _sistema.ActualizarItemEnCatalogo(_catalogo, dto);
-
-
+        
         Assert.AreEqual("Cat 2", item.Categoria);
         Assert.AreEqual("Marca 2", item.Marca);
         Assert.AreEqual("Modelo 2", item.Modelo);
@@ -818,9 +815,6 @@ public class SistemaPruebas
     [TestMethod]
     public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
     {
-
-
-
         var dto = new ItemEditDataTransfer
         {
             Id = 999, // Id inexistente
@@ -1022,15 +1016,65 @@ public class SistemaPruebas
             "No debe haber duplicados que involucren al item eliminado");
         Assert.IsFalse(item1.EstadoDuplicado, "Item1 ya no tiene duplicados");
     }
+    
+    [TestMethod]
+    public void AltaItemConDuplicados_AgregaItemConIdNoValido_CambiandoleElId()
+    {
+        var item1 = new Item("Titulo 1", "Descripcion 1");
+        var item2 = new Item("Titulo 2", "Descripcion 2");
+        item2.ModificarId(item1.Id);
 
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+
+
+        bool losIdsNoSonIguales = item1.Id != item2.Id;
+        bool item1Existe = _sistema.IdExisteEnListaDeIdGlobal(item1.Id);
+        bool item2Existe = _sistema.IdExisteEnListaDeIdGlobal(item2.Id);
+        
+        Assert.IsTrue(losIdsNoSonIguales);
+        Assert.IsTrue(item1Existe);
+        Assert.IsTrue(item2Existe);
+    }
+
+    [TestMethod]
+    public void CantidadDeItemsGlobal_SinItems_RetornaCero()
+    {
+        int numeroDeItems = _sistema.CantidadDeItemsGlobal();
+        
+        Assert.AreEqual(0, numeroDeItems);
+    }
     
+    [TestMethod]
+    public void CantidadDeItemsGlobal_ConItems_RetornaDistintoDeCero()
+    {
+        var nuevoItem = new Item("Item 1", "Descripción 1");
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
+        
+        int numeroDeItems = _sistema.CantidadDeItemsGlobal();
+        
+        Assert.AreNotEqual(0, numeroDeItems);
+        Assert.AreEqual(1, numeroDeItems);
+    }
     
+    [TestMethod]
+    public void IdExisteEnListaDeIdGlobal_ConItemNoExistente_RetornaFalso()
+    {
+        var nuevoItem = new Item("Item 1", "Descripción 1");
+        
+        bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
+        
+        Assert.IsFalse(existeItem);
+    }
     
-    
+    [TestMethod]
+    public void IdExisteEnListaDeIdGlobal_ConItemExistente_RetornaVerdadero()
+    {
+        var nuevoItem = new Item("Item 1", "Descripción 1");
+        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
+        
+        bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
+        
+        Assert.IsTrue(existeItem);
+    }
 }
-    
-    
-    
-    
-    
-    
