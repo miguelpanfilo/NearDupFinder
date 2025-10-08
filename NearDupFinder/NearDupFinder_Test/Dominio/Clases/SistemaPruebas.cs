@@ -1213,12 +1213,18 @@ public class SistemaPruebas
         item1.EstadoDuplicado = true;
         item2.EstadoDuplicado = true;
 
-        _sistema.MarcarNoDuplicado(duplicado);
+        _sistema.DescartarParDuplicado(duplicado);
 
         
         Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado), "El duplicado debería haberse eliminado");
         Assert.IsFalse(item1.EstadoDuplicado, "ItemA ya no debería estar marcado como duplicado");
         Assert.IsFalse(item2.EstadoDuplicado, "ItemB ya no debería estar marcado como duplicado");
     }
+
+    
+    
+    
+    
+    
 }
     
