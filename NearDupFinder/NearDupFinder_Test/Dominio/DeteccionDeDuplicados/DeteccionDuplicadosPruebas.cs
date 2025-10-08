@@ -32,7 +32,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemB);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(1, duplicados.Count);
         Assert.AreEqual(itemB.Id, duplicados[0].ItemB.Id);
@@ -63,7 +63,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemC);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(0, duplicados.Count);
     }
@@ -93,7 +93,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemB);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(0.60f, duplicados[0].Score, 1e-5f);
         Assert.AreEqual(TipoDuplicado.τ_alert, duplicados[0].Tipo);
@@ -124,7 +124,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemB);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(0.75f, duplicados[0].Score, 1e-5f);
         Assert.AreEqual(TipoDuplicado.τ_dup, duplicados[0].Tipo);
@@ -155,7 +155,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemB);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         string[] esperadoTitulo = new[] { "alpha", "beta" };
         string[] esperadoDescripcion = new[] { "rojo", "verde" };
@@ -189,7 +189,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemB);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(1, duplicados[0].ScoreMarca);
         Assert.AreEqual(0, duplicados[0].ScoreModelo);
@@ -240,7 +240,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemB1); 
         catalogo.AgregarItem(itemB2);
         
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
         
         int idB1 = itemB1.Id; 
         int idB2 = itemB2.Id; 
@@ -277,7 +277,7 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemA);
         catalogo.AgregarItem(itemB);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(1.0f, duplicados[0].JaccardTitulo, 1e-6f);
         Assert.AreEqual(0.5f,  duplicados[0].JaccardDescripcion, 1e-6f);
@@ -342,11 +342,11 @@ public class DeteccionDuplicadosPruebas
         catalogo.AgregarItem(itemE);
         catalogo.AgregarItem(itemC);
 
-        List<Duplicados> duplicados = _sis.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado > duplicados = _sis.DetectarDuplicados(itemA, catalogo);
 
         List<int> esperado = new List<int> { itemE.Id, itemC.Id, itemD.Id };
         List<int> actual = new List<int>();
-        foreach (Duplicados d in duplicados)
+        foreach (ParDuplicado  d in duplicados)
             actual.Add(d.ItemB.Id);
 
         CollectionAssert.AreEqual(esperado, actual);

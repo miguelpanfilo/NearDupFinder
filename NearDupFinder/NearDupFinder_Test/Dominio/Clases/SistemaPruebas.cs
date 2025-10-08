@@ -1126,8 +1126,8 @@ public class SistemaPruebas
         var item2 = new Item("Titulo 2", "Descripcion 2");
         item2.ModificarId(item1.Id);
 
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
 
 
         bool losIdsNoSonIguales = item1.Id != item2.Id;
@@ -1151,7 +1151,7 @@ public class SistemaPruebas
     public void CantidadDeItemsGlobal_ConItems_RetornaDistintoDeCero()
     {
         var nuevoItem = new Item("Item 1", "Descripción 1");
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", nuevoItem);
         
         int numeroDeItems = _sistema.CantidadDeItemsGlobal();
         
@@ -1173,7 +1173,7 @@ public class SistemaPruebas
     public void IdExisteEnListaDeIdGlobal_ConItemExistente_RetornaVerdadero()
     {
         var nuevoItem = new Item("Item 1", "Descripción 1");
-        _sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", nuevoItem);
         
         bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
         
@@ -1192,4 +1192,75 @@ public class SistemaPruebas
         
         Assert.IsTrue(itemExiste);
     }
+    
+    [TestMethod]
+    public void DescratarDuplicado_DeberiaEliminarDuplicadoYActualizarEstado()
+    {
+
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+
+        var duplicado = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        _sistema.DuplicadosGlobales.Add(duplicado);
+
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+
+        _sistema.DescartarParDuplicado(duplicado);
+
+        
+        Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado), "El duplicado debería haberse eliminado");
+        Assert.IsFalse(item1.EstadoDuplicado, "ItemA ya no debería estar marcado como duplicado");
+        Assert.IsFalse(item2.EstadoDuplicado, "ItemB ya no debería estar marcado como duplicado");
+    }
+
+    
+    [TestMethod]
+    public void MarcarNoDuplicado_ItemConOtroDuplicado_EstadoDuplicadoPermaneceTrue()
+    {
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+        var item3 = new Item { Titulo = "Item3", Descripcion = "Desc3" };
+
+        var duplicado1 = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        var duplicado2 = new ParDuplicado
+        {
+            ItemA = item1,
+            ItemB = item3,
+            Score = 0.8f,
+            Tipo = TipoDuplicado.τ_dup
+        };
+
+        _sistema.DuplicadosGlobales.Add(duplicado1);
+        _sistema.DuplicadosGlobales.Add(duplicado2);
+
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+        item3.EstadoDuplicado = true;
+        
+        _sistema.DescartarParDuplicado(duplicado1);
+       
+        Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado1));
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsFalse(item2.EstadoDuplicado);
+        Assert.IsTrue(item3.EstadoDuplicado);
+    }
+    
+    
+    
 }
+    
