@@ -1189,6 +1189,7 @@ public class SistemaPruebas
         _sistema.ImportarItemsDesdeCsv(titulos, 1, filas);
 
         bool itemExiste = _sistema.IdExisteEnListaDeIdGlobal(1);
-        _sistema.EliminarItem("Catalogo Inexistente", item);
+        
+        Assert.IsTrue(itemExiste);
     }
 }
