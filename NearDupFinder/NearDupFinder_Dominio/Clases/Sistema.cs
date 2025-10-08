@@ -65,9 +65,11 @@ public class Sistema
     {
         return _gestorUsuarios.BorrarUsuario(email);
     }
-    
-    // Sistema
-    public IReadOnlyList<Usuario> ObtenerUsuarios() => _usuarios.AsReadOnly();
+
+    public IReadOnlyList<Usuario> ObtenerUsuarios()
+    {
+        return _usuarios.AsReadOnly(); 
+    }
 
     internal void AgregarUsuarioDeLaLista(Usuario usuario)
     {

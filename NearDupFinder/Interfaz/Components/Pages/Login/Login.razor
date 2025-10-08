@@ -14,37 +14,23 @@
             </div>
             <div class="card-body">
                 <form method="post" action="/auth/login">
-                    <AntiforgeryToken />
-
+                    
                     <div class="mb-3">
                         <label class="form-label" for="email">Email</label>
-                        <input id="email"
-                               name="Email"
-                               type="email"
-                               class="form-control"
-                               placeholder="tu@correo.com"
-                               autocomplete="username"
-                               @bind="_usuario" />
+                        <input id="email" name="Email" type="email" class="form-control" placeholder="tu@correo.com" autocomplete="username" required/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="pwd">Contraseña</label>
-                        <input id="pwd"
-                               name="Password"
-                               type="password"
-                               class="form-control"
-                               placeholder="••••••••"
-                               autocomplete="current-password"
-                               @bind="_clave" />
+                        <label class="form-label" for="clave">Contraseña</label>
+                        <input id="clave" name="clave" type="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
                     </div>
-                    
+
                     @if (_mostrarError)
                     {
                         <div class="alert alert-danger mb-3" role="alert">
                             Email o contraseña incorrectos.
                         </div>
                     }
-
                     <button type="submit" class="btn btn-primary w-100">
                         Entrar
                     </button>
@@ -56,13 +42,10 @@
 </div>
 
 @code {
-    private string _usuario = "";
-    private string _clave   = "";
     private bool _mostrarError;
 
     protected override void OnParametersSet()
     {
-        // Nos fijamos en la URL si hubo algun error al intentar hacer login.
         var uri = Nav.ToAbsoluteUri(Nav.Uri);
         var query = QueryHelpers.ParseQuery(uri.Query);
         _mostrarError = query.TryGetValue("error", out var v) && v == "1";
