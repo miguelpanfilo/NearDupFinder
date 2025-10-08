@@ -386,8 +386,8 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     {
         DuplicadosGlobales.Remove(d);
 
-        d.ItemA.EstadoDuplicado = false;
-        d.ItemB.EstadoDuplicado = false;
+        d.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(dup => dup.ItemA.Id == d.ItemA.Id || dup.ItemB.Id == d.ItemA.Id);
+        d.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(dup => dup.ItemA.Id == d.ItemB.Id || dup.ItemB.Id == d.ItemB.Id);
     }
 
   
