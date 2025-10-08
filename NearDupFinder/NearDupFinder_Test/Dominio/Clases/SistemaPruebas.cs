@@ -2,7 +2,7 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Controladores;
 using NearDupFinder_Dominio.Excepciones;
 
-namespace NearDupFinder_Test.Dominio;
+namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class SistemaPruebas
