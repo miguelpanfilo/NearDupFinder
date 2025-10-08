@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Struct;
+using NearDupFinder_Dominio.Controladores;
 
 namespace NearDupFinder_Dominio.Clases;
 
@@ -31,6 +32,7 @@ public class Sistema
     private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios;
     private readonly List<int> _idsItemsGlobal;
+    private readonly LectorCsv _lectorCsv;
     public List<Duplicados> _duplicadosGlobales { get; } = new List<Duplicados>();
 
 
@@ -40,6 +42,7 @@ public class Sistema
         _usuarios.Add(CrearUsuarioAdmin());
         _catalogos = new List<Catalogo>();
         _idsItemsGlobal = new List<int>();
+        _lectorCsv = new LectorCsv(this);
     }
 
     //------------------------------------------------------------------------//
@@ -556,4 +559,18 @@ public class Sistema
     }
 //--------------------------------------------------------------
 /* Fin de deteccion de duplicados */
+
+//--------------------------------------------------------------
+/* Inicio Lectura de CSV */
+
+    public void ImportarItemsDesdeCsv(List<string> titulos, int cantidad, List<Fila> filas)
+    {
+        _lectorCsv.LeerCsv(titulos, cantidad, filas);
+        _lectorCsv.ImportarItems();
+        _lectorCsv.Limpiar();
+    }
+
+//--------------------------------------------------------------
+/* Fin de Lectura de CSV */
+
 }
