@@ -11,7 +11,7 @@ public enum TipoDuplicado
     τ_dup
 }
 
-public record struct Duplicados
+public record struct ParDuplicado 
 {
     public Item ItemA { get; set; }
     public Item ItemB { get; set; }
@@ -33,8 +33,8 @@ public class Sistema
     private readonly List<Usuario> _usuarios;
     private readonly List<int> _idsItemsGlobal;
     private readonly LectorCsv _lectorCsv;
+    public List<ParDuplicado > DuplicadosGlobales { get; set; }
     private readonly GestorUsuarios _gestorUsuarios;
-    public List<Duplicados> DuplicadosGlobales { get; set; }
 
 
     public Sistema()
@@ -43,7 +43,7 @@ public class Sistema
         _gestorUsuarios = new GestorUsuarios(this);
         _usuarios.Add(_gestorUsuarios.CrearUsuarioAdmin());
         _catalogos = new List<Catalogo>();
-        DuplicadosGlobales = new List<Duplicados>();
+        DuplicadosGlobales = new List<ParDuplicado >();
         _idsItemsGlobal = new List<int>();
         _lectorCsv = new LectorCsv(this);
     }
@@ -220,7 +220,7 @@ public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
     ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 }
 
-private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<Duplicados>? duplicados)
+private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado>? duplicados)
 {
     if (duplicados == null) return;
 
@@ -272,6 +272,15 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
         return _idsItemsGlobal.Count;
     }
 
+    public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
+    {
+        DuplicadosGlobales.Remove(duplicadoADescartar);
+
+        duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
+        duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
+    }
+
+  
 //------------------------------------------------------------------------
 // Fin espacio Item
 
@@ -394,9 +403,9 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
         return string.Equals(a, b, StringComparison.Ordinal) ? 1 : 0;
     }
 
-    public List<Duplicados> DetectarDuplicados(Item itemA, Catalogo catalogo)
+    public List<ParDuplicado > DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
-        List<Duplicados> listaDuplicados = new List<Duplicados>();
+        List<ParDuplicado > listaDuplicados = new List<ParDuplicado >();
 
         Item itemNormalizadoA = NormalizarItem(itemA);
         ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
@@ -425,7 +434,7 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
                 string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion
                     .Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
 
-                Duplicados duplicado = new Duplicados
+                ParDuplicado  duplicado = new ParDuplicado 
                 {
                     ItemA = itemA,
                     ItemB = itemB,
