@@ -517,6 +517,21 @@ public class SistemaPruebas
         Assert.AreEqual(item.Modelo, dto.Modelo);
     }
 
+    [TestMethod]
+    public void FromEntity_ItemConCamposNull_CopiaCorrectamente()
+    {
+        var item = new Item("Titulo", "Descripcion"); 
+
+        var dto = ItemEditDataTransfer.FromEntity(item);
+
+        Assert.AreEqual(item.Id, dto.Id);
+        Assert.AreEqual(item.Titulo, dto.Titulo);
+        Assert.AreEqual(item.Descripcion, dto.Descripcion);
+        Assert.AreEqual(item.Marca, dto.Marca);
+        Assert.AreEqual(item.Modelo, dto.Modelo);
+        Assert.AreEqual(item.Categoria, dto.Categoria);
+
+    }
 
 
     
