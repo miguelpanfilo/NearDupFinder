@@ -259,37 +259,40 @@ public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
         AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
     }
 
+    
+
+
 public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
 {
-    var original = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
-    if (original == null)
+    var itemAEditar = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
+    if (itemAEditar == null)
         throw new ItemException("No se encontró el item a actualizar.");
 
-    original.Titulo = dto.Titulo;
-    original.Descripcion = dto.Descripcion;
-    original.Categoria = dto.Categoria;
-    original.Marca = dto.Marca;
-    original.Modelo = dto.Modelo;
+    itemAEditar.EditarTitulo(dto.Titulo);
+    itemAEditar.EditarDescripcion(dto.Descripcion);
+    itemAEditar.EditarCategoria(dto.Categoria);
+    itemAEditar.EditarMarca(dto.Marca);
+    itemAEditar.EditarModelo(dto.Modelo);
 }
 
-public void EliminarItem(string catalogo, Item item)
+public void EliminarItem(string catalogo, ItemEditDataTransfer dto)
 {
-    Catalogo catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
-    
+    var catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
     if (catalogoBuscado == null)
         throw new ArgumentException("El catálogo no existe.");
-    
-    if (!catalogoBuscado.Items.Contains(item))
+
+    var item = catalogoBuscado.Items.FirstOrDefault(i => i.Id == dto.Id);
+    if (item == null)
         throw new ItemException("El item no existe en el catálogo.");
-    
+
     ValidarCatalogoYItem(catalogoBuscado, item);
-    
+
     catalogoBuscado.EliminarItem(item);
 
     EliminarDuplicadosPrevios(item);
-
     ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
 }
+
 
 
 

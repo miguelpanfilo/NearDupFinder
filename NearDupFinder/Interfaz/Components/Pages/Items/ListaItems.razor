@@ -62,25 +62,25 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in _itemsFiltradosEnTabla)
+        @foreach (var itemDto in _itemsFiltradosEnTabla)
         {
             <tr>
-                <td>@item.Titulo</td>
-                <td>@item.Descripcion</td>
-                <td>@item.Categoria</td>
-                <td>@(item.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
+                <td>@itemDto.Titulo</td>
+                <td>@itemDto.Descripcion</td>
+                <td>@itemDto.Categoria</td>
+                <td>@(itemDto.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
                 <td>No disponible</td>
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
                         <button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
-                                @onclick="() => AbrirModalEditar(item)"
+                                @onclick="() => AbrirModalEditar(itemDto)"
                                 title="Editar">
                             <i class="bi bi-pencil-square fs-6 lh-1"></i>
                         </button>
 
 
                         <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
-                                @onclick="() => EliminarItem(item)"
+                                @onclick="() => EliminarItem(itemDto)"
                                 title="Eliminar">
                             <i class="bi bi-trash3 fs-6 lh-1"></i>
                         </button>
@@ -148,7 +148,7 @@
     public Catalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
 
-    private List<Item> _itemsFiltradosEnTabla = new();
+    private List<ItemEditDataTransfer> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
 
     private string _textoBusqueda = string.Empty;
@@ -162,10 +162,11 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.ToList();
-            _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
-            
+            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items
+                .Select(item => ItemEditDataTransfer.FromEntity(item))
+                .ToList();
 
+            _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
             ActualizarEstadoDuplicados();
         }
         else
@@ -190,7 +191,9 @@
                 (string.IsNullOrWhiteSpace(_categoriaAFiltrar) ||
                  item.Categoria == _categoriaAFiltrar)
             )
+            .Select(item => ItemEditDataTransfer.FromEntity(item))
             .ToList();
+
         
         ActualizarEstadoDuplicados();
     }
@@ -203,8 +206,13 @@
         _categoriaAFiltrar = string.Empty;
 
         if (_catalogoSeleccionado != null)
-            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items.ToList();
+        {
+            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items
+                .Select(item => ItemEditDataTransfer.FromEntity(item))
+                .ToList();
+        }
     }
+
 
     private string Normalizar(string texto)
     {
@@ -219,27 +227,20 @@
             .Replace("ü", "u")
             .Replace("ñ", "n");
     }
-    // Modal
+    
     private void CerrarModal()
     {
         _mostrarModalEditar = false;
         _itemEditado = null;
     }
 
-    private void AbrirModalEditar(Item item)
+    private void AbrirModalEditar(ItemEditDataTransfer dto)
     {
-        _itemEditado = new ItemEditDataTransfer()
-        {
-            Id = item.Id,
-            Titulo = item.Titulo,
-            Descripcion = item.Descripcion,
-            Categoria = item.Categoria,
-            Marca = item.Marca,
-            Modelo = item.Modelo
-        };
+        _itemEditado = dto;
         _mostrarModalEditar = true;
         _mensajeErrorModal = null;
     }
+
 
     private void GuardarCambios()
     {
@@ -305,7 +306,7 @@
     }
 
 
-    private void EliminarItem(Item item)
+    private void EliminarItem(ItemEditDataTransfer item)
     {
         if (_catalogoSeleccionado == null || item == null) return;
 
