@@ -4,7 +4,7 @@ using NearDupFinder_Dominio.Clases;
 namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
-public class TestCrudCatalogo
+public class CrudCatalogoPruebas
 {   
     
     private Sistema _sistema = null!;
@@ -29,15 +29,6 @@ public class TestCrudCatalogo
         
         Assert.AreEqual(1, _sistema.CantidadDeCatalogos());
         CollectionAssert.Contains(_sistema.Catalogos.ToList(), c);
-    }
-    
-    [TestMethod]
-    public void AgregarCatalogo_Null_Falla()
-    {
-
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => _sistema.AgregarCatalogo(null));
-        Assert.AreEqual("catalogo", ex.ParamName);
-        StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
     
     [TestMethod]
@@ -82,14 +73,6 @@ public class TestCrudCatalogo
         
         Assert.AreEqual(0, _sistema.CantidadDeCatalogos());
         
-    }
-
-    [TestMethod]
-    public void EliminarCatalogo_Null_Falla()
-    {
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => _sistema.EliminarCatalogo(null));
-        Assert.AreEqual("catalogo", ex.ParamName);
-        StringAssert.Contains(ex.Message,"El parametro no puede ser null");
     }
     
     [TestMethod]

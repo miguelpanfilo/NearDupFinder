@@ -40,6 +40,32 @@ public class SistemaPruebas
 
         Assert.AreEqual(admin, usuarioABuscar);
     }
+    // Inicio Pruebas Catalogo
+
+    [TestMethod]
+    public void ObtenerItemsDelCatalogo_CatalogoVacio_RetornaCero()
+    {
+        Sistema sistema = new Sistema();
+        
+        int numeroDeItemsDelCatalogo = sistema.ObtenerItemsDelCatalogo(_catalogo).Count;
+        
+        Assert.AreEqual(numeroDeItemsDelCatalogo, 0);
+    }
+    
+    [TestMethod]
+    public void ObtenerItemsDelCatalogo_CatalogoConItem_RetornaUno()
+    {
+        var item = new Item("Original", "Descripcion original")
+        {
+            Categoria = "Cat 1",
+            Marca = "Marca 1",
+            Modelo = "Modelo 1"
+        };  
+        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item);
+        int numeroDeItemsDelCatalogo = _sistema.ObtenerItemsDelCatalogo(_catalogo).Count;
+        
+        Assert.AreEqual(numeroDeItemsDelCatalogo, 1);
+    }
 
     // Inicio Pruebas Items
 
@@ -532,7 +558,4 @@ public class SistemaPruebas
         Assert.AreEqual(item.Categoria, dto.Categoria);
 
     }
-
-
-    
 }
