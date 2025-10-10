@@ -1,7 +1,8 @@
 @page "/duplicados"
 @using System.Text.RegularExpressions
 @using NearDupFinder_Dominio.Clases
-@inject Sistema sistema
+@using NearDupFinder_Dominio.Controladores
+@inject Sistema Sistema
 @rendermode InteractiveServer
 
 <PageTitle>Duplicados</PageTitle>
@@ -40,11 +41,11 @@ else
                 <td>@d.ScoreModelo</td>
                 <td>@d.Score.ToString("0.00")</td>
                 <td>
-                    @if (d.Tipo == TipoDuplicado.τ_alert)
+                    @if (d.Tipo == TipoDuplicado.AlertaDuplicado)
                     {
                         <span class="badge bg-secondary">POSIBLE DUPLICADO</span>  
                     }
-                    else if (d.Tipo == TipoDuplicado.τ_dup)
+                    else if (d.Tipo == TipoDuplicado.PosibleDuplicado)
                     {
                         <span class="badge bg-warning">DUPLICADO SUGERIDO</span>   
                     }
@@ -120,8 +121,8 @@ else
 
 @code {
     private List<ParDuplicado> _duplicados = new();
-    private bool _mostrarModalComparar = false;
-    private ParDuplicado? _duplicadoSeleccionado = null;
+    private bool _mostrarModalComparar;
+    private ParDuplicado? _duplicadoSeleccionado;
 
     protected override void OnInitialized()
     {
@@ -130,7 +131,7 @@ else
 
     private void CargarDuplicados()
     {
-        _duplicados = sistema.DuplicadosGlobales
+        _duplicados = Sistema.DuplicadosGlobales
             .OrderByDescending(d => d.Score)
             .ToList();
     }
@@ -138,7 +139,7 @@ else
 
     private void DesacrtarDuplicado(ParDuplicado d)
     {
-        sistema.DescartarParDuplicado(d);
+        Sistema.DescartarParDuplicado(d);
         _duplicados.Remove(d);
     }
 
@@ -154,7 +155,7 @@ else
         _mostrarModalComparar = false;
     }
     
-    private MarkupString ResaltarTokens(string textoOriginal, string[] tokensCompartidos)
+    private MarkupString ResaltarTokens(string textoOriginal, string[]? tokensCompartidos)
     {
         if (string.IsNullOrEmpty(textoOriginal) || tokensCompartidos == null || tokensCompartidos.Length == 0)
             return (MarkupString)textoOriginal;
@@ -175,6 +176,4 @@ else
 
         return (MarkupString)resultado;
     }
-
-
 }
