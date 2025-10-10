@@ -62,20 +62,28 @@ public class Sistema
     //------------------------------------------------------------------------//
     /* Comienzo espacio Usuarios*/
     
-    public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
+
+ public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
-        return _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+        bool pasaAltaDeUsuario = _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+        if (pasaAltaDeUsuario)
+            RegistrarLog(AccionLog.AltaUsuario, $"Usuario: {email}");
+        return pasaAltaDeUsuario;
     }
     
     public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
-        return _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
-    }
+        bool pasaModificarUsuario = _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
+        if (pasaModificarUsuario)
+            RegistrarLog(AccionLog.EditarUsuario, $"Usuario modificado: {email}");
+        return pasaModificarUsuario;    }
     
     public bool EliminarUsuario(string email)
     {
-        return _gestorUsuarios.BorrarUsuario(email);
-    }
+        bool pasaEliminarUsuario = _gestorUsuarios.BorrarUsuario(email);
+        if (pasaEliminarUsuario)
+            RegistrarLog(AccionLog.EliminarItem, $"Usuario eliminado: {email}");
+        return pasaEliminarUsuario;    }
 
     public IReadOnlyList<Usuario> ObtenerUsuarios()
     {
@@ -268,6 +276,9 @@ public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
     
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
         AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
+        
+        RegistrarLog(AccionLog.AltaItem, $"Item agregado: {nuevoItem.Titulo} en catálogo {catalogoTitulo}");
+
     }
 
     
@@ -284,6 +295,9 @@ public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto
     itemAEditar.EditarCategoria(dto.Categoria);
     itemAEditar.EditarMarca(dto.Marca);
     itemAEditar.EditarModelo(dto.Modelo);
+    
+    RegistrarLog(AccionLog.EditarItem, $"Item actualizado: {dto.Titulo} en catálogo {catalogo.Titulo}");
+
 }
 
 public void EliminarItem(string catalogo, ItemEditDataTransfer dto)
@@ -302,7 +316,10 @@ public void EliminarItem(string catalogo, ItemEditDataTransfer dto)
 
     EliminarDuplicadosPrevios(item);
     ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
+    RegistrarLog(AccionLog.EliminarItem, $"Item eliminado: {item.Titulo} del catálogo {catalogoBuscado.Titulo}");
+
 }
+
 
 
 
@@ -350,6 +367,13 @@ private void EliminarDuplicadosPrevios(Item item)
         DuplicadosGlobales.Remove(duplicado);
 }
 
+public void ConfirmarDuplicadoConLog(ParDuplicado duplicado)
+{
+    
+
+    RegistrarLog(AccionLog.ConfirmarDuplicado, $"Se confirmó duplicado: Item '{duplicado.ItemA.Titulo}' y '{duplicado.ItemB.Titulo}'");
+}
+
 
 private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
 {
@@ -385,6 +409,8 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
 
         duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
         duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
+        RegistrarLog(AccionLog.DescartarDuplicado, $"Par duplicado descartado: {duplicadoADescartar.ItemA.Titulo} + {duplicadoADescartar.ItemB.Titulo}");
+
     }
 
   
@@ -393,10 +419,22 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
 
 //------------------------------------------------------------------------
 /* Inicio de deteccion de duplicados */
-    public List<ParDuplicado > DetectarDuplicados(Item? itemA, Catalogo? catalogo)
+    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
-        return _gestorDuplicados.DetectarDuplicados(itemA, catalogo);
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+        var duplicados = _gestorDuplicados.DetectarDuplicados(itemA, catalogo);
+
+        stopwatch.Stop();
+
+        RegistrarLog(
+            AccionLog.DeteccionDuplicadosAutomatica,
+            $"Detección de duplicados para item '{itemA.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
+        );
+
+        return duplicados;
     }
+
 //--------------------------------------------------------------
 /* Fin de deteccion de duplicados */
 
