@@ -35,4 +35,56 @@ public class UnitTest1
         var logs = _sistema.ObtenerLogs();
         Assert.AreEqual("Creacion de usuario: Acción de prueba", logs[0].Detalles);
     }
+    [TestMethod]
+    public void RegistrarLog_DeberiaAsignarAccionCorrectamente()
+    {
+        string detalles = "Prueba acción";
+        _sistema.RegistrarLog(AccionLog.EditarUsuario, detalles);
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.AreEqual(AccionLog.EditarUsuario, logs[0].Accion);
+    }
+    [TestMethod]
+    public void RegistrarLog_DeberiaAsignarUsuarioPredeterminado()
+    {
+        string detalles = "Prueba usuario";
+        _sistema.RegistrarLog(AccionLog.AltaItem, detalles);
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.AreEqual("test@test.com", logs[0].Usuario);
+    }
+    [TestMethod]
+    public void RegistrarLog_DeberiaAgregarMultiplesLogs()
+    {
+        _sistema.RegistrarLog(AccionLog.AltaUsuario, "Primero");
+        _sistema.RegistrarLog(AccionLog.EditarUsuario, "Segundo");
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.AreEqual(2, logs.Count);
+        Assert.AreEqual("Creacion de usuario: Primero", logs[0].Detalles);
+        Assert.AreEqual("Modificacion de usuario: Segundo", logs[1].Detalles);
+    }
+    
+    [TestMethod]
+    public void RegistrarLog_LogsSeOrdenanPorTiempo()
+    {
+        _sistema.RegistrarLog(AccionLog.AltaUsuario, "Primero");
+        _sistema.RegistrarLog(AccionLog.AltaItem, "Segundo");
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.IsTrue(logs[0].Timestamp < logs[1].Timestamp, "El primer log debe ser anterior al segundo");
+    }
+    
+    [TestMethod]
+    public void RegistrarLog_DetallesNoPuedeSerNull()
+    {
+        _sistema.RegistrarLog(AccionLog.AltaItem, null);
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.AreEqual("Alta de item: ", logs[0].Detalles);
+    }
+
+   
+
+
 }
