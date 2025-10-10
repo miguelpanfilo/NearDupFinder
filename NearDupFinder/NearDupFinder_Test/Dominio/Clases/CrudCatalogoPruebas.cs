@@ -4,7 +4,7 @@ using NearDupFinder_Dominio.Clases;
 namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
-public class TestCrudCatalogo
+public class CrudCatalogoPruebas
 {   
     
     private Sistema _sistema = null!;

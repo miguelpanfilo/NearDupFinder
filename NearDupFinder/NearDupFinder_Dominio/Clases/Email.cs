@@ -49,10 +49,8 @@ public sealed class Email
         return true;
     }
     
-    public bool Igual(Email? otroEmail)
+    public bool Igual(Email otroEmail)
     {
-        if (otroEmail is null) 
-            return false;
         return string.Equals(this.ToString(), otroEmail.ToString());
     }
 }

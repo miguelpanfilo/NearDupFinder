@@ -127,12 +127,4 @@ public class EmailPruebas
         
         Assert.IsFalse(email1.Igual(email2));
     }
-
-    [TestMethod]
-    public void Igual_EmailNulo_RetornaFalso()
-    {
-        var email = Email.Crear("usuario@ejemplo.com");
-        
-        Assert.IsFalse(email.Igual(null));
-    }
 }

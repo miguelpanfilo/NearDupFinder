@@ -532,7 +532,4 @@ public class SistemaPruebas
         Assert.AreEqual(item.Categoria, dto.Categoria);
 
     }
-
-
-    
 }

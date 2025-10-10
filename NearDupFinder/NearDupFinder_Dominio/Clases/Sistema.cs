@@ -5,13 +5,13 @@ namespace NearDupFinder_Dominio.Clases;
 
 public class Sistema
 {
-    private readonly List<Catalogo> _catalogos;
     private readonly List<Usuario> _usuarios;
+    private readonly List<Catalogo> _catalogos;
     private readonly List<int> _idsItemsGlobal;
-    private readonly LectorCsv _lectorCsv;
     public List<ParDuplicado > DuplicadosGlobales { get; set; }
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
+    private readonly LectorCsv _lectorCsv;
     
     public Sistema()
     {
@@ -28,17 +28,17 @@ public class Sistema
     //------------------------------------------------------------------------//
     /* Comienzo espacio Usuarios*/
     
-    public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
+    public bool AltaUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
     {
         return _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
     }
     
-    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
+    public bool ModificarUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
     {
         return _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
     }
     
-    public bool EliminarUsuario(string email)
+    public bool EliminarUsuario(string? email)
     {
         return _gestorUsuarios.BorrarUsuario(email);
     }
@@ -48,12 +48,12 @@ public class Sistema
         return _usuarios.AsReadOnly(); 
     }
 
-    internal void AgregarUsuarioDeLaLista(Usuario usuario)
+    public void AgregarUsuarioALaLista(Usuario usuario)
     {
         _usuarios.Add(usuario);
     }
 
-    internal void RemoverUsuarioDeLaLista(Usuario usuario)
+    public void RemoverUsuarioDeLaLista(Usuario usuario)
     {
         _usuarios.Remove(usuario);
     }
@@ -74,7 +74,7 @@ public class Sistema
         return null;
     }
     
-    public bool ModificarClave(string email,string claveActual, string? claveNueva)
+    public bool ModificarClave(string? email,string? claveActual, string? claveNueva)
     {
         Usuario? usuarioValidado = ValidarUsuario(email, claveActual);
         if( usuarioValidado is not null)
@@ -222,8 +222,8 @@ public class Sistema
     /* Fin espacio Catalogo*/
     
    //------------------------------------------------------------------------
-// Inicio espacio Item 
-public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
+    // Inicio espacio Item 
+    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
 
@@ -236,95 +236,89 @@ public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
         AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
     }
 
-    
-
-
-public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
-{
-    var itemAEditar = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
-    if (itemAEditar == null)
-        throw new ItemException("No se encontró el item a actualizar.");
-
-    itemAEditar.EditarTitulo(dto.Titulo);
-    itemAEditar.EditarDescripcion(dto.Descripcion);
-    itemAEditar.EditarCategoria(dto.Categoria);
-    itemAEditar.EditarMarca(dto.Marca);
-    itemAEditar.EditarModelo(dto.Modelo);
-}
-
-public void EliminarItem(string catalogo, ItemEditDataTransfer dto)
-{
-    var catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
-    if (catalogoBuscado == null)
-        throw new ArgumentException("El catálogo no existe.");
-
-    var item = catalogoBuscado.Items.FirstOrDefault(i => i.Id == dto.Id);
-    if (item == null)
-        throw new ItemException("El item no existe en el catálogo.");
-
-    ValidarCatalogoYItem(catalogoBuscado, item);
-
-    catalogoBuscado.EliminarItem(item);
-
-    EliminarDuplicadosPrevios(item);
-    ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
-}
-
-
-
-
-private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
-{
-    if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
-        throw new ItemException("Título y Descripción son obligatorios.");
-}
-
-
-public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
-{
-    if (catalogo == null || itemEditado == null)
-        throw new ArgumentNullException();
-
-    EliminarDuplicadosPrevios(itemEditado);
-    
-    var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-    AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
-
-    ActualizarEstadoDuplicadosEnCatalogo(catalogo);
-}
-
-private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado>? duplicados)
-{
-    if (duplicados == null) return;
-
-    foreach (var dup in duplicados)
+    public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto)
     {
-        DuplicadosGlobales.Add(dup);
+        var itemAEditar = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
+        if (itemAEditar == null)
+            throw new ItemException("No se encontró el item a actualizar.");
 
-        dup.ItemA.EstadoDuplicado = true;
-        dup.ItemB.EstadoDuplicado = true;
+        itemAEditar.EditarTitulo(dto.Titulo);
+        itemAEditar.EditarDescripcion(dto.Descripcion);
+        itemAEditar.EditarCategoria(dto.Categoria);
+        itemAEditar.EditarMarca(dto.Marca);
+        itemAEditar.EditarModelo(dto.Modelo);
     }
-}
 
-private void EliminarDuplicadosPrevios(Item item)
-{
-    var duplicadosABorrar = DuplicadosGlobales
-        .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
-        .ToList();
-
-    foreach (var duplicado in duplicadosABorrar)
-        DuplicadosGlobales.Remove(duplicado);
-}
-
-
-private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
-{
-    foreach (var item in catalogo.Items) 
+    public void EliminarItem(string catalogo, ItemEditDataTransfer dto)
     {
-        bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
-        item.EstadoDuplicado = tieneDuplicados;
+        var catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
+        if (catalogoBuscado == null)
+            throw new ArgumentException("El catálogo no existe.");
+
+        var item = catalogoBuscado.Items.FirstOrDefault(i => i.Id == dto.Id);
+        if (item == null)
+            throw new ItemException("El item no existe en el catálogo.");
+
+        ValidarCatalogoYItem(catalogoBuscado, item);
+
+        catalogoBuscado.EliminarItem(item);
+
+        EliminarDuplicadosPrevios(item);
+        ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
     }
-}
+        
+    private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
+    {
+        if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
+            throw new ItemException("Título y Descripción son obligatorios.");
+    }
+
+
+    public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
+    {
+        if (catalogo == null || itemEditado == null)
+            throw new ArgumentNullException();
+
+        EliminarDuplicadosPrevios(itemEditado);
+        
+        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
+
+        ActualizarEstadoDuplicadosEnCatalogo(catalogo);
+    }
+
+    private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado>? duplicados)
+    {
+        if (duplicados == null) return;
+
+        foreach (var dup in duplicados)
+        {
+            DuplicadosGlobales.Add(dup);
+
+            dup.ItemA.EstadoDuplicado = true;
+            dup.ItemB.EstadoDuplicado = true;
+        }
+    }
+
+    private void EliminarDuplicadosPrevios(Item item)
+    {
+        var duplicadosABorrar = DuplicadosGlobales
+            .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
+            .ToList();
+
+        foreach (var duplicado in duplicadosABorrar)
+            DuplicadosGlobales.Remove(duplicado);
+    }
+
+
+    private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
+    {
+        foreach (var item in catalogo.Items) 
+        {
+            bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
+            item.EstadoDuplicado = tieneDuplicados;
+        }
+    }
 
     private void AsegurarIdUnico(Item item)
     {
@@ -368,15 +362,12 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
 
 //--------------------------------------------------------------
 /* Inicio Lectura de CSV */
-
     public void ImportarItemsDesdeCsv(List<string> titulos, int cantidad, List<Fila> filas)
     {
         _lectorCsv.LeerCsv(titulos, cantidad, filas);
         _lectorCsv.ImportarItems();
         _lectorCsv.Limpiar();
     }
-
 //--------------------------------------------------------------
 /* Fin de Lectura de CSV */
-
 }
