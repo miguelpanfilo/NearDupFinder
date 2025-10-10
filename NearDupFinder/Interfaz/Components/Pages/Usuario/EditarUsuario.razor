@@ -87,6 +87,8 @@
     
     private void Editar()
     {
+        CerrarAlerta();
+        
         List<Rol> roles = [];
         if (_rolAdmin)   
             roles.Add(Rol.Administrador);

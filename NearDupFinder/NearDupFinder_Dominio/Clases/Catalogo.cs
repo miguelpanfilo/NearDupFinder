@@ -3,8 +3,8 @@ namespace NearDupFinder_Dominio.Clases;
 
 public class Catalogo
 {
-    private const int tituloMaxLength = 120;
-    private const int descripcionMaxLength = 400;
+    private const int TituloMaxLength = 120;
+    private const int DescripcionMaxLength = 400;
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; } = "";
     private readonly List<Item> _items = new();
@@ -15,7 +15,6 @@ public class Catalogo
     
     public IEnumerable<Cluster> Clusters => _clusters.Values;
     
-
     public Catalogo(string titulo)
     {
         EstablecerTitulo(titulo);
@@ -29,9 +28,9 @@ public class Catalogo
     {
         string d = (descripcion ?? "").Trim();
 
-        if (d.Length > descripcionMaxLength)
+        if (d.Length > DescripcionMaxLength)
         {
-            throw new ArgumentException($"La descripcion debe tener entre 1 y {descripcionMaxLength} caracteres");
+            throw new ArgumentException($"La descripcion debe tener entre 1 y {DescripcionMaxLength} caracteres");
         }
         
         Descripcion = d;
@@ -43,9 +42,9 @@ public class Catalogo
         {
             throw new ArgumentException("El titulo es obligatorio");
         }
-        if (titulo.Length > tituloMaxLength)
+        if (titulo.Length > TituloMaxLength)
         {
-            throw new ArgumentException($"El titulo debe tener entre 1 y {tituloMaxLength} caracteres");
+            throw new ArgumentException($"El titulo debe tener entre 1 y {TituloMaxLength} caracteres");
         }
         
         Titulo = titulo.Trim();
@@ -62,10 +61,9 @@ public class Catalogo
     {
         return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
     }
-    /* Lista Items*/
+
     public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
-
-
+    
     public void AgregarItem(Item item)
     {
         if(item == null)
