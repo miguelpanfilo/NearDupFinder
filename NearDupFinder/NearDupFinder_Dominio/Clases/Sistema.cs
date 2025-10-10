@@ -35,7 +35,7 @@ public class Sistema
         { AccionLog.EditarUsuario, "Modificacion de usuario" },
         { AccionLog.AltaItem, "Alta de item" },
         { AccionLog.EliminarItem, "Eliminación de item" },
-        { AccionLog.DeteccionDuplicadosAutomatica, "Detección duplicados automatica" },
+        { AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
         { AccionLog.ConfirmarDuplicado ,"Confirmación duplicado"},
         { AccionLog.FusionarDuplicado,"Fusión Cluster" },
         { AccionLog.DescartarDuplicado,"Descartar duplicado"},
@@ -428,7 +428,7 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
         stopwatch.Stop();
 
         RegistrarLog(
-            AccionLog.DeteccionDuplicadosAutomatica,
+            AccionLog.DeteccionDuplicados,
             $"Detección de duplicados para item '{itemA.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
         );
 

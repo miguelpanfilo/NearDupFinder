@@ -86,6 +86,21 @@
                 </div>     
             </Authorized>
         </AuthorizeView>
+        <AuthorizeView Roles="Revisor, Administrador">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-1" href="logs">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
+                            <path d="M8.515 3.44a.5.5 0 0 1 .97 0l.07.249a.5.5 0 0 1-.97.07l-.07-.249z"/>
+                            <path d="M8 3a5 5 0 1 0 5 5 .5.5 0 0 0-1 0 4 4 0 1 1-4-4 .5.5 0 0 0 0-1z"/>
+                            <path d="M8 8V4.5a.5.5 0 0 1 1 0V8h-3a.5.5 0 0 1 0-1h2z"/>
+                        </svg>
+                        <span>Auditoría</span>
+                    </NavLink>
+                </div>     
+            </Authorized>
+        </AuthorizeView>
+
         
     </nav>
 </div>

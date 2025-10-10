@@ -10,7 +10,7 @@ public enum AccionLog
     FusionarDuplicado,
     AltaUsuario,
     EditarUsuario,
-    DeteccionDuplicadosAutomatica
+    DeteccionDuplicados
 }
 
 
