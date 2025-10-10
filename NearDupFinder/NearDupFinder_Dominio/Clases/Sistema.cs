@@ -67,7 +67,7 @@ public class Sistema
     {
         bool pasaAltaDeUsuario = _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         if (pasaAltaDeUsuario)
-            RegistrarLog(AccionLog.AltaUsuario, $"Usuario: {email}");
+            RegistrarLog(AccionLog.AltaUsuario, $"Usuario: '{email}'");
         return pasaAltaDeUsuario;
     }
     
@@ -75,14 +75,14 @@ public class Sistema
     {
         bool pasaModificarUsuario = _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         if (pasaModificarUsuario)
-            RegistrarLog(AccionLog.EditarUsuario, $"Usuario modificado: {email}");
+            RegistrarLog(AccionLog.EditarUsuario, $"Usuario modificado: '{email}'");
         return pasaModificarUsuario;    }
     
     public bool EliminarUsuario(string email)
     {
         bool pasaEliminarUsuario = _gestorUsuarios.BorrarUsuario(email);
         if (pasaEliminarUsuario)
-            RegistrarLog(AccionLog.EliminarItem, $"Usuario eliminado: {email}");
+            RegistrarLog(AccionLog.EliminarItem, $"Usuario eliminado: '{email}'");
         return pasaEliminarUsuario;    }
 
     public IReadOnlyList<Usuario> ObtenerUsuarios()
@@ -277,7 +277,7 @@ public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
         AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
         
-        RegistrarLog(AccionLog.AltaItem, $"Item agregado: {nuevoItem.Titulo} en catálogo {catalogoTitulo}");
+        RegistrarLog(AccionLog.AltaItem, $"Item agregado: '{nuevoItem.Titulo}' en catálogo '{catalogoTitulo}'");
 
     }
 
@@ -296,7 +296,7 @@ public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemEditDataTransfer dto
     itemAEditar.EditarMarca(dto.Marca);
     itemAEditar.EditarModelo(dto.Modelo);
     
-    RegistrarLog(AccionLog.EditarItem, $"Item actualizado: {dto.Titulo} en catálogo {catalogo.Titulo}");
+    RegistrarLog(AccionLog.EditarItem, $"Item actualizado: '{dto.Titulo}' en catálogo '{catalogo.Titulo}'");
 
 }
 
@@ -316,7 +316,7 @@ public void EliminarItem(string catalogo, ItemEditDataTransfer dto)
 
     EliminarDuplicadosPrevios(item);
     ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
-    RegistrarLog(AccionLog.EliminarItem, $"Item eliminado: {item.Titulo} del catálogo {catalogoBuscado.Titulo}");
+    RegistrarLog(AccionLog.EliminarItem, $"Item eliminado: '{item.Titulo}' del catálogo '{catalogoBuscado.Titulo}'");
 
 }
 
@@ -409,7 +409,7 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
 
         duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
         duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
-        RegistrarLog(AccionLog.DescartarDuplicado, $"Par duplicado descartado: {duplicadoADescartar.ItemA.Titulo} + {duplicadoADescartar.ItemB.Titulo}");
+        RegistrarLog(AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemA.Titulo}' + '{duplicadoADescartar.ItemB.Titulo}'");
 
     }
 
