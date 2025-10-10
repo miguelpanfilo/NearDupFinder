@@ -447,7 +447,7 @@ public class SistemaPruebas
             ItemA = item1,
             ItemB = item2,
             Score = 0.9f,
-            Tipo = TipoDuplicado.τ_dup
+            Tipo = TipoDuplicado.PosibleDuplicado
         };
 
         _sistema.DuplicadosGlobales.Add(duplicado);
@@ -476,7 +476,7 @@ public class SistemaPruebas
             ItemA = item1,
             ItemB = item2,
             Score = 0.9f,
-            Tipo = TipoDuplicado.τ_dup
+            Tipo = TipoDuplicado.PosibleDuplicado
         };
 
         var duplicado2 = new ParDuplicado
@@ -484,7 +484,7 @@ public class SistemaPruebas
             ItemA = item1,
             ItemB = item3,
             Score = 0.8f,
-            Tipo = TipoDuplicado.τ_dup
+            Tipo = TipoDuplicado.PosibleDuplicado
         };
 
         _sistema.DuplicadosGlobales.Add(duplicado1);
