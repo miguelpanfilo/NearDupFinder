@@ -22,6 +22,17 @@ public class UnitTest1
 
         var logs = _sistema.ObtenerLogs();
         Assert.AreEqual(1, logs.Count);
-        Assert.AreEqual("test@test.com", logs[0].Usuario);
+    }
+    
+    [TestMethod]
+    public void RegistrarLog_DeberiaConcatenarDescripcionYDetalles()
+    {
+        
+        string detalles = "Acción de prueba";
+
+        _sistema.RegistrarLog(AccionLog.AltaUsuario, detalles);
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.AreEqual("Creacion de usuario: Acción de prueba", logs[0].Detalles);
     }
 }

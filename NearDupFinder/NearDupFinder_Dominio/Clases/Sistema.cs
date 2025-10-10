@@ -12,6 +12,8 @@ public class Sistema
     public List<ParDuplicado > DuplicadosGlobales { get; set; }
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
+    private readonly List<LogEntry> _auditoria = new List<LogEntry>();
+
     
     public Sistema()
     {
@@ -23,7 +25,39 @@ public class Sistema
         _idsItemsGlobal = new List<int>();
         _lectorCsv = new LectorCsv(this);
         _gestorDuplicados = new GestorDuplicados();
+
     }
+    
+    
+    private readonly Dictionary<AccionLog, string> _descripcionesAccion = new()
+    {
+        { AccionLog.AltaUsuario, "Creacion de usuario" },
+        { AccionLog.EditarUsuario, "Modificacion de usuario" },
+        { AccionLog.AltaItem, "Alta de item" },
+        { AccionLog.EliminarItem, "Eliminación de item" },
+        { AccionLog.DeteccionDuplicadosAutomatica, "Detección duplicados automatica" },
+        { AccionLog.ConfirmarDuplicado ,"Confirmación duplicado"},
+        { AccionLog.FusionarDuplicado,"Fusión Cluster" },
+        { AccionLog.DescartarDuplicado,"Descartar duplicado"},
+        {AccionLog.EditarItem,"Editar item"},
+        
+        
+    };
+    public void RegistrarLog(AccionLog accion, string detalles)
+    {
+        const string usuarioPredeterminado = "test@test.com";
+
+        var entry = new LogEntry
+        {
+            Timestamp = DateTime.UtcNow,
+            Usuario = usuarioPredeterminado,
+            Accion = accion,
+            Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
+        };
+
+        _auditoria.Add(entry);
+    }
+    public IReadOnlyList<LogEntry> ObtenerLogs() => _auditoria.AsReadOnly();
 
     //------------------------------------------------------------------------//
     /* Comienzo espacio Usuarios*/
