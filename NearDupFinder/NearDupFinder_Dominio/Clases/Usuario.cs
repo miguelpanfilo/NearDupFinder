@@ -65,6 +65,7 @@ public class Usuario
     {
         return Email.Igual(otroUsuario.Email);
     }
+    
     public bool VerificarClave(string? clave)
     {
         if(string.IsNullOrEmpty(clave))

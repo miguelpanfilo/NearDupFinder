@@ -47,6 +47,16 @@ public class Sistema
     {
         return _usuarios.AsReadOnly(); 
     }
+    
+    public IReadOnlyCollection<Rol>ObtenerRolesDeUsuario(Usuario usuario)
+    {
+        return usuario.ObtenerRoles(); 
+    }
+    
+    public bool UsuarioTieneRol(Usuario usuario, Rol rol)
+    {
+        return usuario.TieneRol(rol); 
+    }
 
     public void AgregarUsuarioALaLista(Usuario usuario)
     {

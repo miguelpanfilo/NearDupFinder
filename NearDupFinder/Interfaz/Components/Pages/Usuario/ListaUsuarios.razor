@@ -38,7 +38,7 @@
         <tbody>
         @foreach (var usuario in _usuarios!)
         {
-            var roles = usuario.ObtenerRoles();
+            var roles = Sistema.ObtenerRolesDeUsuario(usuario);
             <tr>
                 <td>@usuario.Nombre</td>
                 <td>@usuario.Apellido</td>
