@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 
-namespace NearDupFinder_Test.Dominio.Clases;
+namespace NearDupFinder_Test;
 
 [TestClass]
 public class ItemsPruebas
@@ -242,9 +242,17 @@ public class ItemsPruebas
         var item3 = new Item { Titulo = "Tres", Descripcion = "Desc"};
         Assert.AreEqual(1, item3.Id); // vuelve a empezar en 1
     }
-  
-   [TestMethod]
-    public void TestItem_DevolverAtributoCorrecto_Ok()
+   
+    [TestMethod]
+    public void TestItem_Equals_ConObjetoDeOtroTipo_DevuelveFalse()
+    {
+        Item item = new Item { Titulo = "A", Descripcion = "B", Marca = "Marca", Modelo = "Modelo", Categoria = "Categoria" };
+
+        Assert.IsFalse(item.Equals("no soy un item"));
+
+    }
+    [TestMethod]
+    public void TestItem_AccederGettersParaCobertura()
     {
         Item item = new Item
         {
