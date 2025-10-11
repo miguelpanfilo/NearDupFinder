@@ -5,11 +5,11 @@ namespace NearDupFinder_Dominio.Clases;
 public class Item
 {
     private static int _siguienteId = 1;
-    private string _titulo;
-    private string _descripcion;
-    private string _marca;
-    private string _modelo;
-    private string _categoria;
+    private string _titulo = null!;
+    private string _descripcion = null!;
+    private string? _marca;
+    private string? _modelo;
+    private string? _categoria;
     public bool EstadoDuplicado = false;
     public int Id { get; private set; }
     
@@ -17,7 +17,7 @@ public class Item
     {
         Id = _siguienteId++;
     }
-    public Item(string titulo, string descripcion, string marca = null, string modelo = null, string categoria = null)
+    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
     {
         Titulo = titulo;    
         Descripcion = descripcion; 
@@ -26,14 +26,15 @@ public class Item
         Categoria = categoria;    
         Id = _siguienteId++;
     }
-    public string Titulo
+    public string? Titulo
     {
         get => _titulo;
         set
         {
+            int tituloDeLargoMaximo = 120;
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("El Título es obligatorio");
-            if (value.Length > 120)
+            if (value.Length > tituloDeLargoMaximo)
                 throw new ItemException("El Título no puede superar 120 caracteres.");
             _titulo = value;
         }
@@ -43,44 +44,48 @@ public class Item
         get => _descripcion;
         set
         {
+            int descripcionDeLargoMaximo = 400;
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("La Descripción es obligatoria.");
-            if (value.Length > 400)
+            if (value.Length > descripcionDeLargoMaximo)
                 throw new ItemException("La descripcion no puede superar 400 caracteres.");
             _descripcion = value;
         }
     }
-    public string Marca
+    public string? Marca
     {
         get => _marca;
         set
         {
-            if (value != null && value.Length > 60)
+            int marcaDeLargoMaximo = 60;
+            if (value != null && value.Length > marcaDeLargoMaximo)
                 throw new ItemException("La marca no puede superar 60 caracteres.");
             _marca = value;
         }
     }
-    public string Modelo
+    public string? Modelo
     {
         get => _modelo;
         set
         {
-            if (value != null && value.Length > 60)
+            int modeloDeLargoMaximo = 60;
+            if (value != null && value.Length > modeloDeLargoMaximo)
                 throw new ItemException("El modelo no puede superar 60 caracteres.");
             _modelo = value;
         }
     }
-    public string Categoria
+    public string? Categoria
     {
         get => _categoria;
         set
         {
-            if (value != null && value.Length > 40)
+            int categoriaDeLargoMaximo = 40;
+            if (value != null && value.Length > categoriaDeLargoMaximo)
                 throw new ItemException("La categoria no puede superar 40 caracteres.");
             _categoria = value;
         }
     }
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is not Item item)
             return false;
@@ -93,9 +98,10 @@ public class Item
     }
     public static void ResetearContadorId()
     {
-      _siguienteId = 1;
+        int primerIdDeUnItem = 1;
+      _siguienteId = primerIdDeUnItem;
     }
-    public void EditarTitulo(string nuevoTitulo) => Titulo = nuevoTitulo;
+    public void EditarTitulo(string? nuevoTitulo) => Titulo = nuevoTitulo;
 
     public void EditarDescripcion(string nuevaDescripcion) => Descripcion = nuevaDescripcion;
 
@@ -107,7 +113,8 @@ public class Item
 
     public void ModificarId(int id)
     {
-        if (id == 0)
+        int  primerIdDeUnItemIncorrecto = 0;
+        if (id == primerIdDeUnItemIncorrecto)
             throw new ItemException("El id no es valido");
 
         Id = id;
