@@ -68,6 +68,7 @@ public class Sistema
         { AccionLog.FusionarDuplicado,"Fusión Cluster" },
         { AccionLog.DescartarDuplicado,"Descartar duplicado"},
         {AccionLog.EditarItem,"Editar item"},
+        {AccionLog.EliminarUser,"Eliminacion de usuario"},
         
         
     };
@@ -109,7 +110,7 @@ public class Sistema
     {
         bool pasaEliminarUsuario = _gestorUsuarios.BorrarUsuario(email);
         if (pasaEliminarUsuario)
-            RegistrarLog(AccionLog.EliminarItem, $"Usuario eliminado: '{email}'");
+            RegistrarLog(AccionLog.EliminarUser, $"Usuario eliminado: '{email}'");
         return pasaEliminarUsuario;    }
 
     public IReadOnlyList<Usuario> ObtenerUsuarios()
