@@ -20,7 +20,10 @@ public class Sistema
     {
         _usuarioActual = email;
     }
-
+    public void LogoutUsuario()
+    {
+        _usuarioActual = "No hay usuario logueado";
+    }
 
 
     public Sistema()
