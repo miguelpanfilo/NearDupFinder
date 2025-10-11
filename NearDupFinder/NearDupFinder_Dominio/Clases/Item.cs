@@ -5,11 +5,11 @@ namespace NearDupFinder_Dominio.Clases;
 public class Item
 {
     private static int _siguienteId = 1;
-    private string _titulo;
-    private string _descripcion;
-    private string _marca;
-    private string _modelo;
-    private string _categoria;
+    private string _titulo = null!;
+    private string _descripcion = null!;
+    private string? _marca;
+    private string? _modelo;
+    private string? _categoria;
     public bool EstadoDuplicado = false;
     public int Id { get; private set; }
     
@@ -17,7 +17,7 @@ public class Item
     {
         Id = _siguienteId++;
     }
-    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string categoria = null)
+    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
     {
         Titulo = titulo;    
         Descripcion = descripcion; 
@@ -26,7 +26,7 @@ public class Item
         Categoria = categoria;    
         Id = _siguienteId++;
     }
-    public string Titulo
+    public string? Titulo
     {
         get => _titulo;
         set
@@ -85,7 +85,7 @@ public class Item
             _categoria = value;
         }
     }
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is not Item item)
             return false;
