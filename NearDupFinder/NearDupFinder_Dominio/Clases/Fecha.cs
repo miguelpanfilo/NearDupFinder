@@ -1,4 +1,5 @@
 using System.Globalization;
+using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
 
@@ -19,13 +20,12 @@ public sealed class Fecha
     {
         try
         {
-            // DateTime valida rangos y reglas de bisiestos.
             var fecha = new DateTime(anio, mes, dia);
             return new Fecha(fecha.Year, fecha.Month, fecha.Day);
         }
-        catch (ArgumentOutOfRangeException ex)
+        catch
         {
-            throw new ArgumentException("No es una fecha válida.", nameof(dia), ex);
+            throw new UsuarioException("No es una fecha válida.");
         }
     }
 
@@ -37,12 +37,5 @@ public sealed class Fecha
     public DateTime ToDateTime()
     {
         return new DateTime(_anio, _mes, _dia);
-    }
-    
-    public bool Igual(Fecha? otraFecha)
-    {
-        if (otraFecha is null) 
-            return false;
-        return _anio == otraFecha._anio && _mes  == otraFecha._mes && _dia  == otraFecha._dia;
     }
 }

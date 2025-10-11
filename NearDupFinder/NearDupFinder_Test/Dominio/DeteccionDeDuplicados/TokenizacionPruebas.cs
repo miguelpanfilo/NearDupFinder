@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Controladores;
 
-namespace NearDupFinder_Test.Dominio.Controladores.DeteccionDeDuplicados;
+namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class TokenizacionPruebas

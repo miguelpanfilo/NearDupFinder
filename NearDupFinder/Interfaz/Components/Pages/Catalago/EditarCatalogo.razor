@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
 @inject Sistema Sistema
-@inject Microsoft.AspNetCore.Components.NavigationManager Nav
+@inject NavigationManager Nav
 
 <PageTitle>Editar de Catalogo</PageTitle>
 
@@ -23,7 +23,7 @@
         </div>
 
         <div class="form-group">
-            <label for="Descripcion">Descripcion</label>
+            <label for="descripcion">Descripcion</label>
             <textarea type="text" class="form-control" id="descripcion" @bind="_descripcion" rows="5"></textarea>
         </div>
 
@@ -38,17 +38,17 @@ else
 
 @code {
     [Parameter]
-    public string? titulo { get; set; }
+    public string? Titulo { get; set; }
 
     private Catalogo? _catalogo;
     private string _titulo = string.Empty;
     private string _descripcion = string.Empty;
     private bool _error;
-    private string _mensajeDeError;
+    private string? _mensajeDeError;
 
     protected override void OnParametersSet()
     {
-        var buscado = Uri.UnescapeDataString(titulo ?? string.Empty);
+        var buscado = Uri.UnescapeDataString(Titulo ?? string.Empty);
         
         _catalogo = Sistema.ObtenerCatalogoPorTitulo(buscado);
 
@@ -73,8 +73,8 @@ else
                 return;
             }
 
-            Sistema.CambiarTituloCatalogo(_catalogo, _titulo);
-            _catalogo.CambiarDescripcion(_descripcion);
+            Sistema.CambiarTituloCatalogo(_catalogo!, _titulo);
+            Sistema.CambiarDescripcionCatalogo(_catalogo!, _descripcion);
 
 
             Nav.NavigateTo("/CrearCatalogo");
