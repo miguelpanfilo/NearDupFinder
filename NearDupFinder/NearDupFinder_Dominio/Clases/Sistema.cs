@@ -30,7 +30,7 @@ public class Sistema
         { LogEntry.AccionLog.AltaItem, "Alta de item" },
         { LogEntry.AccionLog.EliminarItem, "Eliminación de item" },
         { LogEntry.AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
-        { LogEntry.AccionLog.ConfirmarDuplicado ,"Confirmación duplicado"},
+        { LogEntry.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
         { LogEntry.AccionLog.FusionarCluster,"Fusión de cluster" },
         { LogEntry.AccionLog.DescartarDuplicado,"Descartar duplicado"},
         {LogEntry.AccionLog.EditarItem,"Editar item"},
