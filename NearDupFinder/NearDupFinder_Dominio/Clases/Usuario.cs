@@ -1,4 +1,4 @@
-using System.Collections;
+using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
 
@@ -19,7 +19,7 @@ public class Usuario
 
     private readonly HashSet<Rol> _roles = new();
     
-    private Contrasena _contrasena;
+    private Clave? _clave;
     
     private Usuario(string nombre, string apellido, Email email, Fecha fechaNacimiento)
     {
@@ -27,20 +27,16 @@ public class Usuario
         Apellido = apellido;
         Email = email;
         FechaNacimiento = fechaNacimiento;
-        _contrasena = new Contrasena();
+        _clave = new Clave();
         Id = _nextId++;
     }
     
     public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
     {
         if (string.IsNullOrWhiteSpace(nombre))
-            throw new ArgumentException("El nombre no puede estar vacío.", nameof(nombre));
+            throw new UsuarioException("El nombre no puede estar vacío.");
         if (string.IsNullOrWhiteSpace(apellido))
-            throw new ArgumentException("El apellido no puede estar vacío.", nameof(apellido));
-        if (email is null)
-            throw new ArgumentNullException(nameof(email));
-        if (fechaNacimiento is null)
-            throw new ArgumentNullException(nameof(fechaNacimiento));
+            throw new UsuarioException("El apellido no puede estar vacío.");
 
         return new Usuario(nombre.Trim(), apellido.Trim(), email, fechaNacimiento);
     }
@@ -65,25 +61,21 @@ public class Usuario
         return _roles.ToList().AsReadOnly();
     }
     
-    public bool Igual(Usuario? otroUsuario)
+    public bool Igual(Usuario otroUsuario)
     {
-        if (otroUsuario is null) 
-            return false;
-
-        return this.Email.Igual(otroUsuario.Email);
+        return Email.Igual(otroUsuario.Email);
     }
     
-    public bool CambiarContrasena(Contrasena? nuevaContra)
+    public bool VerificarClave(string? clave)
     {
-        if (nuevaContra is null)
+        if(string.IsNullOrEmpty(clave))
             return false;
-        
-        this._contrasena = nuevaContra; 
-        return true;
+        return _clave!.Verificar(clave);
     }
-
-    public bool VerificarContrasena(string? contra)
+    
+    public bool CambiarClave(Clave nuevaClave)
     {
-        return _contrasena.Verificar(contra);
+        _clave = nuevaClave; 
+        return true;
     }
 }

@@ -27,7 +27,8 @@ public readonly record struct ParDuplicado(
     int ScoreMarca,
     int ScoreModelo,
     string[] TokensCompartidosTitulo,
-    string[] TokensCompartidosDescripcion
+    string[] TokensCompartidosDescripcion,
+    string TituloCatalogo
 );
 
 public class GestorDuplicados
@@ -36,11 +37,11 @@ public class GestorDuplicados
     private const float UmbralAlerta = 0.60f;
     private const float UmbralPosible = 0.75f;
 
-    public List<ParDuplicado> DetectarDuplicados(Item? itemA, Catalogo? catalogo)
+    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         List<ParDuplicado> listaDuplicados = new List<ParDuplicado>();
 
-        if (itemA is null || catalogo is null || catalogo.CantidadItems() == 0)
+        if (catalogo.CantidadItems() == 0)
             return listaDuplicados;
 
         Item itemNormalizadoA = NormalizarItem(itemA);
@@ -50,7 +51,7 @@ public class GestorDuplicados
         {
             if (itemB.Id == itemA.Id)
                 continue;
-
+            string tituloCatalogo = catalogo.Titulo;
             Item itemNormalizadoB = NormalizarItem(itemB);
             ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
@@ -75,7 +76,7 @@ public class GestorDuplicados
                     itemA, itemB, score, tipo,
                     jaccardTitulo, jaccardDescripcion,
                     scoreMarca, scoreModelo,
-                    tokensCompartidosTitulo, tokensCompartidosDescripcion
+                    tokensCompartidosTitulo, tokensCompartidosDescripcion, tituloCatalogo
                 );
                 
                 listaDuplicados.Add(duplicado);
@@ -189,11 +190,11 @@ public class GestorDuplicados
         return score;
     }
 
-    private static int IgualdadBinaria(string a, string b)
+    private static int IgualdadBinaria(string textoA, string textoB)
     {
-        if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
+        if (string.IsNullOrEmpty(textoA) || string.IsNullOrEmpty(textoB))
             return 0;
 
-        return string.Equals(a, b, StringComparison.Ordinal) ? 1 : 0;
+        return string.Equals(textoA, textoB) ? 1 : 0;
     }
 }

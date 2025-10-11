@@ -17,7 +17,7 @@ public class AuthController : ControllerBase
         var usuario = sistema.ValidarUsuario(email, clave);
         if (usuario is null) 
             return Redirect("/login?error=1");
-        sistema.SetUsuarioActual(usuario.Email.ToString());
+        
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, usuario.Nombre),
@@ -34,9 +34,8 @@ public class AuthController : ControllerBase
 
     [HttpPost("logout")]
     [AllowAnonymous]
-    public async Task<IActionResult> Logout([FromServices] Sistema sistema)
+    public async Task<IActionResult> Logout()
     {
-        sistema.LogoutUsuario();
         await HttpContext.SignOutAsync();
         return Redirect("/login");
     }
