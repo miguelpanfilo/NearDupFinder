@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Controladores;
 
-namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
+namespace NearDupFinder_Test.Dominio.Controladores.DeteccionDeDuplicados;
 
 [TestClass]
 public class DeteccionDuplicadosPruebas
@@ -22,6 +22,18 @@ public class DeteccionDuplicadosPruebas
         var sis = new Sistema();
         Item? itemA = null;
         var catalogo = CrearCatalogoNuevo();
+
+        var duplicados = sis.DetectarDuplicados(itemA, catalogo);
+
+        Assert.AreEqual(0, duplicados.Count);
+    }
+    
+    [TestMethod]
+    public void DetectarDuplicados_CatalogoNulo_DevuelveListaVacia()
+    {
+        var sis = new Sistema();
+        var itemA = CrearItem("a", "b", "", "", "x");
+        Catalogo? catalogo = null;
 
         var duplicados = sis.DetectarDuplicados(itemA, catalogo);
 

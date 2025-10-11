@@ -1,56 +1,50 @@
 using System.ComponentModel.DataAnnotations;
-using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Email
 {
     private readonly string _valor;
-
-    private Email(string email)
-    {    
-        _valor = email;
-    }
+    
+    private Email(string email) => _valor = email;
 
     public static Email Crear(string? email)
     {
-        if (string.IsNullOrWhiteSpace(email))
-            throw new UsuarioException("El email es requerido.");
+        if (String.IsNullOrWhiteSpace(email))
+            throw new ArgumentException(nameof(email));
         
         var emailNormalizado = email.Trim().ToLowerInvariant();
         
         if (!EsFormatoValido(emailNormalizado))
-            throw new UsuarioException("El email no tiene un formato válido.");
+            throw new ArgumentException("El email no tiene un formato válido.", nameof(email));
 
         return new Email(emailNormalizado);
     }
-
-    public override string ToString()
-    {
-        return _valor;
-    }
+    
+    public override string ToString() => _valor;
     
     private static bool EsFormatoValido(string correo)
     {
+        // Validación estándar de .NET
         var atributo = new EmailAddressAttribute();
         if (!atributo.IsValid(correo)) 
             return false;
 
+        // Ej.: "usuario@ejemplo.com" → dominio = "ejemplo.com".
         var indiceArroba = correo.IndexOf('@');
         var dominio = correo[(indiceArroba + 1)..];
 
-        if (!dominio.Contains('.')) 
-            return false;
-        if (dominio.StartsWith('.') || dominio.EndsWith('.')) 
-            return false;
-        if (correo.Contains("..")) 
-            return false;
+        if (!dominio.Contains('.')) return false;   // “usuario@ejemplo” => inválido
+        if (dominio.StartsWith('.') || dominio.EndsWith('.')) return false; // usuario@.com o usuario@ejemplo.  => inválidos
+        if (correo.Contains("..")) return false; // Prohibimos puntos consecutivos
 
         return true;
     }
     
-    public bool Igual(Email otroEmail)
+    public bool Igual(Email? otroEmail)
     {
-        return string.Equals(this.ToString(), otroEmail.ToString());
+        if (otroEmail is null) 
+            return false;
+        return string.Equals(this.ToString(), otroEmail.ToString(), StringComparison.Ordinal);
     }
 }

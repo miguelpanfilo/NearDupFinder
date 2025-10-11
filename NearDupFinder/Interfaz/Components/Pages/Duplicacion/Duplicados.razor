@@ -136,11 +136,10 @@ else
             .ToList();
     }
     private void ConfirmarDuplicado(ParDuplicado d)
-    { 
-        Sistema.ConfirmarParDuplicado(d);
+    {
+        Sistema.ConfirmarDuplicadoConLog(d); 
         _duplicados.Remove(d);
     }
-
     private void DesacrtarDuplicado(ParDuplicado d)
     {
         Sistema.DescartarParDuplicado(d);
