@@ -113,5 +113,16 @@ public class UnitTest1
         Assert.AreEqual("No hay usuario logueado", logs[0].Usuario);
     }
 
+    [TestMethod]
+    public void LogoutUsuario_DeberiaRestablecerUsuarioPredeterminado()
+    {
+       _sistema.SetUsuarioActual("otro@correo.com");
+        _sistema.LogoutUsuario();
 
+        _sistema.RegistrarLog(AccionLog.EditarUsuario, "Logout");
+
+        var logs = _sistema.ObtenerLogs();
+
+        Assert.AreEqual("No hay usuario logueado", logs[0].Usuario);
+    }
 }
