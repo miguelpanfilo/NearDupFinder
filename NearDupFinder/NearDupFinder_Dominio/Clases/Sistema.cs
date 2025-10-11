@@ -359,7 +359,7 @@ public class Sistema
         var itemEntrante = duplicadoConfirmado.ItemA;
         var itemComparado = duplicadoConfirmado.ItemB;
         
-        catalogo.ConfirmarClusters(itemEntrante,itemComparado);
+        catalogo?.ConfirmarClusters(itemEntrante,itemComparado);
         DuplicadosGlobales.Remove(duplicadoConfirmado);
     }
 
