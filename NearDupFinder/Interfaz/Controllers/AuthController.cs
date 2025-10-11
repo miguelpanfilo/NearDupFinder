@@ -17,7 +17,7 @@ public class AuthController : ControllerBase
         var usuario = sistema.ValidarUsuario(email, clave);
         if (usuario is null) 
             return Redirect("/login?error=1");
-
+        
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, usuario.Nombre),

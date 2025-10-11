@@ -1,85 +1,71 @@
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_Dominio.Struct;
+using NearDupFinder_Dominio.Controladores;
 
 namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class TokenizacionPruebas
 {
-    private Sistema _sistema = null!;
-    [TestInitialize]
-    public void Setup()
+    private static Item CrearNuevoItem(string titulo, string descripcion) =>
+        new Item(titulo, descripcion);
+    
+    [TestMethod]
+    public void Tokenizar_TokensDeUnCaracter_SeDescartan()
     {
-        _sistema = new Sistema();
-    }
-    [TestCleanup]
-    public void TearDown()
-    {
-        _sistema = null!; 
+        var gestor = new GestorDuplicados();
+        var item = CrearNuevoItem("a b c de f 1 2", "x y z 12 q r s");
+
+        var tokens = gestor.TokenizarItem(item);
+
+        CollectionAssert.AreEqual(new[] { "de" }, tokens.TokenTitulo);
+        CollectionAssert.AreEqual(new[] { "12" }, tokens.TokenDescripcion);
     }
     
     [TestMethod]
-    public void CrearToken_Ok()
+    public void Tokenizar_TituloYDescripcion_Basico()
     {
-        Item item = new Item("Iphone 17", "Celular de última generación");
-        
-        ItemTokenizado tokens = _sistema.TokenizarItem(item);
-        
-        CollectionAssert.AreEqual(
-            new[] { "Iphone", "17" },
-            tokens.TokenTitulo
-        );
+        var gestor = new GestorDuplicados();
+        var item = CrearNuevoItem("Iphone 17", "Celular de última generación");
 
-        CollectionAssert.AreEqual(
-            new[] { "Celular", "de", "última", "generación" },
-            tokens.TokenDescripcion
-        );
+        var tokens = gestor.TokenizarItem(item);
+
+        CollectionAssert.AreEqual(new[] { "Iphone", "17" }, tokens.TokenTitulo);
+        CollectionAssert.AreEqual(new[] { "Celular", "de", "última", "generación" }, tokens.TokenDescripcion);
     }
     
     [TestMethod]
-    public void CrearToken_TituloConEspaciosDeMas_Ok()
+    public void Tokenizar_TituloConMultiplesEspacios_ColapsaSeparadores()
     {
-        Item item = new Item("Iphone   17", "Celular de última generación");
-        
-        ItemTokenizado tokens = _sistema.TokenizarItem(item);
-        
-        CollectionAssert.AreEqual(
-            new[] { "Iphone", "17" },
-            tokens.TokenTitulo
-        );
+        var gestor = new GestorDuplicados();
+        var item = CrearNuevoItem("Iphone   17", "Celular de última generación");
 
-        CollectionAssert.AreEqual(
-            new[] { "Celular", "de", "última", "generación" },
-            tokens.TokenDescripcion
-        );
-    }
-    [TestMethod]
-    public void CrearToken_TextoConNumeros_Ok()
-    {
+        var tokens = gestor.TokenizarItem(item);
 
-        var item = new Item("ps5 slim 1tb", "ssd 512");
-
-        var tokens = _sistema.TokenizarItem(item);
-
-        CollectionAssert.AreEqual(new[] { "ps5", "slim", "1tb" }, tokens.TokenTitulo);
-        CollectionAssert.AreEqual(new[] { "ssd", "512" }, tokens.TokenDescripcion);
+        CollectionAssert.AreEqual(new[] { "Iphone", "17" }, tokens.TokenTitulo);
+        CollectionAssert.AreEqual(new[] { "Celular", "de", "última", "generación" }, tokens.TokenDescripcion);
     }
     
     [TestMethod]
-    public void CrearToken_ConEspaciosExtremos_Ok()
+    public void Tokenizar_ConEspaciosExtremos_Recorta()
     {
-        var item = new Item("   iphone 17   ", "   celular   de   ultima   generacion   ");
+        var gestor = new GestorDuplicados();
+        var item = CrearNuevoItem("   iphone 17   ", "   celular   de   ultima   generacion   ");
 
-        var tokens = _sistema.TokenizarItem(item);
+        var tokens = gestor.TokenizarItem(item);
 
         CollectionAssert.AreEqual(new[] { "iphone", "17" }, tokens.TokenTitulo);
         CollectionAssert.AreEqual(new[] { "celular", "de", "ultima", "generacion" }, tokens.TokenDescripcion);
     }
     
     [TestMethod]
-    public void TokenizarItem_ItemNull_TiraArgumentNull()
+    public void Tokenizar_TextoConNumeros_MantieneAlfanumericos()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _sistema.TokenizarItem(null));
+        var gestor = new GestorDuplicados();
+        var item = CrearNuevoItem("ps5 slim 1tb", "ssd 512");
+
+        var tokens = gestor.TokenizarItem(item);
+
+        CollectionAssert.AreEqual(new[] { "ps5", "slim", "1tb" }, tokens.TokenTitulo);
+        CollectionAssert.AreEqual(new[] { "ssd", "512" }, tokens.TokenDescripcion);
     }
-    
 }

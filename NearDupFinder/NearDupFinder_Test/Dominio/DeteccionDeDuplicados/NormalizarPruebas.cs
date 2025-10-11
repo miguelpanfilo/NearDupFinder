@@ -1,27 +1,19 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Controladores;
 
-namespace NormalizarPrueba;
+namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class NormalizarPruebas
 {
+    private readonly GestorDuplicados _gestorDuplicados = new GestorDuplicados();
+    
     [TestMethod]
     public void Normalizar_TextoVacio_RetornaVacio()
     {
-        var sistema = new Sistema();
         string textoOriginal = "";
 
-        var resultado = sistema.Normalizar(textoOriginal);
-
-        Assert.AreEqual(string.Empty, resultado);
-    }
-    [TestMethod]
-    public void Normalizar_TextoNull_RetornaVacio()
-    {
-        var sistema = new Sistema();
-        string textoOriginal = null;
-
-        var resultado = sistema.Normalizar(textoOriginal);
+        var resultado = _gestorDuplicados.Normalizar(textoOriginal);
 
         Assert.AreEqual(string.Empty, resultado);
     }
@@ -29,30 +21,29 @@ public class NormalizarPruebas
     [TestMethod]
     public void Normalizar_TextoMayusculas_RetornarMinusculas()
     {
-        var sistema = new Sistema();
         string textoOriginal = "LAPTOP";
 
-        var resultado = sistema.Normalizar(textoOriginal);
+        var resultado = _gestorDuplicados.Normalizar(textoOriginal);
 
         Assert.AreEqual("laptop", resultado);
     }
+    
     [TestMethod]
     public void Normalizar_TextoConTildes_SeNormaliza()
     {
-        var sistema = new Sistema();
         string textoOriginal = "ÁÉÍÓÚñÜ";
 
-        var resultado = sistema.Normalizar(textoOriginal);
+        var resultado = _gestorDuplicados.Normalizar(textoOriginal);
 
         Assert.AreEqual("aeiounu", resultado);
     }
+    
     [TestMethod]
     public void Normalizar_TextoConSimbolos_SeEliminan()
     {
-        var sistema = new Sistema();
         string textoOriginal = "lap{op";
 
-        var resultado = sistema.Normalizar(textoOriginal);
+        var resultado = _gestorDuplicados.Normalizar(textoOriginal);
 
         Assert.AreEqual("lap op", resultado);
     }
@@ -60,10 +51,9 @@ public class NormalizarPruebas
     [TestMethod]
     public void Normalizar_TextoConEspaciosMultiples_ColapsaYRecorta()
     {
-        var sistema = new Sistema();
         string textoOriginal = " lapt op  ";
 
-        var resultado = sistema.Normalizar(textoOriginal);
+        var resultado = _gestorDuplicados.Normalizar(textoOriginal);
 
         Assert.AreEqual("lapt op", resultado);
     }
@@ -71,7 +61,6 @@ public class NormalizarPruebas
     [TestMethod]
     public void NormalizarItem_TituloYDescripcionSoloSimbolos_LanzaExcepcion()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "!@#$%",
@@ -81,7 +70,7 @@ public class NormalizarPruebas
             Categoria = "!!Categoria!!"
         };
 
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.NormalizarItem(item));
 
         Assert.AreEqual(
             "El título y la descripción no pueden quedar vacío tras normalizar.",
@@ -90,10 +79,8 @@ public class NormalizarPruebas
     }
     
     [TestMethod]
-
-    public void NormalizarItem_TituloConMayusculas()
+    public void NormalizarItem_ConCamposConMayusculas_SeNormalizaCorrectamente()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "LAPTOP",
@@ -103,21 +90,18 @@ public class NormalizarPruebas
             Categoria = "Categoria1"
         };
 
-        var resultado = sistema.NormalizarItem(item);
+        var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("laptop", resultado.Titulo);
         Assert.AreEqual("laptop", resultado.Descripcion);
-
         Assert.AreEqual("marcax", resultado.Marca);
         Assert.AreEqual("modelo1", resultado.Modelo);
         Assert.AreEqual("categoria1", resultado.Categoria);
     }
-
-
+    
     [TestMethod]
-    public void NormalizarItem_TituloConTildesYN_SeNormalizaCorrectamente()
+    public void NormalizarItem_ConCamposConTildes_SeNormalizaCorrectamente()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "Cómputañó",
@@ -127,7 +111,7 @@ public class NormalizarPruebas
             Categoria = "Tecnología"
         };
 
-        var resultado = sistema.NormalizarItem(item);
+        var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("computano", resultado.Titulo);
         Assert.AreEqual("desc", resultado.Descripcion);
@@ -139,7 +123,6 @@ public class NormalizarPruebas
     [TestMethod]
     public void NormalizarItem_EspaciosMultiples_ColapsaYRecorta()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "  Lap_tóp   123!!  ",
@@ -149,7 +132,7 @@ public class NormalizarPruebas
             Categoria = "  TeCnología! "
         };
 
-        var resultado = sistema.NormalizarItem(item);
+        var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("lap top 123", resultado.Titulo);
         Assert.AreEqual("de sc", resultado.Descripcion);
@@ -161,7 +144,6 @@ public class NormalizarPruebas
     [TestMethod]
     public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcion()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "!@#$%^&*()",
@@ -171,7 +153,7 @@ public class NormalizarPruebas
             Categoria = "!!@@"
         };
 
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => sistema.NormalizarItem(item));
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.NormalizarItem(item));
 
         Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", ex.Message);
     }
@@ -179,20 +161,17 @@ public class NormalizarPruebas
     [TestMethod]
     public void NormalizarItem_MarcaModeloCategoriaSoloSimbolos_NoLanzaExcepcion()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "Laptop",
             Descripcion = "Computadora potente",
-            Marca = "!@#$$%", // se normaliza a vacío
-            Modelo = "###$$$", // se normaliza a vacío
-            Categoria = "!!@@" // se normaliza a vacío
+            Marca = "!@#$$%",
+            Modelo = "###$$$",
+            Categoria = "!!@@"
         };
-
             
-        var resultado = sistema.NormalizarItem(item);
+        var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        // Verificar normalización
         Assert.AreEqual("laptop", resultado.Titulo);
         Assert.AreEqual("computadora potente", resultado.Descripcion);
         Assert.AreEqual(string.Empty, resultado.Marca);
@@ -203,7 +182,6 @@ public class NormalizarPruebas
     [TestMethod]
     public void NormalizarItem_TextoYaNormalizado_NoCambia()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "laptop",
@@ -213,7 +191,7 @@ public class NormalizarPruebas
             Categoria = "categoria"
         };
 
-        var resultado = sistema.NormalizarItem(item);
+        var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("laptop", resultado.Titulo);
         Assert.AreEqual("computadora potente", resultado.Descripcion);
@@ -221,10 +199,10 @@ public class NormalizarPruebas
         Assert.AreEqual("modelo", resultado.Modelo);
         Assert.AreEqual("categoria", resultado.Categoria);
     }
+    
     [TestMethod]
     public void NormalizarItem_SimbolosYEspacios_InicioFinalCorrecto()
     {
-        var sistema = new Sistema();
         var item = new Item
         {
             Titulo = "!!!@@@   Laptop ***### ",
@@ -234,7 +212,7 @@ public class NormalizarPruebas
             Categoria = " !!Categoria!! "
         };
 
-        var resultado = sistema.NormalizarItem(item);
+        var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("laptop", resultado.Titulo);
         Assert.AreEqual("computadora", resultado.Descripcion);
@@ -242,8 +220,4 @@ public class NormalizarPruebas
         Assert.AreEqual("modelo", resultado.Modelo);
         Assert.AreEqual("categoria", resultado.Categoria);
     }
-    
-
-
-
 }

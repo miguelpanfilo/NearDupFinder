@@ -15,7 +15,6 @@ public class Catalogo
     private int _cantidadMinimaParaQueClusterExista = 2;
     public IEnumerable<Cluster> Clusters => _clusters.Values;
     
-
     public Catalogo(string titulo)
     {
         EstablecerTitulo(titulo);
@@ -62,10 +61,9 @@ public class Catalogo
     {
         return StringComparer.OrdinalIgnoreCase.GetHashCode(Titulo);
     }
-    /* Lista Items*/
+
     public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
-
-
+    
     public void AgregarItem(Item item)
     {
         if(item == null)

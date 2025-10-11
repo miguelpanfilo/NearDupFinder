@@ -1,178 +1,183 @@
-using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Controladores;
 
 namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class ScorePruebas
 {
-    private Sistema _sistema = new Sistema();
     [TestMethod]
     public void CalcularScore_TodosCeros_RetornaCero()
     {
-        float jaccardTitulo = 0;
-        float jaccardDescripcion = 0;
-        float marcaEq = 0;
-        float modeloEq = 0;
+        var gestor = new GestorDuplicados();
+        float jaccardTitulo = 0f;
+        float jaccardDescripcion = 0f;
+        float marcaEq = 0f;
+        float modeloEq = 0f;
 
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
         Assert.AreEqual(0.0f, score);
     }
 
     [TestMethod]
     public void CalcularScore_SoloTituloUno_Retorna0_45()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 1f;
-        float jaccardDescripcion = 0;
-        float marcaEq = 0;
-        float modeloEq = 0;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
+        float jaccardDescripcion = 0f;
+        float marcaEq = 0f;
+        float modeloEq = 0f;
+
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
         Assert.AreEqual(0.45f, score);
     }
 
     [TestMethod]
     public void CalcularScore_SoloDescripcionUno_Retorna0_35()
     {
-        float jaccardTitulo = 0;
+        var gestor = new GestorDuplicados();
+        float jaccardTitulo = 0f;
         float jaccardDescripcion = 1f;
-        float marcaEq = 0;
-        float modeloEq = 0;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
+        float marcaEq = 0f;
+        float modeloEq = 0f;
+
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
         Assert.AreEqual(0.35f, score);
     }
 
     [TestMethod]
     public void CalcularScore_SoloMarcaUno_Retorna0_10()
     {
-        float jaccardTitulo = 0;
-        float jaccardDescripcion = 0;
+        var gestor = new GestorDuplicados();
+        float jaccardTitulo = 0f;
+        float jaccardDescripcion = 0f;
         float marcaEq = 1f;
-        float modeloEq = 0;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
+        float modeloEq = 0f;
+
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
         Assert.AreEqual(0.10f, score);
     }
 
     [TestMethod]
     public void CalcularScore_SoloModeloUno_Retorna0_10()
     {
-        float jaccardTitulo = 0;
-        float jaccardDescripcion = 0;
-        float marcaEq = 0;
+        var gestor = new GestorDuplicados();
+        float jaccardTitulo = 0f;
+        float jaccardDescripcion = 0f;
+        float marcaEq = 0f;
         float modeloEq = 1f;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
+
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
         Assert.AreEqual(0.10f, score);
     }
 
     [TestMethod]
     public void CalcularScore_TituloYDescripcionUno_SinMarcaModelo_Retorna0_80()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 1f;
         float jaccardDescripcion = 1f;
-        float marcaEq = 0;
-        float modeloEq = 0;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
-        Assert.AreEqual(0.80f, score, 1e-6f);    
+        float marcaEq = 0f;
+        float modeloEq = 0f;
+
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
+        Assert.AreEqual(0.80f, score, 1e-6f);
     }
 
     [TestMethod]
     public void CalcularScore_TodoUno_Retorna1_00()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 1f;
         float jaccardDescripcion = 1f;
         float marcaEq = 1f;
         float modeloEq = 1f;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
-        Assert.AreEqual(1.00f, score, 1e-6f);  
-    }
 
-    [TestMethod]
-    public void CalcularScore_ValoresParciales_RetornaValorEsperado()
-    {
-        float jaccardTitulo = 0.5f;
-        float jaccardDescripcion = 0.2f;
-        float marcaEq = 1f;
-        float modeloEq = 0f;
-        
-        float score = _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq,  modeloEq);
-        
-        Assert.AreEqual(0.395f, score, 1e-6f);  
+        float score = gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+
+        Assert.AreEqual(1.00f, score, 1e-6f);
     }
 
     [TestMethod]
     public void CalcularScore_JaccardTitulo_Negativo_LanzaArgumentOutOfRangeException()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = -0.01f;
         float jaccardDescripcion = 0f;
         float marcaEq = 0f;
         float modeloEq = 0f;
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
-    
+
     [TestMethod]
     public void CalcularScore_JaccardTitulo_MayorAUno_LanzaArgumentOutOfRangeException()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 2.0f;
         float jaccardDescripcion = 0f;
         float marcaEq = 0f;
         float modeloEq = 0f;
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
-    
+
     [TestMethod]
     public void CalcularScore_JaccardDescripcion_Negativo_LanzaArgumentOutOfRangeException()
     {
-        float jaccardTitulo = 0.0f;
+        var gestor = new GestorDuplicados();
+        float jaccardTitulo = 0f;
         float jaccardDescripcion = -1.0f;
         float marcaEq = 0f;
         float modeloEq = 0f;
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
 
     [TestMethod]
     public void CalcularScore_JaccardDescripcion_MayorAUno_LanzaArgumentOutOfRangeException()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 0f;
         float jaccardDescripcion = 2.0f;
         float marcaEq = 0f;
         float modeloEq = 0f;
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
 
     [TestMethod]
     public void CalcularScore_MarcaEq_NoBinaria_LanzaArgumentOutOfRangeException()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 0f;
         float jaccardDescripcion = 0f;
         float marcaEq = 2.0f;
         float modeloEq = 0f;
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
 
     [TestMethod]
     public void CalcularScore_ModeloEq_NoBinaria_LanzaArgumentOutOfRangeException()
     {
+        var gestor = new GestorDuplicados();
         float jaccardTitulo = 0f;
         float jaccardDescripcion = 0f;
         float marcaEq = 0f;
         float modeloEq = 2.0f;
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => _sistema.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
 }

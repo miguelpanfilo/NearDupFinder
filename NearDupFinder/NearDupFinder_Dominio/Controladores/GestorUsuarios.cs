@@ -8,18 +8,18 @@ public class GestorUsuarios(Sistema sistema)
     {
         Email email = Email.Crear("admin@gmail.com");
         Fecha fecha = Fecha.Crear(1997,12,27);
-        Contrasena contrasena = Contrasena.Crear("123QWEasdzxc@");
+        Clave clave = Clave.Crear("123QWEasdzxc@");
         Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
         adminUsuario.AgregarRol(Rol.Administrador);
-        adminUsuario.CambiarContrasena(contrasena);
+        adminUsuario.CambiarClave(clave);
         
         return adminUsuario;
     }
     
-    public bool CrearUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
+    public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
     {
         Usuario nuevoUsuario;
-        Contrasena claveDelUsuario;
+        Clave claveDelUsuario;
         try
         {
             Email correo = Email.Crear(email);
@@ -27,7 +27,7 @@ public class GestorUsuarios(Sistema sistema)
                 return false;
 
             Fecha fecha = Fecha.Crear(anio,mes,dia);
-            claveDelUsuario = Contrasena.Crear(clave);
+            claveDelUsuario = Clave.Crear(clave);
             nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
         }
         catch
@@ -42,13 +42,13 @@ public class GestorUsuarios(Sistema sistema)
         return true;
     }
     
-    public bool EditarDatosDelUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string? clave, List<Rol> roles)
+    public bool EditarDatosDelUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
     {
         if (!ValidarNombreYApellido(nombre, apellido))
             return false;
         
         Usuario? usuarioAModificar;
-        Contrasena? posibleNuevaClave = null;
+        Clave? posibleNuevaClave = null;
         Fecha fecha;
         try
         {
@@ -60,20 +60,20 @@ public class GestorUsuarios(Sistema sistema)
             fecha = Fecha.Crear(anio,mes,dia);
             
             if(!string.IsNullOrWhiteSpace(clave))
-                posibleNuevaClave = Contrasena.Crear(clave);
+                posibleNuevaClave = Clave.Crear(clave);
         }
         catch
         {
             return false;
         }
         
-        ModificarUsuarioExistente(usuarioAModificar, nombre, apellido, fecha, roles);
+        ModificarUsuarioExistente(usuarioAModificar, nombre!, apellido!, fecha, roles);
         CambiarClaveDelUsuarioSiCorresponde(usuarioAModificar, posibleNuevaClave);
         
         return true;
     }
     
-    public bool BorrarUsuario(string email)
+    public bool BorrarUsuario(string? email)
     {
         Email emailUsuario;
         try
@@ -96,10 +96,10 @@ public class GestorUsuarios(Sistema sistema)
     
     public bool ModificarClave(Usuario usuario, string? clave)
     {
-        Contrasena nuevaClave;
+        Clave nuevaClave;
         try
         {
-            nuevaClave = Contrasena.Crear(clave);
+            nuevaClave = Clave.Crear(clave);
         }
         catch
         {
@@ -126,7 +126,7 @@ public class GestorUsuarios(Sistema sistema)
         if (usuario is null)
             return null;
         
-        if (usuario.VerificarContrasena(clave))
+        if (usuario.VerificarClave(clave))
             return usuario;
         
         return null;
@@ -144,10 +144,10 @@ public class GestorUsuarios(Sistema sistema)
         return sistema.BuscarUsuarioPorEmail(email);
     }
 
-    private void CambiarClaveDelUsuarioSiCorresponde(Usuario usuario, Contrasena? clave)
+    private void CambiarClaveDelUsuarioSiCorresponde(Usuario usuario, Clave? clave)
     {
         if(clave is not null)
-            usuario.CambiarContrasena(clave);
+            usuario.CambiarClave(clave);
     }
 
     private void AgregarRolesAlUsuario(Usuario usuario, List<Rol> roles)
@@ -158,7 +158,7 @@ public class GestorUsuarios(Sistema sistema)
 
     private void AgregarALaListaDeUsuarios(Usuario usuario)
     {
-        sistema.AgregarUsuarioDeLaLista(usuario);
+        sistema.AgregarUsuarioALaLista(usuario);
     }
 
     private void RemoverDeLaListaDeUsuarios(Usuario usuario)
@@ -166,7 +166,7 @@ public class GestorUsuarios(Sistema sistema)
         sistema.RemoverUsuarioDeLaLista(usuario);
     }
 
-    private bool ValidarNombreYApellido(string nombre, string apellido)
+    private bool ValidarNombreYApellido(string? nombre, string? apellido)
     {
         if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellido))
             return false;
@@ -181,5 +181,4 @@ public class GestorUsuarios(Sistema sistema)
         usuario.ObtenerRoles().Except(nuevosRoles).ToList().ForEach(usuario.RemoverRol);
         nuevosRoles.Except(usuario.ObtenerRoles()).ToList().ForEach(usuario.AgregarRol);
     }
-
 }
