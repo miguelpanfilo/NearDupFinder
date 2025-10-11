@@ -14,7 +14,13 @@ public class Sistema
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly List<LogEntry> _auditoria = new List<LogEntry>();
-    
+    private string _usuarioActual = "test@test.com";    
+
+    public void SetUsuarioActual(string email)
+    {
+        _usuarioActual = email;
+    }
+
 
 
     public Sistema()
@@ -48,12 +54,11 @@ public class Sistema
     };
     public void RegistrarLog(AccionLog accion, string detalles)
     {
-        const string usuarioPredeterminado = "test@test.com";
 
         var entry = new LogEntry
         {
             Timestamp = DateTime.UtcNow,
-            Usuario = usuarioPredeterminado,
+            Usuario = _usuarioActual,
             Accion = accion,
             Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
         };
