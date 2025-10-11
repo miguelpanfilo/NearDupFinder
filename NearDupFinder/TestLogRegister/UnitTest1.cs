@@ -139,22 +139,7 @@ public class UnitTest1
         Assert.AreEqual(1, logs.Count);
         Assert.AreEqual("segundo@correo.com", logs[0].Usuario);
     }
-    [TestMethod]
-    public void InicializarUsuarioDesdeClaims_DeberiaSetearUsuarioDesdeClaimEmail()
-    {
-        var email = "claim@correo.com";
-        var emailClaim = new Claim(ClaimTypes.Email, email);
-        var identity = new ClaimsIdentity(authenticationType: "TestAuth");
-        identity.AddClaim(emailClaim);
 
-        var claimsPrincipal = new ClaimsPrincipal(identity);
-
-        _sistema.InicializarUsuarioDesdeClaims(claimsPrincipal);
-        _sistema.RegistrarLog(AccionLog.AltaUsuario, "Desde claims");
-
-        var logs = _sistema.ObtenerLogs();
-        Assert.AreEqual(1, logs.Count);
-        Assert.AreEqual(email, logs[0].Usuario);
-    }
+  
 
 }

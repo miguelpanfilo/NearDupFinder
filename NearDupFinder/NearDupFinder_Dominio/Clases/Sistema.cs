@@ -25,23 +25,6 @@ public class Sistema
         _usuarioActual = "No hay usuario logueado";
     }
     
-    public void InicializarUsuarioDesdeClaims(ClaimsPrincipal user)
-    {
-        var identity = user.Identity;
-        if (identity == null || !identity.IsAuthenticated) return;
-
-        foreach (var claim in user.Claims)
-        {
-            if (claim.Type == ClaimTypes.Email)
-            {
-                _usuarioActual = claim.Value;
-                return; 
-            }
-        }
-    }
-
-
-
     public Sistema()
     {
         _usuarios = new List<Usuario>();

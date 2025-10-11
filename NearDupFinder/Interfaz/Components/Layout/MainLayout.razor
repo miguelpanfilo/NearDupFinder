@@ -46,6 +46,16 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-       Sistema.InicializarUsuarioDesdeClaims(user);
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            foreach (var claim in user.Claims)
+            {
+                if (claim.Type == System.Security.Claims.ClaimTypes.Email)
+                {
+                    Sistema.SetUsuarioActual(claim.Value);
+                    break;
+                }
+            }
+        }
     }
 }
