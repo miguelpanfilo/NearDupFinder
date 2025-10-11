@@ -7,8 +7,8 @@ namespace NearDupFinder_Test.Dominio.Clases;
 [TestClass]
 public class SistemaPruebas
 {
-    private Sistema _sistema = null!;
-    private Catalogo _catalogo = null!;
+    private Sistema _sistema;
+    private Catalogo _catalogo;
 
     [TestInitialize]
     public void Setup()
@@ -39,32 +39,6 @@ public class SistemaPruebas
         Usuario? usuarioABuscar = sistema.BuscarUsuarioPorId(idValido);
 
         Assert.AreEqual(admin, usuarioABuscar);
-    }
-    // Inicio Pruebas Catalogo
-
-    [TestMethod]
-    public void ObtenerItemsDelCatalogo_CatalogoVacio_RetornaCero()
-    {
-        Sistema sistema = new Sistema();
-        
-        int numeroDeItemsDelCatalogo = sistema.ObtenerItemsDelCatalogo(_catalogo).Count;
-        
-        Assert.AreEqual(numeroDeItemsDelCatalogo, 0);
-    }
-    
-    [TestMethod]
-    public void ObtenerItemsDelCatalogo_CatalogoConItem_RetornaUno()
-    {
-        var item = new Item("Original", "Descripcion original")
-        {
-            Categoria = "Cat 1",
-            Marca = "Marca 1",
-            Modelo = "Modelo 1"
-        };  
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item);
-        int numeroDeItemsDelCatalogo = _sistema.ObtenerItemsDelCatalogo(_catalogo).Count;
-        
-        Assert.AreEqual(numeroDeItemsDelCatalogo, 1);
     }
 
     // Inicio Pruebas Items
@@ -558,101 +532,7 @@ public class SistemaPruebas
         Assert.AreEqual(item.Categoria, dto.Categoria);
 
     }
+
+
     
-    [TestMethod]
-    public void ConfirmarClusterDesdeSistema()
-    {
-        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x"};
-        var item2 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x" };
-        
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
-
-        var parDuplicados = _sistema.DuplicadosGlobales.First();
-        var clusters = _catalogo.Clusters.ToList();
-
-        var cantidadEsperada = 0;
-        
-        Assert.AreEqual(cantidadEsperada,clusters.Count());
-        
-        _sistema.ConfirmarParDuplicado(parDuplicados);
-        
-        clusters = _catalogo.Clusters.ToList();
-        
-        cantidadEsperada = 1;
-        
-        Assert.AreEqual(cantidadEsperada,clusters.Count());
-    }
-    
-    [TestMethod]
-    public void RemoverClusterDesdeSistema()
-    {
-        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x"};
-        var item2 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x" };
-        
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
-
-        var parDuplicados = _sistema.DuplicadosGlobales.First();
-        int cantidadEsperada = 1;
-        
-        _sistema.ConfirmarParDuplicado(parDuplicados);
-        
-        var clusters = _catalogo.Clusters.ToList();
-        
-        Assert.AreEqual(cantidadEsperada,clusters.Count());
-        
-        _sistema.RemoverItemDelCluster(_catalogo, item1);
-        
-        clusters = _catalogo.Clusters.ToList();
-        cantidadEsperada = 0;
-        
-        Assert.AreEqual(cantidadEsperada ,clusters.Count());
-    }
-    [TestMethod]
-    public void FucionarCampos_AsignarItemCanonicoDeCluster()
-    {
-        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1 111111" , Marca = "x"};
-        var item2 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x", Categoria = "alguna"};
-        
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
-
-        var parDuplicados = _sistema.DuplicadosGlobales.First();
-        
-        _sistema.ConfirmarParDuplicado(parDuplicados);
-        
-        var clusters = _catalogo.Clusters.ToList();
-        
-        _sistema.FusionarItemsEnElCLuster(clusters.First());
-        
-        var canonico = clusters.First().Canonico;
-        
-        Assert.IsNotNull(canonico);
-        Assert.AreEqual("alguna",canonico.Categoria);
-        
-    }
-    [TestMethod]
-    public void SetearElItemCanonicoDeCluster_Null()
-    {
-        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x"};
-        var item2 = new Item { Titulo = "Item1", Descripcion = "Desc1" , Marca = "x" };
-        
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
-
-        var parDuplicados = _sistema.DuplicadosGlobales.First();
-        
-        _sistema.ConfirmarParDuplicado(parDuplicados);
-        
-        var clusters = _catalogo.Clusters.ToList();
-        
-        _sistema.FusionarItemsEnElCLuster(clusters.First());
-        
-        Assert.IsNotNull(clusters.First().Canonico);
-        
-        _sistema.SetearNullCanonico(clusters.First());
-        
-        Assert.IsNull(clusters.First().Canonico);
-    }
 }

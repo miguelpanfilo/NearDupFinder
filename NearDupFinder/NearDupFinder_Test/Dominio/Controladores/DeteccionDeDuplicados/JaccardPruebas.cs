@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Controladores;
 
-namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
+namespace NearDupFinder_Test.Dominio.Controladores.DeteccionDeDuplicados;
 
 [TestClass]
 public class JaccardPruebas

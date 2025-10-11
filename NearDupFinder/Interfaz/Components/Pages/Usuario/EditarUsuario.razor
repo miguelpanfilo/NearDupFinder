@@ -81,14 +81,12 @@
         _apellido = _usuarioActual.Apellido;
         _email = _usuarioActual.Email.ToString();
         _fecha = _usuarioActual.FechaNacimiento.ToDateTime();
-        _rolAdmin = Sistema.UsuarioTieneRol(_usuarioActual, Rol.Administrador);
-        _rolRevisor = Sistema.UsuarioTieneRol(_usuarioActual, Rol.Revisor);
+        _rolAdmin = _usuarioActual.TieneRol(Rol.Administrador);
+        _rolRevisor = _usuarioActual.TieneRol(Rol.Revisor);
     }
     
     private void Editar()
     {
-        CerrarAlerta();
-        
         List<Rol> roles = [];
         if (_rolAdmin)   
             roles.Add(Rol.Administrador);

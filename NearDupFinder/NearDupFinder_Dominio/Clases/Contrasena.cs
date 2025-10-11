@@ -1,25 +1,20 @@
 using System.Security.Cryptography;
 using System.Text;
-using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
 
-public sealed class Clave
+public sealed class Contrasena
 {
     private const int LargoMinimo = 8;
 
     private readonly string _hash;
+    
+    private readonly string _contrasenaDefault = "Encr1pt@do";
 
-    public Clave()
-    {
-        _hash = String.Empty;
-    }
+    public Contrasena() => _hash = HashearMd5(_contrasenaDefault);
 
-    private Clave(string hash)
-    {
-        _hash = hash;
-    }
-
+    private Contrasena(string hash) => _hash = hash;
+    
     /* Valida que se cumplan las siguientes condiciones:
      Longitud mínima: La contraseña debe tener al menos 8 caracteres.
      Debe incluir al menos una letra mayúscula (A-Z).
@@ -27,17 +22,18 @@ public sealed class Clave
      Debe incluir al menos un número (0-9).
      Debe incluir al menos un carácter especial (como @, #, $, etc.).
      */
-    public static bool Validar(string? clave)
+    public static bool Validar(string? contrasena)
     {
-        if (clave is null
-            || clave.Length < LargoMinimo
-            || !clave.Any(char.IsUpper)
-            || !clave.Any(char.IsLower)
-            || !clave.Any(char.IsDigit)
-            || !clave.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c))
+        if (contrasena is null
+            || contrasena.Length < LargoMinimo
+            || !contrasena.Any(char.IsUpper)
+            || !contrasena.Any(char.IsLower)
+            || !contrasena.Any(char.IsDigit)
+            || !contrasena.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c))
            )
+        {
             return false;
-        
+        }
         return true;
     }
     /*
@@ -58,7 +54,7 @@ public sealed class Clave
         byte[] hash = md5.ComputeHash(bytes);
 
         // Convertimos esos 16 bytes a una cadena hexadecimal de 32 caracteres.
-        //  Convert ToHexString devuelve en mayúsculas (p. ej. "E10ADC...").
+        //  Convert.ToHexString devuelve en mayúsculas (p. ej. "E10ADC...").
         string hashString = Convert.ToHexString(hash);
 
         // Devolvemos la representación en hex, que es lo que
@@ -66,20 +62,25 @@ public sealed class Clave
         return hashString;
     }
     
-    public static Clave Crear(string? clave)
+    public static Contrasena Crear(string? contrasena)
     {
-        if (Validar(clave))
+        if (Validar(contrasena))
         {
-            var hash = HashearMd5(clave!);
-            return new Clave(hash);
+            var hash = HashearMd5(contrasena!);
+            return new Contrasena(hash);
         }
- 
-        throw new UsuarioException("La contraseña no tiene el formato valido");        
+        else
+        {
+            throw new ArgumentException("La contraseña no tiene el formato valido");        
+        }
     }
     
-    public bool Verificar(string clave)
+    public bool Verificar(string? contrasena)
     {
-        return string.Equals(HashearMd5(clave), _hash);
+        if (contrasena is null)
+            return false;
+        
+        return string.Equals(HashearMd5(contrasena), _hash, StringComparison.OrdinalIgnoreCase);
     }
 
     public string ObtenerHash()

@@ -1,68 +1,69 @@
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class FechaPruebas
 {
-    [TestMethod]
-    public void Crear_DiaInvalido_LanzaArgumentException()
+    [DataTestMethod]
+    [DataRow(2001, 12, 31, "12-31-2001")]
+    [DataRow(1995,  1,  1, "01-01-1995")]
+    [DataRow(2024,  2, 29, "02-29-2024")] // año bisiesto
+    public void Crear_Valido_DevuelveInstancia(int anio, int mes, int dia, string esperado)
     {
-        int anio = 2000, mes = 12, dia = 0;
-        
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
-    }
-    
-    [TestMethod]
-    public void Crear_MesInvalido_LanzaUsuarioException()
-    {
-        int anio = 2000, mes = 13, dia = 1;
-        
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
-    }
-    
-    [TestMethod]
-    public void Crear_AnioInvalido_LanzaUsuarioException()
-    {
-        int anio = -200, mes = 13, dia = 1;
-        
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
-    }
-    
-    [TestMethod]
-    public void Crear_AnioNoBisiesto_29Febrero_LanzaUsuarioException()
-    {
-        int anio = 2001, mes = 2, dia = 29;
-        
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
-    }
-    
-    [TestMethod]
-    public void CrearFecha_FechaValida_RetornaInstanciaValida()
-    {
-        int anio = 2001, mes = 12, dia = 31;
         var fecha = Fecha.Crear(anio, mes, dia);
-        
-        Assert.AreEqual("12-31-2001", fecha.ToString());
+        Assert.AreEqual(esperado, fecha.ToString());
+    }
+
+    [DataTestMethod]
+    [DataRow(2001,  2, 29)] // 2001 no es bisiesto
+    [DataRow(2000, 13,  1)] // mes inválido
+    [DataRow(2000,  0, 10)] // mes 0
+    [DataRow(2000, 12,  0)] // día 0
+    [DataRow(2000,  4, 31)] // abril 31
+    public void Crear_Invalido_LanzaExcepcion(int anio, int mes, int dia)
+    {
+        Assert.ThrowsException<ArgumentException>(() => Fecha.Crear(anio, mes, dia));
     }
 
     [TestMethod]
-    public void ToString_Formatea_RetornaFormato_MM_dd_yyyy()
+    public void ToString_FormateaComoMM_DD_YYYY()
     {
-        int anio = 2001, mes = 5, dia = 7;
-        var fecha = Fecha.Crear(anio, mes, dia);
-        
+        var fecha = Fecha.Crear(2001, 5, 7); // 7 de mayo de 2001
         Assert.AreEqual("05-07-2001", fecha.ToString());
     }
+    
+    [TestMethod]
+    public void Igual_Valido()
+    {
+        var fecha1 = Fecha.Crear(2000, 2, 1);
+        var fecha2 = Fecha.Crear(2000, 2, 1);
+
+        Assert.IsTrue(fecha1.Igual(fecha2));
+    }
 
     [TestMethod]
-    public void ToDateTime_RetornaInstanciaEsperada()
+    public void Igual_Invalido()
     {
-        int anio = 2001, mes = 5, dia = 7;
-        var fecha = Fecha.Crear(anio, mes, dia);
-        var esperado = new DateTime(2001, 5, 7);
+        var fecha1 = Fecha.Crear(2000, 12, 31);
+        var fecha2 = Fecha.Crear(2000, 12, 30);
 
-        Assert.AreEqual(esperado, fecha.ToDateTime());
+        Assert.IsFalse(fecha1.Igual(fecha2));
+    }
+    
+    [TestMethod]
+    public void Igual_Nulo_DevuelveFalse()
+    {
+        var fecha = Fecha.Crear(2000, 12, 31);
+
+        Assert.IsFalse(fecha.Igual(null));
+    }
+    
+    [TestMethod]
+    public void ToDateTime_RetornaFechaEnFormatoValido()
+    {
+        var fecha = Fecha.Crear(2001, 5, 7);
+        DateTime fechaEnFormatoDateTime = new DateTime(2001,5,7);
+        Assert.AreEqual(fechaEnFormatoDateTime, fecha.ToDateTime());
     }
 }
