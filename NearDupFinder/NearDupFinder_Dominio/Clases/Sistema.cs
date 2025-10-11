@@ -14,7 +14,7 @@ public class Sistema
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly List<LogEntry> _auditoria = new List<LogEntry>();
-    private string _usuarioActual = "test@test.com";    
+    private string _usuarioActual = "No hay usuario logueado";    
 
     public void SetUsuarioActual(string email)
     {

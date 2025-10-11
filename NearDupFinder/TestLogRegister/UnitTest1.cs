@@ -110,7 +110,7 @@ public class UnitTest1
         var logs = sistema.ObtenerLogs();
 
         Assert.AreEqual(1, logs.Count);
-        Assert.AreEqual("No hay usuario registrado", logs[0].Usuario);
+        Assert.AreEqual("No hay usuario logueado", logs[0].Usuario);
     }
 
 
