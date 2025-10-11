@@ -9,9 +9,8 @@ public class ItemsPruebas
     [TestInitialize]
     public void Setup()
     {
-        Item.ResetIdCounter();
+        Item.ResetearContadorId();
     }
-    
     [TestMethod]
     public void TestItems_Crear_Item_Titulo_Largo_Fallo()
     {
@@ -238,7 +237,7 @@ public class ItemsPruebas
         Assert.AreEqual(1, item1.Id);
         Assert.AreEqual(2, item2.Id);
 
-        Item.ResetIdCounter();
+        Item.ResetearContadorId();
 
         var item3 = new Item { Titulo = "Tres", Descripcion = "Desc"};
         Assert.AreEqual(1, item3.Id); // vuelve a empezar en 1
