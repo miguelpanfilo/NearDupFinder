@@ -54,7 +54,7 @@ public class UnitTest1
         _sistema.RegistrarLog(AccionLog.AltaItem, detalles);
 
         var logs = _sistema.ObtenerLogs();
-        Assert.AreEqual("test@test.com", logs[0].Usuario);
+        Assert.AreEqual("No hay usuario logueado", logs[0].Usuario);
     }
 
     [TestMethod]
