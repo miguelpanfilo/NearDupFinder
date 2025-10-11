@@ -27,7 +27,8 @@ public readonly record struct ParDuplicado(
     int ScoreMarca,
     int ScoreModelo,
     string[] TokensCompartidosTitulo,
-    string[] TokensCompartidosDescripcion
+    string[] TokensCompartidosDescripcion,
+    string TituloCatalogo
 );
 
 public class GestorDuplicados
@@ -50,7 +51,7 @@ public class GestorDuplicados
         {
             if (itemB.Id == itemA.Id)
                 continue;
-
+            string tituloCatalogo = catalogo.Titulo;
             Item itemNormalizadoB = NormalizarItem(itemB);
             ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
@@ -75,7 +76,7 @@ public class GestorDuplicados
                     itemA, itemB, score, tipo,
                     jaccardTitulo, jaccardDescripcion,
                     scoreMarca, scoreModelo,
-                    tokensCompartidosTitulo, tokensCompartidosDescripcion
+                    tokensCompartidosTitulo, tokensCompartidosDescripcion, tituloCatalogo
                 );
                 
                 listaDuplicados.Add(duplicado);

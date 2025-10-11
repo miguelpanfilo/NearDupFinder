@@ -23,6 +23,7 @@ public class Sistema
         _idsItemsGlobal = new List<int>();
         _lectorCsv = new LectorCsv(this);
         _gestorDuplicados = new GestorDuplicados();
+        PrecargarCatalogos();
     }
 
     //------------------------------------------------------------------------//
@@ -103,6 +104,88 @@ public class Sistema
     //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
     
+    private void PrecargarCatalogos()
+    {
+        var catalogoTecno = new Catalogo("Tecnología");
+        catalogoTecno.CambiarDescripcion("Componentes eletronicos");
+        catalogoTecno.AgregarItem(new Item
+        {
+            Titulo = "Laptop HP",
+            Descripcion = "Laptop 15 pulgadas",
+            Categoria = "Computadoras",
+            Marca = "HP",
+            Modelo = "Pavilion"
+        });
+        catalogoTecno.AgregarItem(new Item
+        {
+            Titulo = "Teléfono Samsung",
+            Descripcion = "Galaxy S24",
+            Categoria = "Celulares",
+            Marca = "Samsung",
+            Modelo = "S24"
+        });
+
+        var catalogoHogar = new Catalogo("Hogar");
+        catalogoHogar.CambiarDescripcion("Electrodomesticos de Hogar");
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Silla de comedor",
+            Descripcion = "Silla de madera maciza",
+            Categoria = "Muebles",
+            Marca = "Ikea",
+            Modelo = "Nordic"
+        });
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Aspiradora",
+            Descripcion = "Aspiradora sin bolsa 1200W",
+            Categoria = "Electrodomésticos",
+            Marca = "Philips",
+            Modelo = "PowerPro"
+        });
+        catalogoHogar.AgregarItem(new Item
+        {
+            Titulo = "Aspiradoraaaaaa",
+            Descripcion = "Aspiradora sin bolsa 1200W",
+            Categoria = "Electrodomésticos",
+            Marca = "Philips",
+            Modelo = "PowerPro"
+        });
+
+        var catalogoDeportes = new Catalogo("Deportes");
+        catalogoDeportes.CambiarDescripcion("Actividades deportivas, y equipo para hacer deporte");
+        catalogoDeportes.AgregarItem(new Item
+        {
+            Titulo = "Bicicleta",
+            Descripcion = "Bicicleta de montaña 21 cambios",
+            Categoria = "Ciclismo",
+            Marca = "Trek",
+            Modelo = "X-Caliber"
+        });
+        Item nuevoItem1 = new Item
+        {
+            Titulo = "Pelota de fútbol",
+            Descripcion = "Pelota oficial tamaño 5",
+            Categoria = "Fútbol",
+            Marca = "Adidas",
+            Modelo = "Al Rihla"
+        };
+        catalogoDeportes.AgregarItem(nuevoItem1);
+        Item nuevoItem = new Item
+        {
+            Titulo = "Pelota de fútbollll",
+            Descripcion = "Pelota oficial tamaño 5",
+            Categoria = "Fútbol",
+        };
+        catalogoDeportes.AgregarItem(nuevoItem);
+
+        // Agregar catálogos al sistema
+        _catalogos.Add(catalogoTecno);
+        _catalogos.Add(catalogoHogar);
+        _catalogos.Add(catalogoDeportes);
+        
+        catalogoDeportes.ConfirmarClusters(nuevoItem1,nuevoItem);
+    }
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (_catalogos.Contains(catalogo))
@@ -207,10 +290,11 @@ public class Sistema
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
 
-        EliminarDuplicadosPrevios(itemEditado);
-        
-        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
+    EliminarDuplicadosPrevios(itemEditado);
+    catalogo.QuitarItemDeCluster(itemEditado);
+    
+    var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+    AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
 
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
@@ -265,6 +349,34 @@ public class Sistema
     public int CantidadDeItemsGlobal()
     {
         return _idsItemsGlobal.Count;
+    }
+
+    public void ConfirmarParDuplicado(ParDuplicado duplicadoConfirmado) // falta testear Mariano 
+    {
+        var tituloCatalogo = duplicadoConfirmado.TituloCatalogo;
+        var catalogo = ObtenerCatalogoPorTitulo(tituloCatalogo);
+        
+        var itemEntrante = duplicadoConfirmado.ItemA;
+        var itemComparado = duplicadoConfirmado.ItemB;
+        
+        catalogo?.ConfirmarClusters(itemEntrante,itemComparado);
+        DuplicadosGlobales.Remove(duplicadoConfirmado);
+    }
+
+    public void RemoverItemDelCluster(Catalogo catalogo, Item itemARemover) // testear
+    {
+        catalogo.QuitarItemDeCluster(itemARemover);
+    }
+
+    public void SetearNullCanonico(Cluster? cluster)
+    {
+        if(cluster is not null)
+            cluster.Canonico = null;
+    }
+
+    public void FusionarItemsEnElCLuster(Cluster clusterAFusionar)
+    {
+        clusterAFusionar.FuncionarCanonico();
     }
 
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)

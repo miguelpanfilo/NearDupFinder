@@ -135,7 +135,11 @@ else
             .OrderByDescending(d => d.Score)
             .ToList();
     }
-    private void ConfirmarDuplicado(ParDuplicado d) => _duplicados.Remove(d);
+    private void ConfirmarDuplicado(ParDuplicado d)
+    { 
+        Sistema.ConfirmarParDuplicado(d);
+        _duplicados.Remove(d);
+    }
 
     private void DesacrtarDuplicado(ParDuplicado d)
     {

@@ -12,7 +12,7 @@ public class Catalogo
     
     private readonly Dictionary<int, Cluster> _clusters = new();
     private int _nextClusterId = 1;
-    
+    private int _cantidadMinimaParaQueClusterExista = 2;
     public IEnumerable<Cluster> Clusters => _clusters.Values;
     
     public Catalogo(string titulo)
@@ -141,7 +141,7 @@ public class Catalogo
         
         cluster.Remover(item);
         
-        if (cluster.PertenecientesCluster.Count() <= 1) { _clusters.Remove(cluster.Id); }
+        if (cluster.PertenecientesCluster.Count() < _cantidadMinimaParaQueClusterExista) { _clusters.Remove(cluster.Id); }
     }
     
     public Cluster? ObtenerClusterDe(Item item)
