@@ -99,6 +99,19 @@ public class UnitTest1
         Assert.AreEqual(1, logs.Count);
         Assert.AreEqual("nuevo@correo.com", logs[0].Usuario);
     }
+    
+    [TestMethod]
+    public void RegistrarLog_DeberiaUsarUsuarioPredeterminadoPorDefecto()
+    {
+        var sistema = new Sistema();
+
+        sistema.RegistrarLog(AccionLog.AltaUsuario, "Sin usuario seteado");
+
+        var logs = sistema.ObtenerLogs();
+
+        Assert.AreEqual(1, logs.Count);
+        Assert.AreEqual("No hay usuario registrado", logs[0].Usuario);
+    }
 
 
 }
