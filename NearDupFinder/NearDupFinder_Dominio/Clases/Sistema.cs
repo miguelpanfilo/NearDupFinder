@@ -12,7 +12,49 @@ public class Sistema
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly LectorCsv _lectorCsv;
+    private readonly List<LogEntry> _auditoria = new List<LogEntry>();
+
+    private string _usuarioActual = "No hay usuario logueado"; 
+   
+    public void SetUsuarioActual(string email)
+    {
+        _usuarioActual = email;
+    }
+    public void LogoutUsuario()
+    {
+        _usuarioActual = "No hay usuario logueado";
+    }
+    private readonly Dictionary<LogEntry.AccionLog, string> _descripcionesAccion = new()
+    {
+        { LogEntry.AccionLog.AltaUsuario, "Creacion de usuario" },
+        { LogEntry.AccionLog.EditarUsuario, "Modificacion de usuario" },
+        { LogEntry.AccionLog.AltaItem, "Alta de item" },
+        { LogEntry.AccionLog.EliminarItem, "Eliminación de item" },
+        { LogEntry.AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
+        { LogEntry.AccionLog.ConfirmarDuplicado ,"Confirmación duplicado"},
+        { LogEntry.AccionLog.FusionarDuplicado,"Fusión Cluster" },
+        { LogEntry.AccionLog.DescartarDuplicado,"Descartar duplicado"},
+        {LogEntry.AccionLog.EditarItem,"Editar item"},
+        {LogEntry.AccionLog.EliminarUser,"Eliminacion de usuario"},
+        
+        
+    };
+    public void RegistrarLog(LogEntry.AccionLog accion, string detalles)
+    {
+
+        var entry = new LogEntry
+        {
+            Timestamp = DateTime.UtcNow,
+            Usuario = _usuarioActual,
+            Accion = accion,
+            Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
+        };
+
+        _auditoria.Add(entry);
+    }
     
+    public IReadOnlyList<LogEntry> ObtenerLogs() => _auditoria.AsReadOnly();
+
     public Sistema()
     {
         _usuarios = new List<Usuario>();
