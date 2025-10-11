@@ -23,6 +23,7 @@ public record struct ParDuplicado
     public int ScoreModelo { get; set; }
     public string [] TokensCompartidosTitulo { get; set; }
     public string [] TokensCompartidosDescripcion { get; set; }
+    public string TituloCatalogo { get; set; } // agregue esto para poder obetener el catalogo tambien
 }
 
 public class Sistema
@@ -46,6 +47,7 @@ public class Sistema
         DuplicadosGlobales = new List<ParDuplicado >();
         _idsItemsGlobal = new List<int>();
         _lectorCsv = new LectorCsv(this);
+        PrecargarCatalogos();
     }
 
     //------------------------------------------------------------------------//
@@ -306,6 +308,7 @@ public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
         throw new ArgumentNullException();
 
     EliminarDuplicadosPrevios(itemEditado);
+    catalogo.QuitarItemDeCluster(itemEditado);
     
     var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
     AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
@@ -363,6 +366,34 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     public int CantidadDeItemsGlobal()
     {
         return _idsItemsGlobal.Count;
+    }
+
+    public void ConfirmarParDuplicado(ParDuplicado duplicadoConfirmado) // falta testear Mariano 
+    {
+        var tituloCatalogo = duplicadoConfirmado.TituloCatalogo;
+        var catalogo = ObtenerCatalogoPorTitulo(tituloCatalogo);
+        
+        var itemEntrante = duplicadoConfirmado.ItemA;
+        var itemComparado = duplicadoConfirmado.ItemB;
+        
+        catalogo.ConfirmarClusters(itemEntrante,itemComparado);
+        DuplicadosGlobales.Remove(duplicadoConfirmado);
+    }
+
+    public void RemoverItemDelCluster(Catalogo catalogo, Item itemARemover) // testear
+    {
+        catalogo.QuitarItemDeCluster(itemARemover);
+    }
+
+    public void SetearNullCanonico(Cluster? cluster)
+    {
+        if(cluster is not null)
+            cluster.Canonico = null;
+    }
+
+    public void FusionarItemsEnElCLuster(Cluster clusterAFusionar)
+    {
+        clusterAFusionar.FuncionarCanonico();
     }
 
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
@@ -499,7 +530,6 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     public List<ParDuplicado > DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         List<ParDuplicado > listaDuplicados = new List<ParDuplicado >();
-
         Item itemNormalizadoA = NormalizarItem(itemA);
         ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
 
@@ -519,6 +549,7 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
             int scoreModelo = IgualdadBinaria(itemNormalizadoA.Modelo, itemNormalizadoB.Modelo);
 
             float score = CalcularScore(jaccardTitulo, jaccardDescripcion, scoreMarca, scoreModelo);
+            
 
             if (score >= 0.60f)
             {
@@ -538,14 +569,16 @@ private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
                     ScoreMarca = scoreMarca,
                     ScoreModelo = scoreModelo,
                     TokensCompartidosTitulo = tokensCompartidosTitulo,
-                    TokensCompartidosDescripcion = tokensCompartidosDescripcion
+                    TokensCompartidosDescripcion = tokensCompartidosDescripcion,
+                    TituloCatalogo = catalogo.Titulo //cambio que agregue
                 };
 
                 if (score >= 0.75f)
                     duplicado.Tipo = TipoDuplicado.τ_dup;
-
+                
                 listaDuplicados.Add(duplicado);
             }
+            
         }
 
         listaDuplicados.Sort((x, y) =>
