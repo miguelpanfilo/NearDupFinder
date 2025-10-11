@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Controladores;
 
@@ -13,8 +14,9 @@ public class Sistema
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly List<LogEntry> _auditoria = new List<LogEntry>();
-
     
+
+
     public Sistema()
     {
         _usuarios = new List<Usuario>();
@@ -27,7 +29,8 @@ public class Sistema
         _gestorDuplicados = new GestorDuplicados();
 
     }
-    
+
+  
     
     private readonly Dictionary<AccionLog, string> _descripcionesAccion = new()
     {

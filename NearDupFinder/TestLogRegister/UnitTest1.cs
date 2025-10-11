@@ -23,11 +23,11 @@ public class UnitTest1
         var logs = _sistema.ObtenerLogs();
         Assert.AreEqual(1, logs.Count);
     }
-    
+
     [TestMethod]
     public void RegistrarLog_DeberiaConcatenarDescripcionYDetalles()
     {
-        
+
         string detalles = "Acción de prueba";
 
         _sistema.RegistrarLog(AccionLog.AltaUsuario, detalles);
@@ -35,6 +35,7 @@ public class UnitTest1
         var logs = _sistema.ObtenerLogs();
         Assert.AreEqual("Creacion de usuario: Acción de prueba", logs[0].Detalles);
     }
+
     [TestMethod]
     public void RegistrarLog_DeberiaAsignarAccionCorrectamente()
     {
@@ -44,6 +45,7 @@ public class UnitTest1
         var logs = _sistema.ObtenerLogs();
         Assert.AreEqual(AccionLog.EditarUsuario, logs[0].Accion);
     }
+
     [TestMethod]
     public void RegistrarLog_DeberiaAsignarUsuarioPredeterminado()
     {
@@ -53,6 +55,7 @@ public class UnitTest1
         var logs = _sistema.ObtenerLogs();
         Assert.AreEqual("test@test.com", logs[0].Usuario);
     }
+
     [TestMethod]
     public void RegistrarLog_DeberiaAgregarMultiplesLogs()
     {
@@ -64,7 +67,7 @@ public class UnitTest1
         Assert.AreEqual("Creacion de usuario: Primero", logs[0].Detalles);
         Assert.AreEqual("Modificacion de usuario: Segundo", logs[1].Detalles);
     }
-    
+
     [TestMethod]
     public void RegistrarLog_LogsSeOrdenanPorTiempo()
     {
@@ -74,7 +77,7 @@ public class UnitTest1
         var logs = _sistema.ObtenerLogs();
         Assert.IsTrue(logs[0].Timestamp < logs[1].Timestamp, "El primer log debe ser anterior al segundo");
     }
-    
+
     [TestMethod]
     public void RegistrarLog_DetallesNoPuedeSerNull()
     {
@@ -84,7 +87,18 @@ public class UnitTest1
         Assert.AreEqual("Alta de item: ", logs[0].Detalles);
     }
 
-   
+    [TestMethod]
+    public void RegistrarLog_DeberiaUsarUsuarioActual()
+    {
+        _sistema.SetUsuarioActual("nuevo@correo.com");
+
+        _sistema.RegistrarLog(AccionLog.AltaUsuario, "Prueba de log");
+
+        var logs = _sistema.ObtenerLogs();
+
+        Assert.AreEqual(1, logs.Count);
+        Assert.AreEqual("nuevo@correo.com", logs[0].Usuario);
+    }
 
 
 }

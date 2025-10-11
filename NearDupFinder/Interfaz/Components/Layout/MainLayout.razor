@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@using NearDupFinder_Dominio.Clases
+@inject AuthenticationStateProvider AuthStateProvider
+@inject Sistema Sistema
 
 <div class="page">
     <div class="sidebar">
@@ -36,3 +39,13 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+       // Sistema.InicializarUsuarioDesdeClaims(user);
+    }
+}
