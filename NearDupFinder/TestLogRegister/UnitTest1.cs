@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using NearDupFinder_Dominio.Clases;
 
 namespace TestLogRegister;
@@ -125,4 +126,35 @@ public class UnitTest1
 
         Assert.AreEqual("No hay usuario logueado", logs[0].Usuario);
     }
+    [TestMethod]
+    public void RegistrarLog_DeberiaUsarUltimoUsuarioSeteado()
+    {
+        _sistema.SetUsuarioActual("primero@correo.com");
+        _sistema.SetUsuarioActual("segundo@correo.com");
+
+        _sistema.RegistrarLog(AccionLog.AltaUsuario, "Cambio de usuario");
+
+        var logs = _sistema.ObtenerLogs();
+
+        Assert.AreEqual(1, logs.Count);
+        Assert.AreEqual("segundo@correo.com", logs[0].Usuario);
+    }
+    [TestMethod]
+    public void InicializarUsuarioDesdeClaims_DeberiaSetearUsuarioDesdeClaimEmail()
+    {
+        var email = "claim@correo.com";
+        var emailClaim = new Claim(ClaimTypes.Email, email);
+        var identity = new ClaimsIdentity(authenticationType: "TestAuth");
+        identity.AddClaim(emailClaim);
+
+        var claimsPrincipal = new ClaimsPrincipal(identity);
+
+        _sistema.InicializarUsuarioDesdeClaims(claimsPrincipal);
+        _sistema.RegistrarLog(AccionLog.AltaUsuario, "Desde claims");
+
+        var logs = _sistema.ObtenerLogs();
+        Assert.AreEqual(1, logs.Count);
+        Assert.AreEqual(email, logs[0].Usuario);
+    }
+
 }
