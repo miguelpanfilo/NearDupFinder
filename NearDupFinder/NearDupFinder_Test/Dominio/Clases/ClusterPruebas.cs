@@ -5,7 +5,7 @@ namespace NearDupFinder_Test.Dominio.Clases;
 [TestClass]
 public class ClusterPruebas
 {
-    private Catalogo _catalogo;
+    private Catalogo _catalogo = null!;
     
     [TestInitialize]
     public void Setup()
@@ -13,11 +13,7 @@ public class ClusterPruebas
         _catalogo = new Catalogo("X");
     }
     
-    [TestCleanup]
-    public void TearDown()
-    {
-        _catalogo = null;
-    }
+
     [TestMethod]
     public void ConfirmarDuplicado_CreaUnClusterConDosMiembros()
     {
@@ -46,7 +42,7 @@ public class ClusterPruebas
         var a = new Item { Titulo = "A", Descripcion = "d" };
         _catalogo.AgregarItem(a);
         
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(a, null));
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(a, null!));
         StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
     [TestMethod]
@@ -55,7 +51,7 @@ public class ClusterPruebas
         var a = new Item { Titulo = "A", Descripcion = "d" };
         _catalogo.AgregarItem(a);
         
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(null, a));
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(null!, a));
         StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
     
@@ -113,11 +109,13 @@ public class ClusterPruebas
         var a = new Item { Titulo = "A", Descripcion = "d" };
         var b = new Item { Titulo = "B", Descripcion = "d" };
         var c = new Item { Titulo = "C", Descripcion = "d" };
+        
         _catalogo.AgregarItem(a);
         _catalogo.AgregarItem(b);
         _catalogo.AgregarItem(c);
         
         _catalogo.ConfirmarClusters(a, b);
+        
         var cantidadClauster = _catalogo.Clusters.Count();
         
         _catalogo.ConfirmarClusters(c , a); 
@@ -153,6 +151,7 @@ public class ClusterPruebas
         _catalogo.ConfirmarClusters(b, d);
         
         Assert.AreEqual(1, _catalogo.Clusters.Count());
+        
         var clusterUnico = _catalogo.Clusters.First();
         CollectionAssert.AreEquivalent(
             new[] { a, b, c, d },
@@ -172,7 +171,9 @@ public class ClusterPruebas
         _catalogo.ConfirmarClusters(b, a);
         
         Assert.AreEqual(1, _catalogo.Clusters.Count());
+        
         var cluster = _catalogo.Clusters.First();
+        
         CollectionAssert.AreEquivalent(
             new[] { a, b },
             cluster.PertenecientesCluster.ToList()
@@ -221,7 +222,7 @@ public class ClusterPruebas
     [TestMethod]
     public void QuitarItemDeCluster_ItemNull_LanzaArgumentNullException()
     {
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.QuitarItemDeCluster(null));
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.QuitarItemDeCluster(null!));
         
         StringAssert.Contains(ex.Message, "El parámetro no puede ser null");
     }
@@ -294,9 +295,22 @@ public class ClusterPruebas
         _catalogo.AgregarItem(b);
 
         _catalogo.ConfirmarClusters(a, b);
+        
         var cluster = _catalogo.Clusters.First();
-
+        cluster.FuncionarCanonico();
         Assert.AreSame(b, cluster.Canonico);
+    }
+    
+    [TestMethod]
+    public void ClusterVacio_CanonicoNull()
+    {
+        int idCluster = 1;
+        var pertenecientes = new HashSet<Item>();
+        var cluster = new Cluster(idCluster, pertenecientes);
+        
+        cluster.FuncionarCanonico();
+        
+        Assert.IsNull(cluster.Canonico);
     }
     
     [TestMethod]
@@ -329,12 +343,19 @@ public class ClusterPruebas
 
         _catalogo.ConfirmarClusters(a, b); 
         _catalogo.ConfirmarClusters(c, b);
-        Assert.AreSame(b,_catalogo.Clusters.First().Canonico);
+        
+        var cluster = _catalogo.Clusters.First();
+        
+        cluster.FuncionarCanonico();
+        
+        Assert.AreSame(b,cluster.Canonico);
         
         _catalogo.QuitarItemDeCluster(b);
-
+        
+        cluster.FuncionarCanonico();
+        
         Assert.AreEqual(1, _catalogo.Clusters.Count());
-        Assert.AreSame(c,_catalogo.Clusters.First().Canonico);
+        Assert.AreSame(c, cluster.Canonico);
     }
     
     [TestMethod]
@@ -346,12 +367,17 @@ public class ClusterPruebas
         _catalogo.AgregarItem(a); 
         _catalogo.AgregarItem(b);
         _catalogo.ConfirmarClusters(a, b);
-
-        var c = _catalogo.Clusters.First().Canonico;
         
-        Assert.AreEqual("alguna",  c.Marca);
-        Assert.AreEqual("otro", c.Modelo);
-        Assert.AreEqual("No soy vacio", c.Categoria);
+        var cluster = _catalogo.Clusters.First();
+        
+        cluster.FuncionarCanonico();
+        
+        var canonico = cluster.Canonico;
+        
+        Assert.IsNotNull(canonico);
+        Assert.AreEqual("alguna",  canonico.Marca);
+        Assert.AreEqual("otro", canonico.Modelo);
+        Assert.AreEqual("No soy vacio", canonico.Categoria);
     }
     
     [TestMethod]
@@ -368,12 +394,16 @@ public class ClusterPruebas
         _catalogo.ConfirmarClusters(a, b);
         _catalogo.ConfirmarClusters(b, c);
 
-        var canon = _catalogo.Clusters.First().Canonico;
+        var cluster = _catalogo.Clusters.First();
         
-        Assert.AreEqual("AC", canon.Marca);
+        cluster.FuncionarCanonico();
         
-        Assert.AreEqual("M1", canon.Modelo);
-        Assert.AreEqual("X", canon.Categoria);
+        var canonico = cluster.Canonico;
+        
+        Assert.IsNotNull(canonico);
+        Assert.AreEqual("AC", canonico.Marca);
+        Assert.AreEqual("M1", canonico.Modelo);
+        Assert.AreEqual("X", canonico.Categoria);
     }
     
     [TestMethod]
@@ -388,17 +418,24 @@ public class ClusterPruebas
         _catalogo.AgregarItem(c);
         
         _catalogo.ConfirmarClusters(a, b);
-        var canon = _catalogo.Clusters.First().Canonico;
-        Assert.AreSame(a, canon);
+        var cluster = _catalogo.Clusters.First();
+        
+        cluster.FuncionarCanonico();
+        var canonico = cluster.Canonico;
+        
+        Assert.AreSame(a, canonico);
         
         _catalogo.ConfirmarClusters(b, c);
+        cluster.FuncionarCanonico();
         
-        var canonDespues = _catalogo.Clusters.First().Canonico;
-        Assert.AreSame(c, canonDespues);
+        var canonicoDespues = cluster.Canonico;
         
-        Assert.AreEqual("AC", canon.Marca);
-        Assert.AreEqual("M1", canon.Modelo);
-        Assert.AreEqual("X", canon.Categoria);
+        Assert.AreSame(c, canonicoDespues);
+        
+        Assert.IsNotNull(canonico);
+        Assert.AreEqual("AC", canonico.Marca);
+        Assert.AreEqual("M1", canonico.Modelo);
+        Assert.AreEqual("X", canonico.Categoria);
     }
     
     [TestMethod]
@@ -417,12 +454,17 @@ public class ClusterPruebas
         
         var cluster = _catalogo.Clusters.First();
         
+        cluster.FuncionarCanonico();
+        
         Assert.AreSame(a, cluster.Canonico);
 
         _catalogo.QuitarItemDeCluster(a);
         
+        cluster.FuncionarCanonico();
+        
         var canonico = cluster.Canonico;
         
+        Assert.IsNotNull(canonico);
         Assert.AreSame(c, canonico);
         Assert.AreEqual("ACME CORPORATION", canonico.Marca);
         Assert.AreEqual("MODEL-2025",       canonico.Modelo);
@@ -445,10 +487,14 @@ public class ClusterPruebas
         _catalogo.ConfirmarClusters(a, c);
         
         var cluster = _catalogo.Clusters.First();
-        var nuevo = cluster.Canonico;
         
-        Assert.AreEqual(c, nuevo);
-        Assert.AreEqual("Beta", nuevo.Marca);
+        cluster.FuncionarCanonico();
+        
+        var canonico = cluster.Canonico;
+        
+        Assert.IsNotNull(canonico);
+        Assert.AreEqual(c, canonico);
+        Assert.AreEqual("Beta", canonico.Marca);
     }
     
     [TestMethod]

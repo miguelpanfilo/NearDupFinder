@@ -161,7 +161,7 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items
+            _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
                 .Select(item => ItemEditDataTransfer.FromEntity(item))
                 .ToList();
 
@@ -181,7 +181,7 @@
     {
         if (_catalogoSeleccionado == null) return;
 
-        _itemsFiltradosEnTabla = _catalogoSeleccionado.Items
+        _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
             .Where(item =>
                 (string.IsNullOrWhiteSpace(_textoBusqueda) ||
                  Normalizar(item.Titulo).Contains(Normalizar(_textoBusqueda)) ||
@@ -206,7 +206,7 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = _catalogoSeleccionado.Items
+            _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
                 .Select(item => ItemEditDataTransfer.FromEntity(item))
                 .ToList();
         }
@@ -255,7 +255,7 @@
 
             sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
 
-            var itemOriginal = _catalogoSeleccionado.Items.First(i => i.Id == _itemEditado.Id);
+            var itemOriginal = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado).First(i => i.Id == _itemEditado.Id);
             sistema.ActualizarDuplicadosPara(_catalogoSeleccionado, itemOriginal);
 
             ActualizarEstadoDuplicados();
@@ -290,14 +290,14 @@
 
         foreach (var item in _itemsFiltradosEnTabla)
         {
-            var original = _catalogoSeleccionado.Items.FirstOrDefault(i => i.Id == item.Id);
+            var original = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado).FirstOrDefault(i => i.Id == item.Id);
             if (original != null)
                 item.EstadoDuplicado = original.EstadoDuplicado;
         }
     }
     private List<string> ObtenerCategoriasUnicas(Catalogo catalogo)
     {
-        return catalogo.Items
+        return sistema.ObtenerItemsDelCatalogo(catalogo)
             .Select(i => i.Categoria)
             .Where(c => !string.IsNullOrEmpty(c))
             .Distinct()

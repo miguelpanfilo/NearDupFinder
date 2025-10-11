@@ -93,7 +93,7 @@
         try
         {
             var catalogo = new Catalogo(_titulo);
-            catalogo.CambiarDescripcion(_descripcion);
+            Sistema.CambiarDescripcionCatalogo(catalogo, _descripcion);
             Sistema.AgregarCatalogo(catalogo);
             _error = false;
             LimpiarCampos();

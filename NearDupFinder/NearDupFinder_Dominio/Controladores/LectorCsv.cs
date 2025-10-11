@@ -66,7 +66,7 @@ public class LectorCsv(Sistema sistema)
         }
     }
 
-    private bool VerificarOAgregarCatalogoValido(string nombreCatalogo)
+    private bool VerificarOAgregarCatalogoValido(string? nombreCatalogo)
     {
         if (string.IsNullOrWhiteSpace(nombreCatalogo))
             return false;
