@@ -12,23 +12,24 @@ public class LogEntry
         string timestampIso = Timestamp.ToString("yyyy-MM-ddTHH:mm:ss");
         return $"{timestampIso} | {Usuario} | {Accion} | {Detalles}";
     }
+    public enum AccionLog
+    {
+        AltaItem,
+        EditarItem,
+        EliminarItem,
+        DescartarDuplicado,
+        ConfirmarDuplicado,
+        FusionarCluster,
+        AltaUsuario,
+        EditarUsuario,
+        DeteccionDuplicados,
+        EliminarUser
+    
+    }
+
     
 }
 
 
 
-public enum AccionLog
-{
-    AltaItem,
-    EditarItem,
-    EliminarItem,
-    DescartarDuplicado,
-    ConfirmarDuplicado,
-    FusionarDuplicado,
-    AltaUsuario,
-    EditarUsuario,
-    DeteccionDuplicados,
-    EliminarUser
-    
-}
 

@@ -4,6 +4,8 @@
 
 
 
+using NearDupFinder_Dominio.Clases;
+
 [TestClass]
 public class UnitTest1
 {

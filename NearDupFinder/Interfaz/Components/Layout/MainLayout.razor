@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@using NearDupFinder_Dominio.Clases
+
 
 <div class="page">
     <div class="sidebar">
@@ -32,3 +34,14 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private List<LogEntry> _logs = new();
+
+    protected override void OnInitialized()
+    {
+        _logs = NearDupFinder_Dominio.Clases.Sistema.ObtenerLogs()
+            .OrderByDescending(l => l.Timestamp)
+            .ToList();
+    }
+}
