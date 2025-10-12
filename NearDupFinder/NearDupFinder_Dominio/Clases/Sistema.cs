@@ -286,7 +286,7 @@ public class Sistema
     
    //------------------------------------------------------------------------
     // Inicio espacio Item 
-    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
+    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item? nuevoItem)
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
 
@@ -344,7 +344,7 @@ public class Sistema
 
   
 
-    public void ActualizarDuplicadosPara(Catalogo catalogo, Item itemEditado)
+    public void ActualizarDuplicadosPara(Catalogo? catalogo, Item? itemEditado)
     {
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
