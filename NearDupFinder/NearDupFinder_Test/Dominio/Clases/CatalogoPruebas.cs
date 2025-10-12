@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_LogicaDeNegocio;
 
 
 namespace NearDupFinder_Test.Dominio.Clases;

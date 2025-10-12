@@ -1,0 +1,129 @@
+@page "/CrearCatalogo"
+@rendermode InteractiveServer
+@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_LogicaDeNegocio
+@inject Sistema Sistema
+
+<PageTitle>Catalogos</PageTitle>
+
+<h1 class="mt-3">Crear catalogo</h1>
+
+@if(_error)
+{
+    <div class="alert alert-danger" role="alert">
+        @_mensajeDeError
+    </div>
+}
+
+<form>
+    <div class="form-group">
+        <label for="titulo">Titulo</label>
+        <input type="text" class="form-control" id="titulo" @bind="_titulo"/>
+    </div>
+
+    <div class="form-group">
+        <label for="Descripcion">Descripcion</label>
+        <textarea type="text" class="form-control" id="descripcion" @bind="_descripcion" rows="5"></textarea>
+    </div>
+    
+    <button type="button" class="btn btn-primary mt-3" @onclick="(() => OnCrearCatalogoClick())">Guardar cambios</button>
+    <button type="button" class="btn btn-secondary mt-3" @onclick="CancelarCambios">Limpiar campos</button>
+</form>
+
+<h3 class="mt-3">Catalogos</h3>
+
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Titulo</th>
+        <th>Descripcion</th>
+        <th style="width:160px;">Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var catalogo in _catalogos!)
+    {
+        <tr>
+            <td>@catalogo.Titulo</td>
+            <td>@catalogo.Descripcion</td>
+            <td class="text-end text-nowrap">
+                <div class="d-inline-flex gap-2">
+                    <a class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
+                       href="catalogos/@catalogo.Id/editar/"
+                       aria-label="Editar" title="Editar">
+                        <i class="bi bi-pencil-square fs-6 lh-1"></i>
+                    </a>
+
+                    <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                            @onclick="(() => EliminarCatalogo(catalogo))"
+                            aria-label="Eliminar" title="Eliminar">
+                        <i class="bi bi-trash3 fs-6 lh-1"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    
+    private IReadOnlyCollection<Catalogo>? _catalogos;
+    private string _titulo = string.Empty;
+    private string _descripcion = string.Empty;
+    
+   
+    private bool _error;
+    private string _mensajeDeError = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _catalogos = Sistema.Catalogos;
+    }
+
+    public void EliminarCatalogo(Catalogo catalogo)
+    {
+        Sistema.EliminarCatalogo(catalogo);
+        StateHasChanged();
+    }
+
+    private void OnCrearCatalogoClick()
+    {
+        try
+        {
+            var catalogo = new Catalogo(_titulo);
+            Sistema.CambiarDescripcionCatalogo(catalogo, _descripcion);
+            Sistema.AgregarCatalogo(catalogo);
+            _error = false;
+            LimpiarCampos();
+            StateHasChanged();
+        }catch (InvalidOperationException ex)
+        {
+            NotificarError(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            NotificarError(ex.Message);
+        }
+    }
+
+    public void CancelarCambios()
+    {
+        LimpiarCampos();
+    }
+    
+    private void LimpiarCampos()
+    {
+        _titulo = string.Empty;
+        _descripcion = string.Empty;
+    }
+    private void NotificarError(string mensaje)
+    {
+        _error = true;
+        _mensajeDeError = mensaje;
+    }
+
+
+
+}

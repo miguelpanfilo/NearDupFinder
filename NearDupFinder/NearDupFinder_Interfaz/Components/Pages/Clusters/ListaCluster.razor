@@ -1,0 +1,124 @@
+@page "/Cluster"
+@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_LogicaDeNegocio
+@inject Sistema Sistema
+@rendermode InteractiveServer
+
+<PageTitle>Clusters</PageTitle>
+
+<div class="mb-3">
+    <label for="catalogoSelect" class="form-label">Filtrar por catálogo:</label>
+    <select id="catalogoSelect" class="form-select" @onchange="FiltrarPorCatalogo">
+        <option value="">Seleccione un Catalogo</option>
+        @foreach (var cat in _catalogos)
+        {
+            <option value="@cat.Titulo">@cat.Titulo</option>
+        }
+    </select>
+</div>
+
+    @if (_catalogo is not null)
+    {
+        <div class="text-center my-3">
+            <h3>Clusters del Catálogo @_catalogo.Titulo</h3>
+        </div>
+        @if (_clustersFiltrados.Any())
+        {
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ">
+                @foreach (var cluster in _clustersFiltrados)
+                {
+                    <div class="col ">
+                        <div class="card h-100 shadow-sm rounded-4">
+                            <div class="card-body">
+                                @if (cluster.Canonico is not null)
+                                {
+                                    <h5 class="card-title">Cluster de @cluster.Canonico.Titulo</h5>
+
+                                    <h6>Item Canónico:</h6>
+                                    <p><strong>@cluster.Canonico.Titulo</strong></p>
+                                    <ul class="list-unstyled">
+                                        <li><b>Marca:</b> @cluster.Canonico.Descripcion .</li>
+                                        <li><b>Marca:</b> @cluster.Canonico.Marca .</li>
+                                        <li><b>Modelo:</b> @cluster.Canonico.Modelo .</li>
+                                        <li><b>Categoría:</b> @cluster.Canonico.Categoria .</li>
+                                    </ul>
+                                }
+
+                                <h6><b>Items del Cluster:</b></h6>
+                                <ul class="list-unstyled">
+                                    @foreach (var item in cluster.PertenecientesCluster)
+                                    {
+                                        <li class="d-flex justify-content-between align-items-center mb-1">
+                                            <span>@item.Titulo</span>
+                                            <button class="btn btn-sm btn-danger"
+                                                    @onclick="() => EliminarItemDelCluster(_catalogo, item)" title="Eliminar">
+                                                <i class="bi bi-trash3 fs-6 lh-1"></i>
+                                            </button>
+                                        </li>
+                                    }
+                                </ul>
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button class="btn btn-sm btn-primary"
+                                            @onclick="() => FusionarCluster(cluster)" title="Fusionar">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Fusionar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No hay clusters para mostrar.</p>
+        }
+    }
+@code {
+    private List<Catalogo> _catalogos = new();
+    private List<Cluster> _clustersFiltrados = new();
+    private Catalogo? _catalogo;
+
+    protected override void OnInitialized()
+    {
+        _catalogos = Sistema.Catalogos.ToList();
+    }
+
+    private void FiltrarPorCatalogo(ChangeEventArgs e)
+    {
+        string tituloSeleccionado = e.Value?.ToString() ?? "";
+        RefrescarClustersPorTitulo(tituloSeleccionado);
+    }
+    private void RefrescarClustersPorTitulo(string? titulo)
+    {
+        if (!string.IsNullOrWhiteSpace(titulo))
+        {
+            _catalogo = Sistema.ObtenerCatalogoPorTitulo(titulo);
+            _clustersFiltrados = _catalogo?.Clusters.ToList() ?? new();
+        }
+        else
+        {
+            _catalogo = null;
+            _clustersFiltrados.Clear();
+        }
+    }
+
+    private void EliminarItemDelCluster(Catalogo catalogo, Item item)
+    {
+        var cluster = catalogo.ObtenerClusterDe(item);
+        var canonico = cluster?.Canonico;
+        
+        if (canonico is not null && canonico.Equals(item))
+            Sistema.SetearNullCanonico(cluster);
+        
+        Sistema.RemoverItemDelCluster(catalogo, item);
+        
+        RefrescarClustersPorTitulo(catalogo.Titulo);
+    }
+
+    private void FusionarCluster(Cluster cluster)
+    {
+        Sistema.FusionarItemsEnElCLuster(cluster);
+    }
+}

@@ -1,6 +1,7 @@
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_Dominio.Controladores;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_LogicaDeNegocio;
+using NearDupFInder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Test.Dominio.Clases;
 
@@ -81,7 +82,7 @@ public class SistemaPruebas
             Modelo = "Modelo 1"
         };
         catalogo.AgregarItem(item);
-        var dto = new ItemEditDataTransfer
+        var dto = new ItemDTO
         {
             Id = item.Id,
             Titulo = "Nuevo Título",
@@ -111,7 +112,7 @@ public class SistemaPruebas
         };
         catalogo.AgregarItem(item);
 
-        var dto = new ItemEditDataTransfer
+        var dto = new ItemDTO
         {
             Id = item.Id,
             Titulo = "Original",
@@ -134,7 +135,7 @@ public class SistemaPruebas
         var sistema = new Sistema();
         var catalogo = new Catalogo("Catálogo Test");
 
-        var dto = new ItemEditDataTransfer
+        var dto = new ItemDTO
         {
             Id = 999, // Id inexistente
             Titulo = "Título",
@@ -345,7 +346,7 @@ public class SistemaPruebas
         _catalogo.AgregarItem(item1);
         _catalogo.AgregarItem(item2);
 
-        var dto = ItemEditDataTransfer.FromEntity(item1);
+        var dto = ItemDTO.FromEntity(item1);
         _sistema.EliminarItem("Catalogo Test", dto);
 
         Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
@@ -363,7 +364,7 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
 
-        var dto = ItemEditDataTransfer.FromEntity(item1);
+        var dto = ItemDTO.FromEntity(item1);
         _sistema.EliminarItem("Catalogo Test", dto);
 
         Assert.IsFalse(item2.EstadoDuplicado);
@@ -374,7 +375,7 @@ public class SistemaPruebas
     public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");
-        var dto = ItemEditDataTransfer.FromEntity(item);
+        var dto = ItemDTO.FromEntity(item);
         _sistema.EliminarItem("Catalogo Test", dto);
     }
 
@@ -383,7 +384,7 @@ public class SistemaPruebas
     public void EliminarItem_CatalogoNoExistente_LanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");
-        var dto = ItemEditDataTransfer.FromEntity(item);
+        var dto = ItemDTO.FromEntity(item);
         _sistema.EliminarItem("Catalogo Inexistente", dto);
     }
 
@@ -533,7 +534,7 @@ public class SistemaPruebas
     {
         var item = new Item("Título prueba", "Descripción prueba", "Marca1", "Modelo1", "Cat1");
 
-        var dto = ItemEditDataTransfer.FromEntity(item);
+        var dto = ItemDTO.FromEntity(item);
 
         Assert.AreEqual(item.Id, dto.Id);
         Assert.AreEqual(item.Titulo, dto.Titulo);
@@ -548,7 +549,7 @@ public class SistemaPruebas
     {
         var item = new Item("Titulo", "Descripcion"); 
 
-        var dto = ItemEditDataTransfer.FromEntity(item);
+        var dto = ItemDTO.FromEntity(item);
 
         Assert.AreEqual(item.Id, dto.Id);
         Assert.AreEqual(item.Titulo, dto.Titulo);

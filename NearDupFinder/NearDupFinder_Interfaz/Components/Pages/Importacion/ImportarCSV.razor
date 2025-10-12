@@ -1,0 +1,173 @@
+@page "/importar-csv"
+@using System.Globalization
+@using System.Linq
+@using CsvHelper
+@using CsvHelper.Configuration
+@using NearDupFinder_LogicaDeNegocio
+@using NearDupFInder_LogicaDeNegocio.Servicios
+@inject Sistema Sistema
+@rendermode InteractiveServer
+
+<PageTitle>Importar</PageTitle>
+
+<div class="container px-0">
+    <div class="row">
+        <div class="col-12 col-lg-8">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <h1 class="h4 mb-0">Importar archivo</h1>
+            </div>
+
+            @if (_error)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                    Error al intentar leer el archivo.
+                    <button type="button" class="btn-close" @onclick="CerrarAlerta" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            @if (_exito)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-3" role="status">
+                    El archivo fue leído con éxito.
+                    <button type="button" class="btn-close" @onclick="CerrarAlerta" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Seleccionar archivo CSV</label>
+                        <div class="input-group">
+                            <InputFile OnChange="SeleccionarArchivo" accept=".csv" />
+                        </div>
+                        <div class="form-text">
+                            Encabezados esperados: <code>id, titulo, marca, modelo, descripción, categoría, catalogo</code>.
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 align-items-center">
+                        <button class="btn btn-primary"
+                                @onclick="ProcesarCsv"
+                                disabled="@(_archivo is null)">
+                            Leer archivo
+                        </button>
+
+                        @if (_archivo is not null)
+                        {
+                            <span class="text-muted small">
+                                Archivo: @_archivo.Name (@Math.Round(_archivo.Size / 1024.0, 1) KB)
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    
+    private IBrowserFile? _archivo;
+    private bool _error;
+    private bool _exito;
+
+    private void SeleccionarArchivo(InputFileChangeEventArgs e)
+    {
+        _archivo = e.File;
+        _error = false;
+        _exito = false;
+    }
+    
+    private async Task ProcesarCsv()
+    {
+        _error = false;
+
+        if (_archivo is null)
+        {
+            _error = true;
+            return;
+        }
+
+        List<string> titulos = new List<string>();
+        var filas = new List<Fila>();
+        int totalDeFilas = 0;
+
+        try
+        {
+            await using var flujo = _archivo.OpenReadStream();
+            using var lector = new StreamReader(flujo);
+
+            var configuracion = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = true,
+                Delimiter = ",",
+                IgnoreBlankLines = true,
+                TrimOptions = TrimOptions.Trim,
+                BadDataFound = null,
+                MissingFieldFound = null
+            };
+
+            using var csv = new CsvReader(lector, configuracion);
+
+            if (!await csv.ReadAsync())
+            {
+                _error = true;
+                return;
+            }
+
+            csv.ReadHeader();
+            if (csv.HeaderRecord is null || csv.HeaderRecord.Length == 0)
+            {
+                _error = true;
+                return;
+            }
+
+            titulos = csv.HeaderRecord.ToList();
+
+            while (await csv.ReadAsync())
+            {
+                totalDeFilas++;
+
+                if (filas.Count < 15)
+                {
+                    string id = csv.TryGetField("id", out string idLeido) ? idLeido : string.Empty;
+                    string titulo = csv.TryGetField("titulo", out string tituloLeido) ? tituloLeido : string.Empty;
+                    string marca = csv.TryGetField("marca", out string marcaLeida) ? marcaLeida : string.Empty;
+                    string modelo = csv.TryGetField("modelo", out string modeloLeido) ? modeloLeido : string.Empty;
+                    string descripcion = csv.TryGetField("descripción", out string descripcionLeida) ? descripcionLeida : string.Empty;
+                    string categoria = csv.TryGetField("categoría", out string categoriaLeida) ? categoriaLeida : string.Empty;
+                    string catalogo = csv.TryGetField("catalogo", out string catalogoLeido) ? catalogoLeido : string.Empty;
+
+                    Fila nuevaFila = new Fila(id!, titulo!, marca!, modelo!, descripcion!, categoria!, catalogo!);
+                    filas.Add(nuevaFila);
+                }
+            }
+        }
+        catch
+        {
+            _error = true;
+        }
+        finally
+        {
+            Sistema.ImportarItemsDesdeCsv(titulos, totalDeFilas, filas);
+        }
+        
+        ResetEstado();
+    }
+    
+    private void CerrarAlerta()
+    {
+        _error = false;
+        _exito = false;
+    }
+
+    private void ResetEstado()
+    {
+        _exito = true;
+        _archivo = null;
+        StateHasChanged();
+    }
+}
