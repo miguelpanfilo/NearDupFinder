@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace NearDupFinder_Dominio.Clases;
 
 public class LogEntry
@@ -7,6 +9,7 @@ public class LogEntry
     public AccionLog Accion { get; init; }
     public string Detalles { get; init; } = string.Empty;
 
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         string timestampIso = Timestamp.ToString("yyyy-MM-ddTHH:mm:ss");

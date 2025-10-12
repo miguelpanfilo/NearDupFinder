@@ -1,5 +1,5 @@
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_Dominio.Controladores;
+using NearDupFInder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 

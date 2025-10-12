@@ -1,0 +1,112 @@
+@page "/cambiar-clave-usuario"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_LogicaDeNegocio
+@inject AuthenticationStateProvider Auth
+@inject Sistema Sistema
+
+<PageTitle>Cambiar contraseña</PageTitle>
+
+@if(_error)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @_mensaje
+        <button type="button" class="btn-close" @onclick="CerrarAlerta" aria-label="Cerrar"></button>
+    </div>
+}
+
+@if(_exito)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="status">
+        @_mensaje
+        <button type="button" class="btn-close" @onclick="CerrarAlerta" aria-label="Cerrar"></button>
+    </div>
+}
+
+<h1 class="mb-3">Cambiar contraseña</h1>
+
+<form>
+    <div class="mb-3">
+        <label class="form-label" for="claveVieja">Contraseña anterior</label>
+        <input type="password" class="form-control" id="claveVieja" @bind="_claveVieja" />
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label" for="claveNueva">Contraseña nueva</label>
+        <input type="password" class="form-control" id="claveNueva" @bind="_claveNueva" />
+    </div>
+    
+    <div class="mt-3 d-flex gap-2">
+        <button type="button" class="btn btn-primary" @onclick="CambiarClave">Guardar cambios</button>
+    </div>
+</form>
+
+@code {
+    private string? _email;
+    private string? _claveVieja = string.Empty;
+    private string? _claveNueva = string.Empty;
+    
+    private bool _error;
+    private bool _exito;
+    private string _mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await Auth.GetAuthenticationStateAsync()).User;
+        _email = user.FindFirst(ClaimTypes.Email)?.Value;
+    }
+
+    private void CambiarClave()
+    {
+        Usuario? usuarioAutenticado = Sistema.ValidarUsuario(_email, _claveVieja);
+        if (usuarioAutenticado is null)
+        {        
+            NotificarError("La contraseña actual no es la correcta.");
+            LimpiarCampos();
+            StateHasChanged();
+            return;
+        }
+        
+        bool seModificoLaClave = Sistema.ModificarClave(_email!,_claveVieja!, _claveNueva);
+        if (seModificoLaClave)
+        {
+            NotificarExito("La contraseña fue cambiada correctamente.");
+        }
+        else
+        {
+            NotificarError("La contraseña nueva no es valida.");
+        }
+
+        LimpiarCampos();
+        StateHasChanged();
+    }
+    
+    private void LimpiarCampos()
+    {
+        _claveVieja = string.Empty;
+        _claveNueva = string.Empty;
+    }
+
+    private void NotificarExito(string mensaje)
+    {
+        _exito = true;
+        _error = false;
+        _mensaje = mensaje;
+    }
+    
+    private void NotificarError(string mensaje)
+    {
+        _error = true;
+        _exito = false;
+        _mensaje = mensaje;
+    }
+    
+    private void CerrarAlerta()
+    {
+        _error = false;
+        _exito = false;
+        _mensaje = string.Empty;
+    }
+}
