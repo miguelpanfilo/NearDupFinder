@@ -78,7 +78,6 @@ public class Sistema
             RegistrarLog(LogEntry.AccionLog.AltaUsuario, $"Usuario: '{email}'");
         return pasaAltaDeUsuario;
     }
-
     
     public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
@@ -155,7 +154,7 @@ public class Sistema
 
     //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
-    
+
     private void PrecargarCatalogos()
     {
         var catalogoTecno = new Catalogo("Tecnología");
@@ -235,8 +234,8 @@ public class Sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
-        
-        catalogoDeportes.ConfirmarClusters(nuevoItem1,nuevoItem);
+
+        catalogoDeportes.ConfirmarClusters(nuevoItem1, nuevoItem);
     }
     public void AgregarCatalogo(Catalogo catalogo)
     {
@@ -257,7 +256,7 @@ public class Sistema
         catalogo.CambiarTitulo(titulo);
     }
     
-    public void CambiarDescripcionCatalogo(Catalogo catalogo, string descripcion)
+    public void CambiarDescripcionCatalogo(Catalogo catalogo, string? descripcion)
     {
         catalogo.CambiarDescripcion(descripcion);
     }
@@ -273,8 +272,11 @@ public class Sistema
     public IReadOnlyCollection<Catalogo> Catalogos => _catalogos.AsReadOnly();
 
     public IReadOnlyCollection<Item> ObtenerItemsDelCatalogo(Catalogo catalogo) => catalogo.Items;
+
+    public Catalogo? ObtenerCatalogoPorId(int id)
+        => _catalogos.FirstOrDefault(c => c.Id == id);
     
-    public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
+    public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
         => _catalogos.FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
 
     public int CantidadDeCatalogos()
@@ -289,7 +291,7 @@ public class Sistema
     public void AltaItemConAltaDuplicados(string catalogoTitulo, Item? nuevoItem)
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
-
+        
         ValidarCatalogoYItem(catalogo, nuevoItem);
 
         AsegurarIdUnico(nuevoItem);
@@ -342,18 +344,17 @@ public class Sistema
             throw new ItemException("Título y Descripción son obligatorios.");
     }
 
-  
 
     public void ActualizarDuplicadosPara(Catalogo? catalogo, Item? itemEditado)
     {
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
-
-    EliminarDuplicadosPrevios(itemEditado);
-    catalogo.QuitarItemDeCluster(itemEditado);
+        
+        EliminarDuplicadosPrevios(itemEditado);
+        catalogo.QuitarItemDeCluster(itemEditado);
     
-    var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-    AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
+        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
 
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
@@ -437,7 +438,7 @@ public class Sistema
 
     public void FusionarItemsEnElCLuster(Cluster clusterAFusionar)
     {
-        bool fusionado = clusterAFusionar.FuncionarCanonico();
+        bool fusionado = clusterAFusionar.FusionarCanonico();
     
         if (fusionado)
         {
@@ -445,7 +446,6 @@ public class Sistema
                 $"Se fusionó el canónico del cluster {clusterAFusionar.Id} con {clusterAFusionar.PertenecientesCluster.Count()} ítems.");
         }
     }
-
 
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
     {

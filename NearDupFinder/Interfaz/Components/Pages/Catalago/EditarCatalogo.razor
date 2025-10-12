@@ -1,4 +1,4 @@
-@page "/catalogos/{titulo}/editar"
+@page "/catalogos/{Id:int}/editar"
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
 @inject Sistema Sistema
@@ -38,7 +38,7 @@ else
 
 @code {
     [Parameter]
-    public string? Titulo { get; set; }
+    public int Id { get; set;}
 
     private Catalogo? _catalogo;
     private string _titulo = string.Empty;
@@ -48,10 +48,9 @@ else
 
     protected override void OnParametersSet()
     {
-        var buscado = Uri.UnescapeDataString(Titulo ?? string.Empty);
         
-        _catalogo = Sistema.ObtenerCatalogoPorTitulo(buscado);
-
+        _catalogo = Sistema.ObtenerCatalogoPorId(Id);
+        
         if (_catalogo is null)
         {
             NotificarError("El catalogo que deseas editar no existe.");

@@ -15,38 +15,41 @@ public class ClusterPruebas
     
 
     [TestMethod]
-    public void ConfirmarDuplicado_CreaUnClusterConDosMiembros()
+    public void ConfirmarDuplicado_CreaUnClusterConDosMiembros_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        var b = new Item { Titulo = "B", Descripcion = "d" };
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
 
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
         
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.ConfirmarClusters(itemA, itemB);
 
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        var cantidadEsperada = 1;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
 
         var cluster = _catalogo.Clusters.First();
-        
+        cantidadEsperada = 2;
         var pertenecientesCluster = cluster.PertenecientesCluster.ToList();
-        Assert.AreEqual(2, pertenecientesCluster.Count);
+        
+        Assert.AreEqual(cantidadEsperada, pertenecientesCluster.Count);
         CollectionAssert.AreEquivalent(
-            new[] { a, b },
+            new[] { itemA, itemB },
             pertenecientesCluster);
     }
     
     [TestMethod]
-    public void ConfirmarDuplicado_ItemB_Null_LanzaArgumentNullException()
+    public void ConfirmarDuplicado_ItemB_Null_ErrorTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        _catalogo.AgregarItem(a);
+        var item = new Item { Titulo = "A", Descripcion = "d" };
+        _catalogo.AgregarItem(item);
         
-        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(a, null!));
+        var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.ConfirmarClusters(item, null!));
         StringAssert.Contains(ex.Message, "El parametro no puede ser null");
     }
     [TestMethod]
-    public void ConfirmarDuplicado_ItemA_Null_LanzaArgumentNullException()
+    public void ConfirmarDuplicado_ItemA_Null_ErrorTest()
     {
         var a = new Item { Titulo = "A", Descripcion = "d" };
         _catalogo.AgregarItem(a);
@@ -56,171 +59,192 @@ public class ClusterPruebas
     }
     
     [TestMethod]
-    public void ConfirmarDuplicado_ItemNoPerteneceAlCatalogo_LanzaInvalidOperationException()
+    public void ConfirmarDuplicado_ItemNoPerteneceAlCatalogo_ErrorTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        var b = new Item { Titulo = "B", Descripcion = "d" };
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
 
-        _catalogo.AgregarItem(a);
+        _catalogo.AgregarItem(itemA);
         
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.ConfirmarClusters(a, b));
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.ConfirmarClusters(itemA, itemB));
         StringAssert.Contains(ex.Message, "Uno o ambos ítems no pertenecen al catalogo");
     }
     
     [TestMethod]
-    public void ConfirmarDuplicado_RepiteMismoPar_NoCreaNuevoCluster()
+    public void ConfirmarDuplicado_RepiteMismoPar_NoCreaNuevoCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        var b = new Item { Titulo = "B", Descripcion = "d" };
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
         
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        
         var cantidadClauster = _catalogo.Clusters.Count();
-        _catalogo.ConfirmarClusters(a, b); 
+        
+        _catalogo.ConfirmarClusters(itemA, itemB); 
         
         Assert.AreEqual(cantidadClauster, _catalogo.Clusters.Count());
     }
     
     
     [TestMethod]
-    public void ConfirmarDuplicado_Transitivo_AgregaTerceroAlMismoCluster()
+    public void ConfirmarDuplicado_Transitivo_AgregaTerceroAlMismoCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d1" };
-        var b = new Item { Titulo = "B", Descripcion = "d2" };
-        var c = new Item { Titulo = "C", Descripcion = "d3" };
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
-        _catalogo.AgregarItem(c);
+        var itemA = new Item { Titulo = "A", Descripcion = "d1" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d2" };
+        var itemC = new Item { Titulo = "C", Descripcion = "d3" };
         
-        _catalogo.ConfirmarClusters(a, b); 
-        _catalogo.ConfirmarClusters(b, c); 
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.AgregarItem(itemC);
         
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
-        var cluster = _catalogo.Clusters.First();
-        CollectionAssert.AreEquivalent(
-            new[] { a, b, c },
-            cluster.PertenecientesCluster.ToList()
-        );
-    }
-    [TestMethod]
-    public void ConfirmarDuplicado_Transitivo2_AgregaTerceroAlMismoCluster()
-    {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        var b = new Item { Titulo = "B", Descripcion = "d" };
-        var c = new Item { Titulo = "C", Descripcion = "d" };
-        
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
-        _catalogo.AgregarItem(c);
-        
-        _catalogo.ConfirmarClusters(a, b);
-        
-        var cantidadClauster = _catalogo.Clusters.Count();
-        
-        _catalogo.ConfirmarClusters(c , a); 
-        
-        Assert.AreEqual(cantidadClauster, _catalogo.Clusters.Count());
-        
-        var cluster = _catalogo.Clusters.First();
-        CollectionAssert.AreEquivalent(
-            new[] { a, b, c },
-            cluster.PertenecientesCluster.ToList()
-        );
-    }
-    
-    [TestMethod]
-    public void ConfirmarDuplicado_ConectaDosClusters_DebeUnirlos()
-    {
-        var a = new Item { Titulo = "A", Descripcion = "d1" };
-        var b = new Item { Titulo = "B", Descripcion = "d2" };
-        var c = new Item { Titulo = "C", Descripcion = "d3" };
-        var d = new Item { Titulo = "D", Descripcion = "d4" };
+        _catalogo.ConfirmarClusters(itemA, itemB); 
+        _catalogo.ConfirmarClusters(itemB, itemC);
 
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
-        _catalogo.AgregarItem(c);
-        _catalogo.AgregarItem(d);
+        var cantidadEsperada = 1;
+        var cluster = _catalogo.Clusters.First();
         
-        _catalogo.ConfirmarClusters(a, b);
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
         
-        _catalogo.ConfirmarClusters(c, d);
+        CollectionAssert.AreEquivalent(
+            new[] { itemA, itemB, itemC },
+            cluster.PertenecientesCluster.ToList()
+        );
+    }
+    [TestMethod]
+    public void ConfirmarDuplicado_Transitivo2_AgregaTerceroAlMismoCluster_OkTest()
+    {
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
+        var itemC = new Item { Titulo = "C", Descripcion = "d" };
         
-        Assert.AreEqual(2, _catalogo.Clusters.Count());
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.AgregarItem(itemC);
         
-        _catalogo.ConfirmarClusters(b, d);
+        _catalogo.ConfirmarClusters(itemA, itemB);
         
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        var cantidadClauster = _catalogo.Clusters.Count();
+        
+        _catalogo.ConfirmarClusters(itemC , itemA); 
+        
+        Assert.AreEqual(cantidadClauster, _catalogo.Clusters.Count());
+        
+        var cluster = _catalogo.Clusters.First();
+        
+        CollectionAssert.AreEquivalent(
+            new[] { itemA, itemB, itemC },
+            cluster.PertenecientesCluster.ToList()
+        );
+    }
+    
+    [TestMethod]
+    public void ConfirmarDuplicado_ConectaDosClusters_DebeUnirlos_OkTest()
+    {
+        var itemA = new Item { Titulo = "A", Descripcion = "d1" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d2" };
+        var itemC = new Item { Titulo = "C", Descripcion = "d3" };
+        var itemD = new Item { Titulo = "D", Descripcion = "d4" };
+
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.AgregarItem(itemC);
+        _catalogo.AgregarItem(itemD);
+        
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        
+        _catalogo.ConfirmarClusters(itemC, itemD);
+        
+        var cantidadEsperada = 2;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
+        
+        _catalogo.ConfirmarClusters(itemB, itemD);
+
+        cantidadEsperada = 1;
+            
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
         
         var clusterUnico = _catalogo.Clusters.First();
         CollectionAssert.AreEquivalent(
-            new[] { a, b, c, d },
+            new[] { itemA, itemB, itemC, itemD },
             clusterUnico.PertenecientesCluster.ToList()
         );
     }
     
     [TestMethod]
-    public void ConfirmarDuplicado_MismoParEnOrdenInverso_NoCreaNuevoCluster()
+    public void ConfirmarDuplicado_MismoParEnOrdenInverso_NoCreaNuevoCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        var b = new Item { Titulo = "B", Descripcion = "d" };
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
         
-        _catalogo.ConfirmarClusters(a, b);
-        _catalogo.ConfirmarClusters(b, a);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        _catalogo.ConfirmarClusters(itemB, itemA);
         
         Assert.AreEqual(1, _catalogo.Clusters.Count());
         
         var cluster = _catalogo.Clusters.First();
         
         CollectionAssert.AreEquivalent(
-            new[] { a, b },
+            new[] { itemA, itemB },
             cluster.PertenecientesCluster.ToList()
         );
     }
     
     [TestMethod]
-    public void ConfirmarDuplicado_MismoItem_NoCreaCluster()
+    public void ConfirmarDuplicado_MismoItem_NoCreaCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d" };
-        _catalogo.AgregarItem(a);
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var cantidadEsperada = 0;
+        
+        _catalogo.AgregarItem(itemA);
 
-        _catalogo.ConfirmarClusters(a, a);
+        _catalogo.ConfirmarClusters(itemA, itemA);
 
-        Assert.AreEqual(0, _catalogo.Clusters.Count());
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
     }
     
     [TestMethod]
-    public void QuitarDeCluster_DejaSinClusterSiQuedaUnSoloItem()
+    public void QuitarDeCluster_DejaSinClusterSiQuedaUnSoloItem_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d1" };
-        var b = new Item { Titulo = "B", Descripcion = "d2" };
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
+        var itemA = new Item { Titulo = "A", Descripcion = "d1" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d2" };
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
 
-        _catalogo.ConfirmarClusters(a, b);
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        _catalogo.ConfirmarClusters(itemA, itemB);
         
-        _catalogo.QuitarItemDeCluster(b);
+        var cantidadEsperada = 1;
         
-        Assert.AreEqual(0, _catalogo.Clusters.Count());
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
+        
+        _catalogo.QuitarItemDeCluster(itemB);
+
+        cantidadEsperada = 0;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
     }
     
     [TestMethod]
-    public void QuitarItemDeCluster_ItemSinCluster_NoCambiaNada()
+    public void QuitarItemDeCluster_ItemSinCluster_NoCambiaNada_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d1"};
+        var itemA = new Item { Titulo = "A", Descripcion = "d1"};
+        var cantidadEsperada = 0;
         
-        _catalogo.AgregarItem(a);
+        _catalogo.AgregarItem(itemA);
 
-        _catalogo.QuitarItemDeCluster(a);
+        _catalogo.QuitarItemDeCluster(itemA);
         
-        Assert.AreEqual(0, _catalogo.Clusters.Count());
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
     }
     
     [TestMethod]
-    public void QuitarItemDeCluster_ItemNull_LanzaArgumentNullException()
+    public void QuitarItemDeCluster_ItemNull_ErrorTest()
     {
         var ex = Assert.ThrowsException<ArgumentNullException>(() => _catalogo.QuitarItemDeCluster(null!));
         
@@ -228,149 +252,157 @@ public class ClusterPruebas
     }
     
     [TestMethod]
-    public void QuitarItemDeCluster_ConTresMiembros_QuedaClusterConDos()
+    public void QuitarItemDeCluster_ConTresMiembros_QuedaClusterConDos_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d1" };
-        var b = new Item { Titulo = "B", Descripcion = "d2" };
-        var c = new Item { Titulo = "C", Descripcion = "d3" };
+        var itemA = new Item { Titulo = "A", Descripcion = "d1" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d2" };
+        var itemC = new Item { Titulo = "C", Descripcion = "d3" };
         
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
-        _catalogo.AgregarItem(c);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.AgregarItem(itemC);
 
-        _catalogo.ConfirmarClusters(a, b);
-        _catalogo.ConfirmarClusters(b, c);
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        _catalogo.ConfirmarClusters(itemB, itemC);
 
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        var cantidadEsperada = 1;
         
-        _catalogo.QuitarItemDeCluster(b);
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
         
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        _catalogo.QuitarItemDeCluster(itemB);
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
+        
         var cluster = _catalogo.Clusters.First();
+        
         CollectionAssert.AreEquivalent(
-            new[] { a, c },
+            new[] { itemA, itemC },
             cluster.PertenecientesCluster.ToList()
         );
     }
     
     [TestMethod]
-    public void QuitarItemDeCluster_ItemFueraDelCatalogo_LanzaInvalidOperationException()
+    public void QuitarItemDeCluster_ItemFueraDelCatalogo_ErrorTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d1" };
-        var b = new Item { Titulo = "B", Descripcion = "d1" };
+        var itemA = new Item { Titulo = "A", Descripcion = "d1" };
+        var itemQuitar = new Item { Titulo = "B", Descripcion = "d1" };
 
-        _catalogo.AgregarItem(a);
-        _catalogo.ConfirmarClusters(a, a);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.ConfirmarClusters(itemA, itemA);
         
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.QuitarItemDeCluster(b));
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.QuitarItemDeCluster(itemQuitar));
         
         StringAssert.Contains(ex.Message, "El item no pertenece al catalogo");
     }
     
     [TestMethod]
-    public void ObtenerClusterDe_ItemConCluster_RetornaEseCluster()
+    public void ObtenerClusterDe_ItemConCluster_RetornaEseCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "d1" };
-        var b = new Item { Titulo = "B", Descripcion = "d1" };
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b);
+        var itemA = new Item { Titulo = "A", Descripcion = "d1" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d1" };
+        _catalogo.AgregarItem(itemA); 
+        _catalogo.AgregarItem(itemB);
 
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.ConfirmarClusters(itemA, itemB);
 
-        var cluster = _catalogo.ObtenerClusterDe(a);
+        var cluster = _catalogo.ObtenerClusterDe(itemA);
 
         Assert.IsNotNull(cluster);
         CollectionAssert.AreEquivalent(
-            new[] { a, b },
+            new[] { itemA, itemB },
             cluster.PertenecientesCluster.ToList()
         );
     }
     
     [TestMethod]
-    public void Cluster_Canonico_EsElDeDescripcionMasLarga()
+    public void Cluster_Canonico_EsElDeDescripcionMasLarga_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "corta" };
-        var b = new Item { Titulo = "B", Descripcion = "mucho mas larga" };
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
+        var itemA = new Item { Titulo = "A", Descripcion = "corta" };
+        var itemCandidato = new Item { Titulo = "B", Descripcion = "mucho mas larga" };
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemCandidato);
 
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.ConfirmarClusters(itemA, itemCandidato);
         
         var cluster = _catalogo.Clusters.First();
-        cluster.FuncionarCanonico();
-        Assert.AreSame(b, cluster.Canonico);
+        cluster.FusionarCanonico();
+        Assert.AreSame(itemCandidato, cluster.Canonico);
     }
     
     [TestMethod]
-    public void ClusterVacio_CanonicoNull()
+    public void ClusterVacio_CanonicoNull_OkTest()
     {
         int idCluster = 1;
         var pertenecientes = new HashSet<Item>();
         var cluster = new Cluster(idCluster, pertenecientes);
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
         Assert.IsNull(cluster.Canonico);
     }
     
     [TestMethod]
-    public void QuitarItemDeCluster_RemueveNoCanonico_EnClusterDeDos_EliminaCluster()
+    public void QuitarItemDeCluster_RemueveNoCanonico_EnClusterDeDos_EliminaCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "corta" };
-        var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b);
+        var itemA = new Item { Titulo = "A", Descripcion = "corta" };
+        var itemQuitar = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
+        _catalogo.AgregarItem(itemA); 
+        _catalogo.AgregarItem(itemQuitar);
 
-        _catalogo.ConfirmarClusters(a, b); 
+        _catalogo.ConfirmarClusters(itemA, itemQuitar);
+        var cantidadEsperada = 1;
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
         
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
+        _catalogo.QuitarItemDeCluster(itemQuitar);
         
-        _catalogo.QuitarItemDeCluster(b);
-
-        Assert.AreEqual(0, _catalogo.Clusters.Count());
+        cantidadEsperada = 0;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
     }
     
     [TestMethod]
-    public void QuitarItemDeCluster_RemueveCanonico_EnClusterDeTres_YActualizaCanonico()
+    public void QuitarItemDeCluster_RemueveCanonico_EnClusterDeTres_YActualizaCanonico_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "corta" };
-        var b = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
-        var c = new Item { Titulo = "C", Descripcion = "descripcion media" }; 
+        var itemA = new Item { Titulo = "A", Descripcion = "corta" };
+        var itemPrimerCandidato = new Item { Titulo = "B", Descripcion = "descripcion mas larga" }; 
+        var itemSegundoCandidato = new Item { Titulo = "C", Descripcion = "descripcion media" }; 
         
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b);
-        _catalogo.AgregarItem(c);
+        _catalogo.AgregarItem(itemA); 
+        _catalogo.AgregarItem(itemPrimerCandidato);
+        _catalogo.AgregarItem(itemSegundoCandidato);
 
-        _catalogo.ConfirmarClusters(a, b); 
-        _catalogo.ConfirmarClusters(c, b);
+        _catalogo.ConfirmarClusters(itemA, itemPrimerCandidato); 
+        _catalogo.ConfirmarClusters(itemSegundoCandidato, itemPrimerCandidato);
         
         var cluster = _catalogo.Clusters.First();
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
-        Assert.AreSame(b,cluster.Canonico);
+        Assert.AreSame(itemPrimerCandidato,cluster.Canonico);
         
-        _catalogo.QuitarItemDeCluster(b);
+        _catalogo.QuitarItemDeCluster(itemPrimerCandidato);
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
-        Assert.AreEqual(1, _catalogo.Clusters.Count());
-        Assert.AreSame(c, cluster.Canonico);
+        var cantidadEsperada = 1;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.Clusters.Count());
+        Assert.AreSame(itemSegundoCandidato, cluster.Canonico);
     }
     
     [TestMethod]
-    public void FusionarCampos_IgnoraVaciosYTrim()
+    public void FusionarCampos_IgnoraVaciosYTrim_OkTest()
     {
-        var a = new Item { Titulo="X", Descripcion="Descripcion larga",Categoria="No soy vacio" };
-        var b  = new Item { Titulo="Y", Descripcion="corta", Marca="alguna", Modelo="otro",Categoria="No importa si tengo" };
+        var itemCandidato = new Item { Titulo="X", Descripcion="Descripcion larga",Categoria="No soy vacio" };
+        var itemB  = new Item { Titulo="Y", Descripcion="corta", Marca="alguna", Modelo="otro",Categoria="No importa si tengo" };
 
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b);
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.AgregarItem(itemCandidato); 
+        _catalogo.AgregarItem(itemB);
+        _catalogo.ConfirmarClusters(itemCandidato, itemB);
         
         var cluster = _catalogo.Clusters.First();
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
         var canonico = cluster.Canonico;
         
@@ -381,22 +413,22 @@ public class ClusterPruebas
     }
     
     [TestMethod]
-    public void FusionarCampos_TomaMasLargo_YNoPisaSiCanonicoYaTiene()
+    public void FusionarCampos_TomaMasLargo_YNoPisaSiCanonicoYaTiene_OkTest()
     {
-        var a = new Item { Titulo="A", Descripcion="larga", Marca="",     Modelo="",     Categoria="" };
-        var b = new Item { Titulo="B", Descripcion="mucho mas larga", Marca="AC",    Modelo="M1",  Categoria="X" };
-        var c = new Item { Titulo="C", Descripcion="media",            Marca="ACMECO", Modelo="M123", Categoria="Categoria Larguísima" };
+        var itemA = new Item { Titulo="A", Descripcion="larga", Marca="", Modelo="", Categoria="" };
+        var itemCandidato = new Item { Titulo="B", Descripcion="mucho mas larga", Marca="AC", Modelo="M1",  Categoria="X" };
+        var itemC = new Item { Titulo="C", Descripcion="media", Marca="ACMECO", Modelo="M123", Categoria="Categoria Larguísima" };
 
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b); 
-        _catalogo.AgregarItem(c);
+        _catalogo.AgregarItem(itemA); 
+        _catalogo.AgregarItem(itemCandidato); 
+        _catalogo.AgregarItem(itemC);
         
-        _catalogo.ConfirmarClusters(a, b);
-        _catalogo.ConfirmarClusters(b, c);
+        _catalogo.ConfirmarClusters(itemA, itemCandidato);
+        _catalogo.ConfirmarClusters(itemCandidato, itemC);
 
         var cluster = _catalogo.Clusters.First();
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
         var canonico = cluster.Canonico;
         
@@ -407,31 +439,33 @@ public class ClusterPruebas
     }
     
     [TestMethod]
-    public void FusionarCampos_CambiaDeCanonicoYCampos_ConTresItems()
+    public void FusionarCampos_CambiaDeCanonicoYCampos_ConTresItems_OkTest()
     {
-        var a = new Item { Titulo="A", Descripcion="mucho mas larga", Marca="", Modelo="", Categoria="" };
-        var b = new Item { Titulo="B", Descripcion="larga", Marca="AC", Modelo="M1",  Categoria="X" };
-        var c = new Item { Titulo="C", Descripcion="nuevo mas largooo"};
+        var itemPrimerCandidato = new Item { Titulo="A", Descripcion="mucho mas larga", Marca="", Modelo="", Categoria="" };
+        var itemB = new Item { Titulo="B", Descripcion="larga", Marca="AC", Modelo="M1",  Categoria="X" };
+        var itemSegundoCandidato = new Item { Titulo="C", Descripcion="nuevo mas largooo"};
 
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b); 
-        _catalogo.AgregarItem(c);
+        _catalogo.AgregarItem(itemPrimerCandidato); 
+        _catalogo.AgregarItem(itemB); 
+        _catalogo.AgregarItem(itemSegundoCandidato);
         
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.ConfirmarClusters(itemPrimerCandidato, itemB);
+        
         var cluster = _catalogo.Clusters.First();
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
+        
         var canonico = cluster.Canonico;
         
-        Assert.AreSame(a, canonico);
+        Assert.AreSame(itemPrimerCandidato, canonico);
         
-        _catalogo.ConfirmarClusters(b, c);
-        cluster.FuncionarCanonico();
+        _catalogo.ConfirmarClusters(itemB, itemSegundoCandidato);
+        
+        cluster.FusionarCanonico();
         
         var canonicoDespues = cluster.Canonico;
         
-        Assert.AreSame(c, canonicoDespues);
-        
+        Assert.AreSame(itemSegundoCandidato, canonicoDespues);
         Assert.IsNotNull(canonico);
         Assert.AreEqual("AC", canonico.Marca);
         Assert.AreEqual("M1", canonico.Modelo);
@@ -439,82 +473,82 @@ public class ClusterPruebas
     }
     
     [TestMethod]
-    public void FusionarCampos_QuitarCanonico_RecalculaYFusionaConRestantes()
+    public void FusionarCampos_QuitarCanonico_RecalculaYFusionaConRestantes_OkTest()
     {
-        var a = new Item { Titulo="A", Descripcion="mucho mas larga", Marca="", Modelo="", Categoria="" };
-        var b = new Item { Titulo="B", Descripcion="media", Marca="AC",  Modelo="M1",   Categoria="X" };
-        var c = new Item { Titulo="C", Descripcion="mediaa", Marca="ACME CORPORATION", Modelo="MODEL-2025" };
+        var itemCandidatoIncial = new Item { Titulo="A", Descripcion="mucho mas larga", Marca="", Modelo="", Categoria="" };
+        var itemB = new Item { Titulo="B", Descripcion="media", Marca="AC",  Modelo="M1",   Categoria="X" };
+        var itemCandiatoFinal = new Item { Titulo="C", Descripcion="mediaa", Marca="ACME CORPORATION", Modelo="MODEL-2025" };
 
-        _catalogo.AgregarItem(a); 
-        _catalogo.AgregarItem(b); 
-        _catalogo.AgregarItem(c);
+        _catalogo.AgregarItem(itemCandidatoIncial); 
+        _catalogo.AgregarItem(itemB); 
+        _catalogo.AgregarItem(itemCandiatoFinal);
         
-        _catalogo.ConfirmarClusters(a, b);
-        _catalogo.ConfirmarClusters(a, c);
+        _catalogo.ConfirmarClusters(itemCandidatoIncial, itemB);
+        _catalogo.ConfirmarClusters(itemCandidatoIncial, itemCandiatoFinal);
         
         var cluster = _catalogo.Clusters.First();
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
-        Assert.AreSame(a, cluster.Canonico);
+        Assert.AreSame(itemCandidatoIncial, cluster.Canonico);
 
-        _catalogo.QuitarItemDeCluster(a);
+        _catalogo.QuitarItemDeCluster(itemCandidatoIncial);
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
         var canonico = cluster.Canonico;
         
         Assert.IsNotNull(canonico);
-        Assert.AreSame(c, canonico);
+        Assert.AreSame(itemCandiatoFinal, canonico);
         Assert.AreEqual("ACME CORPORATION", canonico.Marca);
         Assert.AreEqual("MODEL-2025",       canonico.Modelo);
         Assert.AreEqual("X", canonico.Categoria);
     }
     
     [TestMethod]
-    public void FusionarCampos_MarcaEmpateLongitud_EligeLexicograficoAsc()
+    public void FusionarCampos_MarcaEmpateLongitud_EligeLexicograficoAsc_OkTest()
     {
-        var a = new Item { Titulo = "AAAAAA",      Descripcion = "ZZZZ", Marca = "Zeta" };
-        var b = new Item { Titulo = "BBBB",        Descripcion = "YYYY", Marca = "Beta" };
-        
-        var c = new Item { Titulo = "BBBBBBBBBBB", Descripcion = "YYYY" };
+        var itemA = new Item { Titulo = "AAAAAA", Descripcion = "ZZZZ", Marca = "Zeta" };
+        var itemB = new Item { Titulo = "BBBB", Descripcion = "YYYY", Marca = "Beta" };
+        var itemCandidato = new Item { Titulo = "BBBBBBBBBBB", Descripcion = "YYYY" };
     
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
-        _catalogo.AgregarItem(c);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.AgregarItem(itemCandidato);
         
-        _catalogo.ConfirmarClusters(a, b);
-        _catalogo.ConfirmarClusters(a, c);
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        _catalogo.ConfirmarClusters(itemA, itemCandidato);
         
         var cluster = _catalogo.Clusters.First();
         
-        cluster.FuncionarCanonico();
+        cluster.FusionarCanonico();
         
         var canonico = cluster.Canonico;
         
         Assert.IsNotNull(canonico);
-        Assert.AreEqual(c, canonico);
+        Assert.AreEqual(itemCandidato, canonico);
         Assert.AreEqual("Beta", canonico.Marca);
     }
     
     [TestMethod]
-    public void EliminarItem_QuePerteneceACluster_LoQuitaDelCluster()
+    public void EliminarItem_QuePerteneceACluster_LoQuitaDelCluster_OkTest()
     {
-        var a = new Item { Titulo = "A", Descripcion = "desc" };
-        var b = new Item { Titulo = "B", Descripcion = "desc" };
+        var itemA = new Item { Titulo = "A", Descripcion = "desc" };
+        var itemB = new Item { Titulo = "B", Descripcion = "desc" };
         
-        _catalogo.AgregarItem(a);
-        _catalogo.AgregarItem(b);
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
         
-        _catalogo.ConfirmarClusters(a, b);
+        _catalogo.ConfirmarClusters(itemA, itemB);
 
         var cluster = _catalogo.Clusters.First();
-        Assert.IsTrue(cluster.PertenecientesCluster.Contains(a));
-        Assert.IsTrue(cluster.PertenecientesCluster.Contains(b));
         
-        _catalogo.EliminarItem(a);
+        Assert.IsTrue(cluster.PertenecientesCluster.Contains(itemA));
+        Assert.IsTrue(cluster.PertenecientesCluster.Contains(itemB));
         
-        Assert.IsFalse(_catalogo.Items.Contains(a));
-        Assert.IsFalse(cluster.PertenecientesCluster.Contains(a));
+        _catalogo.EliminarItem(itemA);
+        
+        Assert.IsFalse(_catalogo.Items.Contains(itemA));
+        Assert.IsFalse(cluster.PertenecientesCluster.Contains(itemA));
     }
 }
