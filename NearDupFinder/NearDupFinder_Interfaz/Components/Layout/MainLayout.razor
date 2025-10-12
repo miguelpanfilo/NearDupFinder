@@ -49,7 +49,7 @@
             {
                 if (claim.Type == System.Security.Claims.ClaimTypes.Email)
                 {
-                    Sistema.SetUsuarioActual(claim.Value);
+                    Sistema.AsignarUsuarioActual(claim.Value);
                     break;
                 }
             }

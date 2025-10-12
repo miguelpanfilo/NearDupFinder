@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\NearDupFinder_DataAccess\NearDupFinder_DataAccess.csproj" />
+      <ProjectReference Include="..\..\NearDupFinder_Almacenamiento\NearDupFinder_Almacenamiento.csproj" />
       <ProjectReference Include="..\..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
     </ItemGroup>
 

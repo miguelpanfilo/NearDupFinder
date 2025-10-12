@@ -3,6 +3,7 @@
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio
+@using NearDupFInder_LogicaDeNegocio.DTO
 @inject NavigationManager Nav
 @inject Sistema sistema
 @rendermode InteractiveServer
@@ -143,12 +144,12 @@
     // Variables
     private string _mensajeErrorModal = "";
     private bool _mostrarModalEditar = false;
-    private ItemDTO _itemEditado;
+    private ItemDto _itemEditado;
 
     public Catalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
 
-    private List<ItemDTO> _itemsFiltradosEnTabla = new();
+    private List<ItemDto> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
 
     private string _textoBusqueda = string.Empty;
@@ -163,7 +164,7 @@
         if (_catalogoSeleccionado != null)
         {
             _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
-                .Select(item => ItemDTO.FromEntity(item))
+                .Select(item => ItemDto.FromEntity(item))
                 .ToList();
 
             _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
@@ -191,7 +192,7 @@
                 (string.IsNullOrWhiteSpace(_categoriaAFiltrar) ||
                  item.Categoria == _categoriaAFiltrar)
             )
-            .Select(item => ItemDTO.FromEntity(item))
+            .Select(item => ItemDto.FromEntity(item))
             .ToList();
 
         
@@ -208,7 +209,7 @@
         if (_catalogoSeleccionado != null)
         {
             _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
-                .Select(item => ItemDTO.FromEntity(item))
+                .Select(item => ItemDto.FromEntity(item))
                 .ToList();
         }
     }
@@ -234,7 +235,7 @@
         _itemEditado = null;
     }
 
-    private void AbrirModalEditar(ItemDTO dto)
+    private void AbrirModalEditar(ItemDto dto)
     {
         _itemEditado = dto;
         _mostrarModalEditar = true;
@@ -306,7 +307,7 @@
     }
 
 
-    private void EliminarItem(ItemDTO item)
+    private void EliminarItem(ItemDto item)
     {
         if (_catalogoSeleccionado == null || item == null) return;
 

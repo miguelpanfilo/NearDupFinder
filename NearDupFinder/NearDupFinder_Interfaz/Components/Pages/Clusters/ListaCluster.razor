@@ -110,7 +110,7 @@
         var canonico = cluster?.Canonico;
         
         if (canonico is not null && canonico.Equals(item))
-            Sistema.SetearNullCanonico(cluster);
+            Sistema.AsignarNuloCanonico(cluster);
         
         Sistema.RemoverItemDelCluster(catalogo, item);
         
