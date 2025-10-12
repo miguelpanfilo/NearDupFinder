@@ -1,6 +1,6 @@
 @page "/Cluster"
 @using NearDupFinder_Dominio.Clases
-@inject Sistema sistema
+@inject Sistema Sistema
 @rendermode InteractiveServer
 
 <PageTitle>Clusters</PageTitle>
@@ -81,7 +81,7 @@
 
     protected override void OnInitialized()
     {
-        _catalogos = sistema.Catalogos.ToList();
+        _catalogos = Sistema.Catalogos.ToList();
     }
 
     private void FiltrarPorCatalogo(ChangeEventArgs e)
@@ -93,7 +93,7 @@
     {
         if (!string.IsNullOrWhiteSpace(titulo))
         {
-            _catalogo = sistema.ObtenerCatalogoPorTitulo(titulo);
+            _catalogo = Sistema.ObtenerCatalogoPorTitulo(titulo);
             _clustersFiltrados = _catalogo?.Clusters.ToList() ?? new();
         }
         else
@@ -109,15 +109,15 @@
         var canonico = cluster?.Canonico;
         
         if (canonico is not null && canonico.Equals(item))
-            sistema.SetearNullCanonico(cluster);
+            Sistema.SetearNullCanonico(cluster);
         
-        sistema.RemoverItemDelCluster(catalogo, item);
+        Sistema.RemoverItemDelCluster(catalogo, item);
         
         RefrescarClustersPorTitulo(catalogo.Titulo);
     }
 
     private void FusionarCluster(Cluster cluster)
     {
-        sistema.FusionarItemsEnElCLuster(cluster);
+        Sistema.FusionarItemsEnElCLuster(cluster);
     }
 }

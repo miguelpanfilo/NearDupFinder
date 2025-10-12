@@ -24,11 +24,11 @@ public class Cluster
     }
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
     
-    public void FuncionarCanonico()
+    public void FusionarCanonico()
     {
         if (_pertenecientesCluster.Count == 0)
         {
-            Canonico = null!;
+            Canonico = null;
             return;
         }
         Canonico = _pertenecientesCluster
@@ -39,8 +39,9 @@ public class Cluster
         FusionarCampos(Canonico, _pertenecientesCluster);
     }
     
-    private void FusionarCampos(Item canonico, IEnumerable<Item> miembros)
+    private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
     {
+        
         canonico.Marca     = ElegirMejorCampo(canonico.Marca,     miembros.Select(m => m.Marca));
         canonico.Modelo    = ElegirMejorCampo(canonico.Modelo,    miembros.Select(m => m.Modelo));
         canonico.Categoria = ElegirMejorCampo(canonico.Categoria, miembros.Select(m => m.Categoria));

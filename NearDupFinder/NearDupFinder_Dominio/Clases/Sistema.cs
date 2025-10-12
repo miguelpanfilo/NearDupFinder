@@ -103,7 +103,7 @@ public class Sistema
 
     //------------------------------------------------------------------------
     /* Comienzo espacio Catalogo*/
-    
+
     private void PrecargarCatalogos()
     {
         var catalogoTecno = new Catalogo("Tecnología");
@@ -183,9 +183,10 @@ public class Sistema
         _catalogos.Add(catalogoTecno);
         _catalogos.Add(catalogoHogar);
         _catalogos.Add(catalogoDeportes);
-        
-        catalogoDeportes.ConfirmarClusters(nuevoItem1,nuevoItem);
+
+        catalogoDeportes.ConfirmarClusters(nuevoItem1, nuevoItem);
     }
+
     public void AgregarCatalogo(Catalogo catalogo)
     {
         if (_catalogos.Contains(catalogo))
@@ -205,7 +206,7 @@ public class Sistema
         catalogo.CambiarTitulo(titulo);
     }
     
-    public void CambiarDescripcionCatalogo(Catalogo catalogo, string descripcion)
+    public void CambiarDescripcionCatalogo(Catalogo catalogo, string? descripcion)
     {
         catalogo.CambiarDescripcion(descripcion);
     }
@@ -221,8 +222,10 @@ public class Sistema
     public IReadOnlyCollection<Catalogo> Catalogos => _catalogos.AsReadOnly();
 
     public IReadOnlyCollection<Item> ObtenerItemsDelCatalogo(Catalogo catalogo) => catalogo.Items;
-    
-    public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
+
+    public Catalogo? ObtenerCatalogoPorId(int id)
+        => _catalogos.FirstOrDefault(c => c.Id == id);
+    public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
         => _catalogos.FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
 
     public int CantidadDeCatalogos()
@@ -237,7 +240,7 @@ public class Sistema
     public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
-
+        
         ValidarCatalogoYItem(catalogo, nuevoItem);
 
         AsegurarIdUnico(nuevoItem);
@@ -289,12 +292,12 @@ public class Sistema
     {
         if (catalogo == null || itemEditado == null)
             throw new ArgumentNullException();
-
-    EliminarDuplicadosPrevios(itemEditado);
-    catalogo.QuitarItemDeCluster(itemEditado);
+        
+        EliminarDuplicadosPrevios(itemEditado);
+        catalogo.QuitarItemDeCluster(itemEditado);
     
-    var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-    AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
+        var nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
+        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
 
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
@@ -376,7 +379,7 @@ public class Sistema
 
     public void FusionarItemsEnElCLuster(Cluster clusterAFusionar)
     {
-        clusterAFusionar.FuncionarCanonico();
+        clusterAFusionar.FusionarCanonico();
     }
 
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)

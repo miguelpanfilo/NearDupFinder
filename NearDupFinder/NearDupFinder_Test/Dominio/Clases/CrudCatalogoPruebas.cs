@@ -1,4 +1,3 @@
-using NearDupFinder_Dominio;
 using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_Test.Dominio.Clases;
@@ -23,37 +22,40 @@ public class CrudCatalogoPruebas
     [TestMethod]
     public void AgregarCatalogo_OkTest()
     {
-        Catalogo c = new Catalogo("Catálogo");
+        Catalogo catalogo = new Catalogo("Catálogo");
+
+        var cantidadDeCatalogo = _sistema.CantidadDeCatalogos()+1;
+        _sistema.AgregarCatalogo(catalogo);
         
-        _sistema.AgregarCatalogo(c);
-        
-        Assert.AreEqual(1, _sistema.CantidadDeCatalogos());
-        CollectionAssert.Contains(_sistema.Catalogos.ToList(), c);
+        Assert.AreEqual(cantidadDeCatalogo, _sistema.CantidadDeCatalogos());
+        CollectionAssert.Contains(_sistema.Catalogos.ToList(), catalogo);
     }
     
     [TestMethod]
-    public void AgregarCatalogo_Duplicado_Falla()
+    public void AgregarCatalogo_Duplicado_ErrorTest()
     {
-        var c1 = new Catalogo("Stock Tata");
-        var c2 = new Catalogo("Stock Tata");
+        var catalogo1 = new Catalogo("Stock Tata");
+        var catalogo2 = new Catalogo("Stock Tata");
 
-        _sistema.AgregarCatalogo(c1);
+        _sistema.AgregarCatalogo(catalogo1);
 
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.AgregarCatalogo(c2));
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.AgregarCatalogo(catalogo2));
         StringAssert.Contains(ex.Message, "Ya existe un catálogo con ese título");
     }
     
     [TestMethod]
-    public void AgregarVariosCatalogos_Ok()
+    public void AgregarVariosCatalogos_OkTest()
     { 
+        var cantidadEsperada = _sistema.CantidadDeCatalogos() + 2;
+        
         _sistema.AgregarCatalogo(new Catalogo("Stock Tata"));
         _sistema.AgregarCatalogo(new Catalogo("Ofertas"));
 
-        Assert.AreEqual(2, _sistema.CantidadDeCatalogos());
+        Assert.AreEqual(cantidadEsperada, _sistema.CantidadDeCatalogos());
     }
     
     [TestMethod]
-    public void AgregarCatalogo_SeGuardaCorrectamente()
+    public void AgregarCatalogo_SeGuardaCorrectamente_ObtengoPorTitulo_OkTest()
     {
         var c = new Catalogo("Stock Tata");
 
@@ -61,6 +63,16 @@ public class CrudCatalogoPruebas
 
         Assert.AreSame(c, _sistema.ObtenerCatalogoPorTitulo(c.Titulo));
     }
+    [TestMethod]
+    public void AgregarCatalogo_SeGuardaCorrectamente_ObtengoPorId_OkTest()
+    {
+        var c = new Catalogo("Stock Tata");
+
+        _sistema.AgregarCatalogo(c);
+
+        Assert.AreSame(c, _sistema.ObtenerCatalogoPorId(c.Id));
+    }
+    
     
     [TestMethod]
     public void EliminarCatalogo_OkTest()
@@ -69,30 +81,39 @@ public class CrudCatalogoPruebas
         
         _sistema.AgregarCatalogo(c);
         
+        var cantidadEsperada = _sistema.CantidadDeCatalogos()-1;
+        
         _sistema.EliminarCatalogo(c);
         
-        Assert.AreEqual(0, _sistema.CantidadDeCatalogos());
+        
+        
+        Assert.AreEqual(cantidadEsperada, _sistema.CantidadDeCatalogos());
         
     }
     
     [TestMethod]
-    public void EliminarCatalogo_NoExisteCatalogo_Falla()
+    public void EliminarCatalogo_NoExisteCatalogo_ErrorTest()
     {
         var c = new Catalogo("Stock Tata");
+        
         var ex = Assert.ThrowsException<InvalidOperationException>(() => _sistema.EliminarCatalogo(c));
         StringAssert.Contains(ex.Message,"No existe un catálogo con ese título");
     }
     
     [TestMethod]
-    public void EliminarCatalogo_CaseInsensitive_Ok()
+    public void EliminarCatalogo_CaseInsensitive_OkTest()
     {
         _sistema.AgregarCatalogo(new Catalogo("Stock Tata"));
+        
+        var cantidadEsperada = _sistema.CantidadDeCatalogos()-1;
+        
         _sistema.EliminarCatalogo(new Catalogo("stock tata")); 
-        Assert.AreEqual(0, _sistema.CantidadDeCatalogos());
+        
+        Assert.AreEqual(cantidadEsperada, _sistema.CantidadDeCatalogos());
     }
     
     [TestMethod]
-    public void EliminarCatalogo_DobleEliminacion_Falla()
+    public void EliminarCatalogo_DobleEliminacion_ErrorTest()
     {
         var c = new Catalogo("Catálogo");
         _sistema.AgregarCatalogo(c);
@@ -103,7 +124,7 @@ public class CrudCatalogoPruebas
     }
     
     [TestMethod]
-    public void CambiarTituloCatalogo_Ok()
+    public void CambiarTituloCatalogo_OkTest()
     {
         var c = new Catalogo("Original");
         _sistema.AgregarCatalogo(c);
@@ -114,15 +135,14 @@ public class CrudCatalogoPruebas
     }
     
     [TestMethod]
-    public void CambiarTituloCatalogo_TituloYaExiste_Falla()
+    public void CambiarTituloCatalogo_TituloYaExiste_ErrorTest()
     {
-        // Arrange
         var c1 = new Catalogo("Cat1");
         var c2 = new Catalogo("Cat2");
+        
         _sistema.AgregarCatalogo(c1);
         _sistema.AgregarCatalogo(c2);
 
-        // Act & Assert
         var ex = Assert.ThrowsException<InvalidOperationException>(
             () => _sistema.CambiarTituloCatalogo(c1, "Cat2")
         );
@@ -130,10 +150,11 @@ public class CrudCatalogoPruebas
     }
     
     [TestMethod]
-    public void CambiarTituloCatalogo_TituloMismoCatalogo_NoFalla()
+    public void CambiarTituloCatalogo_TituloMismoCatalogo_OkTest()
     {
         
         var c = new Catalogo("Cat1");
+        
         _sistema.AgregarCatalogo(c);
 
         _sistema.CambiarTituloCatalogo(c, "Cat1"); 
