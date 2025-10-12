@@ -16,10 +16,10 @@ public class ItemsPruebas
     public void TestItems_CrearItemTituloLargo_Fallo()
     {
         string tituloLargo = new string('a', 121);
-        var ex = Assert.ThrowsException<ItemException>(() =>
+        var error = Assert.ThrowsException<ItemException>(() =>
             new Item(tituloLargo, "Descripcion válida")
         );
-        Assert.AreEqual("El Título no puede superar 120 caracteres.", ex.Message);
+        Assert.AreEqual("El Título no puede superar 120 caracteres.", error.Message);
     }
 
     [TestMethod]
@@ -364,4 +364,25 @@ public class ItemsPruebas
         });
         Assert.AreEqual("El id no es valido", error.Message);
     }
+    [TestMethod]
+    public void TestItem_Equals_DistintoId_RetornaFalse()
+    {
+        Item item1 = new Item("Titulo1", "Desc1");
+        Item item2 = new Item("Titulo2", "Desc2");
+        Assert.IsFalse(item1.Equals(item2));
+    }
+    [TestMethod]
+    public void TestItem_Equals_Null_RetornaFalse()
+    {
+        Item item = new Item("Titulo", "Descripcion");
+        Assert.IsFalse(item.Equals(null));
+    }
+    [TestMethod]
+    public void TestItem_Equals_OtroTipo_RetornaFalse()
+    {
+        Item item = new Item("Titulo", "Descripcion");
+        object obj = new object();
+        Assert.IsFalse(item.Equals(obj));
+    }
+
 }
