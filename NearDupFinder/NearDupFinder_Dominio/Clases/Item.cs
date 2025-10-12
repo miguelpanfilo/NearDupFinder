@@ -1,3 +1,4 @@
+using System.Data;
 using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
@@ -17,7 +18,7 @@ public class Item
     {
         Id = _siguienteId++;
     }
-    public Item(string titulo, string descripcion, string marca = null, string modelo = null, string categoria = null)
+    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string categoria = null)
     {
         Titulo = titulo;    
         Descripcion = descripcion; 
@@ -50,7 +51,7 @@ public class Item
             _descripcion = value;
         }
     }
-    public string Marca
+    public string? Marca
     {
         get => _marca;
         set
@@ -60,7 +61,7 @@ public class Item
             _marca = value;
         }
     }
-    public string Modelo
+    public string? Modelo
     {
         get => _modelo;
         set
@@ -70,7 +71,7 @@ public class Item
             _modelo = value;
         }
     }
-    public string Categoria
+    public string? Categoria
     {
         get => _categoria;
         set
@@ -95,7 +96,7 @@ public class Item
     {
       _siguienteId = 1;
     }
-    public void EditarTitulo(string nuevoTitulo) => Titulo = nuevoTitulo;
+    public void EditarTitulo(string? nuevoTitulo) => Titulo = nuevoTitulo;
 
     public void EditarDescripcion(string nuevaDescripcion) => Descripcion = nuevaDescripcion;
 
