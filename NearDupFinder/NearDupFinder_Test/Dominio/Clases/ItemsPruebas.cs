@@ -348,7 +348,7 @@ public class ItemsPruebas
         Item item = new Item("Titulo", "Descripcion");
         int idViejo = item.Id;
         int idNuevo = idViejo + 100;
-        item.ModificarId(idNuevo);
+        item.AjustarId(idNuevo);
         Assert.AreNotEqual(idViejo, item.Id);
         Assert.AreEqual(idNuevo, item.Id);
     }
@@ -360,7 +360,7 @@ public class ItemsPruebas
         int idNuevo = 0;
         ItemException error = Assert.ThrowsException<ItemException>(() =>
         {
-            item.ModificarId(idNuevo);
+            item.AjustarId(idNuevo);
         });
         Assert.AreEqual("El id no es valido", error.Message);
     }
