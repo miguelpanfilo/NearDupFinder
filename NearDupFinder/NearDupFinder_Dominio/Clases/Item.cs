@@ -1,10 +1,11 @@
+using System.Data;
 using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
 
 public class Item
 {
-    private static int _nextId = 1;
+    private static int _siguienteId = 1;
     private string _titulo;
     private string _descripcion;
     private string _marca;
@@ -13,27 +14,19 @@ public class Item
     public bool EstadoDuplicado = false;
     public int Id { get; private set; }
     
-    
-    
-   
     public Item()
     {
-        Id = _nextId++;
+        Id = _siguienteId++;
     }
-    public Item(string titulo, string descripcion, string marca = null, string modelo = null, string categoria = null)
+    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string categoria = null)
     {
-        // Se asignan los valores usando los setters para que se ejecuten las validaciones
-        Titulo = titulo;          // valida nulo, vacío y largo
-        Descripcion = descripcion; // valida nulo, vacío y largo
-        Marca = marca;            // valida largo si no es null
-        Modelo = modelo;          // valida largo si no es null
-        Categoria = categoria;    // valida largo si no es null
-
-        Id = _nextId++;
+        Titulo = titulo;    
+        Descripcion = descripcion; 
+        Marca = marca;            
+        Modelo = modelo;          
+        Categoria = categoria;    
+        Id = _siguienteId++;
     }
-
-   
-
     public string Titulo
     {
         get => _titulo;
@@ -41,14 +34,11 @@ public class Item
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ItemException("El Título es obligatorio");
-           
-            
             if (value.Length > 120)
                 throw new ItemException("El Título no puede superar 120 caracteres.");
             _titulo = value;
         }
     }
-
     public string Descripcion
     {
         get => _descripcion;
@@ -61,8 +51,7 @@ public class Item
             _descripcion = value;
         }
     }
-
-    public string Marca
+    public string? Marca
     {
         get => _marca;
         set
@@ -72,8 +61,7 @@ public class Item
             _marca = value;
         }
     }
-
-    public string Modelo
+    public string? Modelo
     {
         get => _modelo;
         set
@@ -83,8 +71,7 @@ public class Item
             _modelo = value;
         }
     }
-
-    public string Categoria
+    public string? Categoria
     {
         get => _categoria;
         set
@@ -94,25 +81,22 @@ public class Item
             _categoria = value;
         }
     }
-
-
     public override bool Equals(object obj)
     {
-        if (obj is not Item other)
+        if (obj is not Item item)
             return false;
-        return Id == other.Id;
+        return Id == item.Id;
     }
     
     public override int GetHashCode()
     {
         return Id.GetHashCode();
     }
-    
-    public static void ResetIdCounter()
+    public static void ResetearContadorId()
     {
-      _nextId = 1;
+      _siguienteId = 1;
     }
-    public void EditarTitulo(string nuevoTitulo) => Titulo = nuevoTitulo;
+    public void EditarTitulo(string? nuevoTitulo) => Titulo = nuevoTitulo;
 
     public void EditarDescripcion(string nuevaDescripcion) => Descripcion = nuevaDescripcion;
 
@@ -122,11 +106,20 @@ public class Item
 
     public void EditarCategoria(string nuevaCategoria) => Categoria = nuevaCategoria;
 
-    public void ModificarId(int id)
+    public void AjustarId(int id)
     {
         if (id == 0)
             throw new ItemException("El id no es valido");
 
+        Id = id;
+        _siguienteId = id + 1;
+    }
+    
+    public void ModificarIdEnCasoDeImportacion(int id)
+    {
+        if (id == 0)
+            throw new ItemException("El id no es valido");
+        _siguienteId--;
         Id = id;
     }
 }

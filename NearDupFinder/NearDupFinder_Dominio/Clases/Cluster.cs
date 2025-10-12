@@ -24,22 +24,29 @@ public class Cluster
     }
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
     
-    public void FusionarCanonico()
+    public bool FusionarCanonico()
     {
         if (_pertenecientesCluster.Count == 0)
         {
-            Canonico = null;
-            return;
+            Canonico = null!;
+            return false;
         }
-        Canonico = _pertenecientesCluster
+
+        var nuevoCanonico = _pertenecientesCluster
             .OrderByDescending(i => i.Descripcion.Length)
             .ThenByDescending(i => i.Titulo.Length)
             .ThenBy(i => i.Id)
             .First();
+
+        bool cambio = Canonico == null || Canonico.Id != nuevoCanonico.Id;
+        Canonico = nuevoCanonico;
+
         FusionarCampos(Canonico, _pertenecientesCluster);
+
+        return cambio; 
     }
     
-    private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
+    private void FusionarCampos(Item canonico, IEnumerable<Item> miembros)
     {
         
         canonico.Marca     = ElegirMejorCampo(canonico.Marca,     miembros.Select(m => m.Marca));

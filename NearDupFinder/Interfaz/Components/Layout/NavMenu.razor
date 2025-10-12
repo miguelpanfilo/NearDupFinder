@@ -37,7 +37,7 @@
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="cambiar-clave-usuario">
                         <i class="bi bi-key-fill fs-5 lh-1" aria-hidden="true"></i>
-                        <span>Cambiar Contraseña</span>
+                        <span>Contraseña</span>
                     </NavLink>
                 </div>     
             </Authorized>
@@ -69,12 +69,13 @@
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="importar-csv">
-                        <i class="bi bi-bookmark-plus-fill fs-5 lh-1" aria-hidden="true"></i>
+                        <i class="bi bi-upload fs-5 lh-1" aria-hidden="true"></i>
                         <span>Importar</span>
                     </NavLink>
                 </div>     
             </Authorized>
         </AuthorizeView>
+
         
         <AuthorizeView Roles="Revisor, Administrador">
             <Authorized>
@@ -91,12 +92,24 @@
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link d-flex align-items-center gap-1" href="Cluster">
-                        <i class="bi bi-copy fs-5 lh-1" aria-hidden="true"></i>
+                        <i class="bi bi-diagram-3 fs-5 lh-1" aria-hidden="true"></i>
                         <span>Cluster</span>
                     </NavLink>
                 </div>     
             </Authorized>
         </AuthorizeView>
+
+        <AuthorizeView Roles="Revisor, Administrador">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-1" href="logs">
+                        <i class="bi bi-clock-history fs-5 lh-1" aria-hidden="true"></i>
+                        <span>Auditoría</span>
+                    </NavLink>
+                </div>     
+            </Authorized>
+        </AuthorizeView>
+
         
         
     </nav>

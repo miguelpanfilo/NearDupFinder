@@ -656,4 +656,37 @@ public class PruebasGestorUsuarios
         
         Assert.IsNull(admin);
     }
+    
+    [TestMethod]
+    public void UsuarioTieneRol_TieneRolRevisor_RetornaVerdadero()
+    {
+        Sistema sistema = new Sistema();
+        var usuario = CrearUsuario();
+
+        usuario.AgregarRol(Rol.Revisor);
+
+        Assert.IsTrue(sistema.UsuarioTieneRol(usuario, Rol.Revisor));
+    }
+    
+    [TestMethod]
+    public void UsuarioTieneRol_NoTieneRolRevisor_RetornaFalso()
+    {
+        Sistema sistema = new Sistema();
+        var usuario = CrearUsuario();
+        
+        Assert.IsFalse(sistema.UsuarioTieneRol(usuario, Rol.Revisor));
+    }
+    
+    [TestMethod]
+    public void ObtenerRolesDeUsuario_TieneRolRevisor_RetornaListaConRolRevisor()
+    {
+        Sistema sistema = new Sistema();
+        var usuario = CrearUsuario();
+
+        usuario.AgregarRol(Rol.Revisor);
+        var listaDeRolesDelUsuario = sistema.ObtenerRolesDeUsuario(usuario);
+        
+        Assert.AreEqual(1, listaDeRolesDelUsuario.Count());
+        Assert.IsTrue(usuario.TieneRol(Rol.Revisor));
+    }
 }

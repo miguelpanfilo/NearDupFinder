@@ -16,6 +16,14 @@ public struct ItemTokenizado
     public string[] TokenDescripcion { get; init; }
 }
 
+public struct ItemNormalizado
+{
+    public string TituloNormalizado { get; init; }
+    public string DescripcionNormalizada { get; init; }
+    public string MarcaNormalizada { get; init; }
+    public string ModeloNormalizado { get; init; }
+}
+
 [ExcludeFromCodeCoverage]
 public readonly record struct ParDuplicado(
     Item ItemA,
@@ -44,7 +52,7 @@ public class GestorDuplicados
         if (catalogo.CantidadItems() == 0)
             return listaDuplicados;
 
-        Item itemNormalizadoA = NormalizarItem(itemA);
+        ItemNormalizado itemNormalizadoA = NormalizarItem(itemA);
         ItemTokenizado itemTokenizadoA = TokenizarItem(itemNormalizadoA);
 
         foreach (Item itemB in catalogo.Items)
@@ -52,14 +60,14 @@ public class GestorDuplicados
             if (itemB.Id == itemA.Id)
                 continue;
             string tituloCatalogo = catalogo.Titulo;
-            Item itemNormalizadoB = NormalizarItem(itemB);
+            ItemNormalizado itemNormalizadoB = NormalizarItem(itemB);
             ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
             float jaccardTitulo = CalcularJaccard(itemTokenizadoA.TokenTitulo, itemTokenizadoB.TokenTitulo);
             float jaccardDescripcion = CalcularJaccard(itemTokenizadoA.TokenDescripcion, itemTokenizadoB.TokenDescripcion);
 
-            int scoreMarca = IgualdadBinaria(itemNormalizadoA.Marca, itemNormalizadoB.Marca);
-            int scoreModelo = IgualdadBinaria(itemNormalizadoA.Modelo, itemNormalizadoB.Modelo);
+            int scoreMarca = IgualdadBinaria(itemNormalizadoA.MarcaNormalizada, itemNormalizadoB.MarcaNormalizada);
+            int scoreModelo = IgualdadBinaria(itemNormalizadoA.ModeloNormalizado, itemNormalizadoB.ModeloNormalizado);
 
             float score = CalcularScore(jaccardTitulo, jaccardDescripcion, scoreMarca, scoreModelo);
 
@@ -91,7 +99,7 @@ public class GestorDuplicados
         return listaDuplicados;
     }
     
-    public Item NormalizarItem(Item item)
+    public ItemNormalizado NormalizarItem(Item item)
     {
         string tituloNormalizado = Normalizar(item.Titulo);
         string descripcionNormalizada = Normalizar(item.Descripcion);
@@ -101,17 +109,15 @@ public class GestorDuplicados
             throw new InvalidOperationException("El título y la descripción no pueden quedar vacío tras normalizar.");
         }
 
-        string marcaNormalizada = Normalizar(item.Marca);
-        string modeloNormalizada = Normalizar(item.Modelo);
-        string categoriaNormalizada = Normalizar(item.Categoria);
+        string marcaNormalizada = Normalizar(item.Marca!);
+        string modeloNormalizada = Normalizar(item.Modelo!);
 
-        return new Item
+        return new ItemNormalizado
         {
-            Titulo = tituloNormalizado,
-            Descripcion = descripcionNormalizada,
-            Marca = marcaNormalizada,
-            Modelo = modeloNormalizada,
-            Categoria = categoriaNormalizada
+            TituloNormalizado = tituloNormalizado,
+            DescripcionNormalizada = descripcionNormalizada,
+            MarcaNormalizada = marcaNormalizada,
+            ModeloNormalizado = modeloNormalizada,
         };
     }
 
@@ -134,12 +140,12 @@ public class GestorDuplicados
         return texto;
     }
 
-    public ItemTokenizado TokenizarItem(Item item)
+    public ItemTokenizado TokenizarItem(ItemNormalizado item)
     {
         return new ItemTokenizado
         {
-            TokenTitulo = Tokenizar(item.Titulo),
-            TokenDescripcion = Tokenizar(item.Descripcion)
+            TokenTitulo = Tokenizar(item.TituloNormalizado),
+            TokenDescripcion = Tokenizar(item.DescripcionNormalizada)
         };
     }
 

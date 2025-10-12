@@ -1,4 +1,3 @@
-using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Controladores;
 
 namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
@@ -6,14 +5,20 @@ namespace NearDupFinder_Test.Dominio.DeteccionDeDuplicados;
 [TestClass]
 public class TokenizacionPruebas
 {
-    private static Item CrearNuevoItem(string titulo, string descripcion) =>
-        new Item(titulo, descripcion);
+    private static ItemNormalizado CrearNuevoItemNormalizado(string titulo, string descripcion) => 
+        new ItemNormalizado
+        {
+            TituloNormalizado = titulo,
+            DescripcionNormalizada = descripcion,
+            MarcaNormalizada = "marcaNormalizada",
+            ModeloNormalizado = "modeloNormalizada",
+        };
     
     [TestMethod]
     public void Tokenizar_TokensDeUnCaracter_SeDescartan()
     {
         var gestor = new GestorDuplicados();
-        var item = CrearNuevoItem("a b c de f 1 2", "x y z 12 q r s");
+        var item = CrearNuevoItemNormalizado("a b c de f 1 2", "x y z 12 q r s");
 
         var tokens = gestor.TokenizarItem(item);
 
@@ -25,7 +30,7 @@ public class TokenizacionPruebas
     public void Tokenizar_TituloYDescripcion_Basico()
     {
         var gestor = new GestorDuplicados();
-        var item = CrearNuevoItem("Iphone 17", "Celular de última generación");
+        var item = CrearNuevoItemNormalizado("Iphone 17", "Celular de última generación");
 
         var tokens = gestor.TokenizarItem(item);
 
@@ -37,7 +42,7 @@ public class TokenizacionPruebas
     public void Tokenizar_TituloConMultiplesEspacios_ColapsaSeparadores()
     {
         var gestor = new GestorDuplicados();
-        var item = CrearNuevoItem("Iphone   17", "Celular de última generación");
+        var item = CrearNuevoItemNormalizado("Iphone   17", "Celular de última generación");
 
         var tokens = gestor.TokenizarItem(item);
 
@@ -49,7 +54,7 @@ public class TokenizacionPruebas
     public void Tokenizar_ConEspaciosExtremos_Recorta()
     {
         var gestor = new GestorDuplicados();
-        var item = CrearNuevoItem("   iphone 17   ", "   celular   de   ultima   generacion   ");
+        var item = CrearNuevoItemNormalizado("   iphone 17   ", "   celular   de   ultima   generacion   ");
 
         var tokens = gestor.TokenizarItem(item);
 
@@ -61,7 +66,7 @@ public class TokenizacionPruebas
     public void Tokenizar_TextoConNumeros_MantieneAlfanumericos()
     {
         var gestor = new GestorDuplicados();
-        var item = CrearNuevoItem("ps5 slim 1tb", "ssd 512");
+        var item = CrearNuevoItemNormalizado("ps5 slim 1tb", "ssd 512");
 
         var tokens = gestor.TokenizarItem(item);
 
