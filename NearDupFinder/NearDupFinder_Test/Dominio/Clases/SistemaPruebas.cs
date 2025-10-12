@@ -196,7 +196,7 @@ public class SistemaPruebas
     [ExpectedException(typeof(ItemException))]
     public void AltaItem_Nulo_Excepcion()
     {
-        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null!);
     }
 
     [TestMethod]
@@ -234,14 +234,14 @@ public class SistemaPruebas
     public void ActualizarDuplicadosPara_ExcepcionSiCatalogoEsNull()
     {
         var item = new Item("Titulo", "Descripcion");
-        _sistema.ActualizarDuplicadosPara(null, item);
+        _sistema.ActualizarDuplicadosPara(null!, item);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void ActualizarDuplicadosPara_LanzaExcepcionSiItemEsNull()
     {
-        _sistema.ActualizarDuplicadosPara(_catalogo, null);
+        _sistema.ActualizarDuplicadosPara(_catalogo, null!);
     }
 
     [TestMethod]

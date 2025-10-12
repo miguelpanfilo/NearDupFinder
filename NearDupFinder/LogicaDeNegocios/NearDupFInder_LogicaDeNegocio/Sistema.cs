@@ -136,7 +136,7 @@ public class Sistema
         catalogo.CambiarTitulo(titulo);
     }
     
-    public void CambiarDescripcionCatalogo(Catalogo catalogo, string descripcion)
+    public void CambiarDescripcionCatalogo(Catalogo catalogo, string? descripcion)
     {
         catalogo.CambiarDescripcion(descripcion);
     }
@@ -152,8 +152,11 @@ public class Sistema
     public IReadOnlyCollection<Catalogo> Catalogos => _almacenamientoDeDatos.ObtenerCatalogos().AsReadOnly();
 
     public IReadOnlyCollection<Item> ObtenerItemsDelCatalogo(Catalogo catalogo) => catalogo.Items;
+
+    public Catalogo? ObtenerCatalogoPorId(int id)
+        => _catalogos.FirstOrDefault(c => c.Id == id);
     
-    public Catalogo? ObtenerCatalogoPorTitulo(string titulo)
+    public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
         => _almacenamientoDeDatos.ObtenerCatalogos().FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
 
     public int CantidadDeCatalogos()
@@ -309,7 +312,7 @@ public class Sistema
 
     public void FusionarItemsEnElCLuster(Cluster clusterAFusionar)
     {
-        bool fusionado = clusterAFusionar.FuncionarCanonico();
+        bool fusionado = clusterAFusionar.FusionarCanonico();
     
         if (fusionado)
         {

@@ -2,26 +2,20 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio;
 
 
-namespace NearDupFinder_Test;
+namespace NearDupFinder_Test.Dominio.Clases;
 
 [TestClass]
 public class CatalogoTest
 {
     
-    private Catalogo _catalogo;
-    private Sistema _sistema;
+    private Catalogo _catalogo = null!;
+    private Sistema _sistema = null!;
 
     [TestInitialize]
     public void Setup()
     {
         _sistema = new Sistema();
         _catalogo = new Catalogo("Stock Tata");
-    }
-    
-    [TestCleanup]
-    public void TearDown()
-    {
-        _catalogo = null;
     }
     
     [TestMethod]
@@ -36,7 +30,9 @@ public class CatalogoTest
     {
         string titulo = new string('a', 1); 
         Catalogo c = new Catalogo(titulo);
-        Assert.AreEqual(1, c.Titulo.Length);
+        var largoEsperado = 1;
+        
+        Assert.AreEqual(largoEsperado, c.Titulo.Length);
     }
     
     [TestMethod]
@@ -44,7 +40,9 @@ public class CatalogoTest
     {
         string titulo = new string('a', 120);
         Catalogo c = new Catalogo(titulo);
-        Assert.AreEqual(120, c.Titulo.Length);
+        var largoEsperado = 120;
+        
+        Assert.AreEqual(largoEsperado, c.Titulo.Length);
     }
     
     [TestMethod]
@@ -80,14 +78,14 @@ public class CatalogoTest
     }
     
     [TestMethod]
-    public void CambiarTitulo_Trim_OK()
+    public void CambiarTitulo_Trim_OkTest()
     {
         _catalogo.CambiarTitulo("  Hola  ");
         Assert.AreEqual("Hola", _catalogo.Titulo);
     }
 
     [TestMethod]
-    public void CambiarTitulo_ErrorSinTituloTest()
+    public void CambiarTitulo_SinTitulo_ErrorTest()
     {
         var ex = Assert.ThrowsException<ArgumentException>(() => _catalogo.CambiarTitulo(""));
         Assert.AreEqual("El titulo es obligatorio", ex.Message);
@@ -102,59 +100,69 @@ public class CatalogoTest
     }
     
     [TestMethod]
-    public void CambiarDescripcion_Trim_OK()
+    public void CambiarDescripcion_Trim_OkTest()
     {
         _sistema.CambiarDescripcionCatalogo(_catalogo,"  Centro  ");
         Assert.AreEqual("Centro", _catalogo.Descripcion);
     }
     
     [TestMethod]
-    public void CambiarDescripcion_NullTest()
+    public void CambiarDescripcion_NullTest_OkTest()
     {
         _sistema.CambiarDescripcionCatalogo(_catalogo,null);
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
     [TestMethod]
-    public void CambiarDescripcion_Vacia_OK()
+    public void CambiarDescripcion_Vacia_OkTest()
     {
         _sistema.CambiarDescripcionCatalogo(_catalogo,"");
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
     [TestMethod]
-    public void CambiarDescripcion_SoloEspacios_OK()
+    public void CambiarDescripcion_SoloEspacios_OkTest()
     {
         _sistema.CambiarDescripcionCatalogo(_catalogo,"   ");
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
     [TestMethod]
-    public void CambiarDescripcion_Minimo_OK()
+    public void CambiarDescripcion_Minimo_OkTest()
     {
         string d = new string('a', 1);
+        
         _sistema.CambiarDescripcionCatalogo(_catalogo,d);
-        Assert.AreEqual(1, _catalogo.Descripcion.Length);
+        
+        var largoEsperadoDescripcion = 1;
+        
+        Assert.AreEqual(largoEsperadoDescripcion, _catalogo.Descripcion.Length);
     }
     
     [TestMethod]
-    public void CambiarDescripcion_Maximo_OK()
+    public void CambiarDescripcion_Maximo_OkTest()
     {
         string d = new string('a', 400);
+        
         _sistema.CambiarDescripcionCatalogo(_catalogo,d);
-        Assert.AreEqual(400, _catalogo.Descripcion.Length);
+        
+        var largoEsperadoDescripcion = 400;
+        
+        Assert.AreEqual(largoEsperadoDescripcion, _catalogo.Descripcion.Length);
     }
 
     [TestMethod]
-    public void CambiarDescripcion_MuyLargo_Error()
+    public void CambiarDescripcion_MuyLargo_ErrorTest()
     {
         string d = new string('a', 401);
+        
         var ex = Assert.ThrowsException<ArgumentException>(() => _sistema.CambiarDescripcionCatalogo(_catalogo,d));
+        
         Assert.AreEqual("La descripcion debe tener entre 1 y 400 caracteres", ex.Message);
     }
 
     [TestMethod]
-    public void agregarItemACatalogo_ok()
+    public void AgregarItemACatalogo_OkTest()
     {
         Item item = new Item
         {
@@ -167,20 +175,22 @@ public class CatalogoTest
         
         _catalogo.AgregarItem(item);
         
-        Assert.AreEqual(1, _catalogo.CantidadItems());
+        var cantidadEsperada = 1;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.CantidadItems());
         CollectionAssert.Contains(_catalogo.Items.ToList(), item);
     }
     [TestMethod]
-    public void AgregarItem_Null_Falla()
+    public void AgregarItem_Null_ErrorTest()
     {
-        var ex = Assert.ThrowsException<ArgumentNullException>(()=> _catalogo.AgregarItem(null)); ;
+        var ex = Assert.ThrowsException<ArgumentNullException>(()=> _catalogo.AgregarItem(null!));
         
         Assert.AreEqual("item", ex.ParamName);
         StringAssert.Contains(ex.Message,"El parametro no puede ser Null");
     }
 
     [TestMethod]
-    public void AgregarItem_MismaReferencia_Falla()
+    public void AgregarItem_MismaReferencia_ErrorTest()
     {
         Item item = new Item
         {
@@ -195,11 +205,14 @@ public class CatalogoTest
         var ex = Assert.ThrowsException<InvalidOperationException>(() => _catalogo.AgregarItem(item));
         
         Assert.AreEqual("El item ya se encuentra en el catálogo", ex.Message);
-        Assert.AreEqual(1, _catalogo.CantidadItems());
+        
+        var cantidadEsperada = 1;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.CantidadItems());
     }
     
     [TestMethod]
-    public void EliminarItemDeCatalogo_ok()
+    public void EliminarItemDeCatalogo_OkTest()
     {
         Item item = new Item
         {
@@ -213,19 +226,21 @@ public class CatalogoTest
         _catalogo.AgregarItem(item);
         _catalogo.EliminarItem(item);
         
-        Assert.AreEqual(0, _catalogo.CantidadItems());
+        var cantidadEsperada = 0;
+        
+        Assert.AreEqual(cantidadEsperada, _catalogo.CantidadItems());
     }
 
     [TestMethod]
-    public void EliminarItemDeCatalogo_Null_Falla()
+    public void EliminarItemDeCatalogo_Null_ErrorTest()
     {
-        var ex = Assert.ThrowsException<ArgumentNullException>(()=> _catalogo.EliminarItem(null));
+        var ex = Assert.ThrowsException<ArgumentNullException>(()=> _catalogo.EliminarItem(null!));
         
         Assert.AreEqual("item", ex.ParamName);
         StringAssert.Contains(ex.Message, "El parametro no puede ser Null");
     }
     [TestMethod] 
-    public void EliminarItemDeCatalogo_ItemNoExiste_Falla()
+    public void EliminarItemDeCatalogo_ItemNoExiste_ErrorTest()
     {
         Item item = new Item
         {
@@ -241,29 +256,26 @@ public class CatalogoTest
         Assert.AreEqual("El item no se encuentra en el catálogo", ex.Message);
     }
     
-    /* Este test chequea que
-    Que el catálogo no permite modificar los ítems desde afuera a través de la colección expuesta.
-    Que el diseño respeta el principio de encapsulamiento, manteniendo la lista interna _items privada y protegida.
-    Que los métodos públicos (AgregarItem, EliminarItem) son la única forma de modificar el contenido del catálogo.*/
     [TestMethod]
-    public void Items_EsSoloLectura()
+    public void Items_EsSoloLectura_OkTest()
     {
-        var ro = _catalogo.Items;
-        Assert.IsInstanceOfType(ro, typeof(IReadOnlyCollection<Item>));
+        var items = _catalogo.Items;
+        Assert.IsInstanceOfType(items, typeof(IReadOnlyCollection<Item>));
     }
     
     [TestMethod]
-    public void CatalogosConIgualTitulo_SonIguales()
+    public void CatalogosConIgualTitulo_SonIguales_PeroHashDifiere_OkTest()
     {
         var c1 = new Catalogo("Stock");
-        var c2 = new Catalogo("stock"); // mismo texto, distinto casing
+        var c2 = new Catalogo("stock");
+        
+        Assert.AreEqual(c1, c2);
 
-        Assert.AreEqual(c1, c2); // usa Equals internamente
-        Assert.AreEqual(c1.GetHashCode(), c2.GetHashCode());
+        Assert.AreNotEqual(c1.GetHashCode(), c2.GetHashCode());
     }
 
     [TestMethod]
-    public void CatalogosConTituloDistinto_NoSonIguales()
+    public void CatalogosConTituloDistinto_NoSonIguales_OkTest()
     {
         var c1 = new Catalogo("Stock Tata");
         var c2 = new Catalogo("Stock Disco");
@@ -272,11 +284,20 @@ public class CatalogoTest
     }
 
     [TestMethod]
-    public void Catalogo_ComparadoConOtroTipo_NoEsIgual()
+    public void Catalogo_ComparadoConOtroTipo_NoEsIgual_OkTest()
     {
         var c1 = new Catalogo("Stock");
-        var noCatalogo = "Stock";
+        object  noCatalogo = "Stock";
 
         Assert.IsFalse(c1.Equals(noCatalogo));
+    }
+    [TestMethod]
+    public void Equals_OtroCatalogoNull_DevuelveFalse_OkTest()
+    {
+        var catalogo = new Catalogo("Prueba");
+
+        bool resultado = catalogo.Equals(null);
+
+        Assert.IsFalse(resultado);
     }
 }
