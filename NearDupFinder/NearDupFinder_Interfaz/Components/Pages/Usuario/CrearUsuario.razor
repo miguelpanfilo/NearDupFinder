@@ -142,6 +142,11 @@
             NotificarError("La fecha ingresada es incorrecta");
             return false;
         }
+        if (fecha > DateTime.Today)
+        {
+            NotificarError("La fecha de nacimiento no puede ser posterior a hoy");
+            return false;
+        }
 
         return true;
     }

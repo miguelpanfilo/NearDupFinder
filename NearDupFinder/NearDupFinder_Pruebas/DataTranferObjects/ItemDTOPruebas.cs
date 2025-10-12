@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFInder_LogicaDeNegocio.DTO;
 
-namespace ItemEditDataTransferPruebas;
+namespace NearDupFinder_Pruebas.DataTranferObjects;
 [TestClass]
 public class ListaItemsTests
 {
