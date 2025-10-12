@@ -1,3 +1,4 @@
+using System.Data;
 using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFinder_Dominio.Clases;
