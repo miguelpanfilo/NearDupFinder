@@ -1,6 +1,7 @@
-using NearDupFinder_DataAccess;
+using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Clases;
+using NearDupFInder_LogicaDeNegocio.DTO;
 using NearDupFInder_LogicaDeNegocio.Servicios;
 
 
@@ -14,7 +15,7 @@ public class Sistema
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly LectorCsv _lectorCsv;
-    private readonly List<LogEntry> _auditoria = [];
+    private readonly List<EntradaDeLog> _auditoria = [];
     private string _usuarioActual = "No hay usuario logueado"; 
 
     public Sistema()
@@ -29,12 +30,12 @@ public class Sistema
         _lectorCsv = new LectorCsv(this);
     }
     
-    public void SetUsuarioActual(string email)
+    public void AsignarUsuarioActual(string email)
     {
         _usuarioActual = email;
     }
     
-    public void LogoutUsuario()
+    public void DesasignarUsuario()
     {
         _usuarioActual = "No hay usuario logueado";
     }
@@ -43,7 +44,7 @@ public class Sistema
     {
         bool pasaAltaDeUsuario = _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         if (pasaAltaDeUsuario)
-            RegistrarLog(LogEntry.AccionLog.AltaUsuario, $"Usuario: '{email}'");
+            RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{email}'");
         return pasaAltaDeUsuario;
     }
     
@@ -51,7 +52,7 @@ public class Sistema
     {
         bool pasaModificarUsuario = _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         if (pasaModificarUsuario)
-            RegistrarLog(LogEntry.AccionLog.EditarUsuario, $"Usuario modificado: '{email}'");
+            RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Usuario modificado: '{email}'");
         return pasaModificarUsuario;    
     }
     
@@ -59,7 +60,7 @@ public class Sistema
     {
         bool pasaEliminarUsuario = _gestorUsuarios.BorrarUsuario(email);
         if (pasaEliminarUsuario)
-            RegistrarLog(LogEntry.AccionLog.EliminarUser, $"Usuario eliminado: '{email}'");
+            RegistrarLog(EntradaDeLog.AccionLog.EliminarUser, $"Usuario eliminado: '{email}'");
         return pasaEliminarUsuario;    
     }
 
@@ -168,18 +169,18 @@ public class Sistema
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
 
-        ValidarCatalogoYItem(catalogo!, nuevoItem);
+        ValidarItem(nuevoItem);
 
         AsegurarIdUnico(nuevoItem);
         catalogo!.AgregarItem(nuevoItem);
     
         var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
         AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
-        RegistrarLog(LogEntry.AccionLog.AltaItem, $"Item agregado: '{nuevoItem.Titulo}' en catálogo '{catalogoTitulo}'");
+        RegistrarLog(EntradaDeLog.AccionLog.AltaItem, $"Item agregado: '{nuevoItem.Titulo}' en catálogo '{catalogoTitulo}'");
 
     }
 
-    public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemDTO dto)
+    public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemDto dto)
     {
         var itemAEditar = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
         if (itemAEditar == null)
@@ -187,14 +188,14 @@ public class Sistema
 
         itemAEditar.EditarTitulo(dto.Titulo);
         itemAEditar.EditarDescripcion(dto.Descripcion);
-        itemAEditar.EditarCategoria(dto.Categoria);
-        itemAEditar.EditarMarca(dto.Marca);
-        itemAEditar.EditarModelo(dto.Modelo);
+        itemAEditar.EditarCategoria(dto.Categoria!);
+        itemAEditar.EditarMarca(dto.Marca!);
+        itemAEditar.EditarModelo(dto.Modelo!);
         
-        RegistrarLog(LogEntry.AccionLog.EditarItem, $"Item actualizado: '{dto.Titulo}' en catálogo '{catalogo.Titulo}'");
+        RegistrarLog(EntradaDeLog.AccionLog.EditarItem, $"Item actualizado: '{dto.Titulo}' en catálogo '{catalogo.Titulo}'");
     }
 
-    public void EliminarItem(string catalogo, ItemDTO dto)
+    public void EliminarItem(string catalogo, ItemDto dto)
     {
         var catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
         if (catalogoBuscado == null)
@@ -204,17 +205,17 @@ public class Sistema
         if (item == null)
             throw new ItemException("El item no existe en el catálogo.");
 
-        ValidarCatalogoYItem(catalogoBuscado, item);
+        ValidarItem(item);
 
         catalogoBuscado.EliminarItem(item);
 
         EliminarDuplicadosPrevios(item);
         ActualizarEstadoDuplicadosEnCatalogo(catalogoBuscado);
         
-        RegistrarLog(LogEntry.AccionLog.EliminarItem, $"Item eliminado: '{item.Titulo}' del catálogo '{catalogoBuscado.Titulo}'");
+        RegistrarLog(EntradaDeLog.AccionLog.EliminarItem, $"Item eliminado: '{item.Titulo}' del catálogo '{catalogoBuscado.Titulo}'");
     }
         
-    private void ValidarCatalogoYItem(Catalogo catalogo, Item item)
+    private void ValidarItem(Item item)
     {
         if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
             throw new ItemException("Título y Descripción son obligatorios.");
@@ -295,7 +296,7 @@ public class Sistema
         
         catalogo?.ConfirmarClusters(itemEntrante,itemComparado);
         DuplicadosGlobales.Remove(duplicadoConfirmado);
-        RegistrarLog(LogEntry.AccionLog.ConfirmarDuplicado, $"Se confirmó duplicado: Item '{duplicadoConfirmado.ItemA.Titulo}' y '{duplicadoConfirmado.ItemB.Titulo}'");
+        RegistrarLog(EntradaDeLog.AccionLog.ConfirmarDuplicado, $"Se confirmó duplicado: Item '{duplicadoConfirmado.ItemA.Titulo}' y '{duplicadoConfirmado.ItemB.Titulo}'");
 
     }
 
@@ -304,7 +305,7 @@ public class Sistema
         catalogo.QuitarItemDeCluster(itemARemover);
     }
 
-    public void SetearNullCanonico(Cluster? cluster)
+    public void AsignarNuloCanonico(Cluster? cluster)
     {
         if(cluster is not null)
             cluster.Canonico = null;
@@ -316,7 +317,7 @@ public class Sistema
     
         if (fusionado)
         {
-            RegistrarLog(LogEntry.AccionLog.FusionarCluster, 
+            RegistrarLog(EntradaDeLog.AccionLog.FusionarCluster, 
                 $"Se fusionó el canónico del cluster {clusterAFusionar.Id} con {clusterAFusionar.PertenecientesCluster.Count()} ítems.");
         }
     }
@@ -327,7 +328,7 @@ public class Sistema
 
         duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
         duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
-        RegistrarLog(LogEntry.AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemA.Titulo}' + '{duplicadoADescartar.ItemB.Titulo}'");
+        RegistrarLog(EntradaDeLog.AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemA.Titulo}' + '{duplicadoADescartar.ItemB.Titulo}'");
     }
     
     public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
@@ -339,7 +340,7 @@ public class Sistema
         stopwatch.Stop();
 
         RegistrarLog(
-            LogEntry.AccionLog.DeteccionDuplicados,
+            EntradaDeLog.AccionLog.DeteccionDuplicados,
             $"Detección de duplicados para item '{itemA.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
         );
 
@@ -353,22 +354,22 @@ public class Sistema
         _lectorCsv.Limpiar();
     }
 
-    private readonly Dictionary<LogEntry.AccionLog, string> _descripcionesAccion = new()
+    private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {
-        { LogEntry.AccionLog.AltaUsuario, "Creacion de usuario" },
-        { LogEntry.AccionLog.EditarUsuario, "Modificacion de usuario" },
-        { LogEntry.AccionLog.AltaItem, "Alta de item" },
-        { LogEntry.AccionLog.EliminarItem, "Eliminación de item" },
-        { LogEntry.AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
-        { LogEntry.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
-        { LogEntry.AccionLog.FusionarCluster,"Fusión de cluster" },
-        { LogEntry.AccionLog.DescartarDuplicado,"Descartar duplicado"},
-        {LogEntry.AccionLog.EditarItem,"Editar item"},
-        {LogEntry.AccionLog.EliminarUser,"Eliminacion de usuario"},
+        { EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario" },
+        { EntradaDeLog.AccionLog.EditarUsuario, "Modificacion de usuario" },
+        { EntradaDeLog.AccionLog.AltaItem, "Alta de item" },
+        { EntradaDeLog.AccionLog.EliminarItem, "Eliminación de item" },
+        { EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
+        { EntradaDeLog.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
+        { EntradaDeLog.AccionLog.FusionarCluster,"Fusión de cluster" },
+        { EntradaDeLog.AccionLog.DescartarDuplicado,"Descartar duplicado"},
+        {EntradaDeLog.AccionLog.EditarItem,"Editar item"},
+        {EntradaDeLog.AccionLog.EliminarUser,"Eliminacion de usuario"},
     };
-    public void RegistrarLog(LogEntry.AccionLog accion, string detalles)
+    public void RegistrarLog(EntradaDeLog.AccionLog accion, string detalles)
     {
-        var entry = new LogEntry
+        var entry = new EntradaDeLog
         {
             Timestamp = DateTime.UtcNow,
             Usuario = _usuarioActual,
@@ -379,5 +380,5 @@ public class Sistema
         _auditoria.Add(entry);
     }
     
-    public IReadOnlyList<LogEntry> ObtenerLogs() => _auditoria.AsReadOnly();
+    public IReadOnlyList<EntradaDeLog> ObtenerLogs() => _auditoria.AsReadOnly();
 }

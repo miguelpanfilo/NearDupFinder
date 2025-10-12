@@ -4,25 +4,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Test", "NearDupFinder_Test\NearDupFinder_Test.csproj", "{1E54973F-2076-458C-A09F-61589487C4BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Pruebas", "NearDupFinder_Pruebas\NearDupFinder_Pruebas.csproj", "{1E54973F-2076-458C-A09F-61589487C4BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Dominio", "NearDupFinder_Dominio\NearDupFinder_Dominio.csproj", "{4C677F7A-DD37-4B08-BA1D-AE4A3F029EC2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C5B7097F-8BCC-4509-BA77-E9429330531D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pruebas", "Pruebas", "{C5B7097F-8BCC-4509-BA77-E9429330531D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{02D9B160-C2E0-4380-8767-045B610C15DF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{ECD35B09-A96E-4C9A-8EF6-95B557EF54FD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaz", "Interfaz", "{ECD35B09-A96E-4C9A-8EF6-95B557EF54FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Interfaz", "NearDupFinder_Interfaz\NearDupFinder_Interfaz.csproj", "{EBFCF140-A873-41B5-85DD-8D85A5047079}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LogicaDeNegocios", "LogicaDeNegocios", "{42F18886-A7CE-4BB8-BA7A-74B73D76BDD5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{6FE0F227-957E-4D4E-BB5B-32FF10544F95}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Almacenamiento", "Almacenamiento", "{6FE0F227-957E-4D4E-BB5B-32FF10544F95}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFInder_LogicaDeNegocio", "LogicaDeNegocios\NearDupFInder_LogicaDeNegocio\NearDupFInder_LogicaDeNegocio.csproj", "{46C35828-8BF4-418A-8824-CBA5F87037A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_DataAccess", "NearDupFinder_DataAccess\NearDupFinder_DataAccess.csproj", "{452F7F8F-FA0C-4C76-BDD0-473E986AA243}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Almacenamiento", "NearDupFinder_Almacenamiento\NearDupFinder_Almacenamiento.csproj", "{452F7F8F-FA0C-4C76-BDD0-473E986AA243}"
 EndProject
 
 Global
