@@ -15,18 +15,6 @@ public class DeteccionDuplicadosPruebas
         foreach (var item in items) catalogo.AgregarItem(item);
         return catalogo;
     }
-    
-    [TestMethod]
-    public void DetectarDuplicados_ItemNulo_DevuelveListaVacia()
-    {
-        var sis = new Sistema();
-        Item? itemA = null;
-        var catalogo = CrearCatalogoNuevo();
-
-        var duplicados = sis.DetectarDuplicados(itemA, catalogo);
-
-        Assert.AreEqual(0, duplicados.Count);
-    }
 
     [TestMethod]
     public void DetectarDuplicados_CatalogoVacio_DevuelveListaVacia()

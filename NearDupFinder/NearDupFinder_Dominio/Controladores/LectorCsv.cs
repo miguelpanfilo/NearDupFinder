@@ -55,7 +55,7 @@ public class LectorCsv(Sistema sistema)
                 Item nuevoItem = new Item(fila.Titulo,fila.Descripción,fila.Marca,fila.Modelo,fila.Categoría);
                 
                 if(IdEsValido(fila.Id))
-                    nuevoItem.ModificarId(int.Parse(fila.Id));
+                    nuevoItem.ModificarIdEnCasoDeImportacion(int.Parse(fila.Id));
                 
                 sistema.AltaItemConAltaDuplicados(fila.Catalogo, nuevoItem);
             }

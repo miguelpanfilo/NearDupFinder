@@ -393,7 +393,7 @@ public class SistemaPruebas
         var item1 = new Item("Titulo", "Descripcion");
         var item2 = new Item("Titulo", "Descripcion");
         int idItem1 = item1.Id;
-        item2.ModificarId(idItem1);
+        item2.AjustarId(idItem1);
 
         _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item1);
         _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);

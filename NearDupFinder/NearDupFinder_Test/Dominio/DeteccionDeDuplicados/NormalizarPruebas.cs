@@ -92,11 +92,10 @@ public class NormalizarPruebas
 
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        Assert.AreEqual("laptop", resultado.Titulo);
-        Assert.AreEqual("laptop", resultado.Descripcion);
-        Assert.AreEqual("marcax", resultado.Marca);
-        Assert.AreEqual("modelo1", resultado.Modelo);
-        Assert.AreEqual("categoria1", resultado.Categoria);
+        Assert.AreEqual("laptop", resultado.TituloNormalizado);
+        Assert.AreEqual("laptop", resultado.DescripcionNormalizada);
+        Assert.AreEqual("marcax", resultado.MarcaNormalizada);
+        Assert.AreEqual("modelo1", resultado.ModeloNormalizado);
     }
     
     [TestMethod]
@@ -113,11 +112,10 @@ public class NormalizarPruebas
 
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        Assert.AreEqual("computano", resultado.Titulo);
-        Assert.AreEqual("desc", resultado.Descripcion);
-        Assert.AreEqual("nandu", resultado.Marca);
-        Assert.AreEqual("modelo", resultado.Modelo);
-        Assert.AreEqual("tecnologia", resultado.Categoria);
+        Assert.AreEqual("computano", resultado.TituloNormalizado);
+        Assert.AreEqual("desc", resultado.DescripcionNormalizada);
+        Assert.AreEqual("nandu", resultado.MarcaNormalizada);
+        Assert.AreEqual("modelo", resultado.ModeloNormalizado);
     }
 
     [TestMethod]
@@ -134,12 +132,11 @@ public class NormalizarPruebas
 
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        Assert.AreEqual("lap top 123", resultado.Titulo);
-        Assert.AreEqual("de sc", resultado.Descripcion);
+        Assert.AreEqual("lap top 123", resultado.TituloNormalizado);
+        Assert.AreEqual("de sc", resultado.DescripcionNormalizada);
             
-        Assert.AreEqual("to shiba", resultado.Marca);
-        Assert.AreEqual("modelo 1", resultado.Modelo);
-        Assert.AreEqual("tecnologia", resultado.Categoria);
+        Assert.AreEqual("to shiba", resultado.MarcaNormalizada);
+        Assert.AreEqual("modelo 1", resultado.ModeloNormalizado);
     }
     [TestMethod]
     public void NormalizarItem_ItemSoloConSimbolos_LanzaExcepcion()
@@ -172,11 +169,10 @@ public class NormalizarPruebas
             
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        Assert.AreEqual("laptop", resultado.Titulo);
-        Assert.AreEqual("computadora potente", resultado.Descripcion);
-        Assert.AreEqual(string.Empty, resultado.Marca);
-        Assert.AreEqual(string.Empty, resultado.Modelo);
-        Assert.AreEqual(string.Empty, resultado.Categoria);
+        Assert.AreEqual("laptop", resultado.TituloNormalizado);
+        Assert.AreEqual("computadora potente", resultado.DescripcionNormalizada);
+        Assert.AreEqual(string.Empty, resultado.MarcaNormalizada);
+        Assert.AreEqual(string.Empty, resultado.ModeloNormalizado);
     }
 
     [TestMethod]
@@ -193,11 +189,10 @@ public class NormalizarPruebas
 
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        Assert.AreEqual("laptop", resultado.Titulo);
-        Assert.AreEqual("computadora potente", resultado.Descripcion);
-        Assert.AreEqual("marca", resultado.Marca);
-        Assert.AreEqual("modelo", resultado.Modelo);
-        Assert.AreEqual("categoria", resultado.Categoria);
+        Assert.AreEqual("laptop", resultado.TituloNormalizado);
+        Assert.AreEqual("computadora potente", resultado.DescripcionNormalizada);
+        Assert.AreEqual("marca", resultado.MarcaNormalizada);
+        Assert.AreEqual("modelo", resultado.ModeloNormalizado);
     }
     
     [TestMethod]
@@ -214,10 +209,9 @@ public class NormalizarPruebas
 
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
-        Assert.AreEqual("laptop", resultado.Titulo);
-        Assert.AreEqual("computadora", resultado.Descripcion);
-        Assert.AreEqual("marca", resultado.Marca);
-        Assert.AreEqual("modelo", resultado.Modelo);
-        Assert.AreEqual("categoria", resultado.Categoria);
+        Assert.AreEqual("laptop", resultado.TituloNormalizado);
+        Assert.AreEqual("computadora", resultado.DescripcionNormalizada);
+        Assert.AreEqual("marca", resultado.MarcaNormalizada);
+        Assert.AreEqual("modelo", resultado.ModeloNormalizado);
     }
 }

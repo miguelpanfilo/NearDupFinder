@@ -396,7 +396,7 @@ public class Sistema
         int idApropiado = item.Id;
         while (_idsItemsGlobal.Contains(idApropiado))
             idApropiado++;
-        item.ModificarId(idApropiado);
+        item.AjustarId(idApropiado);
         _idsItemsGlobal.Add(idApropiado);
     }
     

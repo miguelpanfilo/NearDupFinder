@@ -106,11 +106,20 @@ public class Item
 
     public void EditarCategoria(string nuevaCategoria) => Categoria = nuevaCategoria;
 
-    public void ModificarId(int id)
+    public void AjustarId(int id)
     {
         if (id == 0)
             throw new ItemException("El id no es valido");
 
+        Id = id;
+        _siguienteId = id + 1;
+    }
+    
+    public void ModificarIdEnCasoDeImportacion(int id)
+    {
+        if (id == 0)
+            throw new ItemException("El id no es valido");
+        _siguienteId--;
         Id = id;
     }
 }
