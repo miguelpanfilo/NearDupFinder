@@ -154,7 +154,7 @@ public class Sistema
     public IReadOnlyCollection<Item> ObtenerItemsDelCatalogo(Catalogo catalogo) => catalogo.Items;
 
     public Catalogo? ObtenerCatalogoPorId(int id)
-        => _catalogos.FirstOrDefault(c => c.Id == id);
+        => _almacenamientoDeDatos.ObtenerCatalogos().FirstOrDefault(c => c.Id == id);
     
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
         => _almacenamientoDeDatos.ObtenerCatalogos().FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
@@ -168,7 +168,7 @@ public class Sistema
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
 
-        ValidarCatalogoYItem(catalogo!, nuevoItem!);
+        ValidarCatalogoYItem(catalogo!, nuevoItem);
 
         AsegurarIdUnico(nuevoItem);
         catalogo!.AgregarItem(nuevoItem);
