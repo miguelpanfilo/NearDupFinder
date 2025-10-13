@@ -34,9 +34,9 @@ public class Usuario
     public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
     {
         if (string.IsNullOrWhiteSpace(nombre))
-            throw new UsuarioException("El nombre no puede estar vacío.");
+            throw new ExcepcionDeUsuario("El nombre no puede estar vacío.");
         if (string.IsNullOrWhiteSpace(apellido))
-            throw new UsuarioException("El apellido no puede estar vacío.");
+            throw new ExcepcionDeUsuario("El apellido no puede estar vacío.");
 
         return new Usuario(nombre.Trim(), apellido.Trim(), email, fechaNacimiento);
     }

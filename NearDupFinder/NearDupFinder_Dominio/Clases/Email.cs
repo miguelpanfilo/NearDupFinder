@@ -15,12 +15,12 @@ public sealed class Email
     public static Email Crear(string? email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            throw new UsuarioException("El email es requerido.");
+            throw new ExcepcionDeUsuario("El email es requerido.");
         
         var emailNormalizado = email.Trim().ToLowerInvariant();
         
         if (!EsFormatoValido(emailNormalizado))
-            throw new UsuarioException("El email no tiene un formato válido.");
+            throw new ExcepcionDeUsuario("El email no tiene un formato válido.");
 
         return new Email(emailNormalizado);
     }

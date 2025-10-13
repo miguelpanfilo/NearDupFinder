@@ -11,7 +11,7 @@ public class FechaPruebas
     {
         int anio = 2000, mes = 12, dia = 0;
         
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Fecha.Crear(anio, mes, dia));
     }
     
     [TestMethod]
@@ -19,7 +19,7 @@ public class FechaPruebas
     {
         int anio = 2000, mes = 13, dia = 1;
         
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Fecha.Crear(anio, mes, dia));
     }
     
     [TestMethod]
@@ -27,7 +27,7 @@ public class FechaPruebas
     {
         int anio = -200, mes = 13, dia = 1;
         
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Fecha.Crear(anio, mes, dia));
     }
     
     [TestMethod]
@@ -35,7 +35,7 @@ public class FechaPruebas
     {
         int anio = 2001, mes = 2, dia = 29;
         
-        Assert.ThrowsException<UsuarioException>(() => Fecha.Crear(anio, mes, dia));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Fecha.Crear(anio, mes, dia));
     }
     
     [TestMethod]

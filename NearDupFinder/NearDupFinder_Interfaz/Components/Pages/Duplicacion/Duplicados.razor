@@ -9,7 +9,6 @@
 
 <h3>Detección de Duplicados</h3>
 
-
 @if (_duplicados.Count == 0 )
 {
     <div>No se encontraron duplicados.</div>
@@ -152,12 +151,14 @@ else
         _mostrarModalComparar = false;
     }
     
-    private MarkupString ResaltarTokens(string textoOriginal, string[]? tokensCompartidos)
+    private MarkupString ResaltarTokens(string? textoOriginal, string[]? tokensCompartidos)
     {
-        if (string.IsNullOrEmpty(textoOriginal) || tokensCompartidos == null || tokensCompartidos.Length == 0)
-            return (MarkupString)textoOriginal;
+        string texto = textoOriginal ?? string.Empty;
 
-        string resultado = textoOriginal;
+        if (string.IsNullOrEmpty(texto) || tokensCompartidos == null || tokensCompartidos.Length == 0)
+            return (MarkupString)texto;
+
+        string resultado = texto;
 
         foreach (var token in tokensCompartidos.Distinct())
         {
@@ -170,7 +171,7 @@ else
                 RegexOptions.IgnoreCase
             );
         }
-
         return (MarkupString)resultado;
     }
+
 }

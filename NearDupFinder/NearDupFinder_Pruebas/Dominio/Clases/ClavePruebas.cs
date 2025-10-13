@@ -81,7 +81,7 @@ public class ClavePruebas
     {
         string? claveTexto = null;
         
-        Assert.ThrowsException<UsuarioException>(() => Clave.Crear(claveTexto));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Clave.Crear(claveTexto));
     }
     
     [TestMethod]

@@ -26,7 +26,7 @@ public class UsuarioPruebas
         string nombre = "";
         string apellido = "Perez";
 
-        Assert.ThrowsException<UsuarioException>(() => Usuario.Crear(nombre, apellido, email, fecha));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Usuario.Crear(nombre, apellido, email, fecha));
     }
 
     [TestMethod]
@@ -37,7 +37,7 @@ public class UsuarioPruebas
         string nombre = " ";
         string apellido = "Perez";
 
-        Assert.ThrowsException<UsuarioException>(() => Usuario.Crear(nombre, apellido, email, fecha));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Usuario.Crear(nombre, apellido, email, fecha));
     }
 
     [TestMethod]
@@ -48,7 +48,7 @@ public class UsuarioPruebas
         string nombre = "Manuel";
         string apellido = "";
 
-        Assert.ThrowsException<UsuarioException>(() => Usuario.Crear(nombre, apellido, email, fecha));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Usuario.Crear(nombre, apellido, email, fecha));
     }
 
     [TestMethod]
@@ -59,7 +59,7 @@ public class UsuarioPruebas
         string nombre = "Manuel";
         string apellido = " ";
 
-        Assert.ThrowsException<UsuarioException>(() => Usuario.Crear(nombre, apellido, email, fecha));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Usuario.Crear(nombre, apellido, email, fecha));
     }
     
     [TestMethod]

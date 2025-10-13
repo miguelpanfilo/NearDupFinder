@@ -129,7 +129,7 @@ public class SistemaPruebas
             Marca = "Marca",
             Modelo = "Modelo"
         };
-        var error = Assert.ThrowsException<ItemException>(() => sistema.ActualizarItemEnCatalogo(catalogo, dto)
+        var error = Assert.ThrowsException<ExcepcionDeItem>(() => sistema.ActualizarItemEnCatalogo(catalogo, dto)
         );
 
         Assert.AreEqual("No se encontró el item a actualizar.", error.Message);
@@ -152,7 +152,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_LanzaExcepcionSiTituloOVacio()
     {
         var sistema = new Sistema();
@@ -164,7 +164,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_DescripcionVacia_Excepcion()
     {
         var sistema = new Sistema();
@@ -176,7 +176,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_Nulo_Excepcion()
     {
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", null!);
@@ -356,7 +356,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");

@@ -184,7 +184,7 @@ public class Sistema
     {
         var itemAEditar = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
         if (itemAEditar == null)
-            throw new ItemException("No se encontró el item a actualizar.");
+            throw new ExcepcionDeItem("No se encontró el item a actualizar.");
 
         itemAEditar.EditarTitulo(dto.Titulo);
         itemAEditar.EditarDescripcion(dto.Descripcion);
@@ -203,7 +203,7 @@ public class Sistema
 
         var item = catalogoBuscado.Items.FirstOrDefault(i => i.Id == dto.Id);
         if (item == null)
-            throw new ItemException("El item no existe en el catálogo.");
+            throw new ExcepcionDeItem("El item no existe en el catálogo.");
 
         ValidarItem(item);
 
@@ -218,7 +218,7 @@ public class Sistema
     private void ValidarItem(Item item)
     {
         if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
-            throw new ItemException("Título y Descripción son obligatorios.");
+            throw new ExcepcionDeItem("Título y Descripción son obligatorios.");
     }
 
     public void ActualizarDuplicadosPara(Catalogo? catalogo, Item? itemEditado)
