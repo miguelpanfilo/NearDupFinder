@@ -1,10 +1,8 @@
 @page "/lista-items"
-
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio
 @using NearDupFInder_LogicaDeNegocio.DTO
-@inject NavigationManager Nav
 @inject Sistema sistema
 @rendermode InteractiveServer
 
@@ -18,7 +16,6 @@
     </a>
 </div>
 
-<!-- Selector de Catálogo -->
 <div class="mb-3">
     <label for="catalogoSelect">Seleccionar Catálogo:</label>
     <select id="catalogoSelect" class="form-select mb-2" 
@@ -34,7 +31,6 @@
 
 @if (_catalogoSeleccionado != null)
 {
-    <!-- Filtros -->
     <div class="mb-3">
         <input type="text" @bind="_textoBusqueda" placeholder="Buscar por título o descripción" class="form-control mb-2" />
 
@@ -50,7 +46,6 @@
         <button class="btn btn-secondary" @onclick="LimpiarFiltros">Limpiar</button>
     </div>
 
-    <!-- Tabla -->
     <table class="table table-hover align-middle">
         <thead>
         <tr>
@@ -66,7 +61,7 @@
         <tbody>
         @foreach (var itemDto in _itemsFiltradosEnTabla)
         {
-            <tr @key="itemDto.Id"> <!-- <--- Aquí agregás el key -->
+            <tr @key="itemDto.Id">
                 <td>@itemDto.Titulo</td>
                 <td>@itemDto.Descripcion</td>
                 <td>@itemDto.Categoria</td>
@@ -103,7 +98,6 @@
 
 }
 
-<!-- Modal para editar item -->
 @if (_mostrarModalEditar)
 {
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
@@ -149,23 +143,16 @@
 }
 
 @code {
-    //----------------------------------------------------------------------------------------------
-    // Variables
-    private string _mensajeErrorModal = "";
-    private bool _mostrarModalEditar = false;
-    private ItemDto _itemEditado;
-
-    public Catalogo? _catalogoSeleccionado;
+    private string? _mensajeErrorModal = "";
+    private bool _mostrarModalEditar;
+    private ItemDto? _itemEditado;
+    private Catalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
-
     private List<ItemDto> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
-
     private string _textoBusqueda = string.Empty;
     private string _categoriaAFiltrar = string.Empty;
 
-    //----------------------------------------------------------------------------------------------
-    // Lógica
     private void CargarItemsDeCatalogo()
     {
         _catalogoSeleccionado = sistema.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
@@ -186,14 +173,16 @@
         }
     }
 
-
-
     private void AplicarFiltros()
     {
         if (_catalogoSeleccionado == null) return;
 
         _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
             .Where(item =>
+                item.Descripcion != null
+                &&
+                item.Titulo != null
+                &&
                 (string.IsNullOrWhiteSpace(_textoBusqueda) ||
                  Normalizar(item.Titulo).Contains(Normalizar(_textoBusqueda)) ||
                  Normalizar(item.Descripcion).Contains(Normalizar(_textoBusqueda)))
@@ -207,9 +196,7 @@
         
         ActualizarEstadoDuplicados();
     }
-
-
-
+    
     private void LimpiarFiltros()
     {
         _textoBusqueda = string.Empty;
@@ -222,8 +209,7 @@
                 .ToList();
         }
     }
-
-
+    
     private string Normalizar(string texto)
     {
         if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
@@ -251,7 +237,6 @@
         _mensajeErrorModal = null;
     }
 
-
     private void GuardarCambios()
     {
         if (_itemEditado == null || _catalogoSeleccionado == null) return;
@@ -276,7 +261,7 @@
 
             _mostrarModalEditar = false;
             _itemEditado = null;
-            _mensajeErrorModal = null;
+            _mensajeErrorModal = null!;
 
             StateHasChanged();
         }
@@ -285,9 +270,7 @@
             _mensajeErrorModal = ex.Message;
         }
     }
-
-
-
+    
     private void ReconstruirCategorias()
     {
         if (_catalogoSeleccionado == null) return;
@@ -312,11 +295,10 @@
             .Select(i => i.Categoria)
             .Where(c => !string.IsNullOrEmpty(c))
             .Distinct()
-            .ToList();
+            .ToList()!;
     }
-
-
-    private void EliminarItem(ItemDto item)
+    
+    private void EliminarItem(ItemDto? item)
     {
         if (_catalogoSeleccionado == null || item == null) return;
 

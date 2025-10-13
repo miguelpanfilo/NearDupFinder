@@ -3,7 +3,7 @@
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio
-@inject Sistema sistema
+@inject Sistema Sistema
 @inject NavigationManager Nav
 
 <PageTitle>Crear Item</PageTitle>
@@ -15,19 +15,16 @@
     <div class="alert alert-danger">@_mensajeError</div>
 }
 
-<!-- Select de catálogo -->
 <div class="mb-3">
     <label for="catalogoSelect">Seleccionar Catálogo:</label>
     <select id="catalogoSelect" class="form-select" @bind="_catalogoSeleccionadoTitulo">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in sistema.Catalogos)
+        @foreach (var cat in Sistema.Catalogos)
         {
             <option value="@cat.Titulo">@cat.Titulo</option>
         }
     </select>
 </div>
-<!-- Fin de select de catálogo -->
-
 
 <div class="mb-3">
     <label>Título:</label>
@@ -79,7 +76,7 @@
                 Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
             };
 
-            sistema.AltaItemConAltaDuplicados(_catalogoSeleccionadoTitulo, nuevoItem);
+            Sistema.AltaItemConAltaDuplicados(_catalogoSeleccionadoTitulo, nuevoItem);
 
             Nav.NavigateTo("/lista-items");
         }
@@ -88,8 +85,7 @@
             _mensajeError = ex.Message;
         }
     }
-
-
+    
     private void Cancelar()
     {
         Nav.NavigateTo("/lista-items");
