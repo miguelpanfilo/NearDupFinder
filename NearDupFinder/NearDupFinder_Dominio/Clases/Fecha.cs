@@ -25,7 +25,7 @@ public sealed class Fecha
         }
         catch
         {
-            throw new UsuarioException("No es una fecha válida.");
+            throw new ExcepcionDeUsuario("No es una fecha válida.");
         }
     }
 

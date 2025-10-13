@@ -52,7 +52,7 @@ public sealed class Clave
             return new Clave(hash);
         }
  
-        throw new UsuarioException("La contraseña no tiene el formato valido");        
+        throw new ExcepcionDeUsuario("La contraseña no tiene el formato valido");        
     }
     
     public bool Verificar(string clave)

@@ -25,9 +25,7 @@ public class SistemaPruebas
     {
         Sistema sistema = new Sistema();
         int idInexistente = Int32.MaxValue;
-
         Usuario? usuarioABuscar = sistema.BuscarUsuarioPorId(idInexistente);
-
         Assert.IsNull(usuarioABuscar);
     }
 
@@ -37,20 +35,15 @@ public class SistemaPruebas
         Sistema sistema = new Sistema();
         Usuario? admin = sistema.ObtenerUsuarios().FirstOrDefault();
         int idValido = admin!.Id;
-
         Usuario? usuarioABuscar = sistema.BuscarUsuarioPorId(idValido);
-
         Assert.AreEqual(admin, usuarioABuscar);
     }
-    // Inicio Pruebas Catalogo
-
+    
     [TestMethod]
     public void ObtenerItemsDelCatalogo_CatalogoVacio_RetornaCero()
     {
         Sistema sistema = new Sistema();
-        
         int numeroDeItemsDelCatalogo = sistema.ObtenerItemsDelCatalogo(_catalogo).Count;
-        
         Assert.AreEqual(numeroDeItemsDelCatalogo, 0);
     }
     
@@ -65,11 +58,8 @@ public class SistemaPruebas
         };  
         _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item);
         int numeroDeItemsDelCatalogo = _sistema.ObtenerItemsDelCatalogo(_catalogo).Count;
-        
         Assert.AreEqual(numeroDeItemsDelCatalogo, 1);
     }
-
-    // Inicio Pruebas Items
 
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
@@ -92,9 +82,7 @@ public class SistemaPruebas
             Marca = "Marca 1",
             Modelo = "Modelo 1"
         };
-
         sistema.ActualizarItemEnCatalogo(catalogo, dto);
-
         Assert.AreEqual("Nuevo Título", item.Titulo);
         Assert.AreEqual("Nueva Descripción", item.Descripcion);
     }
@@ -102,7 +90,6 @@ public class SistemaPruebas
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaCategoriaMarcaModelo()
     {
-
         var sistema = new Sistema();
         var catalogo = new Catalogo("Catálogo Test");
         var item = new Item("Original", "Descripcion original")
@@ -112,7 +99,6 @@ public class SistemaPruebas
             Modelo = "Modelo 1"
         };
         catalogo.AgregarItem(item);
-
         var dto = new ItemDto
         {
             Id = item.Id,
@@ -122,9 +108,7 @@ public class SistemaPruebas
             Marca = "Marca 2",
             Modelo = "Modelo 2"
         };
-
         sistema.ActualizarItemEnCatalogo(catalogo, dto);
-
         Assert.AreEqual("Cat 2", item.Categoria);
         Assert.AreEqual("Marca 2", item.Marca);
         Assert.AreEqual("Modelo 2", item.Modelo);
@@ -138,18 +122,17 @@ public class SistemaPruebas
 
         var dto = new ItemDto
         {
-            Id = 999, // Id inexistente
+            Id = 999, 
             Titulo = "Título",
             Descripcion = "Descripcion",
             Categoria = "Cat",
             Marca = "Marca",
             Modelo = "Modelo"
         };
-
-        var ex = Assert.ThrowsException<ItemException>(() => sistema.ActualizarItemEnCatalogo(catalogo, dto)
+        var error = Assert.ThrowsException<ExcepcionDeItem>(() => sistema.ActualizarItemEnCatalogo(catalogo, dto)
         );
 
-        Assert.AreEqual("No se encontró el item a actualizar.", ex.Message);
+        Assert.AreEqual("No se encontró el item a actualizar.", error.Message);
     }
 
     [TestMethod]
@@ -158,7 +141,6 @@ public class SistemaPruebas
         var sistema = new Sistema();
         var catalogo = new Catalogo("Catálogo Test");
         sistema.AgregarCatalogo(catalogo);
-
         var nuevoItem = new Item("Item 1", "Descripción 1");
 
         sistema.AltaItemConAltaDuplicados("Catálogo Test", nuevoItem);
@@ -170,7 +152,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_LanzaExcepcionSiTituloOVacio()
     {
         var sistema = new Sistema();
@@ -182,7 +164,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_DescripcionVacia_Excepcion()
     {
         var sistema = new Sistema();
@@ -194,18 +176,17 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_Nulo_Excepcion()
     {
-        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null!);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);
     }
 
     [TestMethod]
     public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
     {
-
         var catalogo = new Catalogo("Catálogo Test");
-        _sistema.AgregarCatalogo(catalogo); // Necesitás este método en tu sistema
+        _sistema.AgregarCatalogo(catalogo); 
 
         var item1 = new Item("Titulo 1", "Descripcion 1");
         var item2 = new Item("Titulo 1", "Descripcion 1");
@@ -213,7 +194,9 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item1);
         _sistema.AltaItemConAltaDuplicados("Catálogo Test", item2);
 
-        Assert.AreEqual(1, _sistema.DuplicadosGlobales.Count);
+        int cantidadDuplicadoGlobalesUno = 1;
+
+        Assert.AreEqual(cantidadDuplicadoGlobalesUno, _sistema.DuplicadosGlobales.Count);
     }
 
     [TestMethod]
@@ -235,14 +218,14 @@ public class SistemaPruebas
     public void ActualizarDuplicadosPara_ExcepcionSiCatalogoEsNull()
     {
         var item = new Item("Titulo", "Descripcion");
-        _sistema.ActualizarDuplicadosPara(null!, item);
+        _sistema.ActualizarDuplicadosPara(null, item);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void ActualizarDuplicadosPara_LanzaExcepcionSiItemEsNull()
     {
-        _sistema.ActualizarDuplicadosPara(_catalogo, null!);
+        _sistema.ActualizarDuplicadosPara(_catalogo, null);
     }
 
     [TestMethod]
@@ -259,7 +242,7 @@ public class SistemaPruebas
 
         _sistema.ActualizarDuplicadosPara(_catalogo, item1);
 
-        Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count, "Los duplicados previos deberían eliminarse.");
+        Assert.AreEqual(0, _sistema.DuplicadosGlobales.Count);
     }
 
     [TestMethod]
@@ -274,8 +257,9 @@ public class SistemaPruebas
 
         Assert.IsTrue(item1.EstadoDuplicado, "Item1 debería estar marcado como duplicado");
         Assert.IsTrue(item2.EstadoDuplicado, "Item2 debería estar marcado como duplicado");
+        int cantidadDuplicadosCero = 0;
 
-        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir al menos un duplicado global");
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > cantidadDuplicadosCero);
     }
 
     [TestMethod]
@@ -292,8 +276,9 @@ public class SistemaPruebas
         item1.Titulo = "TituloNuevo";
         item1.Descripcion = "DescNueva";
         _sistema.ActualizarDuplicadosPara(_catalogo, item1);
+        int cantidadDuplicadosCero = 0;
 
-        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > 0, "Debe existir el duplicado tras editar item 1 con item 3");
+        Assert.IsTrue(_sistema.DuplicadosGlobales.Count > cantidadDuplicadosCero);
 
     }
 
@@ -312,7 +297,6 @@ public class SistemaPruebas
         item1.Descripcion = "DescripcionDiferente";
 
         _sistema.ActualizarDuplicadosPara(_catalogo, item3);
-
         Assert.IsTrue(item3.EstadoDuplicado, "Item3 debería estar marcado como duplicado");
     }
 
@@ -372,7 +356,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ItemException))]
+    [ExpectedException(typeof(ExcepcionDeItem))]
     public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");
@@ -413,7 +397,6 @@ public class SistemaPruebas
     public void CantidadDeItemsGlobal_SinItems_RetornaCero()
     {
         int numeroDeItems = _sistema.CantidadDeItemsGlobal();
-
         Assert.AreEqual(0, numeroDeItems);
     }
 
@@ -444,7 +427,6 @@ public class SistemaPruebas
     {
         var nuevoItem = new Item("Item 1", "Descripción 1");
         _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, nuevoItem);
-
         bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
 
         Assert.IsTrue(existeItem);
@@ -455,11 +437,10 @@ public class SistemaPruebas
     {
         var titulos = new List<string> { "id", "titulo" };
         var filas = new List<Fila> { new Fila("1", "t", "m", "x", "d", "c", "Cat 1") };
-
+       
         _sistema.ImportarItemsDesdeCsv(titulos, 1, filas);
-
+        
         bool itemExiste = _sistema.IdExisteEnListaDeIdGlobal(1);
-
         Assert.IsTrue(itemExiste);
     }
 
@@ -469,22 +450,18 @@ public class SistemaPruebas
 
         var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
         var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
-
         var duplicado = new ParDuplicado
         {
-            ItemA = item1,
-            ItemB = item2,
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item2,
             Score = 0.9f,
             Tipo = TipoDuplicado.PosibleDuplicado
         };
 
         _sistema.DuplicadosGlobales.Add(duplicado);
-
         item1.EstadoDuplicado = true;
         item2.EstadoDuplicado = true;
-
         _sistema.DescartarParDuplicado(duplicado);
-
 
         Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado), "El duplicado debería haberse eliminado");
         Assert.IsFalse(item1.EstadoDuplicado, "ItemA ya no debería estar marcado como duplicado");
@@ -501,20 +478,18 @@ public class SistemaPruebas
 
         var duplicado1 = new ParDuplicado
         {
-            ItemA = item1,
-            ItemB = item2,
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item2,
             Score = 0.9f,
             Tipo = TipoDuplicado.PosibleDuplicado
         };
-
         var duplicado2 = new ParDuplicado
         {
-            ItemA = item1,
-            ItemB = item3,
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item3,
             Score = 0.8f,
             Tipo = TipoDuplicado.PosibleDuplicado
         };
-
         _sistema.DuplicadosGlobales.Add(duplicado1);
         _sistema.DuplicadosGlobales.Add(duplicado2);
 
@@ -523,7 +498,6 @@ public class SistemaPruebas
         item3.EstadoDuplicado = true;
 
         _sistema.DescartarParDuplicado(duplicado1);
-
         Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado1));
         Assert.IsTrue(item1.EstadoDuplicado);
         Assert.IsFalse(item2.EstadoDuplicado);
@@ -534,7 +508,6 @@ public class SistemaPruebas
     public void FromEntity_CreaDtoCorrectamente()
     {
         var item = new Item("Título prueba", "Descripción prueba", "Marca1", "Modelo1", "Cat1");
-
         var dto = ItemDto.FromEntity(item);
 
         Assert.AreEqual(item.Id, dto.Id);
@@ -549,7 +522,6 @@ public class SistemaPruebas
     public void FromEntity_ItemConCamposNull_CopiaCorrectamente()
     {
         var item = new Item("Titulo", "Descripcion"); 
-
         var dto = ItemDto.FromEntity(item);
 
         Assert.AreEqual(item.Id, dto.Id);
@@ -574,13 +546,10 @@ public class SistemaPruebas
         var clusters = _catalogo.Clusters.ToList();
 
         var cantidadEsperada = 0;
-        
         Assert.AreEqual(cantidadEsperada,clusters.Count());
         
         _sistema.ConfirmarParDuplicado(parDuplicados);
-        
         clusters = _catalogo.Clusters.ToList();
-        
         cantidadEsperada = 1;
         
         Assert.AreEqual(cantidadEsperada,clusters.Count());
@@ -621,13 +590,10 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
 
         var parDuplicados = _sistema.DuplicadosGlobales.First();
-        
         _sistema.ConfirmarParDuplicado(parDuplicados);
         
         var clusters = _catalogo.Clusters.ToList();
-        
         _sistema.FusionarItemsEnElCLuster(clusters.First());
-        
         var canonico = clusters.First().Canonico;
         
         Assert.IsNotNull(canonico);
@@ -644,17 +610,64 @@ public class SistemaPruebas
         _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, item2);
 
         var parDuplicados = _sistema.DuplicadosGlobales.First();
-        
         _sistema.ConfirmarParDuplicado(parDuplicados);
-        
         var clusters = _catalogo.Clusters.ToList();
         
         _sistema.FusionarItemsEnElCLuster(clusters.First());
-        
         Assert.IsNotNull(clusters.First().Canonico);
         
         _sistema.AsignarNuloCanonico(clusters.First());
-        
         Assert.IsNull(clusters.First().Canonico);
     }
+    
+    [TestMethod]
+    public void RetornaFalse_SiCatalogoEsNull()
+    {
+        var dto = new ItemDto { Id = 1 };
+        var resultado = _sistema.ItemEstaEnCluster(null, dto);
+        Assert.IsFalse(resultado);
+    }
+    
+    [TestMethod]
+    public void RetornaFalse_SiDtoEsNull()
+    {
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, null);
+        Assert.IsFalse(resultado);
+    }
+    [TestMethod]
+    public void RetornaFalse_SiItemNoExisteEnCatalogo()
+    {
+        var item = new Item {  Titulo = "Item 1" };
+        _catalogo.AgregarItem(item);
+        var dto = new ItemDto { Id = 999 }; 
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, dto);
+        Assert.IsFalse(resultado);
+    }
+    
+    [TestMethod]
+    public void RetornaFalse_SiItemExistePeroNoTieneCluster()
+    {
+        var item = new Item { Titulo = "Item sin cluster" };
+        _catalogo.AgregarItem(item);
+        var dto = new ItemDto { Id = item.Id };
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, dto);
+        Assert.IsFalse(resultado);
+    }
+    
+    [TestMethod]
+    public void RetornaTrue_SiItemPerteneceAUnCluster()
+    {
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        _catalogo.ConfirmarClusters(itemB, itemA);
+       
+        var dto = new ItemDto { Id = itemA.Id };
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, dto);
+        
+        Assert.IsTrue(resultado);
+    }
+    
 }

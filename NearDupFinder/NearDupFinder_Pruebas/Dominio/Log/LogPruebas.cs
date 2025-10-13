@@ -6,8 +6,8 @@ namespace NearDupFinder_Pruebas.Dominio.Log;
 [TestClass]
 public class LogPruebas
 {
-    private Sistema _sistema;
-
+    private Sistema _sistema= new();
+    
     [TestInitialize]
     public void Setup()
     {
@@ -62,8 +62,8 @@ public class LogPruebas
     {
         _sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Primero");
         _sistema.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, "Segundo");
-
         var logs = _sistema.ObtenerLogs();
+        
         Assert.AreEqual(2, logs.Count);
         Assert.AreEqual("Creacion de usuario: Primero", logs[0].Detalles);
         Assert.AreEqual("Modificacion de usuario: Segundo", logs[1].Detalles);
@@ -83,8 +83,8 @@ public class LogPruebas
     public void RegistrarLog_DetallesNoPuedeSerNull()
     {
         _sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaItem, null);
-
         var logs = _sistema.ObtenerLogs();
+        
         Assert.AreEqual("Alta de item: ", logs[0].Detalles);
     }
 
@@ -92,7 +92,6 @@ public class LogPruebas
     public void RegistrarLog_DeberiaUsarUsuarioActual()
     {
         _sistema.AsignarUsuarioActual("nuevo@correo.com");
-
         _sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Prueba de log");
 
         var logs = _sistema.ObtenerLogs();
@@ -105,7 +104,6 @@ public class LogPruebas
     public void RegistrarLog_DeberiaUsarUsuarioPredeterminadoPorDefecto()
     {
         var sistema = new Sistema();
-
         sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Sin usuario seteado");
 
         var logs = sistema.ObtenerLogs();
@@ -119,7 +117,6 @@ public class LogPruebas
     {
         _sistema.AsignarUsuarioActual("otro@correo.com");
         _sistema.DesasignarUsuario();
-
         _sistema.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, "Logout");
 
         var logs = _sistema.ObtenerLogs();
@@ -132,7 +129,6 @@ public class LogPruebas
     {
         _sistema.AsignarUsuarioActual("primero@correo.com");
         _sistema.AsignarUsuarioActual("segundo@correo.com");
-
         _sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Cambio de usuario");
 
         var logs = _sistema.ObtenerLogs();

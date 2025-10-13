@@ -12,9 +12,9 @@ public class NormalizarPruebas
     public void Normalizar_TextoVacio_RetornaVacio()
     {
         string textoOriginal = "";
-
+        
         var resultado = _gestorDuplicados.Normalizar(textoOriginal);
-
+        
         Assert.AreEqual(string.Empty, resultado);
     }
 
@@ -22,9 +22,9 @@ public class NormalizarPruebas
     public void Normalizar_TextoMayusculas_RetornarMinusculas()
     {
         string textoOriginal = "LAPTOP";
-
+        
         var resultado = _gestorDuplicados.Normalizar(textoOriginal);
-
+        
         Assert.AreEqual("laptop", resultado);
     }
     
@@ -32,9 +32,9 @@ public class NormalizarPruebas
     public void Normalizar_TextoConTildes_SeNormaliza()
     {
         string textoOriginal = "ÁÉÍÓÚñÜ";
-
+        
         var resultado = _gestorDuplicados.Normalizar(textoOriginal);
-
+        
         Assert.AreEqual("aeiounu", resultado);
     }
     
@@ -42,9 +42,9 @@ public class NormalizarPruebas
     public void Normalizar_TextoConSimbolos_SeEliminan()
     {
         string textoOriginal = "lap{op";
-
+        
         var resultado = _gestorDuplicados.Normalizar(textoOriginal);
-
+        
         Assert.AreEqual("lap op", resultado);
     }
 
@@ -52,9 +52,9 @@ public class NormalizarPruebas
     public void Normalizar_TextoConEspaciosMultiples_ColapsaYRecorta()
     {
         string textoOriginal = " lapt op  ";
-
+        
         var resultado = _gestorDuplicados.Normalizar(textoOriginal);
-
+        
         Assert.AreEqual("lapt op", resultado);
     }
 
@@ -70,11 +70,10 @@ public class NormalizarPruebas
             Categoria = "!!Categoria!!"
         };
 
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.NormalizarItem(item));
-
+        var error = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.NormalizarItem(item));
         Assert.AreEqual(
             "El título y la descripción no pueden quedar vacío tras normalizar.",
-            ex.Message
+            error.Message
         );
     }
     
@@ -89,7 +88,6 @@ public class NormalizarPruebas
             Modelo = "Modelo1",
             Categoria = "Categoria1"
         };
-
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("laptop", resultado.TituloNormalizado);
@@ -129,7 +127,7 @@ public class NormalizarPruebas
             Modelo = " MÓDeLo   #1 ",
             Categoria = "  TeCnología! "
         };
-
+        
         var resultado = _gestorDuplicados.NormalizarItem(item);
 
         Assert.AreEqual("lap top 123", resultado.TituloNormalizado);
@@ -150,9 +148,9 @@ public class NormalizarPruebas
             Categoria = "!!@@"
         };
 
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.NormalizarItem(item));
+        var error = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.NormalizarItem(item));
 
-        Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", ex.Message);
+        Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", error.Message);
     }
 
     [TestMethod]

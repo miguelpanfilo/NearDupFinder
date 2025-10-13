@@ -40,7 +40,7 @@ public class DeteccionDuplicadosPruebas
         var duplicados = sis.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(1, duplicados.Count);
-        Assert.AreEqual(itemB.Id, duplicados[0].ItemB.Id);
+        Assert.AreEqual(itemB.Id, duplicados[0].ItemPosibleDuplicado.Id);
     }
     
     [TestMethod]
@@ -138,7 +138,7 @@ public class DeteccionDuplicadosPruebas
         var duplicados = sis.DetectarDuplicados(itemA, catalogo);
 
         var esperado = new List<int> { itemB1.Id, itemB2.Id, itemC.Id };
-        var actual = duplicados.Select(d => d.ItemB.Id).ToList();
+        var actual = duplicados.Select(d => d.ItemPosibleDuplicado.Id).ToList();
         CollectionAssert.AreEqual(esperado, actual);
     }
 }

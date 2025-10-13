@@ -11,7 +11,7 @@ public class EmailPruebas
     {
         string? entradaNula = null;
             
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaNula));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaNula));
     }
     
     [TestMethod]
@@ -19,7 +19,7 @@ public class EmailPruebas
     {
         string entradaVacia = string.Empty;
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaVacia));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaVacia));
     }
 
     [TestMethod]
@@ -27,7 +27,7 @@ public class EmailPruebas
     {
         string entradaEspacioEnBlanco = " ";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaEspacioEnBlanco));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaEspacioEnBlanco));
     }
 
     [TestMethod]
@@ -35,7 +35,7 @@ public class EmailPruebas
     {
         string entradaSinDominio = "usuario@";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaSinDominio));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaSinDominio));
     }
 
     [TestMethod]
@@ -43,7 +43,7 @@ public class EmailPruebas
     {
         string entradaSoloArrobaYDominio = "@ejemplo.com";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaSoloArrobaYDominio));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaSoloArrobaYDominio));
     }
 
     [TestMethod]
@@ -51,7 +51,7 @@ public class EmailPruebas
     {
         string entradaSinArroba = "usuario.com";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaSinArroba));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaSinArroba));
     }
 
     [TestMethod]
@@ -59,7 +59,7 @@ public class EmailPruebas
     {
         string entradaSinPuntoCom = "usuario@";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaSinPuntoCom));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaSinPuntoCom));
     }
 
     [TestMethod]
@@ -67,7 +67,7 @@ public class EmailPruebas
     {
         string entradaDominioEmpiezaConPunto = "usuarioo@.com";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaDominioEmpiezaConPunto));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaDominioEmpiezaConPunto));
     }
 
     [TestMethod]
@@ -75,7 +75,7 @@ public class EmailPruebas
     {
         string entradaDominioTerminaConPunto = "usuario@ejemplo.";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaDominioTerminaConPunto));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaDominioTerminaConPunto));
     }
     
     [TestMethod]
@@ -83,7 +83,7 @@ public class EmailPruebas
     {
         string entradaDominioSinPunto = "usuario@ejemplocom";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaDominioSinPunto));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaDominioSinPunto));
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public class EmailPruebas
     {
         string entradaDominioConPuntosConsecutivos = "usuario@ejemplo..com";
         
-        Assert.ThrowsException<UsuarioException>(() => Email.Crear(entradaDominioConPuntosConsecutivos));
+        Assert.ThrowsException<ExcepcionDeUsuario>(() => Email.Crear(entradaDominioConPuntosConsecutivos));
     }
 
     [TestMethod]
