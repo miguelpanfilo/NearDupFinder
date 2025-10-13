@@ -9,7 +9,8 @@
 
 <h3>Detección de Duplicados</h3>
 
-@if (_duplicados.Count == 0)
+
+@if (_duplicados.Count == 0 )
 {
     <div>No se encontraron duplicados.</div>
 }
@@ -49,8 +50,7 @@ else
                     {
                         <span class="badge bg-warning">DUPLICADO SUGERIDO</span>   
                     }
-
-                        </td>
+                </td>
                 <td>
                     <button class="btn btn-success btn-sm me-1" @onclick="() => ConfirmarDuplicado(d)" title="Confirmar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-check2" viewBox="0 0 16 16">
@@ -69,19 +69,12 @@ else
                             <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
                     </button>
-
-
-                   
-          
-                    </td>
+                </td>
             </tr>
         }
         </tbody>
-
     </table>
 }
-
-<!-- Modal Comparar: lado a lado con tokens resaltados -->
 @if (_mostrarModalComparar && _duplicadoSeleccionado.HasValue)
 {
     var d = _duplicadoSeleccionado.Value;
