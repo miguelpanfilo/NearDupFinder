@@ -368,7 +368,7 @@ public class Sistema
         {EntradaDeLog.AccionLog.EliminarUser,"Eliminacion de usuario"},
     };
     
-    public void RegistrarLog(EntradaDeLog.AccionLog accion, string detalles)
+    public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles)
     {
         var entry = new EntradaDeLog
         {
