@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace NearDupFinder_Dominio.Clases;
 
 public class EntradaDeLog
@@ -8,13 +6,6 @@ public class EntradaDeLog
     public string Usuario { get; init; } = "Desconocido";
     public AccionLog Accion { get; init; }
     public string Detalles { get; init; } = string.Empty;
-
-    [ExcludeFromCodeCoverage]
-    public override string ToString()
-    {
-        string timestampIso = Timestamp.ToString("yyyy-MM-ddTHH:mm:ss");
-        return $"{timestampIso} | {Usuario} | {Accion} | {Detalles}";
-    }
     public enum AccionLog
     {
         AltaItem,

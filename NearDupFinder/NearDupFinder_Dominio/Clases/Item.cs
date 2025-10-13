@@ -99,10 +99,10 @@ public class Item
         _siguienteId = primerIdDeUnItemCreado;
     }
     public void EditarTitulo(string? nuevoTitulo) => Titulo = nuevoTitulo;
-    public void EditarDescripcion(string nuevaDescripcion) => Descripcion = nuevaDescripcion;
-    public void EditarMarca(string nuevaMarca) => Marca = nuevaMarca;
-    public void EditarModelo(string nuevoModelo) => Modelo = nuevoModelo;
-    public void EditarCategoria(string nuevaCategoria) => Categoria = nuevaCategoria;
+    public void EditarDescripcion(string? nuevaDescripcion) => Descripcion = nuevaDescripcion;
+    public void EditarMarca(string? nuevaMarca) => Marca = nuevaMarca;
+    public void EditarModelo(string? nuevoModelo) => Modelo = nuevoModelo;
+    public void EditarCategoria(string? nuevaCategoria) => Categoria = nuevaCategoria;
     public void AjustarId(int id)
     {
         int idItemInexistente = 0;
