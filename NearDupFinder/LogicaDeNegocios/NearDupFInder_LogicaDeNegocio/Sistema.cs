@@ -23,7 +23,6 @@ public class Sistema
         _almacenamientoDeDatos = new AlmacenamientoDeDatos();
         _gestorUsuarios = new GestorUsuarios(this);
         _almacenamientoDeDatos.AgregarUsuario(_gestorUsuarios.CrearUsuarioAdmin());
-        
         _gestorDuplicados = new GestorDuplicados();
         DuplicadosGlobales = new List<ParDuplicado >();
         _idsItemsGlobal = new List<int>();
@@ -78,7 +77,7 @@ public class Sistema
     {
         return usuario.TieneRol(rol); 
     }
-
+    
     public void AgregarUsuarioALaLista(Usuario usuario)
     {
         _almacenamientoDeDatos.AgregarUsuario(usuario);
@@ -125,7 +124,7 @@ public class Sistema
         
         _almacenamientoDeDatos.AgregarCatalogo(catalogo);
     }
-
+    
     public void CambiarTituloCatalogo(Catalogo catalogo, string titulo)
     {
         var catalogoCandidato = ObtenerCatalogoPorTitulo(titulo);
@@ -133,7 +132,6 @@ public class Sistema
         {
             throw new InvalidOperationException("El Título del catálogo ya existe");
         }
-
         catalogo.CambiarTitulo(titulo);
     }
     
@@ -141,7 +139,6 @@ public class Sistema
     {
         catalogo.CambiarDescripcion(descripcion);
     }
-    
     public void EliminarCatalogo(Catalogo catalogo)
     {
         if (!_almacenamientoDeDatos.ObtenerCatalogos().Contains(catalogo))
@@ -168,7 +165,6 @@ public class Sistema
     public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
-
         ValidarItem(nuevoItem);
 
         AsegurarIdUnico(nuevoItem);
@@ -179,7 +175,7 @@ public class Sistema
         RegistrarLog(EntradaDeLog.AccionLog.AltaItem, $"Item agregado: '{nuevoItem.Titulo}' en catálogo '{catalogoTitulo}'");
 
     }
-
+    
     public void ActualizarItemEnCatalogo(Catalogo catalogo, ItemDto dto)
     {
         var itemAEditar = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
@@ -194,7 +190,7 @@ public class Sistema
         
         RegistrarLog(EntradaDeLog.AccionLog.EditarItem, $"Item actualizado: '{dto.Titulo}' en catálogo '{catalogo.Titulo}'");
     }
-
+    
     public void EliminarItem(string catalogo, ItemDto dto)
     {
         var catalogoBuscado = ObtenerCatalogoPorTitulo(catalogo);
@@ -214,13 +210,13 @@ public class Sistema
         
         RegistrarLog(EntradaDeLog.AccionLog.EliminarItem, $"Item eliminado: '{item.Titulo}' del catálogo '{catalogoBuscado.Titulo}'");
     }
-        
+    
     private void ValidarItem(Item item)
     {
         if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
             throw new ExcepcionDeItem("Título y Descripción son obligatorios.");
     }
-
+    
     public void ActualizarDuplicadosPara(Catalogo? catalogo, Item? itemEditado)
     {
         if (catalogo == null || itemEditado == null)
@@ -234,30 +230,27 @@ public class Sistema
 
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
-
+    
     private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado>? duplicados)
     {
         if (duplicados == null) return;
-
         foreach (var dup in duplicados)
         {
             DuplicadosGlobales.Add(dup);
-
             dup.ItemA.EstadoDuplicado = true;
             dup.ItemB.EstadoDuplicado = true;
         }
     }
-
+    
     private void EliminarDuplicadosPrevios(Item item)
     {
         var duplicadosABorrar = DuplicadosGlobales
             .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
             .ToList();
-
         foreach (var duplicado in duplicadosABorrar)
             DuplicadosGlobales.Remove(duplicado);
     }
-
+    
     private void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     {
         foreach (var item in catalogo.Items) 
@@ -266,7 +259,7 @@ public class Sistema
             item.EstadoDuplicado = tieneDuplicados;
         }
     }
-
+    
     private void AsegurarIdUnico(Item item)
     {
         int idApropiado = item.Id;
@@ -285,7 +278,7 @@ public class Sistema
     {
         return _idsItemsGlobal.Count;
     }
-
+    
     public void ConfirmarParDuplicado(ParDuplicado duplicadoConfirmado)
     {
         var tituloCatalogo = duplicadoConfirmado.TituloCatalogo;
@@ -299,22 +292,21 @@ public class Sistema
         RegistrarLog(EntradaDeLog.AccionLog.ConfirmarDuplicado, $"Se confirmó duplicado: Item '{duplicadoConfirmado.ItemA.Titulo}' y '{duplicadoConfirmado.ItemB.Titulo}'");
 
     }
-
-    public void RemoverItemDelCluster(Catalogo catalogo, Item itemARemover) // testear
+    
+    public void RemoverItemDelCluster(Catalogo catalogo, Item itemARemover) 
     {
         catalogo.QuitarItemDeCluster(itemARemover);
     }
-
+    
     public void AsignarNuloCanonico(Cluster? cluster)
     {
         if(cluster is not null)
             cluster.Canonico = null;
     }
-
+    
     public void FusionarItemsEnElCLuster(Cluster clusterAFusionar)
     {
         bool fusionado = clusterAFusionar.FusionarCanonico();
-    
         if (fusionado)
         {
             RegistrarLog(EntradaDeLog.AccionLog.FusionarCluster, 
@@ -334,11 +326,10 @@ public class Sistema
         var cluster = catalogo.ObtenerClusterDe(item);
         return cluster != null;
     }
-
+    
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
     {
         DuplicadosGlobales.Remove(duplicadoADescartar);
-
         duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
         duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
         RegistrarLog(EntradaDeLog.AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemA.Titulo}' + '{duplicadoADescartar.ItemB.Titulo}'");
@@ -347,19 +338,15 @@ public class Sistema
     public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
         var duplicados = _gestorDuplicados.DetectarDuplicados(itemA, catalogo);
-
         stopwatch.Stop();
-
         RegistrarLog(
             EntradaDeLog.AccionLog.DeteccionDuplicados,
             $"Detección de duplicados para item '{itemA.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
         );
-
         return duplicados;
     }
-
+    
     public void ImportarItemsDesdeCsv(List<string> titulos, int cantidad, List<Fila> filas)
     {
         _lectorCsv.LeerCsv(titulos, cantidad, filas);
@@ -369,17 +356,18 @@ public class Sistema
 
     private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {
-        { EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario" },
-        { EntradaDeLog.AccionLog.EditarUsuario, "Modificacion de usuario" },
-        { EntradaDeLog.AccionLog.AltaItem, "Alta de item" },
-        { EntradaDeLog.AccionLog.EliminarItem, "Eliminación de item" },
-        { EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
-        { EntradaDeLog.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
-        { EntradaDeLog.AccionLog.FusionarCluster,"Fusión de cluster" },
-        { EntradaDeLog.AccionLog.DescartarDuplicado,"Descartar duplicado"},
+        {EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario"},
+        {EntradaDeLog.AccionLog.EditarUsuario, "Modificacion de usuario"},
+        {EntradaDeLog.AccionLog.AltaItem, "Alta de item"},
+        {EntradaDeLog.AccionLog.EliminarItem, "Eliminación de item"},
+        {EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección duplicados automatica"},
+        {EntradaDeLog.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
+        {EntradaDeLog.AccionLog.FusionarCluster,"Fusión de cluster"},
+        {EntradaDeLog.AccionLog.DescartarDuplicado,"Descartar duplicado"},
         {EntradaDeLog.AccionLog.EditarItem,"Editar item"},
         {EntradaDeLog.AccionLog.EliminarUser,"Eliminacion de usuario"},
     };
+    
     public void RegistrarLog(EntradaDeLog.AccionLog accion, string detalles)
     {
         var entry = new EntradaDeLog
@@ -389,7 +377,6 @@ public class Sistema
             Accion = accion,
             Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
         };
-
         _auditoria.Add(entry);
     }
     
