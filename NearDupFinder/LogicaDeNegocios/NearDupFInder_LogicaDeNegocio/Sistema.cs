@@ -162,7 +162,7 @@ public class Sistema
         return _almacenamientoDeDatos.ObtenerCatalogos().Count;
     }
     
-    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item nuevoItem)
+    public void AltaItemConAltaDuplicados(string catalogoTitulo, Item? nuevoItem)
    {
         var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
         ValidarItem(nuevoItem);
@@ -237,15 +237,15 @@ public class Sistema
         foreach (var dup in duplicados)
         {
             DuplicadosGlobales.Add(dup);
-            dup.ItemA.EstadoDuplicado = true;
-            dup.ItemB.EstadoDuplicado = true;
+            dup.ItemAComparar.EstadoDuplicado = true;
+            dup.ItemPosibleDuplicado.EstadoDuplicado = true;
         }
     }
     
     private void EliminarDuplicadosPrevios(Item item)
     {
         var duplicadosABorrar = DuplicadosGlobales
-            .Where(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id)
+            .Where(d => d.ItemAComparar.Id == item.Id || d.ItemPosibleDuplicado.Id == item.Id)
             .ToList();
         foreach (var duplicado in duplicadosABorrar)
             DuplicadosGlobales.Remove(duplicado);
@@ -255,7 +255,7 @@ public class Sistema
     {
         foreach (var item in catalogo.Items) 
         {
-            bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemA.Id == item.Id || d.ItemB.Id == item.Id);
+            bool tieneDuplicados = DuplicadosGlobales.Any(d => d.ItemAComparar.Id == item.Id || d.ItemPosibleDuplicado.Id == item.Id);
             item.EstadoDuplicado = tieneDuplicados;
         }
     }
@@ -284,12 +284,12 @@ public class Sistema
         var tituloCatalogo = duplicadoConfirmado.TituloCatalogo;
         var catalogo = ObtenerCatalogoPorTitulo(tituloCatalogo);
         
-        var itemEntrante = duplicadoConfirmado.ItemA;
-        var itemComparado = duplicadoConfirmado.ItemB;
+        var itemEntrante = duplicadoConfirmado.ItemAComparar;
+        var itemComparado = duplicadoConfirmado.ItemPosibleDuplicado;
         
         catalogo?.ConfirmarClusters(itemEntrante,itemComparado);
         DuplicadosGlobales.Remove(duplicadoConfirmado);
-        RegistrarLog(EntradaDeLog.AccionLog.ConfirmarDuplicado, $"Se confirmó duplicado: Item '{duplicadoConfirmado.ItemA.Titulo}' y '{duplicadoConfirmado.ItemB.Titulo}'");
+        RegistrarLog(EntradaDeLog.AccionLog.ConfirmarDuplicado, $"Se confirmó duplicado: Item '{duplicadoConfirmado.ItemAComparar.Titulo}' y '{duplicadoConfirmado.ItemPosibleDuplicado.Titulo}'");
 
     }
     
@@ -330,9 +330,9 @@ public class Sistema
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
     {
         DuplicadosGlobales.Remove(duplicadoADescartar);
-        duplicadoADescartar.ItemA.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemA.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemA.Id);
-        duplicadoADescartar.ItemB.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemA.Id == duplicadoADescartar.ItemB.Id || unDuplicado.ItemB.Id == duplicadoADescartar.ItemB.Id);
-        RegistrarLog(EntradaDeLog.AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemA.Titulo}' + '{duplicadoADescartar.ItemB.Titulo}'");
+        duplicadoADescartar.ItemAComparar.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemAComparar.Id == duplicadoADescartar.ItemAComparar.Id || unDuplicado.ItemPosibleDuplicado.Id == duplicadoADescartar.ItemAComparar.Id);
+        duplicadoADescartar.ItemPosibleDuplicado.EstadoDuplicado = DuplicadosGlobales.Any(unDuplicado => unDuplicado.ItemAComparar.Id == duplicadoADescartar.ItemPosibleDuplicado.Id || unDuplicado.ItemPosibleDuplicado.Id == duplicadoADescartar.ItemPosibleDuplicado.Id);
+        RegistrarLog(EntradaDeLog.AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemAComparar.Titulo}' + '{duplicadoADescartar.ItemPosibleDuplicado.Titulo}'");
     }
     
     public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)

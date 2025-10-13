@@ -26,8 +26,8 @@ public struct ItemNormalizado
 
 [ExcludeFromCodeCoverage]
 public readonly record struct ParDuplicado(
-    Item ItemA,
-    Item ItemB,
+    Item ItemAComparar,
+    Item ItemPosibleDuplicado,
     float Score,
     TipoDuplicado Tipo,
     float JaccardTitulo,
@@ -93,7 +93,7 @@ public class GestorDuplicados
 
         listaDuplicados = listaDuplicados
             .OrderByDescending(x => x.Score)
-            .ThenBy(x => x.ItemB.Id)
+            .ThenBy(x => x.ItemPosibleDuplicado.Id)
             .ToList();
 
         return listaDuplicados;
@@ -109,8 +109,8 @@ public class GestorDuplicados
             throw new InvalidOperationException("El título y la descripción no pueden quedar vacío tras normalizar.");
         }
 
-        string marcaNormalizada = Normalizar(item.Marca!);
-        string modeloNormalizada = Normalizar(item.Modelo!);
+        string marcaNormalizada = Normalizar(item.Marca);
+        string modeloNormalizada = Normalizar(item.Modelo);
 
         return new ItemNormalizado
         {
@@ -121,7 +121,7 @@ public class GestorDuplicados
         };
     }
 
-    public string Normalizar(string texto)
+    public string Normalizar(string? texto)
     {
         if (string.IsNullOrEmpty(texto))
             return string.Empty;
@@ -139,6 +139,7 @@ public class GestorDuplicados
         texto = Regex.Replace(texto, @"\s+", " ").Trim();
         return texto;
     }
+
 
     public ItemTokenizado TokenizarItem(ItemNormalizado item)
     {

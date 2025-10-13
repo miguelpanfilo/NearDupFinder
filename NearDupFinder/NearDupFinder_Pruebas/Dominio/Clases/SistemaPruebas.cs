@@ -179,14 +179,14 @@ public class SistemaPruebas
     [ExpectedException(typeof(ExcepcionDeItem))]
     public void AltaItem_Nulo_Excepcion()
     {
-        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null!);
+        _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);
     }
 
     [TestMethod]
     public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
     {
         var catalogo = new Catalogo("Catálogo Test");
-        _sistema.AgregarCatalogo(catalogo); // Necesitás este método en tu sistema
+        _sistema.AgregarCatalogo(catalogo); 
 
         var item1 = new Item("Titulo 1", "Descripcion 1");
         var item2 = new Item("Titulo 1", "Descripcion 1");
@@ -218,14 +218,14 @@ public class SistemaPruebas
     public void ActualizarDuplicadosPara_ExcepcionSiCatalogoEsNull()
     {
         var item = new Item("Titulo", "Descripcion");
-        _sistema.ActualizarDuplicadosPara(null!, item);
+        _sistema.ActualizarDuplicadosPara(null, item);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void ActualizarDuplicadosPara_LanzaExcepcionSiItemEsNull()
     {
-        _sistema.ActualizarDuplicadosPara(_catalogo, null!);
+        _sistema.ActualizarDuplicadosPara(_catalogo, null);
     }
 
     [TestMethod]
@@ -452,8 +452,8 @@ public class SistemaPruebas
         var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
         var duplicado = new ParDuplicado
         {
-            ItemA = item1,
-            ItemB = item2,
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item2,
             Score = 0.9f,
             Tipo = TipoDuplicado.PosibleDuplicado
         };
@@ -478,15 +478,15 @@ public class SistemaPruebas
 
         var duplicado1 = new ParDuplicado
         {
-            ItemA = item1,
-            ItemB = item2,
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item2,
             Score = 0.9f,
             Tipo = TipoDuplicado.PosibleDuplicado
         };
         var duplicado2 = new ParDuplicado
         {
-            ItemA = item1,
-            ItemB = item3,
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item3,
             Score = 0.8f,
             Tipo = TipoDuplicado.PosibleDuplicado
         };

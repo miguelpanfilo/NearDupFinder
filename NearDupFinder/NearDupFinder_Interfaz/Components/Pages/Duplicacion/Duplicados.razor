@@ -33,8 +33,8 @@ else
         @foreach (var d in _duplicados)
         {
             <tr>
-                <td>@d.ItemA.Titulo</td>
-                <td>@d.ItemB.Titulo</td>
+                <td>@d.ItemAComparar.Titulo</td>
+                <td>@d.ItemPosibleDuplicado.Titulo</td>
                 <td>@d.JaccardTitulo.ToString("0.00")</td>
                 <td>@d.JaccardDescripcion.ToString("0.00")</td>
                 <td>@d.ScoreMarca</td>
@@ -88,17 +88,17 @@ else
                     <div class="row">
                         <div class="col-6 border-end">
                             <h6>Item A</h6>
-                            <p><b>Título:</b> @ResaltarTokens(d.ItemA.Titulo, d.TokensCompartidosTitulo)</p>
-                            <p><b>Descripción:</b> @ResaltarTokens(d.ItemA.Descripcion, d.TokensCompartidosDescripcion)</p>
-                            <p><b>Marca:</b> @d.ItemA.Marca</p>
-                            <p><b>Modelo:</b> @d.ItemA.Modelo</p>
+                            <p><b>Título:</b> @ResaltarTokens(d.ItemAComparar.Titulo, d.TokensCompartidosTitulo)</p>
+                            <p><b>Descripción:</b> @ResaltarTokens(d.ItemAComparar.Descripcion, d.TokensCompartidosDescripcion)</p>
+                            <p><b>Marca:</b> @d.ItemAComparar.Marca</p>
+                            <p><b>Modelo:</b> @d.ItemAComparar.Modelo</p>
                         </div>
                         <div class="col-6">
                             <h6>Item B</h6>
-                            <p><b>Título:</b> @ResaltarTokens(d.ItemB.Titulo, d.TokensCompartidosTitulo)</p>
-                            <p><b>Descripción:</b> @ResaltarTokens(d.ItemB.Descripcion, d.TokensCompartidosDescripcion)</p>
-                            <p><b>Marca:</b> @d.ItemB.Marca</p>
-                            <p><b>Modelo:</b> @d.ItemB.Modelo</p>
+                            <p><b>Título:</b> @ResaltarTokens(d.ItemPosibleDuplicado.Titulo, d.TokensCompartidosTitulo)</p>
+                            <p><b>Descripción:</b> @ResaltarTokens(d.ItemPosibleDuplicado.Descripcion, d.TokensCompartidosDescripcion)</p>
+                            <p><b>Marca:</b> @d.ItemPosibleDuplicado.Marca</p>
+                            <p><b>Modelo:</b> @d.ItemPosibleDuplicado.Modelo</p>
                         </div>
                     </div>
                     <p><b>Score Total:</b> @d.Score.ToString("0.00")</p>
