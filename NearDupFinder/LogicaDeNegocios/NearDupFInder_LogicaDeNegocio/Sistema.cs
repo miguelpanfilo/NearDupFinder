@@ -322,7 +322,7 @@ public class Sistema
         }
     }
     
-    public bool ItemEstaEnCluster(Catalogo catalogo, ItemDto dto)
+    public bool ItemEstaEnCluster(Catalogo? catalogo, ItemDto? dto)
     {
         if (catalogo == null || dto == null)
             return false;
