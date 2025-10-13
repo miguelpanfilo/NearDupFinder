@@ -45,7 +45,7 @@ public class GestorDuplicados
     private const float UmbralAlerta = 0.60f;
     private const float UmbralPosible = 0.75f;
 
-    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
+    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo? catalogo)
     {
         List<ParDuplicado> listaDuplicados = new List<ParDuplicado>();
 

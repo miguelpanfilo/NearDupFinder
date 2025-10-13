@@ -104,14 +104,20 @@ public class Sistema
         return null;
     }
     
-    public bool ModificarClave(string? email,string? claveActual, string? claveNueva)
+    public bool ModificarClave(string? email, string? claveActual, string? claveNueva)
     {
         Usuario? usuarioValidado = ValidarUsuario(email, claveActual);
-        if( usuarioValidado is not null)
-            return _gestorUsuarios.ModificarClave(usuarioValidado, claveNueva);
+        if (usuarioValidado is not null)
+        {
+            bool claveModificada = _gestorUsuarios.ModificarClave(usuarioValidado, claveNueva);
+            if (claveModificada)
+                RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Clave modificada para el usuario: '{email}'");
+            return claveModificada;
+        }
+
         return false;
     }
-    
+
     public Usuario? ValidarUsuario(string? email, string? clave)
     {
         return _gestorUsuarios.AutenticarUsuario(email, clave);
@@ -164,15 +170,17 @@ public class Sistema
     
     public void AltaItemConAltaDuplicados(string catalogoTitulo, Item? nuevoItem)
    {
-        var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
-        ValidarItem(nuevoItem);
-
-        AsegurarIdUnico(nuevoItem);
-        catalogo!.AgregarItem(nuevoItem);
+       if (nuevoItem == null || string.IsNullOrWhiteSpace(nuevoItem.Titulo) || string.IsNullOrWhiteSpace(nuevoItem.Descripcion))
+           throw new ExcepcionDeItem("Título y Descripción son obligatorios.");       
+       
+       var catalogo = ObtenerCatalogoPorTitulo(catalogoTitulo);
+       
+       AsegurarIdUnico(nuevoItem);
+       catalogo?.AgregarItem(nuevoItem);
     
-        var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
-        AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
-        RegistrarLog(EntradaDeLog.AccionLog.AltaItem, $"Item agregado: '{nuevoItem.Titulo}' en catálogo '{catalogoTitulo}'");
+       var duplicadosDelItem = DetectarDuplicados(nuevoItem, catalogo);
+       AgregarDuplicadosADuplicadosGlobales(duplicadosDelItem);
+       RegistrarLog(EntradaDeLog.AccionLog.AltaItem, $"Item agregado: '{nuevoItem.Titulo}' en catálogo '{catalogoTitulo}'");
 
     }
     
@@ -184,9 +192,9 @@ public class Sistema
 
         itemAEditar.EditarTitulo(dto.Titulo);
         itemAEditar.EditarDescripcion(dto.Descripcion);
-        itemAEditar.EditarCategoria(dto.Categoria!);
-        itemAEditar.EditarMarca(dto.Marca!);
-        itemAEditar.EditarModelo(dto.Modelo!);
+        itemAEditar.EditarCategoria(dto.Categoria);
+        itemAEditar.EditarMarca(dto.Marca);
+        itemAEditar.EditarModelo(dto.Modelo);
         
         RegistrarLog(EntradaDeLog.AccionLog.EditarItem, $"Item actualizado: '{dto.Titulo}' en catálogo '{catalogo.Titulo}'");
     }
@@ -201,8 +209,6 @@ public class Sistema
         if (item == null)
             throw new ExcepcionDeItem("El item no existe en el catálogo.");
 
-        ValidarItem(item);
-
         catalogoBuscado.EliminarItem(item);
 
         EliminarDuplicadosPrevios(item);
@@ -211,12 +217,7 @@ public class Sistema
         RegistrarLog(EntradaDeLog.AccionLog.EliminarItem, $"Item eliminado: '{item.Titulo}' del catálogo '{catalogoBuscado.Titulo}'");
     }
     
-    private void ValidarItem(Item item)
-    {
-        if (item == null || string.IsNullOrWhiteSpace(item.Titulo) || string.IsNullOrWhiteSpace(item.Descripcion))
-            throw new ExcepcionDeItem("Título y Descripción son obligatorios.");
-    }
-    
+   
     public void ActualizarDuplicadosPara(Catalogo? catalogo, Item? itemEditado)
     {
         if (catalogo == null || itemEditado == null)
@@ -309,8 +310,9 @@ public class Sistema
         bool fusionado = clusterAFusionar.FusionarCanonico();
         if (fusionado)
         {
-            RegistrarLog(EntradaDeLog.AccionLog.FusionarCluster, 
-                $"Se fusionó el canónico del cluster {clusterAFusionar.Id} con {clusterAFusionar.PertenecientesCluster.Count()} ítems.");
+            if (clusterAFusionar.Canonico != null)
+                RegistrarLog(EntradaDeLog.AccionLog.FusionarCluster,
+                    $"Se fusionó el canónico del cluster '{clusterAFusionar.Canonico.Titulo}' con {clusterAFusionar.PertenecientesCluster.Count()} ítems.");
         }
     }
     
@@ -335,14 +337,14 @@ public class Sistema
         RegistrarLog(EntradaDeLog.AccionLog.DescartarDuplicado, $"Par duplicado descartado: '{duplicadoADescartar.ItemAComparar.Titulo}' + '{duplicadoADescartar.ItemPosibleDuplicado.Titulo}'");
     }
     
-    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
+    public List<ParDuplicado> DetectarDuplicados(Item itemAComparar, Catalogo? catalogo)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        var duplicados = _gestorDuplicados.DetectarDuplicados(itemA, catalogo);
+        var duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
         stopwatch.Stop();
         RegistrarLog(
             EntradaDeLog.AccionLog.DeteccionDuplicados,
-            $"Detección de duplicados para item '{itemA.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
+            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo?.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
         );
         return duplicados;
     }
