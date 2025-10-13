@@ -321,6 +321,19 @@ public class Sistema
                 $"Se fusionó el canónico del cluster {clusterAFusionar.Id} con {clusterAFusionar.PertenecientesCluster.Count()} ítems.");
         }
     }
+    
+    public bool ItemEstaEnCluster(Catalogo catalogo, ItemDto dto)
+    {
+        if (catalogo == null || dto == null)
+            return false;
+
+        var item = catalogo.Items.FirstOrDefault(i => i.Id == dto.Id);
+        if (item == null)
+            return false;
+
+        var cluster = catalogo.ObtenerClusterDe(item);
+        return cluster != null;
+    }
 
     public void DescartarParDuplicado(ParDuplicado duplicadoADescartar)
     {
