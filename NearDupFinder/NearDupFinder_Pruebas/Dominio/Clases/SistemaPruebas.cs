@@ -657,4 +657,51 @@ public class SistemaPruebas
         
         Assert.IsNull(clusters.First().Canonico);
     }
+    
+    [TestMethod]
+    public void RetornaFalse_SiCatalogoEsNull()
+    {
+        var dto = new ItemDto { Id = 1 };
+        var resultado = _sistema.ItemEstaEnCluster(null, dto);
+        Assert.IsFalse(resultado);
+    }
+    
+    [TestMethod]
+    public void RetornaFalse_SiDtoEsNull()
+    {
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, null);
+        Assert.IsFalse(resultado);
+    }
+    [TestMethod]
+    public void RetornaFalse_SiItemNoExisteEnCatalogo()
+    {
+        var item = new Item {  Titulo = "Item 1" };
+        _catalogo.AgregarItem(item);
+        var dto = new ItemDto { Id = 999 }; 
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, dto);
+        Assert.IsFalse(resultado);
+    }
+    [TestMethod]
+    public void RetornaFalse_SiItemExistePeroNoTieneCluster()
+    {
+        var item = new Item { Titulo = "Item sin cluster" };
+        _catalogo.AgregarItem(item);
+        var dto = new ItemDto { Id = item.Id };
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, dto);
+        Assert.IsFalse(resultado);
+    }
+    [TestMethod]
+    public void RetornaTrue_SiItemPerteneceAUnCluster()
+    {
+        var itemA = new Item { Titulo = "A", Descripcion = "d" };
+        var itemB = new Item { Titulo = "B", Descripcion = "d" };
+        _catalogo.AgregarItem(itemA);
+        _catalogo.AgregarItem(itemB);
+        _catalogo.ConfirmarClusters(itemA, itemB);
+        _catalogo.ConfirmarClusters(itemB, itemA);
+       var dto = new ItemDto { Id = itemA.Id };
+        var resultado = _sistema.ItemEstaEnCluster(_catalogo, dto);
+        Assert.IsTrue(resultado);
+    }
+    
 }

@@ -381,4 +381,7 @@ public class Sistema
     }
     
     public IReadOnlyList<EntradaDeLog> ObtenerLogs() => _auditoria.AsReadOnly();
+    
+    
+  
 }

@@ -71,7 +71,16 @@
                 <td>@itemDto.Descripcion</td>
                 <td>@itemDto.Categoria</td>
                 <td>@(itemDto.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
-                <td>No disponible</td>
+                <td>
+                    @if (sistema.ItemEstaEnCluster(_catalogoSeleccionado, itemDto))
+                    {
+                        <text>En clúster</text>
+                    }
+                    else
+                    {
+                        <text>No pertence a clúster</text>
+                    }
+                </td>
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
                         <button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
