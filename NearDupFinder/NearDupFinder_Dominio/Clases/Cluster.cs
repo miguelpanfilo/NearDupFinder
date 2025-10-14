@@ -28,13 +28,13 @@ public class Cluster
     {
         if (_pertenecientesCluster.Count == 0)
         {
-            Canonico = null!;
+            Canonico = null;
             return false;
         }
 
         var nuevoCanonico = _pertenecientesCluster
-            .OrderByDescending(i => i.Descripcion.Length)
-            .ThenByDescending(i => i.Titulo.Length)
+            .OrderByDescending(i => i.Descripcion!.Length)
+            .ThenByDescending(i => i.Titulo!.Length)
             .ThenBy(i => i.Id)
             .First();
 
@@ -46,7 +46,7 @@ public class Cluster
         return cambio; 
     }
     
-    private void FusionarCampos(Item canonico, IEnumerable<Item> miembros)
+    private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
     {
         
         canonico.Marca     = ElegirMejorCampo(canonico.Marca,     miembros.Select(m => m.Marca));
@@ -56,7 +56,7 @@ public class Cluster
 
     private static string AseguraLargo(string? s) => string.IsNullOrWhiteSpace(s) ? "" : s.Trim();
 
-    private static string ElegirMejorCampo(string actualCanonico, IEnumerable<string?> candidatos)
+    private static string? ElegirMejorCampo(string? actualCanonico, IEnumerable<string?> candidatos)
     {
         if (!string.IsNullOrWhiteSpace(actualCanonico)) return actualCanonico;
 
