@@ -108,12 +108,10 @@
     {
         var cluster = catalogo.ObtenerClusterDe(item);
         var canonico = cluster?.Canonico;
-        
         if (canonico is not null && canonico.Equals(item))
             Sistema.AsignarNuloCanonico(cluster);
         
         Sistema.RemoverItemDelCluster(catalogo, item);
-        
         RefrescarClustersPorTitulo(catalogo.Titulo);
     }
 
