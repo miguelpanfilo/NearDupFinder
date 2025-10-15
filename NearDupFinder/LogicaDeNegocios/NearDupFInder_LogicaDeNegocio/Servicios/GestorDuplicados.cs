@@ -139,8 +139,7 @@ public class GestorDuplicados
         texto = Regex.Replace(texto, @"\s+", " ").Trim();
         return texto;
     }
-
-
+    
     public ItemTokenizado TokenizarItem(ItemNormalizado item)
     {
         return new ItemTokenizado
@@ -191,12 +190,16 @@ public class GestorDuplicados
     public float CalcularScore(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
     {
         ValidarValoresDentroDeLosRangosEsperados(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
+        float constanteDeTitulo = 0.45f;
+        float constanteDeDescripcion = 0.35f;   
+        float constanteDeMarca = 0.10f;
+        float constanteDeModelo = 0.10f;
         
-        float score = 0.45f * jaccardTitulo + 0.35f * jaccardDescripcion + 0.10f * marcaEq + 0.10f * modeloEq;
+        float score = constanteDeTitulo * jaccardTitulo + constanteDeDescripcion * jaccardDescripcion + constanteDeMarca * marcaEq + constanteDeModelo * modeloEq;
 
         return score;
     }
-
+    
     private static int IgualdadBinaria(string textoA, string textoB)
     {
         if (string.IsNullOrEmpty(textoA) || string.IsNullOrEmpty(textoB))

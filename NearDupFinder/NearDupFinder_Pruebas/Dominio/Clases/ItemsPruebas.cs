@@ -167,7 +167,6 @@ public class ItemsPruebas
             Modelo = "Modelo",  
             Categoria = "Categoria"
         };
-        Assert.AreEqual(60, item.Marca.Length);
         Assert.AreEqual(marcaMax, item.Marca);
     }
     
