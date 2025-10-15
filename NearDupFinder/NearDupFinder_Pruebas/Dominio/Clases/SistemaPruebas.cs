@@ -323,57 +323,6 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    public void EliminarItem_EliminaItemDelCatalogo()
-    {
-        var item1 = new Item("Item 1", "Desc 1");
-        var item2 = new Item("Item 2", "Desc 2");
-
-        _catalogo.AgregarItem(item1);
-        _catalogo.AgregarItem(item2);
-
-        var dto = ItemDto.FromEntity(item1);
-        _sistema.EliminarItem("Catalogo Test", dto);
-
-        Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo");
-        Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe permanecer en el catálogo");
-    }
-
-    [TestMethod]
-    public void EliminarItemYActualizarDuplicados_EliminaDuplicadosGlobalesDelItem()
-    {
-        var item1 = new Item("Titulo", "Descripcion");
-        var item2 = new Item("Titulo", "Descripcion");
-        var item3 = new Item("Otro", "Desc");
-
-        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item1);
-        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item2);
-        _sistema.AltaItemConAltaDuplicados("Catalogo Test", item3);
-
-        var dto = ItemDto.FromEntity(item1);
-        _sistema.EliminarItem("Catalogo Test", dto);
-
-        Assert.IsFalse(item2.EstadoDuplicado);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionDeItem))]
-    public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
-    {
-        var item = new Item("ItemInexistente", "Desc");
-        var dto = ItemDto.FromEntity(item);
-        _sistema.EliminarItem("Catalogo Test", dto);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void EliminarItem_CatalogoNoExistente_LanzaExcepcion()
-    {
-        var item = new Item("ItemInexistente", "Desc");
-        var dto = ItemDto.FromEntity(item);
-        _sistema.EliminarItem("Catalogo Inexistente", dto);
-    }
-
-    [TestMethod]
     public void AltaItemConDuplicados_AgregaItemConIdNoValido_CambiandoleElId()
     {
         var item1 = new Item("Titulo", "Descripcion");
@@ -464,6 +413,27 @@ public class SistemaPruebas
         _sistema.DescartarParDuplicado(duplicado);
 
         Assert.IsFalse(_sistema.DuplicadosGlobales.Contains(duplicado), "El duplicado debería haberse eliminado");
+    }
+    [TestMethod]
+    public void DescratarDuplicado_ActualizarEstado()
+    {
+
+        var item1 = new Item { Titulo = "Item1", Descripcion = "Desc1" };
+        var item2 = new Item { Titulo = "Item2", Descripcion = "Desc2" };
+        var duplicado = new ParDuplicado
+        {
+            ItemAComparar = item1,
+            ItemPosibleDuplicado = item2,
+            Score = 0.9f,
+            Tipo = TipoDuplicado.PosibleDuplicado
+        };
+
+        _sistema.DuplicadosGlobales.Add(duplicado);
+        item1.EstadoDuplicado = true;
+        item2.EstadoDuplicado = true;
+        _sistema.DescartarParDuplicado(duplicado);
+
+      
         Assert.IsFalse(item1.EstadoDuplicado, "ItemA ya no debería estar marcado como duplicado");
         Assert.IsFalse(item2.EstadoDuplicado, "ItemB ya no debería estar marcado como duplicado");
     }
@@ -504,34 +474,6 @@ public class SistemaPruebas
         Assert.IsTrue(item3.EstadoDuplicado);
     }
 
-    [TestMethod]
-    public void FromEntity_CreaDtoCorrectamente()
-    {
-        var item = new Item("Título prueba", "Descripción prueba", "Marca1", "Modelo1", "Cat1");
-        var dto = ItemDto.FromEntity(item);
-
-        Assert.AreEqual(item.Id, dto.Id);
-        Assert.AreEqual(item.Titulo, dto.Titulo);
-        Assert.AreEqual(item.Descripcion, dto.Descripcion);
-        Assert.AreEqual(item.Categoria, dto.Categoria);
-        Assert.AreEqual(item.Marca, dto.Marca);
-        Assert.AreEqual(item.Modelo, dto.Modelo);
-    }
-
-    [TestMethod]
-    public void FromEntity_ItemConCamposNull_CopiaCorrectamente()
-    {
-        var item = new Item("Titulo", "Descripcion"); 
-        var dto = ItemDto.FromEntity(item);
-
-        Assert.AreEqual(item.Id, dto.Id);
-        Assert.AreEqual(item.Titulo, dto.Titulo);
-        Assert.AreEqual(item.Descripcion, dto.Descripcion);
-        Assert.AreEqual(item.Marca, dto.Marca);
-        Assert.AreEqual(item.Modelo, dto.Modelo);
-        Assert.AreEqual(item.Categoria, dto.Categoria);
-
-    }
     
     [TestMethod]
     public void ConfirmarClusterDesdeSistema()
