@@ -11,12 +11,25 @@ public class Sistema
 {
     private readonly AlmacenamientoDeDatos _almacenamientoDeDatos;
     private readonly List<int> _idsItemsGlobal;
-    public readonly List<ParDuplicado> DuplicadosGlobales;
     private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly LectorCsv _lectorCsv;
     private readonly List<EntradaDeLog> _auditoria = [];
     private string _usuarioActual = "No hay usuario logueado"; 
+    private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
+    {
+        {EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario"},
+        {EntradaDeLog.AccionLog.EditarUsuario, "Modificacion de usuario"},
+        {EntradaDeLog.AccionLog.AltaItem, "Alta de item"},
+        {EntradaDeLog.AccionLog.EliminarItem, "Eliminación de item"},
+        {EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección duplicados automatica"},
+        {EntradaDeLog.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
+        {EntradaDeLog.AccionLog.FusionarCluster,"Fusión de cluster"},
+        {EntradaDeLog.AccionLog.DescartarDuplicado,"Descartar duplicado"},
+        {EntradaDeLog.AccionLog.EditarItem,"Editar item"},
+        {EntradaDeLog.AccionLog.EliminarUser,"Eliminacion de usuario"},
+    };
+    public readonly List<ParDuplicado> DuplicadosGlobales;
 
     public Sistema()
     {
@@ -355,20 +368,6 @@ public class Sistema
         _lectorCsv.ImportarItems();
         _lectorCsv.Limpiar();
     }
-
-    private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
-    {
-        {EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario"},
-        {EntradaDeLog.AccionLog.EditarUsuario, "Modificacion de usuario"},
-        {EntradaDeLog.AccionLog.AltaItem, "Alta de item"},
-        {EntradaDeLog.AccionLog.EliminarItem, "Eliminación de item"},
-        {EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección duplicados automatica"},
-        {EntradaDeLog.AccionLog.ConfirmarDuplicado ,"Confirmación de duplicado"},
-        {EntradaDeLog.AccionLog.FusionarCluster,"Fusión de cluster"},
-        {EntradaDeLog.AccionLog.DescartarDuplicado,"Descartar duplicado"},
-        {EntradaDeLog.AccionLog.EditarItem,"Editar item"},
-        {EntradaDeLog.AccionLog.EliminarUser,"Eliminacion de usuario"},
-    };
     
     public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles)
     {
@@ -383,7 +382,4 @@ public class Sistema
     }
     
     public IReadOnlyList<EntradaDeLog> ObtenerLogs() => _auditoria.AsReadOnly();
-    
-    
-  
 }
