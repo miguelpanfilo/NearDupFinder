@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LogicaDeNegocios\NearDupFInder_LogicaDeNegocio\NearDupFInder_LogicaDeNegocio.csproj" />
+      <ProjectReference Include="..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CsvHelper" Version="33.1.0" />
+    </ItemGroup>
+
+</Project>
