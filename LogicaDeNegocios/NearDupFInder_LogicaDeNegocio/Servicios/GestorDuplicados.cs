@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios;
+namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
 public enum TipoDuplicado
 {

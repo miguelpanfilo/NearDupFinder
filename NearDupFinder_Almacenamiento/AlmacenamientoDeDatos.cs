@@ -11,6 +11,7 @@ public class AlmacenamientoDeDatos
     {
         _usuarios = [];
         _catalogos = [];
+        CrearUsuarioAdmin();
     }
 
     public List<Usuario> ObtenerUsuarios()
@@ -41,5 +42,31 @@ public class AlmacenamientoDeDatos
     public void RemoverCatalogo(Catalogo catalogo)
     {
         _catalogos.Remove(catalogo);
+    }
+    
+    public Usuario? BuscarUsuarioPorEmail(Email email)
+    {
+        foreach (Usuario usuario in _usuarios)
+            if (usuario.Email.Igual(email))
+                return usuario;
+        return null;
+    }
+    public Usuario? BuscarUsuarioPorId(int id)
+    {
+        foreach (Usuario usuario in _usuarios)
+            if (usuario.Id == id)
+                return usuario;
+        return null;    
+    }
+    
+    public void CrearUsuarioAdmin()
+    {
+        Email email = Email.Crear("admin@gmail.com");
+        Fecha fecha = Fecha.Crear(1997,12,27);
+        Clave clave = Clave.Crear("123QWEasdzxc@");
+        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
+        adminUsuario.AgregarRol(Rol.Administrador);
+        adminUsuario.CambiarClave(clave);
+        AgregarUsuario(adminUsuario);
     }
 }

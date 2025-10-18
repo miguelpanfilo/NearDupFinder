@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios;
+namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
 public readonly struct Fila(
     string id,

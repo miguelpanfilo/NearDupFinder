@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio;
-using NearDupFInder_LogicaDeNegocio.DTO;
+using NearDupFinder_LogicaDeNegocio.DTO;
 
 namespace NearDupFinder_Pruebas.DataTranferObjects;
 [TestClass]

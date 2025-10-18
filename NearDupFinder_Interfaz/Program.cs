@@ -1,11 +1,15 @@
 using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using NearDupFinder_Almacenamiento;
 using NearDupFinder_LogicaDeNegocio;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddSingleton<Sistema>();
+builder.Services.AddSingleton<AlmacenamientoDeDatos>();
+builder.Services.AddScoped<Sistema>();
+builder.Services.AddScoped<Login>();
+builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddControllers();
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();

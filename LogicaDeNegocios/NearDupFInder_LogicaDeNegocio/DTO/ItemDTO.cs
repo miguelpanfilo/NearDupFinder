@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFInder_LogicaDeNegocio.DTO;
+namespace NearDupFinder_LogicaDeNegocio.DTO;
 
 public class ItemDto
 {

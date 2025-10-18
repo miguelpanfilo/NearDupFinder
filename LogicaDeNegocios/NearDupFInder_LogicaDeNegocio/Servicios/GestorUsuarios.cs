@@ -1,35 +1,29 @@
+using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_LogicaDeNegocio;
+using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_LogicaDeNegocio.Recursos;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios;
+namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
-public class GestorUsuarios(Sistema sistema)
+public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamientoDeDatos)
 {
-    public Usuario CrearUsuarioAdmin()
-    {
-        Email email = Email.Crear("admin@gmail.com");
-        Fecha fecha = Fecha.Crear(1997,12,27);
-        Clave clave = Clave.Crear("123QWEasdzxc@");
-        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
-        adminUsuario.AgregarRol(Rol.Administrador);
-        adminUsuario.CambiarClave(clave);
-        
-        return adminUsuario;
-    }
-    
-    public bool CrearUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
+    public bool CrearUsuario(DatosRegistroUsuario datosRegistroUsuario)
     {
         Usuario nuevoUsuario;
         Clave claveDelUsuario;
         try
         {
-            Email correo = Email.Crear(email);
+            Email correo = Email.Crear(datosRegistroUsuario.Email);
             if (ElEmailYaEstaRegistrado(correo))
                 return false;
 
-            Fecha fecha = Fecha.Crear(anio,mes,dia);
-            claveDelUsuario = Clave.Crear(clave);
-            nuevoUsuario = Usuario.Crear(nombre,apellido,correo,fecha);
+            Fecha fecha = Fecha.Crear(datosRegistroUsuario.Anio,
+                datosRegistroUsuario.Mes, datosRegistroUsuario.Dia);
+
+            claveDelUsuario = Clave.Crear(datosRegistroUsuario.Clave);
+
+            nuevoUsuario = Usuario.Crear(datosRegistroUsuario.Nombre,
+                datosRegistroUsuario.Apellido, correo, fecha);
         }
         catch
         {
@@ -37,64 +31,58 @@ public class GestorUsuarios(Sistema sistema)
         }
 
         CambiarClaveDelUsuarioSiCorresponde(nuevoUsuario, claveDelUsuario);
-        AgregarRolesAlUsuario(nuevoUsuario, roles);
+        AgregarRolesAlUsuario(nuevoUsuario, datosRegistroUsuario.Roles);
         AgregarALaListaDeUsuarios(nuevoUsuario);
-        
+
+        sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{sistema.UsuarioActual}'");
+        ;
         return true;
     }
-    
-    public bool EditarDatosDelUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
+
+    public IReadOnlyList<Usuario> ObtenerUsuarios()
     {
-        if (!ValidarNombreYApellido(nombre, apellido))
-            return false;
-        
-        Usuario? usuarioAModificar;
-        Clave? posibleNuevaClave = null;
-        Fecha fecha;
-        try
-        {
-            Email correo = Email.Crear(email);
-            usuarioAModificar = BuscarUsuarioPorEmailEnSistema(correo);
-            if(usuarioAModificar is null)
-                return false;
-            
-            fecha = Fecha.Crear(anio,mes,dia);
-            
-            if(!string.IsNullOrWhiteSpace(clave))
-                posibleNuevaClave = Clave.Crear(clave);
-        }
-        catch
-        {
-            return false;
-        }
-        
-        ModificarUsuarioExistente(usuarioAModificar, nombre!, apellido!, fecha, roles);
-        CambiarClaveDelUsuarioSiCorresponde(usuarioAModificar, posibleNuevaClave);
-        
-        return true;
+        return almacenamientoDeDatos.ObtenerUsuarios().AsReadOnly();
     }
-    
-    public bool BorrarUsuario(string? email)
+
+
+    public bool BorrarUsuario(DatosUsuarioEmail datosUsuarioEmail)
     {
         Email emailUsuario;
         try
         {
-            emailUsuario = Email.Crear(email);
+            emailUsuario = Email.Crear(datosUsuarioEmail.Email);
         }
-        catch
+        catch (ExcepcionDeUsuario ex)
         {
-            return false;
+            throw ex;
         }
-        
-        Usuario? usuario = BuscarUsuarioPorEmailEnSistema(emailUsuario);
+
+        Usuario? usuario = BuscarUsuarioPorEmail(emailUsuario);
         if (usuario is null)
             return false;
-        
+
+        sistema.RegistrarLog(EntradaDeLog.AccionLog.EliminarUser, $"Usuario eliminado: '{sistema.UsuarioActual}'");
+
         RemoverDeLaListaDeUsuarios(usuario);
-        
+
         return true;
     }
-    
+
+    public bool ModificarClave(DatosCambioClave datosCambioClave)
+    {
+        Usuario? usuarioValidado = AutenticarUsuario(datosCambioClave.Email, datosCambioClave.ClaveActual);
+        if (usuarioValidado is not null)
+        {
+            bool claveModificada = ModificarClave(usuarioValidado, datosCambioClave.ClaveNueva);
+            if (claveModificada)
+                sistema.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario,
+                    $"Clave modificada para el usuario: '{sistema.UsuarioActual}'");
+            return claveModificada;
+        }
+
+        return false;
+    }
+
     public bool ModificarClave(Usuario usuario, string? clave)
     {
         Clave nuevaClave;
@@ -108,10 +96,10 @@ public class GestorUsuarios(Sistema sistema)
         }
 
         CambiarClaveDelUsuarioSiCorresponde(usuario, nuevaClave);
-        
+
         return true;
     }
-    
+
     public Usuario? AutenticarUsuario(string? email, string? clave)
     {
         Email emailAValidar;
@@ -123,35 +111,51 @@ public class GestorUsuarios(Sistema sistema)
         {
             return null;
         }
-        Usuario? usuario = BuscarUsuarioPorEmailEnSistema(emailAValidar);
+
+        Usuario? usuario = BuscarUsuarioPorEmail(emailAValidar);
         if (usuario is null)
             return null;
-        
+
         if (usuario.VerificarClave(clave))
             return usuario;
-        
+
         return null;
     }
 
     private bool ElEmailYaEstaRegistrado(Email email)
     {
-        if (sistema.BuscarUsuarioPorEmail(email) is not null)
+        if (almacenamientoDeDatos.BuscarUsuarioPorEmail(email) is not null)
             return true;
         return false;
     }
 
-    private Usuario? BuscarUsuarioPorEmailEnSistema(Email email)
+    public Usuario? BuscarUsuarioPorEmail(Email email)
     {
-        return sistema.BuscarUsuarioPorEmail(email);
+        return almacenamientoDeDatos.BuscarUsuarioPorEmail(email);
+    }
+
+    public Usuario? BuscarUsuarioPorId(int id)
+    {
+        return almacenamientoDeDatos.BuscarUsuarioPorId(id);
+    }
+
+    public bool UsuarioTieneRol(Usuario usuario, Rol rol)
+    {
+        return usuario.TieneRol(rol);
+    }
+
+    public IReadOnlyCollection<Rol> ObtenerRolesDeUsuario(Usuario usuario)
+    {
+        return usuario.ObtenerRoles();
     }
 
     private void CambiarClaveDelUsuarioSiCorresponde(Usuario usuario, Clave? clave)
     {
-        if(clave is not null)
+        if (clave is not null)
             usuario.CambiarClave(clave);
     }
 
-    private void AgregarRolesAlUsuario(Usuario usuario, List<Rol> roles)
+    private void AgregarRolesAlUsuario(Usuario usuario, IReadOnlyCollection<Rol>? roles)
     {
         foreach (var rol in roles)
             usuario.AgregarRol(rol);
@@ -159,12 +163,12 @@ public class GestorUsuarios(Sistema sistema)
 
     private void AgregarALaListaDeUsuarios(Usuario usuario)
     {
-        sistema.AgregarUsuarioALaLista(usuario);
+        almacenamientoDeDatos.AgregarUsuario(usuario);
     }
 
     private void RemoverDeLaListaDeUsuarios(Usuario usuario)
     {
-        sistema.RemoverUsuarioDeLaLista(usuario);
+        almacenamientoDeDatos.RemoverUsuario(usuario);
     }
 
     private bool ValidarNombreYApellido(string? nombre, string? apellido)
@@ -174,12 +178,57 @@ public class GestorUsuarios(Sistema sistema)
         return true;
     }
 
-    private void ModificarUsuarioExistente(Usuario usuario, string nuevoNombre, string nuevoApellido, Fecha nuevaFecha, List<Rol> nuevosRoles)
+    public bool EditarDatosDelUsuario(DatosEdicionUsuario datosEdicionUsuario)
     {
-        usuario.Nombre = nuevoNombre;
-        usuario.Apellido = nuevoApellido;
+        if (!ValidarNombreYApellido(datosEdicionUsuario.NuevoNombre, datosEdicionUsuario.NuevoApellido))
+            return false;
+
+        Usuario? usuarioAModificar;
+        Clave? posibleNuevaClave = null;
+        Fecha fecha;
+        try
+        {
+            Email correo = Email.Crear(datosEdicionUsuario.EmailActual);
+            usuarioAModificar = BuscarUsuarioPorEmail(correo);
+            if (usuarioAModificar is null)
+                return false;
+
+            fecha = Fecha.Crear(datosEdicionUsuario.Anio, datosEdicionUsuario.Mes, datosEdicionUsuario.Dia);
+
+            if (!string.IsNullOrWhiteSpace(datosEdicionUsuario.NuevaClave))
+                posibleNuevaClave = Clave.Crear(datosEdicionUsuario.NuevaClave);
+        }
+        catch
+        {
+            return false;
+        }
+
+        ModificarUsuarioExistente(usuarioAModificar, datosEdicionUsuario
+            , fecha);
+
+        CambiarClaveDelUsuarioSiCorresponde(usuarioAModificar, posibleNuevaClave);
+
+        return true;
+    }
+
+    public bool ModificarUsuario(DatosEdicionUsuario datosEdicionUsuario)
+    {
+        bool pasaModificarUsuario = EditarDatosDelUsuario(datosEdicionUsuario);
+        if (pasaModificarUsuario)
+        {
+        }
+
+        sistema.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Usuario modificado: '{sistema.UsuarioActual}'");
+        return pasaModificarUsuario;
+    }
+
+    private void ModificarUsuarioExistente(Usuario usuario, DatosEdicionUsuario datosEdicionUsuario, Fecha nuevaFecha)
+    {
+        usuario.Nombre = datosEdicionUsuario.NuevoNombre!;
+        usuario.Apellido = datosEdicionUsuario.NuevoApellido!;
         usuario.FechaNacimiento = nuevaFecha;
-        usuario.ObtenerRoles().Except(nuevosRoles).ToList().ForEach(usuario.RemoverRol);
-        nuevosRoles.Except(usuario.ObtenerRoles()).ToList().ForEach(usuario.AgregarRol);
+        var rolesDestino = datosEdicionUsuario.NuevosRoles ?? Array.Empty<Rol>();
+        usuario.ObtenerRoles().Except(rolesDestino).ToList().ForEach(usuario.RemoverRol);
+        rolesDestino.Except(usuario.ObtenerRoles()).ToList().ForEach(usuario.AgregarRol);
     }
 }

@@ -1,8 +1,9 @@
 @page "/crear-usuario"
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
-@inject Sistema Sistema
+@using NearDupFinder_LogicaDeNegocio.Recursos
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorUsuarios GestorUsuarios
 @attribute [Authorize(Roles = "Administrador")]
 @inject NavigationManager Nav
 
@@ -85,9 +86,11 @@
         if (_rolAdmin)   
             roles.Add(Rol.Administrador);
         if (_rolRevisor)
-            roles.Add(Rol.Revisor);     
-        
-        bool seCreoUsuario = Sistema.AltaUsuario(_nombre, _apellido, _email, _fecha!.Value.Year, _fecha.Value.Month,_fecha.Value.Day, _clave, roles);
+            roles.Add(Rol.Revisor);
+
+        var datosRegistroUsuario = new DatosRegistroUsuario(_nombre, _apellido, _email,
+            _fecha!.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
+        bool seCreoUsuario = GestorUsuarios.CrearUsuario(datosRegistroUsuario);
         
         if (seCreoUsuario)
         {

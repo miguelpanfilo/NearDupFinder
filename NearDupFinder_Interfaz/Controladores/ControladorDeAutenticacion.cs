@@ -4,21 +4,24 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NearDupFinder_LogicaDeNegocio;
+using NearDupFinder_LogicaDeNegocio.Recursos;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 
-namespace NearDupFinder_Interfaz.Controllers;
+namespace NearDupFinder_Interfaz.Controladores;
 
 [Route("auth")]
 public class ControladorDeAutenticacion : ControllerBase
 {
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] Sistema sistema)
+    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] Login login)
     {
-        var usuario = sistema.ValidarUsuario(email, clave);
-        if (usuario is null) 
+        DatosAutenticacion datosAutenticacion = new(email, clave);
+        var usuario = login.AutenticarUsuario(datosAutenticacion);
+        if (usuario is null)
             return Redirect("/login?error=1");
-        
-        sistema.AsignarUsuarioActual(usuario.Email.ToString());
+
+        //login.AsignarUsuarioActual(usuario.Email.ToString());  por ahora no funciona hasta desacoplarlo de sistema
 
         var claims = new List<Claim>
         {

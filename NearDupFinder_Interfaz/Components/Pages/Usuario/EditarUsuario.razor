@@ -1,9 +1,10 @@
 @page "/usuarios/{id:int}/editar/"
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
+@using NearDupFinder_LogicaDeNegocio.Recursos
+@using NearDupFinder_LogicaDeNegocio.Servicios
 @attribute [Authorize(Roles = "Administrador")]
-@inject Sistema Sistema
+@inject GestorUsuarios GestorUsuarios;
 @inject NavigationManager Nav
 
 <PageTitle>Editar Usuario</PageTitle>
@@ -77,13 +78,13 @@
     
     protected override void OnInitialized()
     {
-        _usuarioActual = Sistema.BuscarUsuarioPorId(Id);
+        _usuarioActual = GestorUsuarios.BuscarUsuarioPorId(Id);
         _nombre = _usuarioActual!.Nombre;
         _apellido = _usuarioActual.Apellido;
         _email = _usuarioActual.Email.ToString();
         _fecha = _usuarioActual.FechaNacimiento.ToDateTime();
-        _rolAdmin = Sistema.UsuarioTieneRol(_usuarioActual, Rol.Administrador);
-        _rolRevisor = Sistema.UsuarioTieneRol(_usuarioActual, Rol.Revisor);
+        _rolAdmin = GestorUsuarios.UsuarioTieneRol(_usuarioActual, Rol.Administrador);
+        _rolRevisor = GestorUsuarios.UsuarioTieneRol(_usuarioActual, Rol.Revisor);
     }
     
     private void Editar()
@@ -99,7 +100,10 @@
         if (!ValidarCampos(_nombre, _apellido, _fecha))
             return;
         
-        bool seModificoUsuarioCorrectamente = Sistema.ModificarUsuario(_nombre, _apellido, _email, _fecha!.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
+        
+        bool seModificoUsuarioCorrectamente = GestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(_email,_nombre, _apellido, 
+            _fecha!.Value.Year, _fecha.Value.Month, 
+            _fecha.Value.Day, _clave, roles));
         
         if (seModificoUsuarioCorrectamente)
         {

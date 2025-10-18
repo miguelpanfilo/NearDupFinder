@@ -3,8 +3,11 @@
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_LogicaDeNegocio
+@using NearDupFinder_LogicaDeNegocio.Recursos
+@using NearDupFinder_LogicaDeNegocio.Servicios
 @attribute [Authorize(Roles = "Administrador")]
 @inject Sistema Sistema
+@inject GestorUsuarios GestorUsuarios
 
 <PageTitle>Usuarios</PageTitle>
 
@@ -39,7 +42,7 @@
         <tbody>
         @foreach (var usuario in _usuarios!)
         {
-            var roles = Sistema.ObtenerRolesDeUsuario(usuario);
+            var roles = GestorUsuarios.ObtenerRolesDeUsuario(usuario);
             <tr>
                 <td>@usuario.Nombre</td>
                 <td>@usuario.Apellido</td>
@@ -84,15 +87,15 @@
 
     protected override void OnInitialized()
     {
-        _usuarios = Sistema.ObtenerUsuarios();
+        _usuarios = GestorUsuarios.ObtenerUsuarios();
     }
 
     private void EliminarUsuario(Email correo)
     {
-        bool seEliminoElUsuario = Sistema.EliminarUsuario(correo.ToString());
+        bool seEliminoElUsuario = GestorUsuarios.BorrarUsuario(new DatosUsuarioEmail(correo.ToString()));
         if(!seEliminoElUsuario)
             NotificarError("Error al intentar eliminar el usuario.");
-        _usuarios = Sistema.ObtenerUsuarios();
+        _usuarios = GestorUsuarios.ObtenerUsuarios();
         StateHasChanged();
     }
     

@@ -51,6 +51,6 @@ public sealed class Email
     
     public bool Igual(Email otroEmail)
     {
-        return string.Equals(this.ToString(), otroEmail.ToString());
+        return string.Equals(ToString(), otroEmail.ToString());
     }
 }

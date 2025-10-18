@@ -1,8 +1,8 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_Dominio.Clases;
-using NearDupFInder_LogicaDeNegocio.DTO;
-using NearDupFInder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.DTO;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 
 
 namespace NearDupFinder_LogicaDeNegocio;
@@ -11,11 +11,10 @@ public class Sistema
 {
     private readonly AlmacenamientoDeDatos _almacenamientoDeDatos;
     private readonly List<int> _idsItemsGlobal;
-    private readonly GestorUsuarios _gestorUsuarios;
     private readonly GestorDuplicados _gestorDuplicados;
     private readonly LectorCsv _lectorCsv;
     private readonly List<EntradaDeLog> _auditoria = [];
-    private string _usuarioActual = "No hay usuario logueado"; 
+    public string UsuarioActual { get; private set; } 
     private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {
         {EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario"},
@@ -34,8 +33,6 @@ public class Sistema
     public Sistema()
     {
         _almacenamientoDeDatos = new AlmacenamientoDeDatos();
-        _gestorUsuarios = new GestorUsuarios(this);
-        _almacenamientoDeDatos.AgregarUsuario(_gestorUsuarios.CrearUsuarioAdmin());
         _gestorDuplicados = new GestorDuplicados();
         DuplicadosGlobales = new List<ParDuplicado >();
         _idsItemsGlobal = new List<int>();
@@ -44,80 +41,80 @@ public class Sistema
     
     public void AsignarUsuarioActual(string email)
     {
-        _usuarioActual = email;
+        UsuarioActual = email;
     }
     
     public void DesasignarUsuario()
     {
-        _usuarioActual = "No hay usuario logueado";
+        UsuarioActual = "No hay usuario logueado";
     }
     
-    public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
+    /*public bool AltaUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
         bool pasaAltaDeUsuario = _gestorUsuarios.CrearUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         if (pasaAltaDeUsuario)
             RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{email}'");
         return pasaAltaDeUsuario;
-    }
+    }*/
     
-    public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
+    /*public bool ModificarUsuario(string nombre, string apellido, string email, int anio, int mes, int dia, string clave, List<Rol> roles)
     {
         bool pasaModificarUsuario = _gestorUsuarios.EditarDatosDelUsuario(nombre, apellido, email, anio, mes, dia, clave, roles);
         if (pasaModificarUsuario)
             RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Usuario modificado: '{email}'");
         return pasaModificarUsuario;    
-    }
+    }*/
     
-    public bool EliminarUsuario(string email)
+    /*public bool EliminarUsuario(string email)
     {
         bool pasaEliminarUsuario = _gestorUsuarios.BorrarUsuario(email);
         if (pasaEliminarUsuario)
             RegistrarLog(EntradaDeLog.AccionLog.EliminarUser, $"Usuario eliminado: '{email}'");
         return pasaEliminarUsuario;    
-    }
+    }*/
 
-    public IReadOnlyList<Usuario> ObtenerUsuarios()
+    /*public IReadOnlyList<Usuario> ObtenerUsuarios()
     {
         return _almacenamientoDeDatos.ObtenerUsuarios().AsReadOnly(); 
-    }
+    }*/
     
-    public IReadOnlyCollection<Rol>ObtenerRolesDeUsuario(Usuario usuario)
+    /*public IReadOnlyCollection<Rol>ObtenerRolesDeUsuario(Usuario usuario)
     {
         return usuario.ObtenerRoles(); 
-    }
+    }*/
     
-    public bool UsuarioTieneRol(Usuario usuario, Rol rol)
+    /*public bool UsuarioTieneRol(Usuario usuario, Rol rol)
     {
         return usuario.TieneRol(rol); 
-    }
+    }*/
     
-    public void AgregarUsuarioALaLista(Usuario usuario)
+    /*public void AgregarUsuarioALaLista(Usuario usuario)
     {
-        _almacenamientoDeDatos.AgregarUsuario(usuario);
-    }
+        _almacenamientoDeDatos.AgregarUsuario(usuario);// en usuarios(servicios)
+    }*/
 
-    public void RemoverUsuarioDeLaLista(Usuario usuario)
+    /*public void RemoverUsuarioDeLaLista(Usuario usuario)
     {
         _almacenamientoDeDatos.RemoverUsuario(usuario);
-    }
+    }*/
     
-    public Usuario? BuscarUsuarioPorId(int id)
+    /*public Usuario? BuscarUsuarioPorId(int id)
     {
         foreach (Usuario usuario in _almacenamientoDeDatos.ObtenerUsuarios())
             if (usuario.Id == id)
                 return usuario;
         return null;    
-    }
+    }*/
     
-    public Usuario? BuscarUsuarioPorEmail(Email email)
+    /*public Usuario? BuscarUsuarioPorEmail(Email email)
     {
         foreach (Usuario usuario in _almacenamientoDeDatos.ObtenerUsuarios())
             if (usuario.Email.Igual(email))
                 return usuario;
         return null;
-    }
+    }*/
     
-    public bool ModificarClave(string? email, string? claveActual, string? claveNueva)
+    /*public bool ModificarClave(string? email, string? claveActual, string? claveNueva)
     {
         Usuario? usuarioValidado = ValidarUsuario(email, claveActual);
         if (usuarioValidado is not null)
@@ -129,12 +126,12 @@ public class Sistema
         }
 
         return false;
-    }
+    }*/
 
-    public Usuario? ValidarUsuario(string? email, string? clave)
+    /*public Usuario? ValidarUsuario(string? email, string? clave)
     {
         return _gestorUsuarios.AutenticarUsuario(email, clave);
-    }
+    }*/
     
     public void AgregarCatalogo(Catalogo catalogo)
     {
@@ -374,7 +371,7 @@ public class Sistema
         var entry = new EntradaDeLog
         {
             Timestamp = DateTime.UtcNow,
-            Usuario = _usuarioActual,
+            Usuario = UsuarioActual,
             Accion = accion,
             Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
         };

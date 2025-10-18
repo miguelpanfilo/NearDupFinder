@@ -1,8 +1,10 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
 @using NearDupFinder_LogicaDeNegocio
+@using NearDupFinder_LogicaDeNegocio.Servicios
 @inject AuthenticationStateProvider AuthStateProvider
 @inject Sistema Sistema
+@inject Login Login
 
 <div class="page">
     <div class="sidebar">
@@ -38,7 +40,16 @@
 </div>
 
 @code {
+    
+    
     protected override async Task OnInitializedAsync()
+    {
+        await AsignarUsuario();
+        
+        AuthStateProvider.AuthenticationStateChanged += async _ => await AsignarUsuario();
+    }
+    
+    protected async Task AsignarUsuario()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -55,4 +66,5 @@
             }
         }
     }
+
 }
