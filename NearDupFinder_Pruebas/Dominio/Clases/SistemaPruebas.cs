@@ -1,8 +1,9 @@
+using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio;
-using NearDupFInder_LogicaDeNegocio.DTO;
-using NearDupFInder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.DTO;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Dominio.Clases;
 
@@ -11,11 +12,12 @@ public class SistemaPruebas
 {
     private Sistema _sistema = null!;
     private Catalogo _catalogo = null!;
-
+    private AlmacenamientoDeDatos _almacenamiento = null!;
     [TestInitialize]
     public void Setup()
     {
         _sistema = new Sistema();
+        _almacenamiento = new AlmacenamientoDeDatos();
         _catalogo = new Catalogo("Catalogo Test");
         _sistema.AgregarCatalogo(_catalogo);
     }
@@ -23,9 +25,8 @@ public class SistemaPruebas
     [TestMethod]
     public void BuscarUsuarioPorId_IDNoExsite_RetornaNulo()
     {
-        Sistema sistema = new Sistema();
         int idInexistente = Int32.MaxValue;
-        Usuario? usuarioABuscar = sistema.BuscarUsuarioPorId(idInexistente);
+        Usuario? usuarioABuscar = _almacenamiento.BuscarUsuarioPorId(idInexistente);
         Assert.IsNull(usuarioABuscar);
     }
 
@@ -33,9 +34,9 @@ public class SistemaPruebas
     public void BuscarUsuarioPorId_IDExsite_RetornaUsuarioValido()
     {
         Sistema sistema = new Sistema();
-        Usuario? admin = sistema.ObtenerUsuarios().FirstOrDefault();
+        Usuario? admin = _almacenamiento.ObtenerUsuarios().FirstOrDefault();
         int idValido = admin!.Id;
-        Usuario? usuarioABuscar = sistema.BuscarUsuarioPorId(idValido);
+        Usuario? usuarioABuscar = _almacenamiento.BuscarUsuarioPorId(idValido);
         Assert.AreEqual(admin, usuarioABuscar);
     }
     
