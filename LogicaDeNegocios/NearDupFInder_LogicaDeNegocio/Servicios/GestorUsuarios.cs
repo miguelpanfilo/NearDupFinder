@@ -1,12 +1,19 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.Recursos;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
-public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamientoDeDatos)
+public class GestorUsuarios
 {
+    private AlmacenamientoDeDatos _almacenamientoDeDatos;
+    private GestorAuditoria _gestorAuditoria;
+    public GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorAuditoria gestorAuditoria)
+    {
+        _almacenamientoDeDatos = almacenamientoDeDatos;
+        _gestorAuditoria = gestorAuditoria;
+    }
     public bool CrearUsuario(DatosRegistroUsuario datosRegistroUsuario)
     {
         Usuario nuevoUsuario;
@@ -34,14 +41,14 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
         AgregarRolesAlUsuario(nuevoUsuario, datosRegistroUsuario.Roles);
         AgregarALaListaDeUsuarios(nuevoUsuario);
 
-        sistema.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{sistema.UsuarioActual}'");
-        ;
+        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{datosRegistroUsuario.Email}'");
+        
         return true;
     }
 
     public IReadOnlyList<Usuario> ObtenerUsuarios()
     {
-        return almacenamientoDeDatos.ObtenerUsuarios().AsReadOnly();
+        return _almacenamientoDeDatos.ObtenerUsuarios().AsReadOnly();
     }
 
 
@@ -61,7 +68,7 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
         if (usuario is null)
             return false;
 
-        sistema.RegistrarLog(EntradaDeLog.AccionLog.EliminarUser, $"Usuario eliminado: '{sistema.UsuarioActual}'");
+        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarUser, $"Usuario eliminado: '{datosUsuarioEmail.Email}'");
 
         RemoverDeLaListaDeUsuarios(usuario);
 
@@ -73,17 +80,17 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
         Usuario? usuarioValidado = AutenticarUsuario(datosCambioClave.Email, datosCambioClave.ClaveActual);
         if (usuarioValidado is not null)
         {
-            bool claveModificada = ModificarClave(usuarioValidado, datosCambioClave.ClaveNueva);
+            bool claveModificada = ModificarClaveInterno(usuarioValidado, datosCambioClave.ClaveNueva);
             if (claveModificada)
-                sistema.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario,
-                    $"Clave modificada para el usuario: '{sistema.UsuarioActual}'");
+                _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario,
+                    $"Clave modificada para el usuario: '{datosCambioClave.Email}'");
             return claveModificada;
         }
 
         return false;
     }
 
-    public bool ModificarClave(Usuario usuario, string? clave)
+    private bool ModificarClaveInterno(Usuario usuario, string? clave)
     {
         Clave nuevaClave;
         try
@@ -100,7 +107,7 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
         return true;
     }
 
-    public Usuario? AutenticarUsuario(string? email, string? clave)
+    public Usuario? AutenticarUsuario(string? email, string? clave)//sacar usasr el de login
     {
         Email emailAValidar;
         try
@@ -124,19 +131,19 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
 
     private bool ElEmailYaEstaRegistrado(Email email)
     {
-        if (almacenamientoDeDatos.BuscarUsuarioPorEmail(email) is not null)
+        if (_almacenamientoDeDatos.BuscarUsuarioPorEmail(email) is not null)
             return true;
         return false;
     }
 
-    public Usuario? BuscarUsuarioPorEmail(Email email)
+    private Usuario?  BuscarUsuarioPorEmail(Email email)
     {
-        return almacenamientoDeDatos.BuscarUsuarioPorEmail(email);
+        return _almacenamientoDeDatos.BuscarUsuarioPorEmail(email);
     }
 
     public Usuario? BuscarUsuarioPorId(int id)
     {
-        return almacenamientoDeDatos.BuscarUsuarioPorId(id);
+        return _almacenamientoDeDatos.BuscarUsuarioPorId(id);
     }
 
     public bool UsuarioTieneRol(Usuario usuario, Rol rol)
@@ -163,12 +170,12 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
 
     private void AgregarALaListaDeUsuarios(Usuario usuario)
     {
-        almacenamientoDeDatos.AgregarUsuario(usuario);
+        _almacenamientoDeDatos.AgregarUsuario(usuario);
     }
 
     private void RemoverDeLaListaDeUsuarios(Usuario usuario)
     {
-        almacenamientoDeDatos.RemoverUsuario(usuario);
+        _almacenamientoDeDatos.RemoverUsuario(usuario);
     }
 
     private bool ValidarNombreYApellido(string? nombre, string? apellido)
@@ -214,11 +221,10 @@ public class GestorUsuarios(Sistema sistema, AlmacenamientoDeDatos almacenamient
     public bool ModificarUsuario(DatosEdicionUsuario datosEdicionUsuario)
     {
         bool pasaModificarUsuario = EditarDatosDelUsuario(datosEdicionUsuario);
-        if (pasaModificarUsuario)
-        {
-        }
+        if (pasaModificarUsuario) 
+        {}
 
-        sistema.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Usuario modificado: '{sistema.UsuarioActual}'");
+        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Usuario modificado: '{datosEdicionUsuario.EmailActual}'");
         return pasaModificarUsuario;
     }
 

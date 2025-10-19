@@ -1,8 +1,9 @@
 @page "/duplicados"
 @using System.Text.RegularExpressions
-@using NearDupFinder_LogicaDeNegocio
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados
 @using NearDupFinder_LogicaDeNegocio.Servicios
-@inject Sistema Sistema
+@inject GestorControlDuplicados GestorControlDuplicados;
+@inject GestorControlClusters GestorControlClusters;
 @rendermode InteractiveServer
 
 <PageTitle>Duplicados</PageTitle>
@@ -123,19 +124,30 @@ else
 
     private void CargarDuplicados()
     {
-        _duplicados = Sistema.DuplicadosGlobales
+        _duplicados = GestorControlDuplicados.ObtenerDuplicadosOrdenados()
             .OrderByDescending(d => d.Score)
             .ToList();
     }
+
     private void ConfirmarDuplicado(ParDuplicado d)
-    { 
-        Sistema.ConfirmarParDuplicado(d);
+    {
+        var datosDuplicados = new DatosDuplicados(d.IdCatalogo,
+            d.ItemAComparar.Id,
+            d.ItemPosibleDuplicado.Id
+        );
+
+        GestorControlClusters.ConfirmarParDuplicado(datosDuplicados);
         _duplicados.Remove(d);
     }
 
     private void DesacrtarDuplicado(ParDuplicado d)
     {
-        Sistema.DescartarParDuplicado(d);
+        var datosDuplicados = new DatosDuplicados(d.IdCatalogo,
+            d.ItemAComparar.Id,
+            d.ItemPosibleDuplicado.Id
+        );
+
+        GestorControlDuplicados.DescartarParDuplicado(datosDuplicados);
         _duplicados.Remove(d);
     }
 

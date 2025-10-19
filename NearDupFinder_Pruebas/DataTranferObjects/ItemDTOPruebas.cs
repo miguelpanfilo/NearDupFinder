@@ -1,7 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio;
-using NearDupFinder_LogicaDeNegocio.DTO;
+using NearDupFinder_LogicaDeNegocio.DTOs.DTOs.DTO;
 
 namespace NearDupFinder_Pruebas.DataTranferObjects;
 [TestClass]
@@ -183,7 +182,7 @@ public class ListaItemsTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionDeItem))]
+    [ExpectedException(typeof(ExcepcionItem))]
     public void EliminarItem_ItemNoExistente_NoLanzaExcepcion()
     {
         var item = new Item("ItemInexistente", "Desc");

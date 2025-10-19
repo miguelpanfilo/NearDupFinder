@@ -73,6 +73,11 @@ public class Catalogo
         _items.Add(item);
     }
 
+    public Item? ObtenerItemPorId(int id)
+    {
+        return _items.FirstOrDefault(i => i.Id == id);
+    }
+
     public void EliminarItem(Item item)
     {
         if(item == null)
@@ -156,5 +161,10 @@ public class Catalogo
     public Cluster? ObtenerClusterDe(Item item)
     {
         return _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
+    }
+
+    public Cluster? ObtenerClusterPorId(int id)
+    {
+        return _clusters.TryGetValue(id, out var cluster) ? cluster : null;
     }
 }

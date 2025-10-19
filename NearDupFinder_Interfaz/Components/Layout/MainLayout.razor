@@ -1,9 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
-@using NearDupFinder_LogicaDeNegocio
 @using NearDupFinder_LogicaDeNegocio.Servicios
 @inject AuthenticationStateProvider AuthStateProvider
-@inject Sistema Sistema
+@inject GestorAuditoria GestorAuditoria
 @inject Login Login
 
 <div class="page">
@@ -60,7 +59,7 @@
             {
                 if (claim.Type == System.Security.Claims.ClaimTypes.Email)
                 {
-                    Sistema.AsignarUsuarioActual(claim.Value);
+                    GestorAuditoria.AsignarUsuarioActual(claim.Value);
                     break;
                 }
             }

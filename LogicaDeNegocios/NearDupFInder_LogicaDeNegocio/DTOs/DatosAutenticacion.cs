@@ -1,4 +1,4 @@
-namespace NearDupFinder_LogicaDeNegocio.Recursos;
+namespace NearDupFinder_LogicaDeNegocio.DTOs;
 
 public class DatosAutenticacion
 {

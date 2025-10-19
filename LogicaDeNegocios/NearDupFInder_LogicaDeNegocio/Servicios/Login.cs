@@ -1,7 +1,7 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.Recursos;
+using NearDupFinder_LogicaDeNegocio.DTOs;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios;
 

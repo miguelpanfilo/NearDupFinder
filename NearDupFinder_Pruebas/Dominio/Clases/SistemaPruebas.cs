@@ -1,8 +1,7 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio;
-using NearDupFinder_LogicaDeNegocio.DTO;
+using NearDupFinder_LogicaDeNegocio.DTOs.DTOs.DTO;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Dominio.Clases;
@@ -130,7 +129,7 @@ public class SistemaPruebas
             Marca = "Marca",
             Modelo = "Modelo"
         };
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => sistema.ActualizarItemEnCatalogo(catalogo, dto)
+        var error = Assert.ThrowsException<ExcepcionItem>(() => sistema.ActualizarItemEnCatalogo(catalogo, dto)
         );
 
         Assert.AreEqual("No se encontró el item a actualizar.", error.Message);
@@ -153,7 +152,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionDeItem))]
+    [ExpectedException(typeof(ExcepcionItem))]
     public void AltaItem_LanzaExcepcionSiTituloOVacio()
     {
         var sistema = new Sistema();
@@ -165,7 +164,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionDeItem))]
+    [ExpectedException(typeof(ExcepcionItem))]
     public void AltaItem_DescripcionVacia_Excepcion()
     {
         var sistema = new Sistema();
@@ -177,7 +176,7 @@ public class SistemaPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionDeItem))]
+    [ExpectedException(typeof(ExcepcionItem))]
     public void AltaItem_Nulo_Excepcion()
     {
         _sistema.AltaItemConAltaDuplicados("Catalogo Test", null);

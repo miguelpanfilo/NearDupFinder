@@ -1,8 +1,9 @@
 @page "/CrearCatalogo"
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
-@inject Sistema Sistema
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorCatalogos GestorCatalogos;
 
 <PageTitle>Catalogos</PageTitle>
 
@@ -57,7 +58,7 @@
                     </a>
 
                     <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
-                            @onclick="(() => EliminarCatalogo(catalogo))"
+                            @onclick="(() => EliminarCatalogo(catalogo.Id))"
                             aria-label="Eliminar" title="Eliminar">
                         <i class="bi bi-trash3 fs-6 lh-1"></i>
                     </button>
@@ -80,12 +81,14 @@
 
     protected override void OnInitialized()
     {
-        _catalogos = Sistema.Catalogos;
+        _catalogos = GestorCatalogos.Catalogos;
     }
 
-    public void EliminarCatalogo(Catalogo catalogo)
+    public void EliminarCatalogo(int id)
     {
-        Sistema.EliminarCatalogo(catalogo);
+        
+        GestorCatalogos.BorrarCatalogo(new DatosCatalogoEliminar(id));
+        
         StateHasChanged();
     }
 
@@ -93,9 +96,7 @@
     {
         try
         {
-            var catalogo = new Catalogo(_titulo);
-            Sistema.CambiarDescripcionCatalogo(catalogo, _descripcion);
-            Sistema.AgregarCatalogo(catalogo);
+            GestorCatalogos.CrearCatalogo(new DatosCatalogoCrear(_titulo, _descripcion));
             _error = false;
             LimpiarCampos();
             StateHasChanged();
@@ -126,6 +127,5 @@
         _error = true;
         _mensajeDeError = mensaje;
     }
-
 
 }

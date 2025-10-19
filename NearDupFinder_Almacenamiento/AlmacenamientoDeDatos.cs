@@ -69,4 +69,14 @@ public class AlmacenamientoDeDatos
         adminUsuario.CambiarClave(clave);
         AgregarUsuario(adminUsuario);
     }
+
+    public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
+    {
+        return _catalogos.FirstOrDefault(c=> c.Titulo.Equals(titulo ?? "", StringComparison.OrdinalIgnoreCase));
+    }
+
+    public Catalogo? ObtenerCatalogoPorId(int id)
+    {
+        return ObtenerCatalogos().FirstOrDefault(c => c.Id == id);
+    }
 }

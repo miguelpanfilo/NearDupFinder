@@ -1,9 +1,14 @@
 @page "/lista-items"
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
-@using NearDupFinder_LogicaDeNegocio
-@using NearDupFinder_LogicaDeNegocio.DTO
-@inject Sistema sistema
+@using NearDupFinder_LogicaDeNegocio.DTOs
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlDuplicados
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorControlClusters GestorControlClusters
+@inject GestorControlDuplicados GestorControlDuplicados
+@inject GestorCatalogos GestorCatalogos
+@inject GestorItems GestorItems
 @rendermode InteractiveServer
 
 <PageTitle>Items</PageTitle>
@@ -22,7 +27,7 @@
             @bind="_catalogoSeleccionadoTitulo" 
             @bind:after="CargarItemsDeCatalogo">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in sistema.Catalogos)
+        @foreach (var cat in GestorCatalogos.Catalogos)
         {
             <option value="@cat.Titulo">@cat.Titulo</option>
         }
@@ -67,14 +72,9 @@
                 <td>@itemDto.Categoria</td>
                 <td>@(itemDto.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
                 <td>
-                    @if (sistema.ItemEstaEnCluster(_catalogoSeleccionado, itemDto))
-                    {
-                        <text>En clúster</text>
-                    }
-                    else
-                    {
-                        <text>No pertence a clúster</text>
-                    }
+                    @(GestorControlClusters.ItemEstaEnCluster(_catalogoSeleccionado.Id, itemDto.Id)
+                        ? "En clúster"
+                        : "No pertenece a clúster")
                 </td>
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
@@ -155,11 +155,11 @@
 
     private void CargarItemsDeCatalogo()
     {
-        _catalogoSeleccionado = sistema.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
+        _catalogoSeleccionado = GestorCatalogos.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
+            _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
                 .Select(item => ItemDto.FromEntity(item))
                 .ToList();
 
@@ -177,7 +177,7 @@
     {
         if (_catalogoSeleccionado == null) return;
 
-        _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
+        _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
             .Where(item =>
                 item.Descripcion != null
                 &&
@@ -204,7 +204,7 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
+            _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
                 .Select(item => ItemDto.FromEntity(item))
                 .ToList();
         }
@@ -249,10 +249,19 @@
                 return;
             }
 
-            sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
-
-            var itemOriginal = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado).First(i => i.Id == _itemEditado.Id);
-            sistema.ActualizarDuplicadosPara(_catalogoSeleccionado, itemOriginal);
+            GestorItems.ActualizarItemEnCatalogo(
+                new DatosActualizarItem(
+                    _catalogoSeleccionado.Id,
+                    _itemEditado.Id,
+                    Titulo: _itemEditado.Titulo,
+                    Descripcion: _itemEditado.Descripcion,
+                    Categoria: _itemEditado.Categoria,
+                    Marca: _itemEditado.Marca,
+                    Modelo: _itemEditado.Modelo
+                )
+            );
+            
+            GestorControlDuplicados.ActualizarDuplicadosPara(new DatosActualizarDuplicados(_catalogoSeleccionado.Id, _itemEditado.Id));
 
             ActualizarEstadoDuplicados();
 
@@ -265,7 +274,7 @@
 
             StateHasChanged();
         }
-        catch (ExcepcionDeItem ex)
+        catch (ExcepcionItem ex)
         {
             _mensajeErrorModal = ex.Message;
         }
@@ -284,14 +293,15 @@
 
         foreach (var item in _itemsFiltradosEnTabla)
         {
-            var original = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado).FirstOrDefault(i => i.Id == item.Id);
+            var original = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id).FirstOrDefault(i => i.Id == item.Id);
             if (original != null)
                 item.EstadoDuplicado = original.EstadoDuplicado;
         }
     }
+    
     private List<string> ObtenerCategoriasUnicas(Catalogo catalogo)
     {
-        return sistema.ObtenerItemsDelCatalogo(catalogo)
+        return GestorCatalogos.ObtenerItemsDelCatalogo(catalogo.Id)
             .Select(i => i.Categoria)
             .Where(c => !string.IsNullOrEmpty(c))
             .Distinct()
@@ -302,10 +312,12 @@
     {
         if (_catalogoSeleccionado == null || item == null) return;
 
-        sistema.EliminarItem(_catalogoSeleccionado.Titulo, item);
+        GestorItems.EliminarItem(new DatosEliminarItem(_catalogoSeleccionado.Id, item.Id));
 
         ReconstruirCategorias();
+        
         AplicarFiltros();
+        
         StateHasChanged();
     }
 

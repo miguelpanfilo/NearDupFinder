@@ -1,6 +1,5 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.Recursos;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Servicios

@@ -1,7 +1,9 @@
 @page "/Cluster"
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
-@inject Sistema Sistema
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorCatalogos GestorCatalogos;
+@inject GestorControlClusters GestorControlClusters;
 @rendermode InteractiveServer
 
 <PageTitle>Clusters</PageTitle>
@@ -52,7 +54,7 @@
                                         <li class="d-flex justify-content-between align-items-center mb-1">
                                             <span>@item.Titulo</span>
                                             <button class="btn btn-sm btn-danger"
-                                                    @onclick="() => EliminarItemDelCluster(_catalogo, item)" title="Eliminar">
+                                                    @onclick="() => EliminarItemDelCluster(_catalogo, item.Id)" title="Eliminar">
                                                 <i class="bi bi-trash3 fs-6 lh-1"></i>
                                             </button>
                                         </li>
@@ -60,7 +62,7 @@
                                 </ul>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button class="btn btn-sm btn-primary"
-                                            @onclick="() => FusionarCluster(cluster)" title="Fusionar">
+                                            @onclick="() => FusionarCluster(_catalogo.Id, cluster.Id)" title="Fusionar">
                                         <i class="bi bi-arrow-repeat me-1"></i> Fusionar
                                     </button>
                                 </div>
@@ -82,7 +84,7 @@
 
     protected override void OnInitialized()
     {
-        _catalogos = Sistema.Catalogos.ToList();
+        _catalogos = GestorCatalogos.Catalogos.ToList();
     }
 
     private void FiltrarPorCatalogo(ChangeEventArgs e)
@@ -94,7 +96,7 @@
     {
         if (!string.IsNullOrWhiteSpace(titulo))
         {
-            _catalogo = Sistema.ObtenerCatalogoPorTitulo(titulo);
+            _catalogo = GestorCatalogos.ObtenerCatalogoPorTitulo(titulo);
             _clustersFiltrados = _catalogo?.Clusters.ToList() ?? new();
         }
         else
@@ -104,19 +106,18 @@
         }
     }
 
-    private void EliminarItemDelCluster(Catalogo catalogo, Item item)
+    private void EliminarItemDelCluster(Catalogo catalogo, int idItem)
     {
-        var cluster = catalogo.ObtenerClusterDe(item);
-        var canonico = cluster?.Canonico;
-        if (canonico is not null && canonico.Equals(item))
-            Sistema.AsignarNuloCanonico(cluster);
+        GestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(idItem, catalogo.Id));
         
-        Sistema.RemoverItemDelCluster(catalogo, item);
         RefrescarClustersPorTitulo(catalogo.Titulo);
+        
+        StateHasChanged(); 
     }
 
-    private void FusionarCluster(Cluster cluster)
+    private void FusionarCluster(int idCatalogo, int idCluster)
     {
-        Sistema.FusionarItemsEnElCLuster(cluster);
+        
+        GestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(idCatalogo,idCluster));
     }
 }

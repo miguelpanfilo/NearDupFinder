@@ -1,8 +1,7 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio;
-using NearDupFinder_LogicaDeNegocio.Recursos;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Servicios;
@@ -22,14 +21,14 @@ public class GestorUsuariosPruebas
     private Sistema _sistema = null!;
     private Catalogo _catalogo = null!;
     private AlmacenamientoDeDatos _almacenamiento = null!;
-    private GestorUsuarios _gestor = null!;
+    private GestorUsuarios _gestorUsuarios = null!;
     
     [TestInitialize]
     public void Setup()
     {
         _sistema = new Sistema();
         _almacenamiento = new AlmacenamientoDeDatos();
-        _gestor = new GestorUsuarios(_sistema, _almacenamiento);
+        _gestorUsuarios = new GestorUsuarios(_sistema, _almacenamiento);
         _catalogo = new Catalogo("Catalogo Test");
         _sistema.AgregarCatalogo(_catalogo);
         
@@ -46,7 +45,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
         
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado);
     }
@@ -64,7 +63,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado);
     }
@@ -82,7 +81,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado);
     }
@@ -100,7 +99,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado);
     }
@@ -118,7 +117,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveInvalida";
         List<Rol> roles = [Rol.Revisor];
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado);
     }
@@ -135,7 +134,7 @@ public class GestorUsuariosPruebas
         string clave = "";
         List<Rol> roles = [Rol.Revisor];
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado);
     }
@@ -152,7 +151,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = new List<Rol>();
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsTrue(usuarioCreado);
     }
@@ -171,8 +170,8 @@ public class GestorUsuariosPruebas
         string nombre2 = "Juan";
         string apellido2 = "Perez";
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
-        bool usuarioCreado2 = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre2, apellido2, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado2 = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre2, apellido2, email, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(usuarioCreado2);
     }
@@ -190,7 +189,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Administrador];
 
-        bool usuarioCreado = _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool usuarioCreado = _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
         Assert.IsTrue(usuarioCreado);
     }
@@ -208,9 +207,9 @@ public class GestorUsuariosPruebas
         int dia = 10;
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email, nombreVacio, apellido, anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email, nombreVacio, apellido, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(modificado);
     }
@@ -228,8 +227,8 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellidoVacio, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellidoVacio, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(modificado);
     }
@@ -246,9 +245,9 @@ public class GestorUsuariosPruebas
         int dia = 10;
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(emailInvalido, nombre, apellido, anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(emailInvalido, nombre, apellido, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(modificado);
     }
@@ -268,9 +267,9 @@ public class GestorUsuariosPruebas
         
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido, anioInvalido, mesInvalido, diaInvalido, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido, anioInvalido, mesInvalido, diaInvalido, clave, roles));
 
         Assert.IsFalse(modificado);
     }
@@ -287,9 +286,9 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         string claveInvalida = "Invalida";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, claveInvalida, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, claveInvalida, roles));
 
         Assert.IsFalse(modificado);
     }
@@ -306,9 +305,9 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         string claveVacia = string.Empty;
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, claveVacia, roles) );
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, claveVacia, roles) );
 
         Assert.IsTrue(modificado);
     }
@@ -326,11 +325,11 @@ public class GestorUsuariosPruebas
         int dia = 10;
         string clave = "123QWEasdzxc@";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email,nombreNuevo, apellidoNuevo,anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email,nombreNuevo, apellidoNuevo,anio, mes, dia, clave, roles));
         
-        var usuario = _gestor.AutenticarUsuario(email, clave);
+        var usuario = _gestorUsuarios.AutenticarUsuario(email, clave);
         
         Assert.IsTrue(modificado);
         Assert.AreEqual(nombreNuevo, usuario!.Nombre);
@@ -348,10 +347,10 @@ public class GestorUsuariosPruebas
         int dia = 10;
         string clave = "123QWEasdzxc@";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, clave, roles));
-        Usuario? usuarioAutenticado = _gestor.AutenticarUsuario(email,clave);
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, clave, roles));
+        Usuario? usuarioAutenticado = _gestorUsuarios.AutenticarUsuario(email,clave);
 
         Assert.IsTrue(modificado);
         Assert.IsNotNull(usuarioAutenticado);
@@ -369,11 +368,11 @@ public class GestorUsuariosPruebas
         string clave = "123QWEasdzxc@";
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido, anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido, anio, mes, dia, clave, roles));
         
-        var usuario = _gestor.AutenticarUsuario(email, clave);
+        var usuario = _gestorUsuarios.AutenticarUsuario(email, clave);
         
         var rolesUsuario = usuario!.ObtenerRoles().ToList();
         
@@ -393,12 +392,12 @@ public class GestorUsuariosPruebas
         int dia = 10;
         string clave = "123QWEasdzxc@";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
         List<Rol> rolesVacios = [];
         
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido , anio, mes, dia, clave, rolesVacios));
-        var usuario = _gestor.AutenticarUsuario(email, clave);
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido , anio, mes, dia, clave, rolesVacios));
+        var usuario = _gestorUsuarios.AutenticarUsuario(email, clave);
         var rolesUsuario = usuario!.ObtenerRoles().ToList();
 
         Assert.IsTrue(modificado);
@@ -417,9 +416,9 @@ public class GestorUsuariosPruebas
         int dia = 10;
         string clave = "123QWEasdzxc@";
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
 
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido,anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido,anio, mes, dia, clave, roles));
         
         Assert.IsTrue(modificado);
     }
@@ -436,7 +435,7 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
 
-        bool modificado = _gestor.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, clave, roles));
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email,nombre, apellido, anio, mes, dia, clave, roles));
 
         Assert.IsFalse(modificado);
     }
@@ -454,9 +453,9 @@ public class GestorUsuariosPruebas
         string clave = "ClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         
-        bool usuarioRemovido = _gestor.BorrarUsuario(new DatosUsuarioEmail(email));
+        bool usuarioRemovido = _gestorUsuarios.BorrarUsuario(new DatosUsuarioEmail(email));
         
         Assert.IsTrue(usuarioRemovido);
     }
@@ -466,7 +465,7 @@ public class GestorUsuariosPruebas
     {
         string email = "asdasdasda@gmail.com";
         
-        bool usuarioRemovido = _gestor.BorrarUsuario(new DatosUsuarioEmail(email));
+        bool usuarioRemovido = _gestorUsuarios.BorrarUsuario(new DatosUsuarioEmail(email));
         
         Assert.IsFalse(usuarioRemovido);
     }
@@ -478,7 +477,7 @@ public class GestorUsuariosPruebas
         var datos = new DatosUsuarioEmail(email);
 
         var ex = Assert.ThrowsException<ExcepcionDeUsuario>(() =>
-            _gestor.BorrarUsuario(datos)
+            _gestorUsuarios.BorrarUsuario(datos)
         );
 
         StringAssert.Contains(ex.Message, "El email no tiene un formato válido.");
@@ -498,9 +497,9 @@ public class GestorUsuariosPruebas
         
         string claveNueva = "NuevaClaveValida123!";
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
         
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(email,claveActual, claveNueva));
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(email,claveActual, claveNueva));
 
         Assert.IsTrue(modificado);
     }
@@ -520,9 +519,9 @@ public class GestorUsuariosPruebas
         string claveNueva = "NuevaClaveValida123!";
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
 
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(emailInexistente, claveActual, claveNueva));
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(emailInexistente, claveActual, claveNueva));
 
         Assert.IsFalse(modificado);
     }
@@ -541,9 +540,9 @@ public class GestorUsuariosPruebas
         string claveActual = "123QWEasdzxc@";
         string claveNueva = "NuevaClaveValida123!";
 
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
         
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(emailInexistente, claveActual, claveNueva));
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(emailInexistente, claveActual, claveNueva));
         
 
         Assert.IsFalse(modificado);
@@ -563,10 +562,10 @@ public class GestorUsuariosPruebas
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
         
         
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(email, claveActual, claveNueva));
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(email, claveActual, claveNueva));
         
         Assert.IsFalse(modificado);
     }
@@ -586,9 +585,9 @@ public class GestorUsuariosPruebas
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
 
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
         
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(email, claveActualInvalida, claveNueva));
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(email, claveActualInvalida, claveNueva));
 
 
         Assert.IsFalse(modificado);
@@ -606,10 +605,10 @@ public class GestorUsuariosPruebas
         int mes = 1;
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
         
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(email, claveActual, claveNueva));
-        Usuario? admin = _gestor.AutenticarUsuario(email, claveNueva);
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(email, claveActual, claveNueva));
+        Usuario? admin = _gestorUsuarios.AutenticarUsuario(email, claveNueva);
 
         Assert.IsTrue(modificado);
         Assert.IsNotNull(admin);
@@ -628,10 +627,10 @@ public class GestorUsuariosPruebas
         int mes = 1;
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
 
-        bool modificado = _gestor.ModificarClave(new DatosCambioClave(email, claveActual, claveNueva));
-        Usuario? admin = _gestor.AutenticarUsuario(email, claveActual);
+        bool modificado = _gestorUsuarios.ModificarClave(new DatosCambioClave(email, claveActual, claveNueva));
+        Usuario? admin = _gestorUsuarios.AutenticarUsuario(email, claveActual);
 
         Assert.IsTrue(modificado);
         Assert.IsNull(admin);
@@ -650,8 +649,8 @@ public class GestorUsuariosPruebas
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
-        Usuario? admin = _gestor.AutenticarUsuario(email, clave);
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        Usuario? admin = _gestorUsuarios.AutenticarUsuario(email, clave);
         
         Assert.IsNotNull(admin);
     }
@@ -670,8 +669,8 @@ public class GestorUsuariosPruebas
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
-        Usuario? admin = _gestor.AutenticarUsuario(email, claveIncorrecta);
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        Usuario? admin = _gestorUsuarios.AutenticarUsuario(email, claveIncorrecta);
         
         Assert.IsNull(admin);
     }
@@ -689,8 +688,8 @@ public class GestorUsuariosPruebas
         int dia = 1;
         List<Rol> roles = [Rol.Revisor];
         
-        _gestor.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
-        Usuario? admin = _gestor.AutenticarUsuario(emailIncorrecto, clave);
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        Usuario? admin = _gestorUsuarios.AutenticarUsuario(emailIncorrecto, clave);
         
         Assert.IsNull(admin);
     }
@@ -702,7 +701,7 @@ public class GestorUsuariosPruebas
 
         usuario.AgregarRol(Rol.Revisor);
 
-        Assert.IsTrue(_gestor.UsuarioTieneRol(usuario, Rol.Revisor));
+        Assert.IsTrue(_gestorUsuarios.UsuarioTieneRol(usuario, Rol.Revisor));
     }
     
     [TestMethod]
@@ -710,7 +709,7 @@ public class GestorUsuariosPruebas
     {
         var usuario = CrearUsuario();
         
-        Assert.IsFalse(_gestor.UsuarioTieneRol(usuario, Rol.Revisor));
+        Assert.IsFalse(_gestorUsuarios.UsuarioTieneRol(usuario, Rol.Revisor));
     }
     
     [TestMethod]
@@ -719,7 +718,7 @@ public class GestorUsuariosPruebas
         var usuario = CrearUsuario();
 
         usuario.AgregarRol(Rol.Revisor);
-        var listaDeRolesDelUsuario = _gestor.ObtenerRolesDeUsuario(usuario);
+        var listaDeRolesDelUsuario = _gestorUsuarios.ObtenerRolesDeUsuario(usuario);
         
         Assert.AreEqual(1, listaDeRolesDelUsuario.Count());
         Assert.IsTrue(usuario.TieneRol(Rol.Revisor));
@@ -728,7 +727,7 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ObtenerUsuarios_DevuelveUsuariosExistentes()
     {
-        var usuarios = _gestor.ObtenerUsuarios();
+        var usuarios = _gestorUsuarios.ObtenerUsuarios();
 
         Assert.IsNotNull(usuarios);
         Assert.AreEqual(1, usuarios.Count);
@@ -738,8 +737,8 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ObtenerUsuarios_SinUsuarios_DevuelveListaVacia()
     {
-        _gestor.BorrarUsuario(new DatosUsuarioEmail("admin@gmail.com"));
-        var usuarios = _gestor.ObtenerUsuarios();
+        _gestorUsuarios.BorrarUsuario(new DatosUsuarioEmail("admin@gmail.com"));
+        var usuarios = _gestorUsuarios.ObtenerUsuarios();
         
         Assert.IsNotNull(usuarios);
         Assert.AreEqual(0, usuarios.Count);
@@ -749,11 +748,11 @@ public class GestorUsuariosPruebas
     public void BuscarUsuarioPorId_UsuarioExistente_RetornaUsuario()
     {
         
-        var usuarios = _gestor.ObtenerUsuarios();
+        var usuarios = _gestorUsuarios.ObtenerUsuarios();
         
         int idAdmin = usuarios.First().Id;
         
-        var usuario = _gestor.BuscarUsuarioPorId(idAdmin);
+        var usuario = _gestorUsuarios.BuscarUsuarioPorId(idAdmin);
         
         Assert.IsNotNull(usuario);
         Assert.AreEqual(idAdmin, usuario!.Id);
@@ -764,7 +763,7 @@ public class GestorUsuariosPruebas
     {
         int idInexistente = 9999;
       
-        var usuario = _gestor.BuscarUsuarioPorId(idInexistente);
+        var usuario = _gestorUsuarios.BuscarUsuarioPorId(idInexistente);
         
         Assert.IsNull(usuario);
     }

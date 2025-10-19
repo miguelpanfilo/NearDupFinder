@@ -1,5 +1,5 @@
-using NearDupFinder_Dominio.Clases;
-using NearDupFinder_LogicaDeNegocio;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
@@ -21,8 +21,15 @@ public readonly struct Fila(
     public string Catalogo { get;} = catalogo;
 }
 
-public class LectorCsv(Sistema sistema)
+public class LectorCsv
 {
+    private GestorCatalogos _gestorCatalogos;
+    private GestorItems _gestorItems;
+    public LectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestorItems)
+    {
+        _gestorCatalogos = gestorCatalogos;
+        _gestorItems = gestorItems;
+    }
     public List<string> Titulos { get; private set; } = [];
     public int CantidadDeFilas { get; private set; }
     public List<Fila> Filas { get; private set; } = [];
@@ -53,12 +60,23 @@ public class LectorCsv(Sistema sistema)
             
             try
             {
-                Item nuevoItem = new Item(fila.Titulo,fila.Descripción,fila.Marca,fila.Modelo,fila.Categoría);
-                
-                if(IdEsValido(fila.Id))
-                    nuevoItem.ModificarIdEnCasoDeImportacion(int.Parse(fila.Id));
-                
-                sistema.AltaItemConAltaDuplicados(fila.Catalogo, nuevoItem);
+
+                var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(fila.Catalogo);
+
+                int? idImportado = null;
+                if (IdEsValido(fila.Id) && int.TryParse(fila.Id, out var parsed))
+                    idImportado = parsed;
+
+                var dto = new DatosCrearItem(
+                    IdCatalogo: catalogo!.Id,
+                    Titulo: fila.Titulo,
+                    Descripcion: fila.Descripción,
+                    Categoria: fila.Categoría,
+                    Marca: fila.Marca,
+                    Modelo: fila.Modelo,
+                    IdImportado: idImportado
+                );
+                _gestorItems.CrearItem(dto);
             }
             catch
             {
@@ -72,18 +90,18 @@ public class LectorCsv(Sistema sistema)
         if (string.IsNullOrWhiteSpace(nombreCatalogo))
             return false;
             
-        var catalogo = sistema.ObtenerCatalogoPorTitulo(nombreCatalogo);
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(nombreCatalogo);
         if(catalogo is null)
         {
             try
             {
-                catalogo = new Catalogo(nombreCatalogo);
+                _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear(nombreCatalogo));
             }
             catch
             {
                 return false;
             }
-            sistema.AgregarCatalogo(catalogo);
+            
         }
 
         return true;
@@ -93,7 +111,7 @@ public class LectorCsv(Sistema sistema)
     {
         if (IdEsValido(id))
         {
-            bool idYaExiste = sistema.IdExisteEnListaDeIdGlobal(int.Parse(id));
+            bool idYaExiste = _gestorItems.IdExisteEnListaDeIdGlobal(int.Parse(id));
             if (idYaExiste)
                 return true;
         }

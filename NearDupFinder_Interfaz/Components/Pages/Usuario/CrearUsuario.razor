@@ -1,7 +1,7 @@
 @page "/crear-usuario"
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio.Recursos
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
 @using NearDupFinder_LogicaDeNegocio.Servicios
 @inject GestorUsuarios GestorUsuarios
 @attribute [Authorize(Roles = "Administrador")]

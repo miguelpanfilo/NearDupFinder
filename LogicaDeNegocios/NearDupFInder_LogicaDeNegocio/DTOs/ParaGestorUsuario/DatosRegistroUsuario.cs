@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_LogicaDeNegocio.Recursos;
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 
 public class DatosRegistroUsuario
 {

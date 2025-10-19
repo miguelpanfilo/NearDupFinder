@@ -1,8 +1,9 @@
 @page "/catalogos/{Id:int}/editar"
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
-@inject Sistema Sistema
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorCatalogos GestorCatalogos;
 @inject NavigationManager Nav
 
 <PageTitle>Editar de Catalogo</PageTitle>
@@ -50,7 +51,7 @@ else
     protected override void OnParametersSet()
     {
         
-        _catalogo = Sistema.ObtenerCatalogoPorId(Id);
+        _catalogo = GestorCatalogos.ObtenerCatalogoPorId(Id);
         
         if (_catalogo is null)
         {
@@ -73,10 +74,8 @@ else
                 return;
             }
 
-            Sistema.CambiarTituloCatalogo(_catalogo!, _titulo);
-            Sistema.CambiarDescripcionCatalogo(_catalogo!, _descripcion);
-
-
+            GestorCatalogos.ModificarCampos(new DatosCatalogoEditar(Id, _titulo, _descripcion));
+            
             Nav.NavigateTo("/CrearCatalogo");
         }catch (InvalidOperationException ex)
         {

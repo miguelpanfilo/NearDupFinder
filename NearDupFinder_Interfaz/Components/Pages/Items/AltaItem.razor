@@ -2,8 +2,10 @@
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
-@using NearDupFinder_LogicaDeNegocio
-@inject Sistema Sistema
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorItems GestorItems
+@inject GestorCatalogos GestorCatalogos;
 @inject NavigationManager Nav
 
 <PageTitle>Crear Item</PageTitle>
@@ -17,11 +19,11 @@
 
 <div class="mb-3">
     <label for="catalogoSelect">Seleccionar Catálogo:</label>
-    <select id="catalogoSelect" class="form-select" @bind="_catalogoSeleccionadoTitulo">
+    <select id="catalogoSelect" class="form-select" @bind="_catalogoSeleccionadoId">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in Sistema.Catalogos)
+        @foreach (var cat in GestorCatalogos.Catalogos)
         {
-            <option value="@cat.Titulo">@cat.Titulo</option>
+            <option value="@cat.Id">@cat.Titulo</option>
         }
     </select>
 </div>
@@ -60,27 +62,30 @@
     private string _categoria = "";
     private string _marca = "";
     private string _modelo = "";
-    private string _catalogoSeleccionadoTitulo = "";
+    private int? _catalogoSeleccionadoId;
     private string _mensajeError = "";
 
     private void GuardarItem()
     {
         try
         {
-            var nuevoItem = new Item
-            {
-                Titulo = _titulo,
-                Descripcion = _descripcion,
-                Categoria = string.IsNullOrWhiteSpace(_categoria) ? "" : _categoria,
-                Marca = string.IsNullOrWhiteSpace(_marca) ? "" : _marca,
-                Modelo = string.IsNullOrWhiteSpace(_modelo) ? "" : _modelo
-            };
+            var datos = new DatosCrearItem(
+                IdCatalogo: _catalogoSeleccionadoId ?? 0,  // ⚠️ mejor pasar el Id, no el título
+                Titulo: _titulo,
+                Descripcion: _descripcion,
+                Categoria: string.IsNullOrWhiteSpace(_categoria) ? null : _categoria,
+                Marca: string.IsNullOrWhiteSpace(_marca) ? null : _marca,
+                Modelo: string.IsNullOrWhiteSpace(_modelo) ? null : _modelo
+            );
 
-            Sistema.AltaItemConAltaDuplicados(_catalogoSeleccionadoTitulo, nuevoItem);
+            GestorItems.CrearItem(datos);
 
             Nav.NavigateTo("/lista-items");
         }
-        catch (ExcepcionDeItem ex)
+        catch (ExcepcionItem ex)
+        {
+            _mensajeError = ex.Message;
+        }catch (ExcepcionCatalogo ex)
         {
             _mensajeError = ex.Message;
         }

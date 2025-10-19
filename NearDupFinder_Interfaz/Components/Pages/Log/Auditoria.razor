@@ -1,7 +1,7 @@
 @page "/logs"
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
-@inject Sistema Sistema
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorAuditoria GestorAuditoria
 @rendermode InteractiveServer
 
 <PageTitle>Logs del Sistema</PageTitle>
@@ -42,7 +42,7 @@ else
 
     protected override void OnInitialized()
     {
-        _logs = Sistema.ObtenerLogs()
+        _logs = GestorAuditoria.ObtenerLogs()
             .OrderByDescending(l => l.Timestamp)
             .ToList();
     }

@@ -2,11 +2,9 @@
 
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
-@using NearDupFinder_LogicaDeNegocio.Recursos
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
 @using NearDupFinder_LogicaDeNegocio.Servicios
 @attribute [Authorize(Roles = "Administrador")]
-@inject Sistema Sistema
 @inject GestorUsuarios GestorUsuarios
 
 <PageTitle>Usuarios</PageTitle>

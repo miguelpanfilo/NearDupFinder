@@ -36,7 +36,7 @@ public readonly record struct ParDuplicado(
     int ScoreModelo,
     string[] TokensCompartidosTitulo,
     string[] TokensCompartidosDescripcion,
-    string TituloCatalogo
+    int IdCatalogo
 );
 
 public class GestorDuplicados
@@ -59,7 +59,7 @@ public class GestorDuplicados
         {
             if (itemB.Id == itemA.Id)
                 continue;
-            string tituloCatalogo = catalogo.Titulo;
+            int idCatalogo = catalogo.Id;
             ItemNormalizado itemNormalizadoB = NormalizarItem(itemB);
             ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
@@ -84,7 +84,7 @@ public class GestorDuplicados
                     itemA, itemB, score, tipo,
                     jaccardTitulo, jaccardDescripcion,
                     scoreMarca, scoreModelo,
-                    tokensCompartidosTitulo, tokensCompartidosDescripcion, tituloCatalogo
+                    tokensCompartidosTitulo, tokensCompartidosDescripcion, idCatalogo
                 );
                 
                 listaDuplicados.Add(duplicado);
@@ -99,7 +99,7 @@ public class GestorDuplicados
         return listaDuplicados;
     }
     
-    public ItemNormalizado NormalizarItem(Item item)
+    private ItemNormalizado NormalizarItem(Item item)
     {
         string tituloNormalizado = Normalizar(item.Titulo);
         string descripcionNormalizada = Normalizar(item.Descripcion);
@@ -121,7 +121,7 @@ public class GestorDuplicados
         };
     }
 
-    public string Normalizar(string? texto)
+    private string Normalizar(string? texto)
     {
         if (string.IsNullOrEmpty(texto))
             return string.Empty;
@@ -140,7 +140,7 @@ public class GestorDuplicados
         return texto;
     }
     
-    public ItemTokenizado TokenizarItem(ItemNormalizado item)
+    private ItemTokenizado TokenizarItem(ItemNormalizado item)
     {
         return new ItemTokenizado
         {
@@ -157,17 +157,17 @@ public class GestorDuplicados
             .ToArray();
     }
 
-    public int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
+    private int CalcularNumTokensUnion(string[] tokens1, string[] tokens2)
     {
         return tokens1.Union(tokens2).Count();
     }
 
-    public int CalcularNumTokensInterseccion(string[] tokens1, string[] tokens2)
+    private int CalcularNumTokensInterseccion(string[] tokens1, string[] tokens2)
     {
         return tokens1.Intersect(tokens2).Count();
     }
 
-    public float CalcularJaccard(string[] tokens1, string[] tokens2)
+    private float CalcularJaccard(string[] tokens1, string[] tokens2)
     {
         float numTokensUnion = CalcularNumTokensUnion(tokens1, tokens2);
         if (numTokensUnion == 0)
@@ -187,7 +187,7 @@ public class GestorDuplicados
             throw new ArgumentOutOfRangeException();
     }
 
-    public float CalcularScore(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
+    private float CalcularScore(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
     {
         ValidarValoresDentroDeLosRangosEsperados(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
         float constanteDeTitulo = 0.45f;
