@@ -9,11 +9,13 @@ public class GestorUsuarios
 {
     private AlmacenamientoDeDatos _almacenamientoDeDatos;
     private GestorAuditoria _gestorAuditoria;
+
     public GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorAuditoria gestorAuditoria)
     {
         _almacenamientoDeDatos = almacenamientoDeDatos;
         _gestorAuditoria = gestorAuditoria;
     }
+
     public bool CrearUsuario(DatosRegistroUsuario datosRegistroUsuario)
     {
         Usuario nuevoUsuario;
@@ -42,7 +44,7 @@ public class GestorUsuarios
         AgregarALaListaDeUsuarios(nuevoUsuario);
 
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{datosRegistroUsuario.Email}'");
-        
+
         return true;
     }
 
@@ -68,7 +70,8 @@ public class GestorUsuarios
         if (usuario is null)
             return false;
 
-        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarUser, $"Usuario eliminado: '{datosUsuarioEmail.Email}'");
+        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarUser,
+            $"Usuario eliminado: '{datosUsuarioEmail.Email}'");
 
         RemoverDeLaListaDeUsuarios(usuario);
 
@@ -107,7 +110,7 @@ public class GestorUsuarios
         return true;
     }
 
-    public Usuario? AutenticarUsuario(string? email, string? clave)//sacar usasr el de login
+    public Usuario? AutenticarUsuario(string? email, string? clave) //sacar usasr el de login
     {
         Email emailAValidar;
         try
@@ -136,7 +139,7 @@ public class GestorUsuarios
         return false;
     }
 
-    private Usuario?  BuscarUsuarioPorEmail(Email email)
+    private Usuario? BuscarUsuarioPorEmail(Email email)
     {
         return _almacenamientoDeDatos.BuscarUsuarioPorEmail(email);
     }
@@ -221,10 +224,12 @@ public class GestorUsuarios
     public bool ModificarUsuario(DatosEdicionUsuario datosEdicionUsuario)
     {
         bool pasaModificarUsuario = EditarDatosDelUsuario(datosEdicionUsuario);
-        if (pasaModificarUsuario) 
-        {}
-
-        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, $"Usuario modificado: '{datosEdicionUsuario.EmailActual}'");
+        if (pasaModificarUsuario)
+        {
+            _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario,
+                $"Usuario modificado: '{datosEdicionUsuario.EmailActual}'");
+        }
+        
         return pasaModificarUsuario;
     }
 

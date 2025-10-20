@@ -40,7 +40,7 @@ public readonly record struct ParDuplicado(
 );
 
 public class GestorDuplicados
-{ 
+{
     private const string TokenPattern = @"\W+";
     private const float UmbralAlerta = 0.60f;
     private const float UmbralPosible = 0.75f;
@@ -64,7 +64,8 @@ public class GestorDuplicados
             ItemTokenizado itemTokenizadoB = TokenizarItem(itemNormalizadoB);
 
             float jaccardTitulo = CalcularJaccard(itemTokenizadoA.TokenTitulo, itemTokenizadoB.TokenTitulo);
-            float jaccardDescripcion = CalcularJaccard(itemTokenizadoA.TokenDescripcion, itemTokenizadoB.TokenDescripcion);
+            float jaccardDescripcion =
+                CalcularJaccard(itemTokenizadoA.TokenDescripcion, itemTokenizadoB.TokenDescripcion);
 
             int scoreMarca = IgualdadBinaria(itemNormalizadoA.MarcaNormalizada, itemNormalizadoB.MarcaNormalizada);
             int scoreModelo = IgualdadBinaria(itemNormalizadoA.ModeloNormalizado, itemNormalizadoB.ModeloNormalizado);
@@ -73,11 +74,13 @@ public class GestorDuplicados
 
             if (score >= UmbralAlerta)
             {
-                string[] tokensCompartidosTitulo = itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
-                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion.Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
-                
-                TipoDuplicado tipo = score >= UmbralPosible 
-                    ? TipoDuplicado.PosibleDuplicado 
+                string[] tokensCompartidosTitulo =
+                    itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
+                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion
+                    .Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
+
+                TipoDuplicado tipo = score >= UmbralPosible
+                    ? TipoDuplicado.PosibleDuplicado
                     : TipoDuplicado.AlertaDuplicado;
 
                 ParDuplicado duplicado = new ParDuplicado(
@@ -86,7 +89,7 @@ public class GestorDuplicados
                     scoreMarca, scoreModelo,
                     tokensCompartidosTitulo, tokensCompartidosDescripcion, idCatalogo
                 );
-                
+
                 listaDuplicados.Add(duplicado);
             }
         }
@@ -98,7 +101,7 @@ public class GestorDuplicados
 
         return listaDuplicados;
     }
-    
+
     private ItemNormalizado NormalizarItem(Item item)
     {
         string tituloNormalizado = Normalizar(item.Titulo);
@@ -139,7 +142,7 @@ public class GestorDuplicados
         texto = Regex.Replace(texto, @"\s+", " ").Trim();
         return texto;
     }
-    
+
     private ItemTokenizado TokenizarItem(ItemNormalizado item)
     {
         return new ItemTokenizado
@@ -179,7 +182,8 @@ public class GestorDuplicados
         return valorJaccard;
     }
 
-    private void ValidarValoresDentroDeLosRangosEsperados(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
+    private void ValidarValoresDentroDeLosRangosEsperados(float jaccardTitulo, float jaccardDescripcion, float marcaEq,
+        float modeloEq)
     {
         if (jaccardTitulo < 0f || jaccardTitulo > 1f || jaccardDescripcion < 0f || jaccardDescripcion > 1f)
             throw new ArgumentOutOfRangeException();
@@ -191,15 +195,16 @@ public class GestorDuplicados
     {
         ValidarValoresDentroDeLosRangosEsperados(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
         float constanteDeTitulo = 0.45f;
-        float constanteDeDescripcion = 0.35f;   
+        float constanteDeDescripcion = 0.35f;
         float constanteDeMarca = 0.10f;
         float constanteDeModelo = 0.10f;
-        
-        float score = constanteDeTitulo * jaccardTitulo + constanteDeDescripcion * jaccardDescripcion + constanteDeMarca * marcaEq + constanteDeModelo * modeloEq;
+
+        float score = constanteDeTitulo * jaccardTitulo + constanteDeDescripcion * jaccardDescripcion +
+                      constanteDeMarca * marcaEq + constanteDeModelo * modeloEq;
 
         return score;
     }
-    
+
     private static int IgualdadBinaria(string textoA, string textoB)
     {
         if (string.IsNullOrEmpty(textoA) || string.IsNullOrEmpty(textoB))

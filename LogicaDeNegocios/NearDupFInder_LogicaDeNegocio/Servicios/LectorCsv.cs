@@ -14,40 +14,42 @@ public readonly struct Fila(
 {
     public string Id { get; } = id;
     public string Titulo { get; } = titulo;
-    public string Marca { get;} = marca;
-    public string Modelo { get;} = modelo;
-    public string Descripción { get;} = descripción;
-    public string Categoría { get;} = categoria;
-    public string Catalogo { get;} = catalogo;
+    public string Marca { get; } = marca;
+    public string Modelo { get; } = modelo;
+    public string Descripción { get; } = descripción;
+    public string Categoría { get; } = categoria;
+    public string Catalogo { get; } = catalogo;
 }
 
 public class LectorCsv
 {
     private GestorCatalogos _gestorCatalogos;
     private GestorItems _gestorItems;
+
     public LectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestorItems)
     {
         _gestorCatalogos = gestorCatalogos;
         _gestorItems = gestorItems;
     }
+
     public List<string> Titulos { get; private set; } = [];
     public int CantidadDeFilas { get; private set; }
     public List<Fila> Filas { get; private set; } = [];
-    
+
     public void LeerCsv(List<string> titulos, int cantidad, List<Fila> filas)
     {
         Titulos = titulos;
         CantidadDeFilas = cantidad;
         Filas = filas;
     }
-    
+
     public void Limpiar()
     {
         Titulos = [];
         CantidadDeFilas = 0;
         Filas = [];
     }
-    
+
     public void ImportarItems()
     {
         foreach (Fila fila in Filas)
@@ -55,33 +57,26 @@ public class LectorCsv
             if (!VerificarOAgregarCatalogoValido(fila.Catalogo))
                 continue;
 
-            if(ExisteId(fila.Id))
+            if (ExisteId(fila.Id))
                 continue;
-            
-            try
-            {
 
-                var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(fila.Catalogo);
 
-                int? idImportado = null;
-                if (IdEsValido(fila.Id) && int.TryParse(fila.Id, out var parsed))
-                    idImportado = parsed;
+            var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(fila.Catalogo);
 
-                var dto = new DatosCrearItem(
-                    IdCatalogo: catalogo!.Id,
-                    Titulo: fila.Titulo,
-                    Descripcion: fila.Descripción,
-                    Categoria: fila.Categoría,
-                    Marca: fila.Marca,
-                    Modelo: fila.Modelo,
-                    IdImportado: idImportado
-                );
-                _gestorItems.CrearItem(dto);
-            }
-            catch
-            {
-                continue;
-            }
+            int? idImportado = null;
+            if (IdEsValido(fila.Id) && int.TryParse(fila.Id, out var parsed))
+                idImportado = parsed;
+
+            var dto = new DatosCrearItem(
+                IdCatalogo: catalogo!.Id,
+                Titulo: fila.Titulo,
+                Descripcion: fila.Descripción,
+                Categoria: fila.Categoría,
+                Marca: fila.Marca,
+                Modelo: fila.Modelo,
+                IdImportado: idImportado
+            );
+            _gestorItems.CrearItem(dto);
         }
     }
 
@@ -89,9 +84,9 @@ public class LectorCsv
     {
         if (string.IsNullOrWhiteSpace(nombreCatalogo))
             return false;
-            
+
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(nombreCatalogo);
-        if(catalogo is null)
+        if (catalogo is null)
         {
             try
             {
@@ -101,7 +96,6 @@ public class LectorCsv
             {
                 return false;
             }
-            
         }
 
         return true;
@@ -115,6 +109,7 @@ public class LectorCsv
             if (idYaExiste)
                 return true;
         }
+
         return false;
     }
 
@@ -123,4 +118,3 @@ public class LectorCsv
         return !string.IsNullOrWhiteSpace(id) && int.Parse(id) != 0;
     }
 }
-

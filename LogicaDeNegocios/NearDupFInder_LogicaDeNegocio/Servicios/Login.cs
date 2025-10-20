@@ -8,7 +8,7 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios;
 public class Login
 {
     private readonly AlmacenamientoDeDatos _almacenamiento;
-    
+
     public Login(AlmacenamientoDeDatos almacenamiento)
     {
         _almacenamiento = almacenamiento;
@@ -25,9 +25,9 @@ public class Login
 
             return usuario.VerificarClave(datosAutenticaciones.Clave) ? usuario : null;
         }
-        catch (ExcepcionDeUsuario e){
-        
-             throw e;
+        catch (ExcepcionDeUsuario e)
+        {
+            throw e;
         }
     }
 }

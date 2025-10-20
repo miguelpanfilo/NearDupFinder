@@ -42,12 +42,12 @@ public class GestorItems
             Modelo = datos.Modelo
         };
 
-        if (datos.IdImportado is int fijo)
+        if (datos.IdImportado is int idImportado)
         {
-            if (IdExisteEnListaDeIdGlobal(fijo))
-                throw new ExcepcionItem($"El Id importado {fijo} ya existe.");
-            item.ModificarIdEnCasoDeImportacion(fijo);
-            _idsItemsGlobal.Add(fijo);
+            if (IdExisteEnListaDeIdGlobal(idImportado))
+                throw new ExcepcionItem($"El Id importado {idImportado} ya existe.");
+            item.ModificarIdEnCasoDeImportacion(idImportado);
+            _idsItemsGlobal.Add(idImportado);
         }
         else
         {

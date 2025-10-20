@@ -31,7 +31,7 @@ public class GestorCatalogos
         var catalogoAEliminar = ObtenerCatalogoPorId(datosCatalogoEliminar.Id) ??
                                 throw new ExcepcionCatalogo($"No existe un catálogo con Id={datosCatalogoEliminar.Id}");
 
-        RemoverDeLaListaDeCatalogos(catalogoAEliminar!);
+        RemoverDeLaListaDeCatalogos(catalogoAEliminar);
     }
 
     public void ModificarCampos(DatosCatalogoEditar datosCatalogoEditar)
@@ -87,8 +87,7 @@ public class GestorCatalogos
     {
         return _almacenamientoDeDatos.ObtenerCatalogoPorId(id);
     }
-
-
+    
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
     {
         return _almacenamientoDeDatos.ObtenerCatalogoPorTitulo(titulo);
