@@ -18,20 +18,15 @@ public class GestorUsuariosPruebas
         int a = 1997, int m = 12, int d = 27) =>
         Usuario.Crear(nombre, apellido, CrearEmail(mail), CrearFecha(a, m, d));
     
-    private Sistema _sistema = null!;
-    private Catalogo _catalogo = null!;
     private AlmacenamientoDeDatos _almacenamiento = null!;
+    private readonly GestorAuditoria _gestorAuditoria = null!;
     private GestorUsuarios _gestorUsuarios = null!;
     
     [TestInitialize]
     public void Setup()
     {
-        _sistema = new Sistema();
         _almacenamiento = new AlmacenamientoDeDatos();
-        _gestorUsuarios = new GestorUsuarios(_sistema, _almacenamiento);
-        _catalogo = new Catalogo("Catalogo Test");
-        _sistema.AgregarCatalogo(_catalogo);
-        
+        _gestorUsuarios = new GestorUsuarios(_almacenamiento, _gestorAuditoria);
     }
     [TestMethod]
     public void CrearUsuario_NombreVacio_RetornaFalso()
@@ -53,7 +48,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void CrearUsuario_ApellidoVacio_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "";
         string email = "manuelperezmartirene@gmail.com";
@@ -71,7 +65,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void CrearUsuario_EmailInvalido_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Perez";
         string email = "manuelperezmartirene.com";
@@ -89,7 +82,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void CrearUsuario_FechaInvalida_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Perez";
         string email = "manuel@gmail.com";
@@ -107,7 +99,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void CrearUsuario_ClaveInvalido_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Perez";
         string email = "manuelperezmartirene@gmail.com";
@@ -179,7 +170,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void CrearUsuario_CamposValidos_RetornaVerdadero()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Perez";
         string email = "manuelperezmartirene@gmail.com";
@@ -201,7 +191,6 @@ public class GestorUsuariosPruebas
         string nombreVacio = "";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
-        string emailVacio = null;
         int anio = 1995;
         int mes = 5;
         int dia = 10;
@@ -383,7 +372,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ModificarUsuario_RolesVacio_EliminaTodosLosRoles()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -407,7 +395,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ModificarUsuario_CamposValidos_RetornaVerdadero()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -443,7 +430,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void RemoverUsuario_Existente_RetornaVerdadero()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -507,7 +493,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ModificarClave_UsuarioInexistente_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -551,7 +536,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ModificarClave_ClaveInvalida_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -573,7 +557,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ModificarClave_ClaveActualInCorrecta_RetornaFalso()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -617,7 +600,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void ModificarClave_CambiaClave_NoPermiteAutenticarConClaveVieja()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -639,7 +621,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void AutenticoUsuario_Correcto_RetornaUsuario()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -658,7 +639,6 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void AutenticoUsuario_ClaveIncorrecta_RetornaNulo()
     {
-        Sistema sistema = new Sistema();
         string nombre = "Manuel";
         string apellido = "Pérez";
         string email = "manuel@gmail.com";
@@ -761,7 +741,7 @@ public class GestorUsuariosPruebas
     [TestMethod]
     public void BuscarUsuarioPorId_UsuarioInexistente_RetornaNull()
     {
-        int idInexistente = 9999;
+        const int idInexistente = 9999;
       
         var usuario = _gestorUsuarios.BuscarUsuarioPorId(idInexistente);
         
