@@ -3,6 +3,7 @@ using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados;
+using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios;
@@ -10,16 +11,16 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios;
 public class GestorControlClusters
 {
     private readonly GestorCatalogos _gestorCatalogos;
-    private readonly GestorControlDuplicados _gestorControlDuplicados;
+    private readonly ControladorDuplicados _controladorDuplicados;
     private readonly GestorAuditoria _gestorAuditoria;
 
     public GestorControlClusters(
         GestorCatalogos gestorCatalogos,
-        GestorControlDuplicados gestorControlDuplicados,
+        ControladorDuplicados controladorDuplicados,
         GestorAuditoria gestorAuditoria)
     {
         _gestorCatalogos = gestorCatalogos;
-        _gestorControlDuplicados = gestorControlDuplicados;
+        _controladorDuplicados = controladorDuplicados;
         _gestorAuditoria = gestorAuditoria;
     }
 
@@ -37,7 +38,7 @@ public class GestorControlClusters
 
         catalogo.ConfirmarClusters(itemA, itemB);
 
-        _gestorControlDuplicados.DescartarParDuplicado(duplicadoConfirmado);
+        _controladorDuplicados.DescartarParDuplicado(duplicadoConfirmado);
 
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.ConfirmarDuplicado,

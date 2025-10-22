@@ -2,31 +2,19 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
-public class GestorControlDuplicados
+public class ControladorDuplicados(
+    GestorAuditoria gestorAuditoria,
+    GestorDuplicados gestorDuplicados,
+    GestorCatalogos gestorCatalogos,
+    List<ParDuplicado> duplicadosGlobales)
 {
-    private readonly GestorAuditoria _gestorAuditoria;
-    private readonly GestorDuplicados _gestorDuplicados;
-    private readonly List<ParDuplicado> _duplicadosGlobales;
-    private readonly GestorCatalogos _gestorCatalogos;
-
-    public GestorControlDuplicados(
-        GestorAuditoria gestorAuditoria,
-        GestorDuplicados gestorDuplicados,
-        GestorCatalogos gestorCatalogos,
-        List<ParDuplicado> duplicadosGlobales)
-    {
-        _gestorAuditoria = gestorAuditoria;
-        _gestorCatalogos = gestorCatalogos;
-        _gestorDuplicados = gestorDuplicados;
-        _duplicadosGlobales = duplicadosGlobales;
-    }
-
     public void ProcesarDuplicadosPorAlta(int idCatalogo, int idItem)
     {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(idCatalogo)
+        var catalogo = gestorCatalogos.ObtenerCatalogoPorId(idCatalogo)
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={idCatalogo}).");
 
         var item = catalogo.ObtenerItemPorId(idItem)
@@ -38,7 +26,7 @@ public class GestorControlDuplicados
 
     public void ActualizarDuplicadosPara(DatosActualizarDuplicados datosActualizarDuplicados)
     {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datosActualizarDuplicados.IdCatalogo)
+        var catalogo = gestorCatalogos.ObtenerCatalogoPorId(datosActualizarDuplicados.IdCatalogo)
                        ?? throw new ExcepcionCatalogo(
                            $"Catálogo no encontrado (Id={datosActualizarDuplicados.IdCatalogo}).");
 
@@ -56,7 +44,7 @@ public class GestorControlDuplicados
 
     public List<ParDuplicado> ObtenerDuplicadosOrdenados()
     {
-        return _duplicadosGlobales
+        return duplicadosGlobales
             .OrderByDescending(d => d.Score)
             .ToList();
     }
@@ -67,7 +55,7 @@ public class GestorControlDuplicados
         
         foreach (var dup in duplicados)
         {
-            _duplicadosGlobales.Add(dup);
+            duplicadosGlobales.Add(dup);
             dup.ItemAComparar.EstadoDuplicado = true;
             dup.ItemPosibleDuplicado.EstadoDuplicado = true;
         }
@@ -75,18 +63,18 @@ public class GestorControlDuplicados
 
     public void EliminarDuplicadosPrevios(Item item)
     {
-        var duplicadosABorrar = _duplicadosGlobales
+        var duplicadosABorrar = duplicadosGlobales
             .Where(d => d.ItemAComparar.Id == item.Id || d.ItemPosibleDuplicado.Id == item.Id)
             .ToList();
         foreach (var duplicado in duplicadosABorrar)
-            _duplicadosGlobales.Remove(duplicado);
+            duplicadosGlobales.Remove(duplicado);
     }
 
     public void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     {
         foreach (var item in catalogo.Items)
         {
-            bool tieneDuplicados = _duplicadosGlobales.Any(d =>
+            bool tieneDuplicados = duplicadosGlobales.Any(d =>
                 d.ItemAComparar.Id == item.Id || d.ItemPosibleDuplicado.Id == item.Id);
             item.EstadoDuplicado = tieneDuplicados;
         }
@@ -94,7 +82,7 @@ public class GestorControlDuplicados
     
     public void DescartarParDuplicado(DatosDuplicados datos)
     {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
+        var catalogo = gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
 
         var itemA = catalogo.ObtenerItemPorId(datos.IdItemAComparar)
@@ -103,7 +91,7 @@ public class GestorControlDuplicados
         var itemB = catalogo.ObtenerItemPorId(datos.IdItemPosibleDuplicado)
                     ?? throw new ExcepcionItem($"Ítem no encontrado (Id={datos.IdItemPosibleDuplicado}).");
 
-        var removidos = _duplicadosGlobales.RemoveAll(p =>
+        var removidos = duplicadosGlobales.RemoveAll(p =>
             (p.ItemAComparar.Id == itemA.Id && p.ItemPosibleDuplicado.Id == itemB.Id) ||
             (p.ItemAComparar.Id == itemB.Id && p.ItemPosibleDuplicado.Id == itemA.Id));
 
@@ -115,21 +103,21 @@ public class GestorControlDuplicados
         itemB.EstadoDuplicado = ExisteParConItem(itemB.Id);
 
 
-        _gestorAuditoria.RegistrarLog(
+        gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.DescartarDuplicado,
             $"Se descartó el par de posibles duplicados: '{itemA.Titulo}' (Id={itemA.Id}) y '{itemB.Titulo}' (Id={itemB.Id}) en catálogo Id={catalogo.Id}."
         );
     }
 
     private bool ExisteParConItem(int itemId) =>
-        _duplicadosGlobales.Any(p => p.ItemAComparar.Id == itemId || p.ItemPosibleDuplicado.Id == itemId);
+        duplicadosGlobales.Any(p => p.ItemAComparar.Id == itemId || p.ItemPosibleDuplicado.Id == itemId);
 
     private List<ParDuplicado> DetectarDuplicados(Item itemAComparar, Catalogo? catalogo)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        var duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
+        var duplicados = gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
         stopwatch.Stop();
-        _gestorAuditoria.RegistrarLog(
+        gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.DeteccionDuplicados,
             $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo?.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
         );

@@ -2,24 +2,25 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
+using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
 public class GestorItems
 {
     private readonly GestorCatalogos _gestorCatalogos;
-    private readonly GestorControlDuplicados _gestorControlDuplicados;
+    private readonly ControladorDuplicados _controladorDuplicados;
     private readonly HashSet<int> _idsItemsGlobal;
     private readonly GestorAuditoria _gestorAuditoria;
 
     public GestorItems(
         GestorCatalogos gestorCatalogos,
-        GestorControlDuplicados gestorControlDuplicados,
+        ControladorDuplicados controladorDuplicados,
         GestorAuditoria gestorAuditoria,
         HashSet<int> idsItemsGlobal)
     {
         _gestorCatalogos = gestorCatalogos;
-        _gestorControlDuplicados = gestorControlDuplicados;
+        _controladorDuplicados = controladorDuplicados;
         _gestorAuditoria = gestorAuditoria;
         _idsItemsGlobal = idsItemsGlobal;
     }
@@ -61,7 +62,7 @@ public class GestorItems
             $"Item agregado: '{item.Titulo}' (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
         );
 
-        _gestorControlDuplicados.ProcesarDuplicadosPorAlta(catalogo.Id, item.Id);
+        _controladorDuplicados.ProcesarDuplicadosPorAlta(catalogo.Id, item.Id);
     }
 
 
@@ -119,8 +120,8 @@ public class GestorItems
 
         catalogo.EliminarItem(item);
 
-        _gestorControlDuplicados.EliminarDuplicadosPrevios(item);
-        _gestorControlDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
+        _controladorDuplicados.EliminarDuplicadosPrevios(item);
+        _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarItem,
             $"Item eliminado: '{item.Titulo}' del catálogo '{catalogo.Titulo}'");

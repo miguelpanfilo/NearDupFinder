@@ -2,7 +2,8 @@
 @using System.Text.RegularExpressions
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados
 @using NearDupFinder_LogicaDeNegocio.Servicios
-@inject GestorControlDuplicados GestorControlDuplicados;
+@using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados
+@inject ControladorDuplicados ControladorDuplicados;
 @inject GestorControlClusters GestorControlClusters;
 @rendermode InteractiveServer
 
@@ -124,7 +125,7 @@ else
 
     private void CargarDuplicados()
     {
-        _duplicados = GestorControlDuplicados.ObtenerDuplicadosOrdenados()
+        _duplicados = ControladorDuplicados.ObtenerDuplicadosOrdenados()
             .OrderByDescending(d => d.Score)
             .ToList();
     }
@@ -147,7 +148,7 @@ else
             d.ItemPosibleDuplicado.Id
         );
 
-        GestorControlDuplicados.DescartarParDuplicado(datosDuplicados);
+        ControladorDuplicados.DescartarParDuplicado(datosDuplicados);
         _duplicados.Remove(d);
     }
 

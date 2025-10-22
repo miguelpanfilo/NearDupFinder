@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
 public enum TipoDuplicado
 {
@@ -45,7 +45,7 @@ public class GestorDuplicados
     private const float UmbralAlerta = 0.60f;
     private const float UmbralPosible = 0.75f;
 
-    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo? catalogo)
+    public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         List<ParDuplicado> listaDuplicados = new List<ParDuplicado>();
 
@@ -181,19 +181,8 @@ public class GestorDuplicados
 
         return valorJaccard;
     }
-
-    private void ValidarValoresDentroDeLosRangosEsperados(float jaccardTitulo, float jaccardDescripcion, float marcaEq,
-        float modeloEq)
-    {
-        if (jaccardTitulo < 0f || jaccardTitulo > 1f || jaccardDescripcion < 0f || jaccardDescripcion > 1f)
-            throw new ArgumentOutOfRangeException();
-        if (marcaEq is not (0f or 1f) || modeloEq is not (0f or 1f))
-            throw new ArgumentOutOfRangeException();
-    }
-
     private float CalcularScore(float jaccardTitulo, float jaccardDescripcion, float marcaEq, float modeloEq)
     {
-        ValidarValoresDentroDeLosRangosEsperados(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq);
         float constanteDeTitulo = 0.45f;
         float constanteDeDescripcion = 0.35f;
         float constanteDeMarca = 0.10f;
