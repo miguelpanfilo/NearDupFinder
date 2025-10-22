@@ -1,8 +1,9 @@
 @page "/usuarios/{id:int}/editar/"
+
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
 @using NearDupFinder_LogicaDeNegocio.Servicios
+@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
 @attribute [Authorize(Roles = "Administrador")]
 @inject GestorUsuarios GestorUsuarios;
 @inject NavigationManager Nav
@@ -62,7 +63,7 @@
     [Parameter]
     public int Id { get; set; }
 
-    private Usuario? _usuarioActual;
+    private DatosPublicosUsuario? _usuarioActual;
     
     private string _nombre = string.Empty;
     private string _apellido = string.Empty;
@@ -78,28 +79,27 @@
     
     protected override void OnInitialized()
     {
-        _usuarioActual = GestorUsuarios.BuscarUsuarioPorId(Id);
+        _usuarioActual = GestorUsuarios.ObtenerUsuarioPorId(Id);
         _nombre = _usuarioActual!.Nombre;
         _apellido = _usuarioActual.Apellido;
-        _email = _usuarioActual.Email.ToString();
-        _fecha = _usuarioActual.FechaNacimiento.ToDateTime();
-        _rolAdmin = GestorUsuarios.UsuarioTieneRol(_usuarioActual, Rol.Administrador);
-        _rolRevisor = GestorUsuarios.UsuarioTieneRol(_usuarioActual, Rol.Revisor);
+        _email = _usuarioActual.Email;
+        _fecha = _usuarioActual.FechaNacimiento;
+        _rolAdmin = GestorUsuarios.UsuarioTieneRol(_usuarioActual.Email, "Administrador");
+        _rolRevisor = GestorUsuarios.UsuarioTieneRol(_usuarioActual.Email, "Revisor");
     }
     
     private void Editar()
     {
         CerrarAlerta();
         
-        List<Rol> roles = [];
+        List<string> roles = [];
         if (_rolAdmin)   
-            roles.Add(Rol.Administrador);
+            roles.Add("Administrador");
         if (_rolRevisor)
-            roles.Add(Rol.Revisor);
+            roles.Add("Revisor");
 
         if (!ValidarCampos(_nombre, _apellido, _fecha))
             return;
-        
         
         bool seModificoUsuarioCorrectamente = GestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(_email,_nombre, _apellido, 
             _fecha!.Value.Year, _fecha.Value.Month, 
@@ -147,7 +147,7 @@
             return false;
         }
         
-        if (fecha is null)
+        if (fecha is null || fecha > DateTime.Today)
         {
             NotificarError("La fecha ingresada es incorrecta");
             return false;

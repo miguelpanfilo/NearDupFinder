@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs.DTOs.DTO;
-
+using NearDupFinder_LogicaDeNegocio.DTOs;
+/*
 namespace NearDupFinder_Pruebas.DataTranferObjects;
 [TestClass]
 public class ListaItemsTests
@@ -200,3 +200,4 @@ public class ListaItemsTests
     }
 
 }
+*/

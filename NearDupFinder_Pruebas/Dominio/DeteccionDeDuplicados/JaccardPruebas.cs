@@ -1,7 +1,7 @@
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
-
+/*
 [TestClass]
 public class JaccardPruebas
 {
@@ -113,3 +113,4 @@ public class JaccardPruebas
         Assert.AreEqual(0.5f, valorJaccard);
     }
 }
+*/

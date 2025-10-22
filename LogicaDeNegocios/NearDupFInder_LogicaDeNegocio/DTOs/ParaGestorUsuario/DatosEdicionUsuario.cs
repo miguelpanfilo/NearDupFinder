@@ -2,34 +2,41 @@ using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 
-public class DatosEdicionUsuario
+public class DatosEdicionUsuario(
+    string email,
+    string nuevoNombre,
+    string nuevoApellido,
+    int anio,
+    int mes,
+    int dia,
+    string nuevaClave,
+    List<string> roles)
 {
-    public string EmailActual { get; }
-    public string? NuevoNombre { get; }
-    public string? NuevoApellido { get; }
-    public int Anio { get; }
-    public int Mes { get; }
-    public int Dia { get; }
-    public string? NuevaClave { get; }
-    public IReadOnlyCollection<Rol>? NuevosRoles { get; }
+    public readonly string EmailActual = email;
+    public readonly string NuevoNombre = nuevoNombre;
+    public readonly string NuevoApellido = nuevoApellido;
+    public readonly int Anio = anio;
+    public readonly int Mes = mes;
+    public readonly int Dia = dia;
+    public readonly string NuevaClave = nuevaClave;
+    public readonly IReadOnlyCollection<Rol> NuevosRoles = ConvertirListaStringARoles(roles);
 
-    public DatosEdicionUsuario(
-        string email,
-        string? nuevoNombre,
-        string? nuevoApellido,
-        int anio,
-        int mes,
-        int dia,
-        string? nuevaClave,
-        List<Rol>? nuevosRoles)
+
+    private static IReadOnlyCollection<Rol> ConvertirListaStringARoles(List<string> roles)
     {
-        EmailActual = email.Trim() ?? "";
-        NuevoNombre = nuevoNombre?.Trim();
-        NuevoApellido = nuevoApellido?.Trim();
-        Anio = anio;
-        Mes = mes;
-        Dia = dia;
-        NuevaClave = nuevaClave;
-        NuevosRoles = nuevosRoles;
+        List<Rol> listaDeRoles = [];
+        foreach (string rol in roles)
+        {
+            if (string.Equals(rol, "Administrador") && !listaDeRoles.Contains(Rol.Administrador))
+            {
+                listaDeRoles.Add(Rol.Administrador);
+            }
+            else if (string.Equals(rol, "Revisor") && !listaDeRoles.Contains(Rol.Revisor))
+            {
+                listaDeRoles.Add(Rol.Revisor);
+            }
+        }
+
+        return listaDeRoles;
     }
 }

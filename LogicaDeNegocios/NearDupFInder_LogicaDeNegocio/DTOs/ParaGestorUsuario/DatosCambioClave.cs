@@ -1,15 +1,8 @@
 namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 
-public class DatosCambioClave
+public class DatosCambioClave(string? email, string? claveActual, string? claveNueva)
 {
-    public string Email { get; }
-    public string ClaveActual { get; }
-    public string ClaveNueva { get; }
-
-    public DatosCambioClave(string? email, string? claveActual, string? claveNueva)
-    {
-        Email = (email ?? "").Trim();
-        ClaveActual = claveActual ?? "";
-        ClaveNueva  = claveNueva  ?? "";
-    }
+    public string Email { get; } = (email ?? "").Trim();
+    public string ClaveActual { get; } = claveActual ?? "";
+    public string ClaveNueva { get; } = claveNueva  ?? "";
 }
