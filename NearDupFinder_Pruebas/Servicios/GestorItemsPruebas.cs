@@ -105,10 +105,11 @@ public class GestorItemsPruebas
     public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
     {
         int catalogoExistenteId = _catalogo.Id;
+        const int idItemInexistente = 9999;
 
         var itemDtoNoExistente = new DatosActualizarItem(
             IdCatalogo: catalogoExistenteId,
-            IdItem: 999,
+            IdItem: idItemInexistente,
             Titulo: "Título",
             Descripcion: "Descripcion",
             Categoria: "Cat",
@@ -202,8 +203,10 @@ public class GestorItemsPruebas
             Descripcion: "Descripcion 1"
         );
         _gestorItems.CrearItem(dto2);
+        const int cantidadDeItemEnElCatalogo = 2;
 
-        Assert.AreEqual(2, _catalogo.Items.Count, "El catálogo contiene los dos ítems esperados.");
+
+        Assert.AreEqual(cantidadDeItemEnElCatalogo, _catalogo.Items.Count, "El catálogo contiene los dos ítems esperados.");
         Assert.IsTrue(_duplicadosGlobales.Count == 1, "No se generó ningún duplicado en la lista global.");
     }
 
@@ -224,11 +227,14 @@ public class GestorItemsPruebas
 
         var item1 = _gestorItems.CrearItem(dto1);
         var item2 = _gestorItems.CrearItem(dto2);
+        const int cantidadDeItemEnElCatalogo = 2;
 
-        Assert.AreEqual(2, _catalogo.Items.Count, "El catálogo contiene los dos ítems esperados.");
+        const int duplicadosGlobalesVacio = 0;
+
+        Assert.AreEqual(cantidadDeItemEnElCatalogo, _catalogo.Items.Count, "El catálogo contiene los dos ítems esperados.");
         Assert.IsTrue(item1.EstadoDuplicado, "Item1 debería estar marcado como duplicado.");
         Assert.IsTrue(item2.EstadoDuplicado, "Item2 debería estar marcado como duplicado.");
-        Assert.IsTrue(_duplicadosGlobales.Count > 0, "Se generó duplicados en la lista global.");
+        Assert.IsTrue(_duplicadosGlobales.Count > duplicadosGlobalesVacio);
     }
 
   
@@ -277,7 +283,8 @@ public class GestorItemsPruebas
     [TestMethod]
     public void EliminarItem_ItemNoExistente_DeberiaLanzarExcepcionConMensaje_Correcto()
     {
-        var dtoInexistente = new DatosEliminarItem(_catalogo.Id, 9999);
+        const int idItemInexistente=9999;
+        var dtoInexistente = new DatosEliminarItem(_catalogo.Id, idItemInexistente);
 
         var ex = Assert.ThrowsException<ExcepcionItem>(() =>
             _gestorItems.EliminarItem(dtoInexistente)
@@ -290,7 +297,9 @@ public class GestorItemsPruebas
     [TestMethod]
     public void EliminarItem_CatalogoNoExistente_DeberiaLanzarExcepcionCatalogoConMensaje_Correcto()
     {
-        var dtoInexistente = new DatosEliminarItem(9999,1);
+        const int idCatalogoInexistente = 9999;
+        const int idItemExistente=1;
+        var dtoInexistente = new DatosEliminarItem(idCatalogoInexistente,idItemExistente);
 
 
         var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
@@ -323,6 +332,7 @@ public class GestorItemsPruebas
     [TestMethod]
     public void CrearItem_DeberiaRegistrarLogDeAlta_Correcto()
     {
+        const int cantidadValidaDeAuditoriasRegistradas = 1;
         var dto = new DatosCrearItem(
             IdCatalogo: _catalogo.Id,
             Titulo: "Nuevo Item",
@@ -332,7 +342,7 @@ public class GestorItemsPruebas
         var itemCreado = _gestorItems.CrearItem(dto);
 
         var logs = _gestorAuditoria.ObtenerLogs();
-        Assert.IsTrue(logs.Count >= 1, "Debe haberse registrado al menos un log por la creación del ítem.");
+        Assert.IsTrue(logs.Count >= cantidadValidaDeAuditoriasRegistradas, "Debe haberse registrado al menos un log por la creación del ítem.");
 
         var logAlta = logs.FirstOrDefault(l => l.Accion == EntradaDeLog.AccionLog.AltaItem);
         Assert.IsNotNull(logAlta, "Debe existir un log de AltaItem.");
@@ -360,10 +370,12 @@ public class GestorItemsPruebas
         _gestorItems.ActualizarItemEnCatalogo(dto);
 
         var logs = _gestorAuditoria.ObtenerLogs();
+        const int primeraAuditoriaregistrada = 0;
+        const int cantidadDeAuditoria = 1;
 
-        Assert.AreEqual(1, logs.Count);
-        Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[0].Accion);
-        StringAssert.Contains(logs[0].Detalles, "Ítem actualizado");
+        Assert.AreEqual(cantidadDeAuditoria, logs.Count);
+        Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[primeraAuditoriaregistrada].Accion);
+        StringAssert.Contains(logs[primeraAuditoriaregistrada].Detalles, "Ítem actualizado");
     }
 
     [TestMethod]
@@ -381,9 +393,10 @@ public class GestorItemsPruebas
         _gestorItems.EliminarItem(dtoEliminar);
 
         var logs = _gestorAuditoria.ObtenerLogs();
+        const int primeraAuditoriaRegistrada = 0;
       
-        Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[0].Accion);
-        StringAssert.Contains(logs[0].Detalles, "Item eliminado");
+        Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[primeraAuditoriaRegistrada].Accion);
+        StringAssert.Contains(logs[primeraAuditoriaRegistrada].Detalles, "Item eliminado");
    
     }
 
