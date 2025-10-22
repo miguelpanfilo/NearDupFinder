@@ -1,25 +1,26 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
+using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Items;
 
 public class GestorItems
 {
     private readonly GestorCatalogos _gestorCatalogos;
-    private readonly GestorControlDuplicados _gestorControlDuplicados;
+    private readonly ControladorDuplicados _controladorDuplicados;
     private readonly HashSet<int> _idsItemsGlobal;
     private readonly GestorAuditoria _gestorAuditoria;
 
     public GestorItems(
         GestorCatalogos gestorCatalogos,
-        GestorControlDuplicados gestorControlDuplicados,
+        ControladorDuplicados controladorDuplicados,
         GestorAuditoria gestorAuditoria,
         HashSet<int> idsItemsGlobal)
     {
         _gestorCatalogos = gestorCatalogos;
-        _gestorControlDuplicados = gestorControlDuplicados;
+        _controladorDuplicados = controladorDuplicados;
         _gestorAuditoria = gestorAuditoria;
         _idsItemsGlobal = idsItemsGlobal;
     }
@@ -61,8 +62,8 @@ public class GestorItems
             $"Item agregado: '{item.Titulo}' (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
         );
 
-        _gestorControlDuplicados.ProcesarDuplicadosPorAlta(catalogo.Id, item.Id);
-
+        _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
+        
         return item;
     }
 
@@ -79,11 +80,6 @@ public class GestorItems
     public bool IdExisteEnListaDeIdGlobal(int id)
     {
         return _idsItemsGlobal.Contains(id);
-    }
-
-    public int CantidadDeItemsGlobal()
-    {
-        return _idsItemsGlobal.Count;
     }
 
     public void ActualizarItemEnCatalogo(DatosActualizarItem itemDtoActualizar)
@@ -121,8 +117,8 @@ public class GestorItems
 
         catalogo.EliminarItem(itemAEliminar);
 
-        _gestorControlDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
-        _gestorControlDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
+        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
+        _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarItem,
             $"Item eliminado: '{itemAEliminar.Titulo}' del catálogo '{catalogo.Titulo}'");

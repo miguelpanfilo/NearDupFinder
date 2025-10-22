@@ -2,12 +2,14 @@
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio.DTOs
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlDuplicados
+@using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFinder_LogicaDeNegocio.Servicios
+@using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados
+@using NearDupFInder_LogicaDeNegocio.Servicios.Items
 @inject GestorControlClusters GestorControlClusters
-@inject GestorControlDuplicados GestorControlDuplicados
+@inject ControladorDuplicados ControladorDuplicados
 @inject GestorCatalogos GestorCatalogos
 @inject GestorItems GestorItems
 @rendermode InteractiveServer
@@ -262,7 +264,7 @@
                 )
             );
             
-            GestorControlDuplicados.ActualizarDuplicadosPara(new DatosActualizarDuplicados(_catalogoSeleccionado.Id, _itemEditado.Id));
+            ControladorDuplicados.ActualizarDuplicadosPara(new DatosActualizarDuplicados(_catalogoSeleccionado.Id, _itemEditado.Id));
 
             ActualizarEstadoDuplicados();
 

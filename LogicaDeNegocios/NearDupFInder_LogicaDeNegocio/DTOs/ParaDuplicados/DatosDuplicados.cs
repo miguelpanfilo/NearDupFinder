@@ -1,4 +1,4 @@
-namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados;
+namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
 
 public record DatosDuplicados(
     int IdCatalogo,
