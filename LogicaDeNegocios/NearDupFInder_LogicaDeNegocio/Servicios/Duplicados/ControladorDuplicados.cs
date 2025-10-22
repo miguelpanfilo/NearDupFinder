@@ -119,14 +119,14 @@ public class ControladorDuplicados(
     private bool ExisteParConItem(int itemId) =>
         duplicadosGlobales.Any(p => p.ItemAComparar.Id == itemId || p.ItemPosibleDuplicado.Id == itemId);
 
-    private List<ParDuplicado> DetectarDuplicados(Item itemAComparar, Catalogo? catalogo)
+    private List<ParDuplicado> DetectarDuplicados(Item itemAComparar, Catalogo catalogo)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         var duplicados = gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
         stopwatch.Stop();
         gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.DeteccionDuplicados,
-            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo?.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
+            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
         );
         return duplicados;
     }

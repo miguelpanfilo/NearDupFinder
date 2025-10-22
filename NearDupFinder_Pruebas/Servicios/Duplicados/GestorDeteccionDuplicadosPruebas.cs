@@ -12,7 +12,7 @@ public class DeteccionDuplicadosPruebas
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
         new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
 
-    private static Catalogo CrearCatalogoNuevo(params Item[] items)
+    private static Catalogo CrearCatalogo(params Item[] items)
     {
         var catalogo = new Catalogo("Catalogo");
         foreach (var item in items) catalogo.AgregarItem(item);
@@ -29,7 +29,7 @@ public class DeteccionDuplicadosPruebas
     public void DetectarDuplicados_CatalogoVacio_DevuelveListaVacia()
     {
         Item itemAComparar = CrearItem("a", "b", "", "", "x");
-        Catalogo catalogo = CrearCatalogoNuevo();
+        Catalogo catalogo = CrearCatalogo();
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -41,7 +41,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("Notebook Lenovo L14", "Intel i5 8GB 256GB SSD", "Lenovo", "L14", "Notebooks");
         Item itemPosibleDuplicado = CrearItem("notebook lenovo l14", "intel i5 8gb 256gb ssd", "lenovo", "l14", "notebooks");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemPosibleDuplicado);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemPosibleDuplicado);
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -54,7 +54,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("Smartphone Samsung Galaxy S20", "uno dos", "Samsung", "S20", "Celulares");
         Item itemPosibleDuplicado = CrearItem("smartphone samsung galaxy s20", "uno tres", "samsung", "", "celulares");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemPosibleDuplicado);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemPosibleDuplicado);
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -67,7 +67,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("a", "b", "c", "d", "e");
         Item item2AComparar = CrearItem("f", "g", "h", "i", "j");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, item2AComparar);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, item2AComparar);
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -79,7 +79,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("Notebook Lenovo L14", "alpha beta gamma delta epsilon zeta theta", "Lenovo", "L14", "Notebooks");
         Item itemPosibleDuplicado = CrearItem("notebook lenovo l14", "alpha", "lenovo", "", "notebooks");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemPosibleDuplicado);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemPosibleDuplicado);
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -91,7 +91,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("Notebook Lenovo L14", "alpha beta gamma delta epsilon zeta", "", "", "Notebooks");
         Item itemB = CrearItem("notebook lenovo l14", "alpha beta gamma delta epsilon zeta", "", "", "notebooks");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemB);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemB);
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -103,7 +103,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("alpha alpha beta", "rojo rojo verde azul", "Lenovo", "L14", "Notebooks");
         Item itemB = CrearItem("beta alpha gamma alpha", "verde verde rojo", "lenovo", "l14", "notebooks");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemB);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemB);
         var esperadoTitulo = new[] { "alpha", "beta" };
         var esperadoDescripcion = new[] { "rojo", "verde" };
 
@@ -118,7 +118,7 @@ public class DeteccionDuplicadosPruebas
     {
         Item itemAComparar = CrearItem("alpha beta", "rojo verde", "Lenovo", "L14", "n");
         Item itemB = CrearItem("alpha beta", "azul negro", "lenovo", "l14", "n");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemB);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemB);
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
 
@@ -132,7 +132,7 @@ public class DeteccionDuplicadosPruebas
         Item itemPosibleDuplicado1 = CrearItem("notebook lenovo l14", "uno dos", "lenovo", "l14", "notebooks");
         Item itemPosibleDuplicado2 = CrearItem("Notebook Lenovo L14", "uno dos", "Lenovo", "L14", "Notebooks");
         Item itemC  = CrearItem("notebook lenovo l14", "uno", "", "", "notebooks");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar, itemC, itemPosibleDuplicado1, itemPosibleDuplicado2);
+        Catalogo catalogo = CrearCatalogo(itemAComparar, itemC, itemPosibleDuplicado1, itemPosibleDuplicado2);
         var esperado = new List<int> { itemPosibleDuplicado1.Id, itemPosibleDuplicado2.Id, itemC.Id };
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
@@ -145,7 +145,7 @@ public class DeteccionDuplicadosPruebas
     public void DetectarDuplicados_ItemConNombreNoTokenizable_LanzaExcepcion()
     {
         Item itemAComparar = CrearItem("@", "@", "", "", "x");
-        Catalogo catalogo = CrearCatalogoNuevo(itemAComparar);
+        Catalogo catalogo = CrearCatalogo(itemAComparar);
         
         var error = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo));
         Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", error.Message);
