@@ -21,17 +21,8 @@ public readonly struct Fila(
     public string Catalogo { get; } = catalogo;
 }
 
-public class LectorCsv
+public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestorItems)
 {
-    private GestorCatalogos _gestorCatalogos;
-    private GestorItems _gestorItems;
-
-    public LectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestorItems)
-    {
-        _gestorCatalogos = gestorCatalogos;
-        _gestorItems = gestorItems;
-    }
-
     public List<string> Titulos { get; private set; } = [];
     public int CantidadDeFilas { get; private set; }
     public List<Fila> Filas { get; private set; } = [];
@@ -61,7 +52,7 @@ public class LectorCsv
                 continue;
 
 
-            var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(fila.Catalogo);
+            var catalogo = gestorCatalogos.ObtenerCatalogoPorTitulo(fila.Catalogo);
 
             int? idImportado = null;
             if (IdEsValido(fila.Id) && int.TryParse(fila.Id, out var parsed))
@@ -76,7 +67,7 @@ public class LectorCsv
                 Modelo: fila.Modelo,
                 IdImportado: idImportado
             );
-            _gestorItems.CrearItem(dto);
+            gestorItems.CrearItem(dto);
         }
     }
 
@@ -85,12 +76,12 @@ public class LectorCsv
         if (string.IsNullOrWhiteSpace(nombreCatalogo))
             return false;
 
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(nombreCatalogo);
+        var catalogo = gestorCatalogos.ObtenerCatalogoPorTitulo(nombreCatalogo);
         if (catalogo is null)
         {
             try
             {
-                _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear(nombreCatalogo));
+                gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear(nombreCatalogo));
             }
             catch
             {
@@ -105,7 +96,7 @@ public class LectorCsv
     {
         if (IdEsValido(id))
         {
-            bool idYaExiste = _gestorItems.IdExisteEnListaDeIdGlobal(int.Parse(id));
+            bool idYaExiste = gestorItems.IdExisteEnListaDeIdGlobal(int.Parse(id));
             if (idYaExiste)
                 return true;
         }

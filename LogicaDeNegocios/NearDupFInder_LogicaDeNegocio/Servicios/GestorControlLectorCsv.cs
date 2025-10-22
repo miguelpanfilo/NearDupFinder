@@ -4,17 +4,17 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
 public class GestorControlLectorCsv
 {
-    private LectorCsv _lectorCsv;
+    private GestorLectorCsv _gestorLectorCsv;
 
-    public GestorControlLectorCsv(LectorCsv lectorCsv)
+    public GestorControlLectorCsv(GestorLectorCsv gestorLectorCsv)
     {
-        _lectorCsv = lectorCsv;
+        _gestorLectorCsv = gestorLectorCsv;
     }
 
     public void ImportarItemsDesdeCsv(DatosImportarCsv datosImportarCsv)
     {
-        _lectorCsv.LeerCsv(datosImportarCsv.Titulos, datosImportarCsv.Cantidad, datosImportarCsv.Filas);
-        _lectorCsv.ImportarItems();
-        _lectorCsv.Limpiar();
+        _gestorLectorCsv.LeerCsv(datosImportarCsv.Titulos, datosImportarCsv.Cantidad, datosImportarCsv.Filas);
+        _gestorLectorCsv.ImportarItems();
+        _gestorLectorCsv.Limpiar();
     }
 }

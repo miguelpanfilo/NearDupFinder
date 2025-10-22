@@ -2,6 +2,7 @@ using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,15 +41,15 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
 });
 
 
-builder.Services.AddScoped<LectorCsv>(sp =>
+builder.Services.AddScoped<GestorLectorCsv>(sp =>
 {
     var gestorCatalogos = sp.GetRequiredService<GestorCatalogos>();
     var gestorItems = sp.GetRequiredService<GestorItems>();
-    return new LectorCsv(gestorCatalogos, gestorItems);
+    return new GestorLectorCsv(gestorCatalogos, gestorItems);
 });
 
 builder.Services.AddScoped<GestorControlLectorCsv>();
-builder.Services.AddScoped<Login>();
+builder.Services.AddScoped<GestorAutenticacionUsuario>();
 builder.Services.AddSingleton<GestorInicializacion>();
 
 builder.Services.AddHttpContextAccessor();

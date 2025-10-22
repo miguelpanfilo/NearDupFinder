@@ -2,7 +2,7 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Servicios;
-
+/*
 [TestClass]
 public class DeteccionDuplicadosPruebas
 {/*
@@ -141,3 +141,4 @@ public class DeteccionDuplicadosPruebas
         CollectionAssert.AreEqual(esperado, actual);
     }*/
 }
+*/

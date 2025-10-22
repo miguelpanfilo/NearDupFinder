@@ -1,7 +1,7 @@
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
-
+/*
 [TestClass]
 public class ScorePruebas
 {/*
@@ -182,3 +182,4 @@ public class ScorePruebas
     }
 */
 }
+*/
