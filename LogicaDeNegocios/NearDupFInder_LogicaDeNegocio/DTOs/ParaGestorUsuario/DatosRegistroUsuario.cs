@@ -11,9 +11,10 @@ public class DatosRegistroUsuario
     public int Mes { get; } 
     public int Dia { get; }
     public string? Clave { get; }
-    public IReadOnlyCollection<Rol>? Roles;
+    
+    public readonly IReadOnlyCollection<Rol> Roles;
 
-    public  DatosRegistroUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<Rol> roles)
+    public  DatosRegistroUsuario(string? nombre, string? apellido, string? email, int anio, int mes, int dia, string? clave, List<string> roles)
     {
         Nombre = nombre;
         Apellido = apellido;
@@ -22,6 +23,24 @@ public class DatosRegistroUsuario
         Mes = mes;
         Dia = dia;
         Clave = clave;
-        Roles = roles;
+        Roles = ConvertirListaStringARoles(roles);
+    }
+
+    private List<Rol> ConvertirListaStringARoles(List<string> roles)
+    {
+        List<Rol> listaDeRoles = [];
+        foreach (string rol in roles)
+        {
+            if (string.Equals(rol, "Administrador") && !listaDeRoles.Contains(Rol.Administrador))
+            {
+                listaDeRoles.Add(Rol.Administrador);
+            }
+            else if (string.Equals(rol, "Revisor") && !listaDeRoles.Contains(Rol.Revisor))
+            {
+                listaDeRoles.Add(Rol.Revisor);
+            }
+        }
+
+        return listaDeRoles;
     }
 }

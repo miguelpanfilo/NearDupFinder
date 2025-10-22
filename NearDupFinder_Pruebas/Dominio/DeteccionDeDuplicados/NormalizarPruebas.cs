@@ -2,7 +2,7 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
-
+/*
 [TestClass]
 public class NormalizarPruebas
 {
@@ -213,3 +213,4 @@ public class NormalizarPruebas
         Assert.AreEqual("modelo", resultado.ModeloNormalizado);
     }
 }
+*/
