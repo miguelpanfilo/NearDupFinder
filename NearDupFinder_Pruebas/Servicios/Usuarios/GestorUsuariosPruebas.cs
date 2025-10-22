@@ -244,7 +244,7 @@ public class GestorUsuariosPruebas
         int mes = 5;
         int dia = 10;
         string clave = "ClaveValida123!";
-        List<string> roles = ["Revisor"];
+        List<string> roles = ["Administrador"];
         
         _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
         bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(emailInvalido, nombre, apellido, anio, mes, dia, clave, roles));

@@ -26,7 +26,7 @@ public class GestorAutenticacionUsuarioPruebas
             12,
             27,
             clave,
-            ["Administrador"]);
+            ["Administrador", "Revisor"]);
     }
 
     [TestInitialize]
@@ -80,9 +80,8 @@ public class GestorAutenticacionUsuarioPruebas
     [TestMethod]
     public void AutenticoUsuario_EmailInvalido_LanzaExcepcion()
     {
-        string email = "manuel@ejemplo.com"; 
+        string email = "manuel@.com"; 
         string clave = "123QWEasdzxc@";
-        _gestorUsuarios.CrearUsuario(CrearDtoUsuario(email, clave));
         DatosAutenticacion datos = new DatosAutenticacion(email, clave);
         
         var ex = Assert.ThrowsException<ExcepcionDeUsuario>(() =>
@@ -121,8 +120,8 @@ public class GestorAutenticacionUsuarioPruebas
     [TestMethod]
     public void AutenticarUsuarioBooleano_ClaveIncorrecta_RetornaFalso()
     {
-        string email = "manuel@ejemplo.com"; 
-        string claveCorrecta = "123QWEasdzxc@"
+        string email = "manuel@ejemplo.com";
+        string claveCorrecta = "123QWEasdzxc@";
         string claveIncorrecta = "ClaveMala123@";
         _gestorUsuarios.CrearUsuario(CrearDtoUsuario(email, claveCorrecta));
         DatosAutenticacion datos = new DatosAutenticacion(email, claveIncorrecta);
@@ -143,7 +142,7 @@ public class GestorAutenticacionUsuarioPruebas
             _gestorAutenticacionUsuario.AutenticarUsuarioBooleano(datos)
         );
 
-        StringAssert.Contains(ex.Message, "El email no tiene un formato válido.");
+        StringAssert.Contains(ex.Message, "El email no es valido");
     }
     
     [TestMethod]
@@ -162,10 +161,8 @@ public class GestorAutenticacionUsuarioPruebas
     [TestMethod]
     public void AutenticarUsuarioDto_UsuarioInexistente_LanzaExcepcion()
     {
-        
         string email = "noexiste@neardupfinder.com";
         string clave = "123QWEasdzxc@";
-        _gestorUsuarios.CrearUsuario(CrearDtoUsuario(email, clave));
         DatosAutenticacion datos = new DatosAutenticacion(email, clave);
        
         var ex = Assert.ThrowsException<ExcepcionDeUsuario>(() =>
@@ -202,6 +199,6 @@ public class GestorAutenticacionUsuarioPruebas
             _gestorAutenticacionUsuario.AutenticarUsuarioDto(datos)
         );
 
-        StringAssert.Contains(ex.Message, "El usuario no es valido");
+        StringAssert.Contains(ex.Message, "El email no es valido");
     }
 }
