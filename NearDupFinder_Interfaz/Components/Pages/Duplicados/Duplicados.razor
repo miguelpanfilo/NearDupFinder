@@ -1,5 +1,7 @@
 @page "/duplicados"
+
 @using System.Text.RegularExpressions
+@using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados
 @using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados
@@ -32,40 +34,31 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var d in _duplicados)
+        @foreach (DatosParDuplicado duplicado in _duplicados)
         {
             <tr>
-                <td>@d.ItemAComparar.Titulo</td>
-                <td>@d.ItemPosibleDuplicado.Titulo</td>
-                <td>@d.JaccardTitulo.ToString("0.00")</td>
-                <td>@d.JaccardDescripcion.ToString("0.00")</td>
-                <td>@d.ScoreMarca</td>
-                <td>@d.ScoreModelo</td>
-                <td>@d.Score.ToString("0.00")</td>
+                <td>@duplicado.TituloItemAComparar</td>
+                <td>@duplicado.TituloItemPosibleDuplicado</td>
+                <td>@duplicado.JaccardTitulo.ToString("0.00")</td>
+                <td>@duplicado.JaccardDescripcion.ToString("0.00")</td>
+                <td>@duplicado.ScoreMarca</td>
+                <td>@duplicado.ScoreModelo</td>
+                <td>@duplicado.Score.ToString("0.00")</td>
+                <td>@duplicado.Tipo</td>
                 <td>
-                    @if (d.Tipo == TipoDuplicado.AlertaDuplicado)
-                    {
-                        <span class="badge bg-secondary">POSIBLE DUPLICADO</span>  
-                    }
-                    else if (d.Tipo == TipoDuplicado.PosibleDuplicado)
-                    {
-                        <span class="badge bg-warning">DUPLICADO SUGERIDO</span>   
-                    }
-                </td>
-                <td>
-                    <button class="btn btn-success btn-sm me-1" @onclick="() => ConfirmarDuplicado(d)" title="Confirmar">
+                    <button class="btn btn-success btn-sm me-1" @onclick="() => ConfirmarDuplicado(duplicado)" title="Confirmar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-check2" viewBox="0 0 16 16">
                             <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
                         </svg>
                     </button>
 
-                    <button class="btn btn-info btn-sm" @onclick="() => AbrirModalComparar(d)" title="Comparar">
+                    <button class="btn btn-info btn-sm" @onclick="() => AbrirModalComparar(duplicado)" title="Comparar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-left-right ms-1" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5"/>
                         </svg>
                     </button>
 
-                    <button class="btn btn-danger btn-sm me-1" @onclick="() => DesacrtarDuplicado(d)" title="Descartar">
+                    <button class="btn btn-danger btn-sm me-1" @onclick="() => DesacrtarDuplicado(duplicado)" title="Descartar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-x-lg" viewBox="0 0 16 16">
                             <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
@@ -76,9 +69,8 @@ else
         </tbody>
     </table>
 }
-@if (_mostrarModalComparar && _duplicadoSeleccionado.HasValue)
+@if (_mostrarModalComparar && _duplicadoSeleccionado is not null)
 {
-    var d = _duplicadoSeleccionado.Value;
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -90,20 +82,20 @@ else
                     <div class="row">
                         <div class="col-6 border-end">
                             <h6>Item A</h6>
-                            <p><b>Título:</b> @ResaltarTokens(d.ItemAComparar.Titulo, d.TokensCompartidosTitulo)</p>
-                            <p><b>Descripción:</b> @ResaltarTokens(d.ItemAComparar.Descripcion, d.TokensCompartidosDescripcion)</p>
-                            <p><b>Marca:</b> @d.ItemAComparar.Marca</p>
-                            <p><b>Modelo:</b> @d.ItemAComparar.Modelo</p>
+                            <p><b>Título:</b> @ResaltarTokens(_duplicadoSeleccionado.TituloItemAComparar, _duplicadoSeleccionado.TokensCompartidosTitulo)</p>
+                            <p><b>Descripción:</b> @ResaltarTokens(_duplicadoSeleccionado.DescripcionItemAComparar, _duplicadoSeleccionado.TokensCompartidosDescripcion)</p>
+                            <p><b>Marca:</b> @_duplicadoSeleccionado.MarcaItemAComparar</p>
+                            <p><b>Modelo:</b> @_duplicadoSeleccionado.ModeloItemAComparar</p>
                         </div>
                         <div class="col-6">
                             <h6>Item B</h6>
-                            <p><b>Título:</b> @ResaltarTokens(d.ItemPosibleDuplicado.Titulo, d.TokensCompartidosTitulo)</p>
-                            <p><b>Descripción:</b> @ResaltarTokens(d.ItemPosibleDuplicado.Descripcion, d.TokensCompartidosDescripcion)</p>
-                            <p><b>Marca:</b> @d.ItemPosibleDuplicado.Marca</p>
-                            <p><b>Modelo:</b> @d.ItemPosibleDuplicado.Modelo</p>
+                            <p><b>Título:</b> @ResaltarTokens(_duplicadoSeleccionado.TituloItemPosibleDuplicado, _duplicadoSeleccionado.TokensCompartidosTitulo)</p>
+                            <p><b>Descripción:</b> @ResaltarTokens(_duplicadoSeleccionado.DescripcionItemPosibleDuplicado, _duplicadoSeleccionado.TokensCompartidosDescripcion)</p>
+                            <p><b>Marca:</b> @_duplicadoSeleccionado.MarcaItemPosibleDuplicado</p>
+                            <p><b>Modelo:</b> @_duplicadoSeleccionado.ModeloItemPosibleDuplicado</p>
                         </div>
                     </div>
-                    <p><b>Score Total:</b> @d.Score.ToString("0.00")</p>
+                    <p><b>Score Total:</b> @_duplicadoSeleccionado.Score</p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" @onclick="CerrarModalComparar">Cerrar</button>
@@ -114,9 +106,9 @@ else
 }
 
 @code {
-    private List<ParDuplicado> _duplicados = new();
+    private List<DatosParDuplicado> _duplicados = new();
     private bool _mostrarModalComparar;
-    private ParDuplicado? _duplicadoSeleccionado;
+    private DatosParDuplicado? _duplicadoSeleccionado;
 
     protected override void OnInitialized()
     {
@@ -125,36 +117,32 @@ else
 
     private void CargarDuplicados()
     {
-        _duplicados = ControladorDuplicados.ObtenerDuplicadosOrdenados()
-            .OrderByDescending(d => d.Score)
-            .ToList();
+        _duplicados = ControladorDuplicados.ObtenerDuplicadosOrdenados();
     }
 
-    private void ConfirmarDuplicado(ParDuplicado d)
+    private void ConfirmarDuplicado(DatosParDuplicado duplicado)
     {
-        var datosDuplicados = new DatosDuplicados(d.IdCatalogo,
-            d.ItemAComparar.Id,
-            d.ItemPosibleDuplicado.Id
-        );
+        DatosDuplicados datosDuplicados = new DatosDuplicados(duplicado.IdCatalogo,
+            duplicado.IdItemAComparar,
+            duplicado.IdItemPosibleDuplicado);
 
         GestorControlClusters.ConfirmarParDuplicado(datosDuplicados);
-        _duplicados.Remove(d);
+        _duplicados.Remove(duplicado);
     }
 
-    private void DesacrtarDuplicado(ParDuplicado d)
+    private void DesacrtarDuplicado(DatosParDuplicado duplicado)
     {
-        var datosDuplicados = new DatosDuplicados(d.IdCatalogo,
-            d.ItemAComparar.Id,
-            d.ItemPosibleDuplicado.Id
-        );
+        var datosDuplicados = new DatosDuplicados(duplicado.IdCatalogo,
+            duplicado.IdItemAComparar,
+            duplicado.IdItemPosibleDuplicado);
 
         ControladorDuplicados.DescartarParDuplicado(datosDuplicados);
-        _duplicados.Remove(d);
+        _duplicados.Remove(duplicado);
     }
 
-    private void AbrirModalComparar(ParDuplicado d)
+    private void AbrirModalComparar(DatosParDuplicado duplicado)
     {
-        _duplicadoSeleccionado = d;
+        _duplicadoSeleccionado = duplicado;
         _mostrarModalComparar = true;
     }
 
@@ -173,9 +161,10 @@ else
 
         string resultado = texto;
 
-        foreach (var token in tokensCompartidos.Distinct())
+        foreach (string token in tokensCompartidos.Distinct())
         {
-            if (string.IsNullOrWhiteSpace(token)) continue;
+            if (string.IsNullOrWhiteSpace(token)) 
+                continue;
 
             resultado = Regex.Replace(
                 resultado,

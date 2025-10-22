@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios;
@@ -42,11 +43,17 @@ public class ControladorDuplicados(
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
 
-    public List<ParDuplicado> ObtenerDuplicadosOrdenados()
+    public List<DatosParDuplicado> ObtenerDuplicadosOrdenados()
     {
-        return duplicadosGlobales
+        List<ParDuplicado> listaDuplicadosOrdenada = duplicadosGlobales
             .OrderByDescending(d => d.Score)
             .ToList();
+        
+        List<DatosParDuplicado> listaDtosParDuplicado = [];
+        foreach (ParDuplicado duplicado in listaDuplicadosOrdenada)
+            listaDtosParDuplicado.Add(DatosParDuplicado.FromEntity(duplicado));
+        
+        return listaDtosParDuplicado;
     }
 
     private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado>? duplicados)

@@ -82,11 +82,6 @@ public class GestorItems
         return _idsItemsGlobal.Contains(id);
     }
 
-    public int CantidadDeItemsGlobal()
-    {
-        return _idsItemsGlobal.Count;
-    }
-
     public void ActualizarItemEnCatalogo(DatosActualizarItem itemDtoActualizar)
     {
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(itemDtoActualizar.IdCatalogo)
@@ -122,7 +117,7 @@ public class GestorItems
 
         catalogo.EliminarItem(itemAEliminar);
 
-        _controladorDuplicados.EliminarDuplicadosPrevios(item);
+        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarItem,

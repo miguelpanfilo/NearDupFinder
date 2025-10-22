@@ -3,6 +3,7 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
 namespace NearDupFinder_Pruebas.Servicios;
 
@@ -27,7 +28,7 @@ public class GestorItemsPruebas
         _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();
 
-        var gestorControlDuplicados = new GestorControlDuplicados(
+        var gestorControlDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             gestorDuplicados,
             _gestorCatalogos,

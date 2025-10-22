@@ -24,7 +24,6 @@ public struct ItemNormalizado
     public string ModeloNormalizado { get; init; }
 }
 
-[ExcludeFromCodeCoverage]
 public readonly record struct ParDuplicado(
     Item ItemAComparar,
     Item ItemPosibleDuplicado,
