@@ -1,8 +1,8 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs;
+using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorDuplicados;
 using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
 

@@ -1,10 +1,10 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Items;
 
 public class GestorItems
 {
@@ -62,7 +62,7 @@ public class GestorItems
             $"Item agregado: '{item.Titulo}' (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
         );
 
-        _controladorDuplicados.ProcesarDuplicadosPorAlta(catalogo.Id, item.Id);
+        _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
         
         return item;
     }

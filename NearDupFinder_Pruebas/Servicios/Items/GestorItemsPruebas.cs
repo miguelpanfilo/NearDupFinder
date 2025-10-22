@@ -4,8 +4,9 @@ using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFInder_LogicaDeNegocio.Servicios.Items;
 
-namespace NearDupFinder_Pruebas.Servicios;
+namespace NearDupFinder_Pruebas.Servicios.Items;
 
 [TestClass]
 public class GestorItemsPruebas

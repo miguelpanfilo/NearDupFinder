@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFInder_LogicaDeNegocio.Servicios.Items;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 
