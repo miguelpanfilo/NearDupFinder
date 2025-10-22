@@ -140,5 +140,3 @@ public class DeteccionDuplicadosPruebas
         var actual = duplicados.Select(d => d.ItemPosibleDuplicado.Id).ToList();
         CollectionAssert.AreEqual(esperado, actual);
     }*/
-}
-*/

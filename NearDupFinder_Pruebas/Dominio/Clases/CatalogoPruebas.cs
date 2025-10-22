@@ -300,5 +300,3 @@ public class CatalogoTest
         Assert.IsFalse(resultado);
     }
     */
-}
-*/

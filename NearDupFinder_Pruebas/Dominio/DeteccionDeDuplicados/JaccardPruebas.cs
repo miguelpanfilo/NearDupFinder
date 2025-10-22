@@ -113,5 +113,3 @@ public class JaccardPruebas
         Assert.AreEqual(0.5f, valorJaccard);
     }
 */
-}
-*/

@@ -181,5 +181,3 @@ public class ScorePruebas
             gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
 */
-}
-*/
