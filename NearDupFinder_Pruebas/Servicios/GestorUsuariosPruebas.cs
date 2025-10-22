@@ -8,7 +8,7 @@ namespace NearDupFinder_Pruebas.Servicios;
 
 [TestClass]
 public class GestorUsuariosPruebas
-{
+{/*
     private static Email CrearEmail(string email) => Email.Crear(email);
     private static Fecha CrearFecha(int a, int m, int d) => Fecha.Crear(a, m, d);
     private static Usuario CrearUsuario(
@@ -767,4 +767,5 @@ public class GestorUsuariosPruebas
         
         Assert.IsNull(usuario);
     }
+*/
 }

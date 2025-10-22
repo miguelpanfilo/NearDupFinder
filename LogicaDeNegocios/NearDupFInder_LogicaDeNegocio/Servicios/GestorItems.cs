@@ -114,7 +114,7 @@ public class GestorItems
     public void EliminarItem(DatosEliminarItem itemDtoAEliminar)
     {
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(itemDtoAEliminar.IdCatalogo)
-                       ?? throw new ArgumentException("El catálogo no existe.");
+                       ?? throw new ExcepcionCatalogo("El catálogo no existe.");
 
         var itemAEliminar = catalogo.Items.FirstOrDefault(i => i.Id == itemDtoAEliminar.IdItem)
                    ?? throw new ExcepcionItem("El item no existe en el catálogo.");

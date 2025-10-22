@@ -69,7 +69,7 @@
         try
         {
             var datos = new DatosCrearItem(
-                IdCatalogo: _catalogoSeleccionadoId ?? 0,  // ⚠️ mejor pasar el Id, no el título
+                IdCatalogo: _catalogoSeleccionadoId ?? 0, 
                 Titulo: _titulo,
                 Descripcion: _descripcion,
                 Categoria: string.IsNullOrWhiteSpace(_categoria) ? null : _categoria,

@@ -1,26 +1,26 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Servicios;
 
+[TestClass]
 public class GestorItemsPruebas
 {
-    private static GestorItems _gestorItems = null!;
-    private static GestorCatalogos _gestorCatalogos = null!;
-    private static Catalogo _catalogo = null!;
-    private static HashSet<int> _idsItemsGlobal = null!;
-    private static List<ParDuplicado> _duplicadosGlobales = null!;
+    private GestorItems _gestorItems = null!;
+    private GestorCatalogos _gestorCatalogos = null!;
+    private GestorAuditoria _gestorAuditoria = null!;
+    private Catalogo _catalogo = null!;
+    private HashSet<int> _idsItemsGlobal = null!;
+    private List<ParDuplicado> _duplicadosGlobales = null!;
 
-    [ClassInitialize]
-    public static void Inicializar(TestContext context)
+    [TestInitialize]
+    public void Setup()
     {
         var almacenamiento = new AlmacenamientoDeDatos();
-        var gestorAuditoria = new GestorAuditoria();
+        _gestorAuditoria = new GestorAuditoria();
         var gestorDuplicados = new GestorDuplicados();
 
         _gestorCatalogos = new GestorCatalogos(almacenamiento);
@@ -28,7 +28,7 @@ public class GestorItemsPruebas
         _duplicadosGlobales = new List<ParDuplicado>();
 
         var gestorControlDuplicados = new GestorControlDuplicados(
-            gestorAuditoria,
+            _gestorAuditoria,
             gestorDuplicados,
             _gestorCatalogos,
             _duplicadosGlobales
@@ -37,14 +37,14 @@ public class GestorItemsPruebas
         _gestorItems = new GestorItems(
             _gestorCatalogos,
             gestorControlDuplicados,
-            gestorAuditoria,
+            _gestorAuditoria,
             _idsItemsGlobal
         );
 
-        _catalogo = new Catalogo("Catálogo Test");
+        _catalogo = new Catalogo("Catálogo Auditoría Test");
         almacenamiento.AgregarCatalogo(_catalogo);
     }
-
+    
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
     {
@@ -104,8 +104,10 @@ public class GestorItemsPruebas
     [TestMethod]
     public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
     {
+        int catalogoExistenteId = _catalogo.Id;
+
         var itemDtoNoExistente = new DatosActualizarItem(
-            IdCatalogo: _catalogo.Id,
+            IdCatalogo: catalogoExistenteId,
             IdItem: 999,
             Titulo: "Título",
             Descripcion: "Descripcion",
@@ -114,12 +116,13 @@ public class GestorItemsPruebas
             Modelo: "Modelo"
         );
 
-        var error = Assert.ThrowsException<ExcepcionItem>(
-            () => _gestorItems.ActualizarItemEnCatalogo(itemDtoNoExistente)
+        var error = Assert.ThrowsException<ExcepcionItem>(() =>
+            _gestorItems.ActualizarItemEnCatalogo(itemDtoNoExistente)
         );
 
         Assert.AreEqual($"Ítem no encontrado (Id={itemDtoNoExistente.IdItem}).", error.Message);
     }
+
 
     [TestMethod]
     public void AltaItem_AgregaItemAlCatalogo()
@@ -139,9 +142,9 @@ public class GestorItemsPruebas
         Assert.AreEqual("Descripcion", items.First().Descripcion);
     }
 
+    
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionItem))]
-    public void AltaItem_LanzaExcepcionSiTituloOVacio()
+    public void AltaItem_TituloVacio_Excepcion()
     {
         var dto = new DatosCrearItem(
             IdCatalogo: _catalogo.Id,
@@ -155,7 +158,6 @@ public class GestorItemsPruebas
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionItem))]
     public void AltaItem_DescripcionVacia_Excepcion()
     {
         var dto = new DatosCrearItem(
@@ -169,8 +171,8 @@ public class GestorItemsPruebas
         Assert.AreEqual("Título y Descripción son obligatorios.", error.Message);
     }
 
+
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionItem))]
     public void AltaItem_Nulo_Excepcion()
     {
         var dto = new DatosCrearItem(
@@ -229,8 +231,9 @@ public class GestorItemsPruebas
         Assert.IsTrue(_duplicadosGlobales.Count > 0, "Se generó duplicados en la lista global.");
     }
 
+  
     [TestMethod]
-    public void AltaItemConDuplicados_AgregaItemConIdNoValido_CorrigeElIdAutomaticamente()
+    public void AltaItemConDuplicados_AgregaItemConIdNoValido_LanzaExcepcion()
     {
         var dto1 = new DatosCrearItem(
             IdCatalogo: _catalogo.Id,
@@ -248,15 +251,144 @@ public class GestorItemsPruebas
             IdImportado: idItem1
         );
 
-        var item2 = _gestorItems.CrearItem(dto2);
+        var error = Assert.ThrowsException<ExcepcionItem>(() => _gestorItems.CrearItem(dto2)
+        );
 
-        bool losIdsNoSonIguales = item1.Id != item2.Id;
-        bool item1Existe = _idsItemsGlobal.Contains(item1.Id);
-        bool item2Existe = _idsItemsGlobal.Contains(item2.Id);
-
-        Assert.IsTrue(losIdsNoSonIguales, "Los ids no deberían ser iguales después de la corrección.");
-        Assert.IsTrue(item1Existe, "El id del primer ítem debería estar registrado en la lista global.");
-        Assert.IsTrue(item2Existe, "El id corregido del segundo ítem debería estar registrado en la lista global.");
+        Assert.AreEqual(
+            $"El Id importado {idItem1} ya existe.",
+            error.Message
+        );
     }
     
+    [TestMethod]
+    public void EliminarItemYActualizarEstadoDuplicados_Correcto()
+    {
+        var dto1 = new DatosCrearItem(_catalogo.Id, "Titulo", "Descripcion");
+        var dto2 = new DatosCrearItem(_catalogo.Id, "Titulo", "Descripcion");
+
+        var item1 = _gestorItems.CrearItem(dto1);
+        var item2 = _gestorItems.CrearItem(dto2);
+
+        _gestorItems.EliminarItem(new DatosEliminarItem(_catalogo.Id, item1.Id));
+
+        Assert.IsFalse(item2.EstadoDuplicado, "El item duplicado debería dejar de estar marcado en false después de eliminar el item1.");
+    }
+
+    [TestMethod]
+    public void EliminarItem_ItemNoExistente_DeberiaLanzarExcepcionConMensaje_Correcto()
+    {
+        var dtoInexistente = new DatosEliminarItem(_catalogo.Id, 9999);
+
+        var ex = Assert.ThrowsException<ExcepcionItem>(() =>
+            _gestorItems.EliminarItem(dtoInexistente)
+        );
+
+        Assert.AreEqual("El item no existe en el catálogo.", ex.Message);
+    }
+
+
+    [TestMethod]
+    public void EliminarItem_CatalogoNoExistente_DeberiaLanzarExcepcionCatalogoConMensaje_Correcto()
+    {
+        var dtoInexistente = new DatosEliminarItem(9999,1);
+
+
+        var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
+            _gestorItems.EliminarItem(dtoInexistente)
+        );
+        
+
+        Assert.AreEqual("El catálogo no existe.", ex.Message);
+    }
+
+    [TestMethod]
+    public void EliminarItem_EliminaItemDelCatalogo()
+    {
+        var item1 = new Item("Item 1", "Desc 1");
+        var item2 = new Item("Item 2", "Desc 2");
+
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        var dtoEliminar = new DatosEliminarItem(
+            idCatalogo: _catalogo.Id,
+            idItem: item1.Id
+        );
+
+        _gestorItems.EliminarItem(dtoEliminar);
+
+        Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo.");
+        Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe estar en el catálogo.");
+    }
+    [TestMethod]
+    public void CrearItem_DeberiaRegistrarLogDeAlta_Correcto()
+    {
+        var dto = new DatosCrearItem(
+            IdCatalogo: _catalogo.Id,
+            Titulo: "Nuevo Item",
+            Descripcion: "Descripción del item"
+        );
+
+        var itemCreado = _gestorItems.CrearItem(dto);
+
+        var logs = _gestorAuditoria.ObtenerLogs();
+        Assert.IsTrue(logs.Count >= 1, "Debe haberse registrado al menos un log por la creación del ítem.");
+
+        var logAlta = logs.FirstOrDefault(l => l.Accion == EntradaDeLog.AccionLog.AltaItem);
+        Assert.IsNotNull(logAlta, "Debe existir un log de AltaItem.");
+
+        var detalleEsperado = $"Alta de item: Item agregado: '{itemCreado.Titulo}' (Id={itemCreado.Id}) en catálogo '{_catalogo.Titulo}' (Id={_catalogo.Id}).";
+
+        Assert.AreEqual(detalleEsperado, logAlta.Detalles);
+    }
+
+
+    [TestMethod]
+    public void ActualizarItem_DeberiaRegistrarLogDeEdicion()
+    {
+        var item = new Item("Original", "Desc original");
+        _catalogo.AgregarItem(item);
+        _idsItemsGlobal.Add(item.Id);
+
+        var dto = new DatosActualizarItem(
+            IdCatalogo: _catalogo.Id,
+            IdItem: item.Id,
+            Titulo: "Editado",
+            Descripcion: "Descripcion editada"
+        );
+
+        _gestorItems.ActualizarItemEnCatalogo(dto);
+
+        var logs = _gestorAuditoria.ObtenerLogs();
+
+        Assert.AreEqual(1, logs.Count);
+        Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[0].Accion);
+        StringAssert.Contains(logs[0].Detalles, "Ítem actualizado");
+    }
+
+    [TestMethod]
+    public void EliminarItem_DeberiaRegistrarLogDeEliminacion()
+    {
+        var item = new Item("A borrar", "Descripción del item");
+        _catalogo.AgregarItem(item);
+        _idsItemsGlobal.Add(item.Id);
+
+        var dtoEliminar = new DatosEliminarItem(
+            idCatalogo: _catalogo.Id,
+            idItem: item.Id
+        );
+
+        _gestorItems.EliminarItem(dtoEliminar);
+
+        var logs = _gestorAuditoria.ObtenerLogs();
+      
+        Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[0].Accion);
+        StringAssert.Contains(logs[0].Detalles, "Item eliminado");
+   
+    }
+
+
+
 }
+  
+

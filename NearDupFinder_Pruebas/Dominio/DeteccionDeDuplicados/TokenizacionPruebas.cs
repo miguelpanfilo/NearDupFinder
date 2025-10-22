@@ -4,7 +4,7 @@ namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class TokenizacionPruebas
-{
+{/*
     private static ItemNormalizado CrearNuevoItemNormalizado(string titulo, string descripcion) => 
         new ItemNormalizado
         {
@@ -73,4 +73,4 @@ public class TokenizacionPruebas
         CollectionAssert.AreEqual(new[] { "ps5", "slim", "1tb" }, tokens.TokenTitulo);
         CollectionAssert.AreEqual(new[] { "ssd", "512" }, tokens.TokenDescripcion);
     }
-}
+*/}

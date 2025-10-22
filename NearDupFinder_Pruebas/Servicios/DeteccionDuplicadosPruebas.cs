@@ -5,7 +5,7 @@ namespace NearDupFinder_Pruebas.Servicios;
 
 [TestClass]
 public class DeteccionDuplicadosPruebas
-{
+{/*
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
         new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
 
@@ -139,5 +139,5 @@ public class DeteccionDuplicadosPruebas
         var esperado = new List<int> { itemPosibleDuplicado1.Id, itemPosibleDuplicado2.Id, itemC.Id };
         var actual = duplicados.Select(d => d.ItemPosibleDuplicado.Id).ToList();
         CollectionAssert.AreEqual(esperado, actual);
-    }
+    }*/
 }

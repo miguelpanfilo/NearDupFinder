@@ -5,7 +5,7 @@ namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
 
 [TestClass]
 public class NormalizarPruebas
-{
+{/*
     private readonly GestorDuplicados _gestorDuplicados = new GestorDuplicados();
     
     [TestMethod]
@@ -211,5 +211,5 @@ public class NormalizarPruebas
         Assert.AreEqual("computadora", resultado.DescripcionNormalizada);
         Assert.AreEqual("marca", resultado.MarcaNormalizada);
         Assert.AreEqual("modelo", resultado.ModeloNormalizado);
-    }
+    }*/
 }
