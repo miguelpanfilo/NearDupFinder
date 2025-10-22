@@ -25,7 +25,7 @@ public class GestorItems
     }
 
 
-    public void CrearItem(DatosCrearItem datos)
+    public Item  CrearItem(DatosCrearItem datos)
     {
         if (string.IsNullOrWhiteSpace(datos.Titulo) || string.IsNullOrWhiteSpace(datos.Descripcion))
             throw new ExcepcionItem("Título y Descripción son obligatorios.");
@@ -62,6 +62,8 @@ public class GestorItems
         );
 
         _gestorControlDuplicados.ProcesarDuplicadosPorAlta(catalogo.Id, item.Id);
+
+        return item;
     }
 
 
@@ -84,24 +86,24 @@ public class GestorItems
         return _idsItemsGlobal.Count;
     }
 
-    public void ActualizarItemEnCatalogo(DatosActualizarItem datosActualizarItem)
+    public void ActualizarItemEnCatalogo(DatosActualizarItem itemDtoActualizar)
     {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datosActualizarItem.IdCatalogo)
-                       ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datosActualizarItem.IdCatalogo}).");
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(itemDtoActualizar.IdCatalogo)
+                       ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={itemDtoActualizar.IdCatalogo}).");
 
-        var item = catalogo.ObtenerItemPorId(datosActualizarItem.IdItem)
-                   ?? throw new ExcepcionItem($"Ítem no encontrado (Id={datosActualizarItem.IdItem}).");
+        var item = catalogo.ObtenerItemPorId(itemDtoActualizar.IdItem)
+                   ?? throw new ExcepcionItem($"Ítem no encontrado (Id={itemDtoActualizar.IdItem}).");
 
-        if (datosActualizarItem.Titulo is not null)
-            item.EditarTitulo(datosActualizarItem.Titulo);
-        if (datosActualizarItem.Descripcion is not null)
-            item.EditarDescripcion(datosActualizarItem.Descripcion);
-        if (datosActualizarItem.Categoria is not null)
-            item.EditarCategoria(datosActualizarItem.Categoria);
-        if (datosActualizarItem.Marca is not null)
-            item.EditarMarca(datosActualizarItem.Marca);
-        if (datosActualizarItem.Modelo is not null)
-            item.EditarModelo(datosActualizarItem.Modelo);
+        if (itemDtoActualizar.Titulo is not null)
+            item.EditarTitulo(itemDtoActualizar.Titulo);
+        if (itemDtoActualizar.Descripcion is not null)
+            item.EditarDescripcion(itemDtoActualizar.Descripcion);
+        if (itemDtoActualizar.Categoria is not null)
+            item.EditarCategoria(itemDtoActualizar.Categoria);
+        if (itemDtoActualizar.Marca is not null)
+            item.EditarMarca(itemDtoActualizar.Marca);
+        if (itemDtoActualizar.Modelo is not null)
+            item.EditarModelo(itemDtoActualizar.Modelo);
 
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.EditarItem,
@@ -109,20 +111,20 @@ public class GestorItems
         );
     }
 
-    public void EliminarItem(DatosEliminarItem datosEliminarItem)
+    public void EliminarItem(DatosEliminarItem itemDtoAEliminar)
     {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datosEliminarItem.IdCatalogo)
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(itemDtoAEliminar.IdCatalogo)
                        ?? throw new ArgumentException("El catálogo no existe.");
 
-        var item = catalogo.Items.FirstOrDefault(i => i.Id == datosEliminarItem.IdItem)
+        var itemAEliminar = catalogo.Items.FirstOrDefault(i => i.Id == itemDtoAEliminar.IdItem)
                    ?? throw new ExcepcionItem("El item no existe en el catálogo.");
 
-        catalogo.EliminarItem(item);
+        catalogo.EliminarItem(itemAEliminar);
 
-        _gestorControlDuplicados.EliminarDuplicadosPrevios(item);
+        _gestorControlDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
         _gestorControlDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarItem,
-            $"Item eliminado: '{item.Titulo}' del catálogo '{catalogo.Titulo}'");
+            $"Item eliminado: '{itemAEliminar.Titulo}' del catálogo '{catalogo.Titulo}'");
     }
 }

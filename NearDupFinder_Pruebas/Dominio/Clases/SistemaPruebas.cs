@@ -3,24 +3,45 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.DTOs.DTO;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 
 namespace NearDupFinder_Pruebas.Dominio.Clases;
 
 [TestClass]
 public class SistemaPruebas
 {
-    private Sistema _sistema = null!;
+   
+   
+    private GestorItems _gestorItems = null!;
+    private GestorCatalogos _gestorCatalogos = null!;
+    private GestorControlDuplicados _gestorControlDuplicados = null!;
+    private GestorAuditoria _gestorAuditoria = null!;
+    private HashSet<int> _idsItemsGlobal = null!;
     private Catalogo _catalogo = null!;
-    private AlmacenamientoDeDatos _almacenamiento = null!;
+
     [TestInitialize]
     public void Setup()
     {
-        _sistema = new Sistema();
-        _almacenamiento = new AlmacenamientoDeDatos();
-        _catalogo = new Catalogo("Catalogo Test");
-        _sistema.AgregarCatalogo(_catalogo);
-    }
+        // "Fake" almacenamiento de datos
+        var almacenamientoFake = new AlmacenamientoDeDatos();
+        _gestorCatalogos = new GestorCatalogos(almacenamientoFake);
 
+        _gestorControlDuplicados = new GestorControlDuplicados();
+        _gestorAuditoria = new GestorAuditoria();
+        _idsItemsGlobal = new HashSet<int>();
+
+        _gestorItems = new GestorItems(
+            _gestorCatalogos,
+            _gestorControlDuplicados,
+            _gestorAuditoria,
+            _idsItemsGlobal
+        );
+
+        // Crear un catálogo de prueba
+        _catalogo = new Catalogo("Catalogo Test");
+        _catalogo.ModificarIdEnCasoDeImportacion(1);
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear { Titulo = _catalogo.Titulo });
+    }
     [TestMethod]
     public void BuscarUsuarioPorId_IDNoExsite_RetornaNulo()
     {
