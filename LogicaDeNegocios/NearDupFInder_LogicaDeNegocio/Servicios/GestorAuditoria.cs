@@ -20,7 +20,7 @@ public class GestorAuditoria
         { EntradaDeLog.AccionLog.EliminarUser, "Eliminacion de usuario" },
     };
 
-    private string _usuarioActual = "Anónimo";
+    private string _usuarioActual = "No hay usuario logueado";
 
     public void AsignarUsuarioActual(string email)
     {

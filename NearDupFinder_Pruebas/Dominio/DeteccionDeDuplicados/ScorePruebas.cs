@@ -4,7 +4,7 @@ namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
 /*
 [TestClass]
 public class ScorePruebas
-{
+{/*
     [TestMethod]
     public void CalcularScore_TodosCeros_RetornaCero()
     {
@@ -180,5 +180,4 @@ public class ScorePruebas
         Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             gestor.CalcularScore(jaccardTitulo, jaccardDescripcion, marcaEq, modeloEq));
     }
-}
 */

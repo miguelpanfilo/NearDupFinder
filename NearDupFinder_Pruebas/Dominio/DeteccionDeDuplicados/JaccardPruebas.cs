@@ -4,7 +4,7 @@ namespace NearDupFinder_Pruebas.Dominio.DeteccionDeDuplicados;
 /*
 [TestClass]
 public class JaccardPruebas
-{
+{/*
     [TestMethod]
     public void CalcularNumTokensUnion_AmbosVacios_DevuelveCero()
     {
@@ -112,5 +112,4 @@ public class JaccardPruebas
 
         Assert.AreEqual(0.5f, valorJaccard);
     }
-}
 */
