@@ -1,8 +1,8 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_LogicaDeNegocio.DTOs;
+namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorItems;
 
-public class ItemDto
+public class DatosItemListaItems
 {
     public int Id { get; set; }             
     public string? Titulo { get; set; } = string.Empty;
@@ -13,16 +13,18 @@ public class ItemDto
     
     public bool EstadoDuplicado { get; set; }
     
-    public static ItemDto FromEntity(Item item)
+    public static DatosItemListaItems FromEntity(Item item)
     {
-        return new ItemDto
+        return new DatosItemListaItems
         {
             Id = item.Id,
             Titulo = item.Titulo,
             Descripcion = item.Descripcion,
-            Categoria = item.Categoria,
-            Marca = item.Marca,
-            Modelo = item.Modelo
+            Categoria = item.Categoria ?? string.Empty,
+            Marca = item.Marca ?? string.Empty,
+            Modelo = item.Modelo ?? string.Empty,
+            EstadoDuplicado = item.EstadoDuplicado
         };
     }
+
 }

@@ -1,10 +1,10 @@
 using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_Pruebas.Servicios;
-/*
+
 [TestClass]
 public class CrudCatalogoPruebas
-{   
+{   /*
     
     private Sistema _sistema = null!;
 
@@ -161,5 +161,5 @@ public class CrudCatalogoPruebas
         
         Assert.AreEqual("Cat1", c.Titulo); 
     }
-}
 */
+}

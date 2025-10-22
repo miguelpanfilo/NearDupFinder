@@ -4,6 +4,7 @@
 @using NearDupFinder_LogicaDeNegocio.DTOs
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlDuplicados
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
+@using NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados
 @inject GestorControlClusters GestorControlClusters
@@ -146,10 +147,10 @@
 @code {
     private string? _mensajeErrorModal = "";
     private bool _mostrarModalEditar;
-    private ItemDto? _itemEditado;
+    private DatosItemListaItems? _itemEditado;
     private Catalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
-    private List<ItemDto> _itemsFiltradosEnTabla = new();
+    private List<DatosItemListaItems> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
     private string _textoBusqueda = string.Empty;
     private string _categoriaAFiltrar = string.Empty;
@@ -161,7 +162,7 @@
         if (_catalogoSeleccionado != null)
         {
             _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
-                .Select(item => ItemDto.FromEntity(item))
+                .Select(item => DatosItemListaItems.FromEntity(item))
                 .ToList();
 
             _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
@@ -191,7 +192,7 @@
                 (string.IsNullOrWhiteSpace(_categoriaAFiltrar) ||
                  item.Categoria == _categoriaAFiltrar)
             )
-            .Select(item => ItemDto.FromEntity(item))
+            .Select(item => DatosItemListaItems.FromEntity(item))
             .ToList();
 
         
@@ -206,7 +207,7 @@
         if (_catalogoSeleccionado != null)
         {
             _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
-                .Select(item => ItemDto.FromEntity(item))
+                .Select(item => DatosItemListaItems.FromEntity(item))
                 .ToList();
         }
     }
@@ -231,9 +232,9 @@
         _itemEditado = null;
     }
 
-    private void AbrirModalEditar(ItemDto dto)
+    private void AbrirModalEditar(DatosItemListaItems listaItems)
     {
-        _itemEditado = dto;
+        _itemEditado = listaItems;
         _mostrarModalEditar = true;
         _mensajeErrorModal = null;
     }
@@ -309,7 +310,7 @@
             .ToList()!;
     }
     
-    private void EliminarItem(ItemDto? item)
+    private void EliminarItem(DatosItemListaItems? item)
     {
         if (_catalogoSeleccionado == null || item == null) return;
 
