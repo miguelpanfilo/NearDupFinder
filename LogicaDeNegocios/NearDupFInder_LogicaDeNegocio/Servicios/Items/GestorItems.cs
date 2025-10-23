@@ -24,49 +24,15 @@ public class GestorItems
         _gestorAuditoria = gestorAuditoria;
         _idsItemsGlobal = idsItemsGlobal;
     }
-
-
-    public Item  CrearItem(DatosCrearItem datos)
+    public void AsegurarIdUnicoPublic(Item item)
     {
-        if (string.IsNullOrWhiteSpace(datos.Titulo) || string.IsNullOrWhiteSpace(datos.Descripcion))
-            throw new ExcepcionItem("Título y Descripción son obligatorios.");
-
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
-                       ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
-
-        var item = new Item()
-        {
-            Titulo = datos.Titulo,
-            Descripcion = datos.Descripcion,
-            Categoria = datos.Categoria,
-            Marca = datos.Marca,
-            Modelo = datos.Modelo
-        };
-
-        if (datos.IdImportado is int idImportado)
-        {
-            if (IdExisteEnListaDeIdGlobal(idImportado))
-                throw new ExcepcionItem($"El Id importado {idImportado} ya existe.");
-            item.ModificarIdEnCasoDeImportacion(idImportado);
-            _idsItemsGlobal.Add(idImportado);
-        }
-        else
-        {
-            AsegurarIdUnico(item);
-        }
-
-        catalogo.AgregarItem(item);
-
-        _gestorAuditoria.RegistrarLog(
-            EntradaDeLog.AccionLog.AltaItem,
-            $"Item agregado: '{item.Titulo}' (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
-        );
-
-        _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
-        
-        return item;
+        AsegurarIdUnico(item);
     }
 
+    public void AgregarIdAGlobal(int id)
+    {
+        _idsItemsGlobal.Add(id);
+    }
 
     private void AsegurarIdUnico(Item item)
     {
@@ -82,45 +48,4 @@ public class GestorItems
         return _idsItemsGlobal.Contains(id);
     }
 
-    public void ActualizarItemEnCatalogo(DatosActualizarItem itemDtoActualizar)
-    {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(itemDtoActualizar.IdCatalogo)
-                       ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={itemDtoActualizar.IdCatalogo}).");
-
-        var item = catalogo.ObtenerItemPorId(itemDtoActualizar.IdItem)
-                   ?? throw new ExcepcionItem($"Ítem no encontrado (Id={itemDtoActualizar.IdItem}).");
-
-        if (itemDtoActualizar.Titulo is not null)
-            item.EditarTitulo(itemDtoActualizar.Titulo);
-        if (itemDtoActualizar.Descripcion is not null)
-            item.EditarDescripcion(itemDtoActualizar.Descripcion);
-        if (itemDtoActualizar.Categoria is not null)
-            item.EditarCategoria(itemDtoActualizar.Categoria);
-        if (itemDtoActualizar.Marca is not null)
-            item.EditarMarca(itemDtoActualizar.Marca);
-        if (itemDtoActualizar.Modelo is not null)
-            item.EditarModelo(itemDtoActualizar.Modelo);
-
-        _gestorAuditoria.RegistrarLog(
-            EntradaDeLog.AccionLog.EditarItem,
-            $"Ítem actualizado (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
-        );
-    }
-
-    public void EliminarItem(DatosEliminarItem itemDtoAEliminar)
-    {
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(itemDtoAEliminar.IdCatalogo)
-                       ?? throw new ExcepcionCatalogo("El catálogo no existe.");
-
-        var itemAEliminar = catalogo.Items.FirstOrDefault(i => i.Id == itemDtoAEliminar.IdItem)
-                   ?? throw new ExcepcionItem("El item no existe en el catálogo.");
-
-        catalogo.EliminarItem(itemAEliminar);
-
-        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
-        _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
-
-        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarItem,
-            $"Item eliminado: '{itemAEliminar.Titulo}' del catálogo '{catalogo.Titulo}'");
-    }
 }
