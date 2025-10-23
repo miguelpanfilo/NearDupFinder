@@ -4,8 +4,8 @@
 @using CsvHelper
 @using CsvHelper.Configuration
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlLectorCsv
-@using NearDupFInder_LogicaDeNegocio.Servicios.Importacion
-@inject ControladorLectorCsv ControladorLectorCsv
+@using NearDupFinder_LogicaDeNegocio.Servicios
+@inject GestorControlLectorCsv GestorControlLectorCsv
 @rendermode InteractiveServer
 
 <PageTitle>Importar</PageTitle>
@@ -152,7 +152,7 @@
         }
         finally
         {
-        ControladorLectorCsv.ImportarItemsDesdeCsv(new DatosImportarCsv(titulos, totalDeFilas, filas));
+        GestorControlLectorCsv.ImportarItemsDesdeCsv(new DatosImportarCsv(titulos, totalDeFilas, filas));
         }
         
         ResetEstado();
