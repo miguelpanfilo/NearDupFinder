@@ -1,27 +1,15 @@
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
-using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Items;
 
 public class GestorItems
 {
-    private readonly GestorCatalogos _gestorCatalogos;
-    private readonly ControladorDuplicados _controladorDuplicados;
     private readonly HashSet<int> _idsItemsGlobal;
-    private readonly GestorAuditoria _gestorAuditoria;
 
     public GestorItems(
-        GestorCatalogos gestorCatalogos,
-        ControladorDuplicados controladorDuplicados,
-        GestorAuditoria gestorAuditoria,
-        HashSet<int> idsItemsGlobal)
+       HashSet<int> idsItemsGlobal)
     {
-        _gestorCatalogos = gestorCatalogos;
-        _controladorDuplicados = controladorDuplicados;
-        _gestorAuditoria = gestorAuditoria;
+       
         _idsItemsGlobal = idsItemsGlobal;
     }
     public void AsegurarIdUnicoPublic(Item item)

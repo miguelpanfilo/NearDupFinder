@@ -38,9 +38,6 @@ public class ControladorItemsPruebas
         );
 
         _gestorItems = new GestorItems(
-            _gestorCatalogos,
-            gestorControlDuplicados,
-            _gestorAuditoria,
             _idsItemsGlobal
         );
 

@@ -29,7 +29,7 @@ public class GestorLectorCsvPruebas
         _gestorAuditoria = new GestorAuditoria();
         _gestorDuplicados = new GestorDuplicados();
         _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados,_gestorCatalogos,_duplicadosGlobales);
-        _gestorItems = new GestorItems(_gestorCatalogos,_controladorDuplicados, _gestorAuditoria, _idsItemsGlobal);
+        _gestorItems = new GestorItems(_idsItemsGlobal);
         _controladorItems = new ControladorItems(_gestorItems,_gestorCatalogos,_controladorDuplicados,_gestorAuditoria, _idsItemsGlobal);
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems,_controladorItems);
     }

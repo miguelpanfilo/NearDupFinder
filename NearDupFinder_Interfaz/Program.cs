@@ -28,11 +28,8 @@ builder.Services.AddScoped<ControladorDuplicados>(sp =>
 
 builder.Services.AddScoped<GestorItems>(sp =>
 {
-    var cat = sp.GetRequiredService<GestorCatalogos>();
-    var dup = sp.GetRequiredService<ControladorDuplicados>();
-    var aud = sp.GetRequiredService<GestorAuditoria>();
     var state = sp.GetRequiredService<AppState>();
-    return new GestorItems(cat, dup, aud, state.IdsItemsGlobal);
+    return new GestorItems( state.IdsItemsGlobal);
 });
 
 builder.Services.AddScoped<GestorControlClusters>(sp =>
