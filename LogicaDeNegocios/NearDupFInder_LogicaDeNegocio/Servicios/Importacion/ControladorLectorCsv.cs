@@ -1,12 +1,12 @@
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlLectorCsv;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Importacion;
 
-public class GestorControlLectorCsv
+public class ControladorLectorCsv
 {
     private GestorLectorCsv _gestorLectorCsv;
 
-    public GestorControlLectorCsv(GestorLectorCsv gestorLectorCsv)
+    public ControladorLectorCsv(GestorLectorCsv gestorLectorCsv)
     {
         _gestorLectorCsv = gestorLectorCsv;
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFInder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFInder_LogicaDeNegocio.Servicios.Items;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
@@ -50,7 +51,7 @@ builder.Services.AddScoped<GestorLectorCsv>(sp =>
     return new GestorLectorCsv(gestorCatalogos, gestorItems);
 });
 
-builder.Services.AddScoped<GestorControlLectorCsv>();
+builder.Services.AddScoped<ControladorLectorCsv>();
 builder.Services.AddScoped<GestorAutenticacionUsuario>();
 builder.Services.AddSingleton<GestorInicializacion>();
 

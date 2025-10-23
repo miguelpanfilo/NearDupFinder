@@ -1,8 +1,9 @@
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Items;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Importacion;
 
 public readonly struct Fila(
     string id,
@@ -51,14 +52,16 @@ public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestor
 
             if (ExisteId(fila.Id))
                 continue;
-
-
+            
             var catalogo = gestorCatalogos.ObtenerCatalogoPorTitulo(fila.Catalogo);
 
             int? idImportado = null;
             if (IdEsValido(fila.Id) && int.TryParse(fila.Id, out var parsed))
                 idImportado = parsed;
 
+            if(!ValidarTituloYDescripcion(fila.Titulo,fila.Descripción))
+                continue;
+            
             var dto = new DatosCrearItem(
                 IdCatalogo: catalogo!.Id,
                 Titulo: fila.Titulo,
@@ -68,8 +71,17 @@ public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestor
                 Modelo: fila.Modelo,
                 IdImportado: idImportado
             );
+            
             gestorItems.CrearItem(dto);
         }
+    }
+
+    private bool ValidarTituloYDescripcion(string filaTitulo, string filaDescripción)
+    {
+        if(string.IsNullOrEmpty(filaTitulo) || string.IsNullOrWhiteSpace(filaDescripción))
+            return false;
+        
+        return true;
     }
 
     private bool VerificarOAgregarCatalogoValido(string? nombreCatalogo)
