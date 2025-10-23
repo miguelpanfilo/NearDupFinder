@@ -21,6 +21,7 @@ public class ControladorLectorCsvPruebas
     private GestorDuplicados _gestorDuplicados = null!;
     private readonly HashSet<int> _idsItemsGlobal = [];
     private ControladorLectorCsv _controladorLectorCsv = null!;
+    private ControladorItems _controladorItems = null!;
 
     
     [TestInitialize]
@@ -32,7 +33,9 @@ public class ControladorLectorCsvPruebas
         _gestorDuplicados = new GestorDuplicados();
         _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados,_gestorCatalogos,_duplicadosGlobales);
         _gestorItems = new GestorItems(_gestorCatalogos,_controladorDuplicados, _gestorAuditoria, _idsItemsGlobal);
-        _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems);
+        _controladorItems = new ControladorItems(_gestorItems,_gestorCatalogos,_controladorDuplicados,_gestorAuditoria, _idsItemsGlobal);
+
+        _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems,_controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
     }
     

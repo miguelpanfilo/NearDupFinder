@@ -42,13 +42,29 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
     var aud = sp.GetRequiredService<GestorAuditoria>();
     return new GestorControlClusters(cat, dup, aud);
 });
+builder.Services.AddScoped<ControladorItems>(sp =>
+{
+    var gestorItems = sp.GetRequiredService<GestorItems>();
+    var gestorCatalogos = sp.GetRequiredService<GestorCatalogos>();
+    var controladorDuplicados = sp.GetRequiredService<ControladorDuplicados>();
+    var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
+    var appState = sp.GetRequiredService<AppState>();
 
+    return new ControladorItems(
+        gestorItems,
+        gestorCatalogos,
+        controladorDuplicados,
+        gestorAuditoria,
+        appState.IdsItemsGlobal
+    );
+});
 
 builder.Services.AddScoped<GestorLectorCsv>(sp =>
 {
     var gestorCatalogos = sp.GetRequiredService<GestorCatalogos>();
     var gestorItems = sp.GetRequiredService<GestorItems>();
-    return new GestorLectorCsv(gestorCatalogos, gestorItems);
+    var controladorItems= sp.GetRequiredService<ControladorItems>();
+    return new GestorLectorCsv(gestorCatalogos, gestorItems, controladorItems);
 });
 
 builder.Services.AddScoped<ControladorLectorCsv>();
