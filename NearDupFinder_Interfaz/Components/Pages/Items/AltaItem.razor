@@ -4,8 +4,8 @@
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Items
-@inject GestorItems GestorItems
 @inject GestorCatalogos GestorCatalogos;
+@inject ControladorItems ControladorItems
 @inject NavigationManager Nav
 
 <PageTitle>Crear Item</PageTitle>
@@ -78,7 +78,7 @@
                 Modelo: string.IsNullOrWhiteSpace(_modelo) ? null : _modelo
             );
 
-            GestorItems.CrearItem(datos);
+            ControladorItems.CrearItem(datos);
 
             Nav.NavigateTo("/lista-items");
         }

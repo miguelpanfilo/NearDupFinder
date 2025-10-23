@@ -23,7 +23,7 @@ public readonly struct Fila(
     public string Catalogo { get; } = catalogo;
 }
 
-public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestorItems)
+public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestorItems, ControladorItems controladorItems)
 {
     public List<string> Titulos { get; private set; } = [];
     public int CantidadDeFilas { get; private set; }
@@ -72,7 +72,7 @@ public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestor
                 IdImportado: idImportado
             );
             
-            gestorItems.CrearItem(dto);
+            controladorItems.CrearItem(dto);
         }
     }
 

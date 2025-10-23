@@ -1,7 +1,6 @@
 @page "/lista-items"
 @using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
-@using NearDupFinder_LogicaDeNegocio.DTOs
 @using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorItems
@@ -11,7 +10,7 @@
 @inject GestorControlClusters GestorControlClusters
 @inject ControladorDuplicados ControladorDuplicados
 @inject GestorCatalogos GestorCatalogos
-@inject GestorItems GestorItems
+@inject ControladorItems ControladorItems
 @rendermode InteractiveServer
 
 <PageTitle>Items</PageTitle>
@@ -252,7 +251,7 @@
                 return;
             }
 
-            GestorItems.ActualizarItemEnCatalogo(
+            ControladorItems.ActualizarItemEnCatalogo(
                 new DatosActualizarItem(
                     _catalogoSeleccionado.Id,
                     _itemEditado.Id,
@@ -315,7 +314,7 @@
     {
         if (_catalogoSeleccionado == null || item == null) return;
 
-        GestorItems.EliminarItem(new DatosEliminarItem(_catalogoSeleccionado.Id, item.Id));
+        ControladorItems.EliminarItem(new DatosEliminarItem(_catalogoSeleccionado.Id, item.Id));
 
         ReconstruirCategorias();
         

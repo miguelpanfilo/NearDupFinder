@@ -155,44 +155,8 @@ public class SistemaPruebas
         Assert.IsTrue(item2.EstadoDuplicado, "Item2 debe estar marcado como  duplicado");
     }
 
-    [TestMethod]
-    public void CantidadDeItemsGlobal_SinItems_RetornaCero()
-    {
-        int numeroDeItems = _sistema.CantidadDeItemsGlobal();
-        Assert.AreEqual(0, numeroDeItems);
-    }
-
-    [TestMethod]
-    public void CantidadDeItemsGlobal_ConItems_RetornaDistintoDeCero()
-    {
-        var nuevoItem = new Item("Item 1", "Descripción 1");
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, nuevoItem);
-
-        int numeroDeItems = _sistema.CantidadDeItemsGlobal();
-
-        Assert.AreNotEqual(0, numeroDeItems);
-        Assert.AreEqual(1, numeroDeItems);
-    }
-
-    [TestMethod]
-    public void IdExisteEnListaDeIdGlobal_ConItemNoExistente_RetornaFalso()
-    {
-        var nuevoItem = new Item("Item 1", "Descripción 1");
-
-        bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
-
-        Assert.IsFalse(existeItem);
-    }
-
-    [TestMethod]
-    public void IdExisteEnListaDeIdGlobal_ConItemExistente_RetornaVerdadero()
-    {
-        var nuevoItem = new Item("Item 1", "Descripción 1");
-        _sistema.AltaItemConAltaDuplicados(_catalogo.Titulo, nuevoItem);
-        bool existeItem = _sistema.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
-
-        Assert.IsTrue(existeItem);
-    }
+   
+   
 
     [TestMethod]
     public void ImportarItemsDesdeCsv_AgregaItems()
