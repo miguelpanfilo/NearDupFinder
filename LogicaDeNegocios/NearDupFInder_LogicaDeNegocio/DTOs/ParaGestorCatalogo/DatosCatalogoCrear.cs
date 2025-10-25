@@ -13,10 +13,4 @@ public class DatosCatalogoCrear
         Descripcion = descripcion;
     }
     
-    public Catalogo ToEntity()
-    {
-        var catalogo = new Catalogo(Titulo);
-        catalogo.CambiarDescripcion(Descripcion);
-        return catalogo;
-    }
 }

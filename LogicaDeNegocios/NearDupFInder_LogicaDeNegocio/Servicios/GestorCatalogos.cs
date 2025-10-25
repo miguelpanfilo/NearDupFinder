@@ -21,7 +21,9 @@ public class GestorCatalogos
             throw new ExcepcionCatalogo($"Ya existe un catálogo con el título '{datosCatalogoCrear.Titulo}'.");
         }
 
-        var nuevoCatalogo = datosCatalogoCrear.ToEntity();
+        var nuevoCatalogo = new Catalogo(datosCatalogoCrear.Titulo);
+        
+        CambiarDescripcionCatalogo(nuevoCatalogo, datosCatalogoCrear.Descripcion!);
 
         AgregarALaListaDeCatalogo(nuevoCatalogo);
     }
@@ -34,7 +36,7 @@ public class GestorCatalogos
         RemoverDeLaListaDeCatalogos(catalogoAEliminar);
     }
 
-    public void ModificarCampos(DatosCatalogoEditar datosCatalogoEditar)
+    public void ModificarCatalogo(DatosCatalogoEditar datosCatalogoEditar)
     {
         var catalogo = ObtenerCatalogoPorId(datosCatalogoEditar.Id)
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datosCatalogoEditar.Id})");

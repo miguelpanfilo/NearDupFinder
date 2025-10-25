@@ -6,7 +6,7 @@ public class DatosCatalogoEditar
     public string? Titulo { get;}
     public string? Descripcion { get;}
 
-    public DatosCatalogoEditar(int id, string titulo, string descripcion)
+    public DatosCatalogoEditar(int id, string titulo, string descripcion = null!)
     {
         Id = id;
         Titulo = titulo;

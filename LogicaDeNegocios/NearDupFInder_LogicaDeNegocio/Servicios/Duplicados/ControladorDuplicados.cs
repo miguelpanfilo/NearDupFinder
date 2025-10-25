@@ -1,14 +1,15 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
-using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
 public class ControladorDuplicados(
     GestorAuditoria gestorAuditoria,
     GestorDuplicados gestorDuplicados,
     GestorCatalogos gestorCatalogos,
+    GestorControlClusters gestorControlClusters,
     List<ParDuplicado> duplicadosGlobales)
 {
     public void ProcesarDuplicados(int idCatalogo, int idItem)
@@ -35,6 +36,7 @@ public class ControladorDuplicados(
 
     public void ActualizarDuplicadosPara(DatosActualizarDuplicados datosActualizarDuplicados)
     {
+        
         Catalogo catalogo = gestorCatalogos.ObtenerCatalogoPorId(datosActualizarDuplicados.IdCatalogo)
                             ?? throw new ExcepcionCatalogo(
                                 $"Catálogo no encontrado (Id={datosActualizarDuplicados.IdCatalogo}).");
@@ -43,14 +45,22 @@ public class ControladorDuplicados(
                            ?? throw new ExcepcionItem($"Ítem no encontrado (Id={datosActualizarDuplicados.IdItem}).");
 
         EliminarDuplicadosPrevios(itemEditado);
-        catalogo.QuitarItemDeCluster(itemEditado);
+        gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemEditado.Id, catalogo.Id));
 
         List<ParDuplicado> nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
         AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
 
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
-    
+
+    public void ConfirmarParDuplicado(DatosDuplicados datosDuplicados)
+    {
+        bool confirmado = gestorControlClusters.ConfirmarCluster(datosDuplicados);
+        if (confirmado)
+        {
+            DescartarParDuplicado(datosDuplicados);
+        };
+    }
     public void DescartarParDuplicado(DatosDuplicados datos)
     {
         Catalogo catalogo = gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)

@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaLogin;
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 
 public class DatosIdentificacion(string nombre, string email, int id, IReadOnlyCollection<Rol> roles)
 {

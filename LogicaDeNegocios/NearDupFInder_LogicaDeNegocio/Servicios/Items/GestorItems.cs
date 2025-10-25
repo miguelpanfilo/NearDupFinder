@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios.Items;
+namespace NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 public class GestorItems
 {

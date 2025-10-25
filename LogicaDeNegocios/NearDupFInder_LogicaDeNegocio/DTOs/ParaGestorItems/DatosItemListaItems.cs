@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorItems;
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 
 public class DatosItemListaItems
 {

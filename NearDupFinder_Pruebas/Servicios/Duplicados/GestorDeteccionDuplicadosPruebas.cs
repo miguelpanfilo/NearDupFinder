@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -8,6 +8,7 @@ namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 public class DeteccionDuplicadosPruebas
 {
     private GestorDuplicados _gestorDuplicados = null!;
+    private GestorCatalogos gestorCatalogos = null!;
     
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
         new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };

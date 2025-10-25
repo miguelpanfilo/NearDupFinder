@@ -1,4 +1,4 @@
-namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 
 public class DatosActualizarDuplicados
 {

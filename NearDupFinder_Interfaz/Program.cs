@@ -2,9 +2,10 @@ using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
-using NearDupFInder_LogicaDeNegocio.Servicios.Importacion;
-using NearDupFInder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
+using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 
@@ -17,13 +18,22 @@ builder.Services.AddSingleton<GestorAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
 
+
+builder.Services.AddScoped<GestorControlClusters>(sp =>
+{
+    var cat = sp.GetRequiredService<GestorCatalogos>();
+    var aud = sp.GetRequiredService<GestorAuditoria>();
+    return new GestorControlClusters(cat, aud);
+});
+
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
 {
     var auditoria = sp.GetRequiredService<GestorAuditoria>();
     var detector = sp.GetRequiredService<GestorDuplicados>();
     var gestorCat = sp.GetRequiredService<GestorCatalogos>();
+    var gestorControlClusters = sp.GetRequiredService<GestorControlClusters>();
     var state = sp.GetRequiredService<AppState>();
-    return new ControladorDuplicados(auditoria, detector, gestorCat, state.DuplicadosGlobales);
+    return new ControladorDuplicados(auditoria, detector, gestorCat,gestorControlClusters, state.DuplicadosGlobales);
 });
 
 builder.Services.AddScoped<GestorItems>(sp =>
@@ -32,13 +42,7 @@ builder.Services.AddScoped<GestorItems>(sp =>
     return new GestorItems( state.IdsItemsGlobal);
 });
 
-builder.Services.AddScoped<GestorControlClusters>(sp =>
-{
-    var cat = sp.GetRequiredService<GestorCatalogos>();
-    var dup = sp.GetRequiredService<ControladorDuplicados>();
-    var aud = sp.GetRequiredService<GestorAuditoria>();
-    return new GestorControlClusters(cat, dup, aud);
-});
+
 builder.Services.AddScoped<ControladorItems>(sp =>
 {
     var gestorItems = sp.GetRequiredService<GestorItems>();

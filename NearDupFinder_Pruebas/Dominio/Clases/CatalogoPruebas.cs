@@ -2,18 +2,16 @@ using NearDupFinder_Dominio.Clases;
 
 
 namespace NearDupFinder_Pruebas.Dominio.Clases;
-/*
+
 [TestClass]
 public class CatalogoTest
-{/*
+{
     
     private Catalogo _catalogo = null!;
-    private Sistema _sistema = null!;
 
     [TestInitialize]
     public void Setup()
     {
-        _sistema = new Sistema();
         _catalogo = new Catalogo("Stock Tata");
     }
     
@@ -94,35 +92,35 @@ public class CatalogoTest
     public void CambiarDescripcion_OkTest()
     {
         
-        _sistema.CambiarDescripcionCatalogo(_catalogo,"Local numero 145, del barrio Centro");
+        _catalogo.CambiarDescripcion("Local numero 145, del barrio Centro");
         Assert.AreEqual("Local numero 145, del barrio Centro", _catalogo.Descripcion);
     }
     
     [TestMethod]
     public void CambiarDescripcion_Trim_OkTest()
     {
-        _sistema.CambiarDescripcionCatalogo(_catalogo,"  Centro  ");
+        _catalogo.CambiarDescripcion("  Centro  ");
         Assert.AreEqual("Centro", _catalogo.Descripcion);
     }
     
     [TestMethod]
     public void CambiarDescripcion_NullTest_OkTest()
     {
-        _sistema.CambiarDescripcionCatalogo(_catalogo,null);
+        _catalogo.CambiarDescripcion(null);
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
     [TestMethod]
     public void CambiarDescripcion_Vacia_OkTest()
     {
-        _sistema.CambiarDescripcionCatalogo(_catalogo,"");
+        _catalogo.CambiarDescripcion("");
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
     [TestMethod]
     public void CambiarDescripcion_SoloEspacios_OkTest()
     {
-        _sistema.CambiarDescripcionCatalogo(_catalogo,"   ");
+        _catalogo.CambiarDescripcion("   ");
         Assert.AreEqual("", _catalogo.Descripcion);
     }
     
@@ -131,7 +129,7 @@ public class CatalogoTest
     {
         string d = new string('a', 1);
         
-        _sistema.CambiarDescripcionCatalogo(_catalogo,d);
+        _catalogo.CambiarDescripcion(d);
         
         var largoEsperadoDescripcion = 1;
         
@@ -143,7 +141,7 @@ public class CatalogoTest
     {
         string d = new string('a', 400);
         
-        _sistema.CambiarDescripcionCatalogo(_catalogo,d);
+        _catalogo.CambiarDescripcion(d);
         
         var largoEsperadoDescripcion = 400;
         
@@ -155,7 +153,7 @@ public class CatalogoTest
     {
         string d = new string('a', 401);
         
-        var ex = Assert.ThrowsException<ArgumentException>(() => _sistema.CambiarDescripcionCatalogo(_catalogo,d));
+        var ex = Assert.ThrowsException<ArgumentException>(() => _catalogo.CambiarDescripcion(d));
         
         Assert.AreEqual("La descripcion debe tener entre 1 y 400 caracteres", ex.Message);
     }
@@ -299,4 +297,4 @@ public class CatalogoTest
 
         Assert.IsFalse(resultado);
     }
-    */
+}

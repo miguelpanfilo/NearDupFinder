@@ -2,10 +2,12 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
-using NearDupFInder_LogicaDeNegocio.DTOs.ParaLogin;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+
 
 public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorAuditoria gestorAuditoria, GestorAutenticacionUsuario gestorAutenticacionUsuario)
 {

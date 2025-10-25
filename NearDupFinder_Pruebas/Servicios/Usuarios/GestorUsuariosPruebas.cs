@@ -1,8 +1,9 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
-using NearDupFInder_LogicaDeNegocio.DTOs.ParaLogin;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Usuarios;

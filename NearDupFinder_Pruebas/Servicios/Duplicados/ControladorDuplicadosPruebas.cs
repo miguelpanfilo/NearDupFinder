@@ -1,46 +1,64 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
+[DoNotParallelize]
 [TestClass]
 public class ControladorDuplicadosPruebas
 {
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorDuplicados _gestorDuplicados = null!;
     private GestorCatalogos _gestorCatalogos = null!;
+    private GestorControlClusters _gestorControlClusters = null!;
     private AlmacenamientoDeDatos _almacenamiento = null!;
     private List<ParDuplicado> _duplicadosGlobales = null!;
     private ControladorDuplicados _controladorDuplicados = null!;
-    
-    private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria)
+    private GestorItems _gestorItems = null!;
+    private ControladorItems _controladorItems = null!;
+
+    private Item CrearItem(int catalogoId, string titulo, string desc, string marca, string modelo, string categoria)
     {
-        Item item = new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
+        Item item = _controladorItems.CrearItem(new DatosCrearItem(catalogoId, titulo, desc,categoria, marca, modelo));
+
         return item;
     }
 
-    private static Catalogo CrearCatalogo(string titulo, params Item[] items)
+    private Catalogo CrearCatalogo(string titulo)
     {
-        Catalogo catalogo = new Catalogo(titulo);
-        foreach (Item item in items) catalogo.AgregarItem(item);
-        return catalogo;
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear(titulo));
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(titulo);
+        return catalogo!;
     }
-    
+
     [TestInitialize]
     public void Setup()
     {
+       
+        _almacenamiento = new AlmacenamientoDeDatos();
+        var idsItems = new HashSet<int>();
         _gestorAuditoria = new GestorAuditoria();
         _gestorDuplicados = new GestorDuplicados();
-        _almacenamiento = new AlmacenamientoDeDatos();
         _gestorCatalogos = new GestorCatalogos(_almacenamiento);
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
+
         _duplicadosGlobales = new List<ParDuplicado>();
-        _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados, _gestorCatalogos, _duplicadosGlobales);
+        _controladorDuplicados = new ControladorDuplicados(
+            _gestorAuditoria, _gestorDuplicados, _gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
+
+        _gestorItems = new GestorItems(idsItems);
+        _controladorItems = new ControladorItems(
+            _gestorItems, _gestorCatalogos, _controladorDuplicados, _gestorAuditoria, idsItems);
     }
-    
+
+
     [TestMethod]
     public void ProcesarDuplicadosPorAlta_CatalogoNoExiste_LanzaExcepcionCatalogo()
     {
@@ -55,10 +73,8 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void ProcesarDuplicadosPorAlta_ItemNoExiste_LanzaExcepcionItem()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA);
-        _almacenamiento.AgregarCatalogo(catalogo);
-
+        Catalogo catalogo = CrearCatalogo("Cat");
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
         int idCatalogo = catalogo.Id;
         int idItemInexistente = itemA.Id + 1000;
 
@@ -70,18 +86,17 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void ProcesarDuplicadosPorAlta_DetectaYAgregaADuplicadosGlobales_YSeteaEstadoEnItems()
     {
-        Item itemA = CrearItem("Notebook Lenovo L14", "intel i5 8gb 256gb ssd", "Lenovo", "L14", "Notebooks");
-        Item itemB = CrearItem("notebook lenovo l14", "intel i5 8gb 256gb ssd", "lenovo", "l14", "notebooks");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB);
-        _almacenamiento.AgregarCatalogo(catalogo);
-
-        _controladorDuplicados.ProcesarDuplicados(catalogo.Id, itemA.Id);
+        Catalogo catalogo = CrearCatalogo("Cat");
+        Item itemA = CrearItem(catalogo.Id, "Notebook Lenovo L14", "intel i5 8gb 256gb ssd", "Lenovo", "L14",
+            "Notebooks");
+        Item itemB = CrearItem(catalogo.Id, "notebook lenovo l14", "intel i5 8gb 256gb ssd", "lenovo", "l14",
+            "notebooks");
 
         Assert.AreEqual(1, _duplicadosGlobales.Count);
         Assert.IsTrue(itemA.EstadoDuplicado);
         Assert.IsTrue(itemB.EstadoDuplicado);
     }
-    
+
     [TestMethod]
     public void ActualizarDuplicadosPara_CatalogoNoExiste_LanzaExcepcionCatalogo()
     {
@@ -95,9 +110,8 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void ActualizarDuplicadosPara_ItemNoExiste_LanzaExcepcionItem()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
 
         DatosActualizarDuplicados datos = new DatosActualizarDuplicados(catalogo.Id, itemA.Id + 999);
 
@@ -109,12 +123,12 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void ActualizarDuplicadosPara_EliminaPrevios_RecalculaYActualizaEstados()
     {
-        Item itemA = CrearItem("alpha beta", "lorem ipsum", "m", "x", "c");
-        Item itemB = CrearItem("alpha beta", "lorem ipsum", "m", "x", "c");
-        Item itemC = CrearItem("gamma delta", "otro texto", "", "", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB, itemC);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat3");
 
+        Item itemA = CrearItem(catalogo.Id, "alpha beta", "lorem ipsum", "m", "x", "c");
+        Item itemB = CrearItem(catalogo.Id, "alpha beta", "lorem ipsum", "m", "x", "c");
+        Item itemC = CrearItem(catalogo.Id, "gamma delta", "otro texto", "", "", "c");
+        
         _duplicadosGlobales.Add(new ParDuplicado(
             itemA, itemB, 0.95f, TipoDuplicado.PosibleDuplicado,
             1.0f, 1.0f, 1, 1,
@@ -129,9 +143,9 @@ public class ControladorDuplicadosPruebas
         itemA.Modelo = "";
 
         DatosActualizarDuplicados datos = new DatosActualizarDuplicados(catalogo.Id, itemA.Id);
-
+        
         _controladorDuplicados.ActualizarDuplicadosPara(datos);
-
+            
         Assert.AreEqual(1, _duplicadosGlobales.Count);
         Assert.AreEqual(itemC.Id, _duplicadosGlobales[0].ItemPosibleDuplicado.Id);
 
@@ -139,15 +153,15 @@ public class ControladorDuplicadosPruebas
         Assert.IsFalse(itemB.EstadoDuplicado);
         Assert.IsTrue(itemC.EstadoDuplicado);
     }
-    
+
     [TestMethod]
     public void ObtenerDuplicadosOrdenados_DevuelveDtoOrdenadoPorScoreDesc()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Item itemB = CrearItem("b", "d", "m", "x", "c");
-        Item itemC = CrearItem("c", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB, itemC);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
+        Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
+        Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
         _duplicadosGlobales.Add(new ParDuplicado(
             itemA, itemB, 0.70f, TipoDuplicado.AlertaDuplicado,
@@ -167,15 +181,15 @@ public class ControladorDuplicadosPruebas
         Assert.AreEqual(0.90f, listaDtos[0].Score, 1e-6);
         Assert.AreEqual(0.70f, listaDtos[1].Score, 1e-6);
     }
-    
+
     [TestMethod]
     public void EliminarDuplicadosPrevios_EliminaTodosLosParesQueInvolucranElItem()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Item itemB = CrearItem("b", "d", "m", "x", "c");
-        Item itemC = CrearItem("c", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB, itemC);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
+        Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
+        Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
         _duplicadosGlobales.Add(new ParDuplicado(itemA, itemB, 0.80f, TipoDuplicado.AlertaDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
@@ -186,15 +200,15 @@ public class ControladorDuplicadosPruebas
 
         Assert.AreEqual(0, _duplicadosGlobales.Count);
     }
-    
+
     [TestMethod]
     public void ActualizarEstadoDuplicadosEnCatalogo_SeteaTrueSoloParaItemsEnPares()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Item itemB = CrearItem("b", "d", "m", "x", "c");
-        Item itemC = CrearItem("c", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB, itemC);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
+        Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
+        Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
         _duplicadosGlobales.Add(new ParDuplicado(itemA, itemB, 0.88f, TipoDuplicado.PosibleDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
@@ -205,7 +219,7 @@ public class ControladorDuplicadosPruebas
         Assert.IsTrue(itemB.EstadoDuplicado);
         Assert.IsFalse(itemC.EstadoDuplicado);
     }
-    
+
     [TestMethod]
     public void DescartarParDuplicado_CatalogoNoExiste_LanzaExcepcionCatalogo()
     {
@@ -219,9 +233,8 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void DescartarParDuplicado_ItemANoExiste_LanzaExcepcionItem()
     {
-        Item itemB = CrearItem("b", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemB);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+        Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
 
         DatosDuplicados datos = new DatosDuplicados(catalogo.Id, itemB.Id + 999, itemB.Id);
 
@@ -233,9 +246,8 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void DescartarParDuplicado_ItemBNoExiste_LanzaExcepcionItem()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
 
         DatosDuplicados datos = new DatosDuplicados(catalogo.Id, itemA.Id, itemA.Id + 999);
 
@@ -247,26 +259,28 @@ public class ControladorDuplicadosPruebas
     [TestMethod]
     public void DescartarParDuplicado_ParNoExiste_LanzaExcepcionDuplicado()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Item itemB = CrearItem("b", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
+        Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
 
         DatosDuplicados datos = new DatosDuplicados(catalogo.Id, itemA.Id, itemB.Id);
 
         ExcepcionDuplicado error = Assert.ThrowsException<ExcepcionDuplicado>(() =>
             _controladorDuplicados.DescartarParDuplicado(datos));
-        StringAssert.Contains(error.Message, $"El par (A={itemA.Id}, B={itemB.Id}) no estaba en la lista de duplicados.");
+        StringAssert.Contains(error.Message,
+            $"El par (A={itemA.Id}, B={itemB.Id}) no estaba en la lista de duplicados.");
     }
 
     [TestMethod]
     public void DescartarParDuplicado_EliminaPar_ActualizaEstados()
     {
-        Item itemA = CrearItem("a", "d", "m", "x", "c");
-        Item itemB = CrearItem("b", "d", "m", "x", "c");
-        Item itemC = CrearItem("c", "d", "m", "x", "c");
-        Catalogo catalogo = CrearCatalogo("Cat", itemA, itemB, itemC);
-        _almacenamiento.AgregarCatalogo(catalogo);
+        Catalogo catalogo = CrearCatalogo("Cat");
+
+        Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
+        Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
+        Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
+
 
         _duplicadosGlobales.Add(new ParDuplicado(itemA, itemB, 0.80f, TipoDuplicado.AlertaDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));

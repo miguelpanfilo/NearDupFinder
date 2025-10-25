@@ -1,10 +1,9 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
-using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios.Items;
+namespace NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 public class ControladorItems
 {
@@ -87,7 +86,8 @@ public class ControladorItems
             item.EditarMarca(itemDtoActualizar.Marca);
         if (itemDtoActualizar.Modelo is not null)
             item.EditarModelo(itemDtoActualizar.Modelo);
-
+        
+        
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.EditarItem,
             $"Ítem actualizado (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."

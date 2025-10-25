@@ -1,4 +1,4 @@
-namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaLogin;
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 
 public class DatosAutenticacion(string email, string clave)
 {

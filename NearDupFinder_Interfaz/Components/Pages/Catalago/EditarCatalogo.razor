@@ -74,7 +74,7 @@ else
                 return;
             }
 
-            GestorCatalogos.ModificarCampos(new DatosCatalogoEditar(Id, _titulo, _descripcion));
+            GestorCatalogos.ModificarCatalogo(new DatosCatalogoEditar(Id, _titulo, _descripcion));
             
             Nav.NavigateTo("/CrearCatalogo");
         }catch (InvalidOperationException ex)

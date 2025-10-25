@@ -1,9 +1,8 @@
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
-using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios.Importacion;
+namespace NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 
 public readonly struct Fila(
     string id,

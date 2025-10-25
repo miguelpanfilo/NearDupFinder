@@ -1,9 +1,9 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFInder_LogicaDeNegocio.DTOs.ParaLogin;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 
-namespace NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+namespace NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
 public class GestorAutenticacionUsuario(AlmacenamientoDeDatos almacenamiento)
 {

@@ -2,8 +2,8 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
-using NearDupFInder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_Pruebas.Servicios.Items;
 
@@ -14,6 +14,7 @@ public class GestorItemPruebas
     private GestorItems _gestorItems = null!;
     private GestorCatalogos _gestorCatalogos = null!;
     private GestorAuditoria _gestorAuditoria = null!;
+    private GestorControlClusters _gestorControlClusters = null!;
     private Catalogo _catalogo = null!;
     private HashSet<int> _idsItemsGlobal = null!;
     private List<ParDuplicado> _duplicadosGlobales = null!;
@@ -28,11 +29,12 @@ public class GestorItemPruebas
         _gestorCatalogos = new GestorCatalogos(almacenamiento);
         _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();
-
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
         var gestorControlDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             gestorDuplicados,
             _gestorCatalogos,
+            _gestorControlClusters,
             _duplicadosGlobales
         );
 

@@ -2,8 +2,9 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
-using NearDupFInder_LogicaDeNegocio.DTOs.ParaLogin;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Usuarios;
@@ -13,6 +14,7 @@ public class GestorAutenticacionUsuarioPruebas
 {
     private GestorAutenticacionUsuario _gestorAutenticacionUsuario = null!;
     private AlmacenamientoDeDatos _almacenamiento = null!;
+    
     private GestorUsuarios _gestorUsuarios = null!;
     private GestorAuditoria _gestorAuditoria = null!;
 

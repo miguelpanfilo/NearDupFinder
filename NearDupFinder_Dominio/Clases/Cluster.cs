@@ -5,25 +5,26 @@ public class Cluster
     public int Id { get; }
     private readonly HashSet<Item> _pertenecientesCluster;
     public Item? Canonico { get; set; }
-    public  IEnumerable<Item> PertenecientesCluster => _pertenecientesCluster;
+    public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
 
-    public  Cluster(int id, HashSet<Item> pertenecientesCluster)
+    public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
         Id = id;
         _pertenecientesCluster = pertenecientesCluster;
     }
-    
+
     public void Agregar(Item item)
     {
         _pertenecientesCluster.Add(item);
     }
-    
+
     public void Remover(Item item)
     {
         _pertenecientesCluster.Remove(item);
     }
+
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
-    
+
     public bool FusionarCanonico()
     {
         if (_pertenecientesCluster.Count == 0)
@@ -43,14 +44,13 @@ public class Cluster
 
         FusionarCampos(Canonico, _pertenecientesCluster);
 
-        return cambio; 
+        return cambio;
     }
-    
+
     private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
     {
-        
-        canonico.Marca     = ElegirMejorCampo(canonico.Marca,     miembros.Select(m => m.Marca));
-        canonico.Modelo    = ElegirMejorCampo(canonico.Modelo,    miembros.Select(m => m.Modelo));
+        canonico.Marca = ElegirMejorCampo(canonico.Marca, miembros.Select(m => m.Marca));
+        canonico.Modelo = ElegirMejorCampo(canonico.Modelo, miembros.Select(m => m.Modelo));
         canonico.Categoria = ElegirMejorCampo(canonico.Categoria, miembros.Select(m => m.Categoria));
     }
 
@@ -66,8 +66,7 @@ public class Cluster
             .OrderByDescending(v => v.Length)
             .ThenBy(v => v, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
-        
+
         return mejor ?? actualCanonico;
     }
-    
 }

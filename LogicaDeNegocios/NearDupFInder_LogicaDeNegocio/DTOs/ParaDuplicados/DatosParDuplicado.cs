@@ -1,6 +1,6 @@
-using NearDupFInder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
-namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaDuplicados;
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 
 public class DatosParDuplicado(
     int idItemAComparar,
