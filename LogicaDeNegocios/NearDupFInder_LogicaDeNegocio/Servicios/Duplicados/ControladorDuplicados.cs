@@ -45,6 +45,7 @@ public class ControladorDuplicados(
                            ?? throw new ExcepcionItem($"Ítem no encontrado (Id={datosActualizarDuplicados.IdItem}).");
 
         EliminarDuplicadosPrevios(itemEditado);
+        
         gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemEditado.Id, catalogo.Id));
 
         List<ParDuplicado> nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);

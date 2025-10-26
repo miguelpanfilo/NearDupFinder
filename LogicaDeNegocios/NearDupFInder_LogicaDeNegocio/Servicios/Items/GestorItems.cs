@@ -7,19 +7,14 @@ public class GestorItems
     private readonly HashSet<int> _idsItemsGlobal;
 
     public GestorItems(
-       HashSet<int> idsItemsGlobal)
+        HashSet<int> idsItemsGlobal)
     {
-       
         _idsItemsGlobal = idsItemsGlobal;
     }
+
     public void AsegurarIdUnicoPublic(Item item)
     {
         AsegurarIdUnico(item);
-    }
-
-    public void AgregarIdAGlobal(int id)
-    {
-        _idsItemsGlobal.Add(id);
     }
 
     private void AsegurarIdUnico(Item item)
@@ -35,5 +30,4 @@ public class GestorItems
     {
         return _idsItemsGlobal.Contains(id);
     }
-
 }

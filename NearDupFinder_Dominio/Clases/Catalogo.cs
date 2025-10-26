@@ -109,9 +109,7 @@ public class Catalogo
     public void RemoverItemDeCluster(Cluster c, Item item) => c.Remover(item);
 
     public void EliminarCluster(Cluster c) => _clusters.Remove(c.Id);
-
-    public int CantidadEnCluster(Cluster c) => c.PertenecientesCluster.Count();
-
+    
     public Cluster? ObtenerClusterDe(Item item)
     {
         return _clusters.Values.FirstOrDefault(c => c.PertenecientesCluster.Contains(item));
