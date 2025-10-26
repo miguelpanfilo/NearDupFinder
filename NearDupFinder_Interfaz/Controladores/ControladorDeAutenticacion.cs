@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Interfaz.Controladores;

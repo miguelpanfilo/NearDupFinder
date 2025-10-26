@@ -3,6 +3,9 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
+using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
+using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 

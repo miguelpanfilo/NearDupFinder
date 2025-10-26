@@ -2,8 +2,9 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 
-namespace NearDupFinder_Pruebas.Servicios;
+namespace NearDupFinder_Pruebas.Servicios.Catalogos;
 
 [TestClass]
 public class GestorCatalogoPruebas

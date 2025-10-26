@@ -3,7 +3,7 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 
 public class GestorCatalogos
 {

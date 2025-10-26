@@ -1,5 +1,6 @@
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
+using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Importacion;

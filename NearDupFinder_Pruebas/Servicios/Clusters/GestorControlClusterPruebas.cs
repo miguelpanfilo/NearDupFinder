@@ -1,12 +1,15 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
+using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
+using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 
-namespace NearDupFinder_Pruebas.Servicios
+namespace NearDupFinder_Pruebas.Servicios.Clusters
 {
     [TestClass]
     public class GestorControlClusterPruebas

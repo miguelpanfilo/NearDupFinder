@@ -2,9 +2,10 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
+using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
+using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 
-
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 
 public class GestorControlClusters
 {
