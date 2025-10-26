@@ -31,9 +31,9 @@ public class Item
         {
             int tituloLargoInavlido = 120;
             if (string.IsNullOrWhiteSpace(value))
-                throw new ExcepcionDeItem("El Título es obligatorio");
+                throw new ExcepcionItem("El Título es obligatorio");
             if (value.Length > tituloLargoInavlido)
-                throw new ExcepcionDeItem("El Título no puede superar 120 caracteres.");
+                throw new ExcepcionItem("El Título no puede superar 120 caracteres.");
             _titulo = value;
         }
     }
@@ -44,9 +44,9 @@ public class Item
         {
             int descripcionLargoInavlido = 400;
             if (string.IsNullOrWhiteSpace(value))
-                throw new ExcepcionDeItem("La Descripción es obligatoria.");
+                throw new ExcepcionItem("La Descripción es obligatoria.");
             if (value.Length > descripcionLargoInavlido)
-                throw new ExcepcionDeItem("La descripcion no puede superar 400 caracteres.");
+                throw new ExcepcionItem("La descripcion no puede superar 400 caracteres.");
             _descripcion = value;
         }
     }
@@ -57,7 +57,7 @@ public class Item
         {
             int marcaLargoInavlido = 60;
             if (value != null && value.Length > marcaLargoInavlido)
-                throw new ExcepcionDeItem("La marca no puede superar 60 caracteres.");
+                throw new ExcepcionItem("La marca no puede superar 60 caracteres.");
             _marca = value;
         }
     }
@@ -68,7 +68,7 @@ public class Item
         {
             int modeloLargoInavlido = 60;
             if (value != null && value.Length > modeloLargoInavlido)
-                throw new ExcepcionDeItem("El modelo no puede superar 60 caracteres.");
+                throw new ExcepcionItem("El modelo no puede superar 60 caracteres.");
             _modelo = value;
         }
     }
@@ -79,7 +79,7 @@ public class Item
         {
             int categoriaLargoInavlido = 40;
             if (value != null && value.Length > categoriaLargoInavlido)
-                throw new ExcepcionDeItem("La categoria no puede superar 40 caracteres.");
+                throw new ExcepcionItem("La categoria no puede superar 40 caracteres.");
             _categoria = value;
         }
     }
@@ -107,7 +107,7 @@ public class Item
     {
         int idItemInexistente = 0;
         if (id == idItemInexistente)
-            throw new ExcepcionDeItem("El id no es valido");
+            throw new ExcepcionItem("El id no es valido");
         Id = id;
         _siguienteId = id + 1;
     }
@@ -115,7 +115,7 @@ public class Item
     {
         int idItemInexistente = 0;
         if (id == idItemInexistente)
-            throw new ExcepcionDeItem("El id no es valido");
+            throw new ExcepcionItem("El id no es valido");
         _siguienteId--;
         Id = id;
     }

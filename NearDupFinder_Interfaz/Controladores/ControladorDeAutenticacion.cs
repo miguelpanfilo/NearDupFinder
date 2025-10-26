@@ -3,31 +3,40 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NearDupFinder_LogicaDeNegocio;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
+using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
+using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
-namespace NearDupFinder_Interfaz.Controllers;
+namespace NearDupFinder_Interfaz.Controladores;
 
 [Route("auth")]
 public class ControladorDeAutenticacion : ControllerBase
 {
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] Sistema sistema)
+    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] GestorAutenticacionUsuario gestorAutenticacionUsuario,
+        [FromServices] GestorInicializacion gestorInicializacion,[FromServices] GestorAuditoria gestorAuditoria)
     {
-        var usuario = sistema.ValidarUsuario(email, clave);
-        if (usuario is null) 
+        gestorInicializacion.AsegurarInicializacion();
+        
+        DatosAutenticacion datosAutenticacion = new DatosAutenticacion(email, clave);
+        bool elUsuarioExiste = gestorAutenticacionUsuario.AutenticarUsuarioBooleano(datosAutenticacion);
+        if (!elUsuarioExiste)
             return Redirect("/login?error=1");
         
-        sistema.AsignarUsuarioActual(usuario.Email.ToString());
+        DatosIdentificacion usuario = gestorAutenticacionUsuario.AutenticarUsuarioDto(datosAutenticacion);
+
+        gestorAuditoria.AsignarUsuarioActual(usuario.Email); 
 
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, usuario.Nombre),
-            new(ClaimTypes.Email, usuario.Email.ToString()),
+            new(ClaimTypes.Email, usuario.Email),
             new(ClaimTypes.NameIdentifier, usuario.Id.ToString())
         };
-        foreach (var rol in usuario.ObtenerRoles())
-            claims.Add(new Claim(ClaimTypes.Role, rol.ToString()));
+        foreach (string rol in usuario.Roles)
+            claims.Add(new Claim(ClaimTypes.Role, rol));
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
@@ -36,9 +45,9 @@ public class ControladorDeAutenticacion : ControllerBase
 
     [HttpPost("logout")]
     [AllowAnonymous]
-    public async Task<IActionResult> Logout([FromServices] Sistema sistema)
+    public async Task<IActionResult> Logout([FromServices] GestorAuditoria gestorAuditoria)
     {
-        sistema.DesasignarUsuario();
+        gestorAuditoria.DesasignarUsuario();
 
         await HttpContext.SignOutAsync();
         return Redirect("/login");

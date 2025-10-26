@@ -1,11 +1,15 @@
 @page "/cambiar-clave-usuario"
+
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
-@using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin
+@using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios
+@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
 @inject AuthenticationStateProvider Auth
-@inject Sistema Sistema
+@inject GestorUsuarios GestorUsuarios
+@inject GestorAutenticacionUsuario GestorAutenticacionUsuario
 
 <PageTitle>Cambiar contraseña</PageTitle>
 
@@ -54,14 +58,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var user = (await Auth.GetAuthenticationStateAsync()).User;
-        _email = user.FindFirst(ClaimTypes.Email)?.Value;
+        ClaimsPrincipal claimPrincipalUsuario = (await Auth.GetAuthenticationStateAsync()).User;
+        _email = claimPrincipalUsuario.FindFirst(ClaimTypes.Email)?.Value;
     }
 
     private void CambiarClave()
     {
-        Usuario? usuarioAutenticado = Sistema.ValidarUsuario(_email, _claveVieja);
-        if (usuarioAutenticado is null)
+        bool usuarioAutenticado = GestorAutenticacionUsuario.AutenticarUsuarioBooleano(new DatosAutenticacion(_email!, _claveVieja!));
+        if (!usuarioAutenticado)
         {        
             NotificarError("La contraseña actual no es la correcta.");
             LimpiarCampos();
@@ -69,7 +73,7 @@
             return;
         }
         
-        bool seModificoLaClave = Sistema.ModificarClave(_email!,_claveVieja!, _claveNueva);
+        bool seModificoLaClave = GestorUsuarios.ModificarClave(new DatosCambioClave(_email,_claveVieja, _claveNueva));
         if (seModificoLaClave)
         {
             NotificarExito("La contraseña fue cambiada correctamente.");

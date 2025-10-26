@@ -1,0 +1,177 @@
+@page "/duplicados"
+
+@using System.Text.RegularExpressions
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados
+@using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados
+
+@inject ControladorDuplicados ControladorDuplicados;
+@rendermode InteractiveServer
+
+<PageTitle>Duplicados</PageTitle>
+
+<h3>Detección de Duplicados</h3>
+
+@if (_duplicados.Count == 0 )
+{
+    <div>No se encontraron duplicados.</div>
+}
+else
+{
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Posible duplicado</th>
+            <th>Jaccard Título</th>
+            <th>Jaccard Descripción</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Score Total</th>
+            <th>Estado</th> 
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (DatosParDuplicado duplicado in _duplicados)
+        {
+            <tr>
+                <td>@duplicado.TituloItemAComparar</td>
+                <td>@duplicado.TituloItemPosibleDuplicado</td>
+                <td>@duplicado.JaccardTitulo.ToString("0.00")</td>
+                <td>@duplicado.JaccardDescripcion.ToString("0.00")</td>
+                <td>@duplicado.ScoreMarca</td>
+                <td>@duplicado.ScoreModelo</td>
+                <td>@duplicado.Score.ToString("0.00")</td>
+                <td>@duplicado.Tipo</td>
+                <td>
+                    <button class="btn btn-success btn-sm me-1" @onclick="() => ConfirmarDuplicado(duplicado)" title="Confirmar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-check2" viewBox="0 0 16 16">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                        </svg>
+                    </button>
+
+                    <button class="btn btn-info btn-sm" @onclick="() => AbrirModalComparar(duplicado)" title="Comparar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-left-right ms-1" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5"/>
+                        </svg>
+                    </button>
+
+                    <button class="btn btn-danger btn-sm me-1" @onclick="() => DesacrtarDuplicado(duplicado)" title="Descartar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+@if (_mostrarModalComparar && _duplicadoSeleccionado is not null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comparar Items</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalComparar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6 border-end">
+                            <h6>Item A</h6>
+                            <p><b>Título:</b> @ResaltarTokens(_duplicadoSeleccionado.TituloItemAComparar, _duplicadoSeleccionado.TokensCompartidosTitulo)</p>
+                            <p><b>Descripción:</b> @ResaltarTokens(_duplicadoSeleccionado.DescripcionItemAComparar, _duplicadoSeleccionado.TokensCompartidosDescripcion)</p>
+                            <p><b>Marca:</b> @_duplicadoSeleccionado.MarcaItemAComparar</p>
+                            <p><b>Modelo:</b> @_duplicadoSeleccionado.ModeloItemAComparar</p>
+                        </div>
+                        <div class="col-6">
+                            <h6>Item B</h6>
+                            <p><b>Título:</b> @ResaltarTokens(_duplicadoSeleccionado.TituloItemPosibleDuplicado, _duplicadoSeleccionado.TokensCompartidosTitulo)</p>
+                            <p><b>Descripción:</b> @ResaltarTokens(_duplicadoSeleccionado.DescripcionItemPosibleDuplicado, _duplicadoSeleccionado.TokensCompartidosDescripcion)</p>
+                            <p><b>Marca:</b> @_duplicadoSeleccionado.MarcaItemPosibleDuplicado</p>
+                            <p><b>Modelo:</b> @_duplicadoSeleccionado.ModeloItemPosibleDuplicado</p>
+                        </div>
+                    </div>
+                    <p><b>Score Total:</b> @_duplicadoSeleccionado.Score</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CerrarModalComparar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<DatosParDuplicado> _duplicados = new();
+    private bool _mostrarModalComparar;
+    private DatosParDuplicado? _duplicadoSeleccionado;
+
+    protected override void OnInitialized()
+    {
+        CargarDuplicados();
+    }
+
+    private void CargarDuplicados()
+    {
+        _duplicados = ControladorDuplicados.ObtenerDuplicadosOrdenados();
+    }
+
+    private void ConfirmarDuplicado(DatosParDuplicado duplicado)
+    {
+        DatosDuplicados datosDuplicados = new DatosDuplicados(duplicado.IdCatalogo,
+            duplicado.IdItemAComparar,
+            duplicado.IdItemPosibleDuplicado);
+
+        ControladorDuplicados.ConfirmarParDuplicado(datosDuplicados);
+        _duplicados.Remove(duplicado);
+    }
+
+    private void DesacrtarDuplicado(DatosParDuplicado duplicado)
+    {
+        var datosDuplicados = new DatosDuplicados(duplicado.IdCatalogo,
+            duplicado.IdItemAComparar,
+            duplicado.IdItemPosibleDuplicado);
+
+        ControladorDuplicados.DescartarParDuplicado(datosDuplicados);
+        _duplicados.Remove(duplicado);
+    }
+
+    private void AbrirModalComparar(DatosParDuplicado duplicado)
+    {
+        _duplicadoSeleccionado = duplicado;
+        _mostrarModalComparar = true;
+    }
+
+    private void CerrarModalComparar()
+    {
+        _duplicadoSeleccionado = null;
+        _mostrarModalComparar = false;
+    }
+    
+    private MarkupString ResaltarTokens(string? textoOriginal, string[]? tokensCompartidos)
+    {
+        string texto = textoOriginal ?? string.Empty;
+
+        if (string.IsNullOrEmpty(texto) || tokensCompartidos == null || tokensCompartidos.Length == 0)
+            return (MarkupString)texto;
+
+        string resultado = texto;
+
+        foreach (string token in tokensCompartidos.Distinct())
+        {
+            if (string.IsNullOrWhiteSpace(token)) 
+                continue;
+
+            resultado = Regex.Replace(
+                resultado,
+                $@"\b{Regex.Escape(token)}\b",
+                $"<span class='bg-warning'>{token}</span>",
+                RegexOptions.IgnoreCase
+            );
+        }
+        return (MarkupString)resultado;
+    }
+
+}

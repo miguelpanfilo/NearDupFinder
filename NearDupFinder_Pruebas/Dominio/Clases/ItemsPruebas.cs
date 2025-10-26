@@ -16,7 +16,7 @@ public class ItemsPruebas
     public void TestItems_CrearItemTituloLargo_Fallo()
     {
         string tituloLargo = new string('a', 121);
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        var error = Assert.ThrowsException<ExcepcionItem>(() =>
             new Item(tituloLargo, "Descripcion válida")
         );
         Assert.AreEqual("El Título no puede superar 120 caracteres.", error.Message);
@@ -43,21 +43,21 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItems_CrearItemTitulo_Vacio_Fallo()
     {
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => new Item("", "Descripcion"));
+        var error = Assert.ThrowsException<ExcepcionItem>(() => new Item("", "Descripcion"));
         Assert.AreEqual("El Título es obligatorio", error.Message);
     }
 
     [TestMethod]
     public void TestItems_CrearItemTituloSoloEspacios_Fallo()
     {
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => new Item("   ", "Descripcion"));
+        var error = Assert.ThrowsException<ExcepcionItem>(() => new Item("   ", "Descripcion"));
         Assert.AreEqual("El Título es obligatorio", error.Message);
     }
     
     [TestMethod]
     public void TestItems_CrearItemDescripcion_Vacio_Fallo()
     { 
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => 
+        var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item(
                 "Titulo válido",
                 "",          
@@ -72,7 +72,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItems_CrearItemDescripcion_Solo_Espacios_Fallo()
     { 
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => 
+        var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item(
                 "Titulo válido",
                 "   ",       
@@ -88,7 +88,7 @@ public class ItemsPruebas
     public void TestItems_CrearItemDescripcion_Largo_Fallo()
     {
         string descripcion = new string('A', 401);
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => 
+        var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item("Titulo", descripcion) 
         );
         Assert.AreEqual("La descripcion no puede superar 400 caracteres.", error.Message);
@@ -98,7 +98,7 @@ public class ItemsPruebas
     public void TestItems_CrearItemMarcaLargo_Fallo()
     {
         string marca = new string('A', 61);
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => 
+        var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item("Titulo", "descripcion", marca) 
         );
         Assert.AreEqual("La marca no puede superar 60 caracteres.", error.Message);
@@ -108,7 +108,7 @@ public class ItemsPruebas
     public void TestItems_CrearItemModeloLargo_Fallo()
     {
         string modelo = new string('A', 61);
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => 
+        var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item("Titulo", "descripcion", null, modelo) 
         );
         Assert.AreEqual("El modelo no puede superar 60 caracteres.", error.Message);
@@ -118,7 +118,7 @@ public class ItemsPruebas
     public void TestItems_CrearItemCategoriaLargo_Fallo()
     {
         string categoria = new string('A', 41);
-        var error = Assert.ThrowsException<ExcepcionDeItem>(() => 
+        var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item("Titulo", "descripcion", null, null, categoria) 
         );
         Assert.AreEqual("La categoria no puede superar 40 caracteres.", error.Message);
@@ -242,7 +242,7 @@ public class ItemsPruebas
         Item item = new Item("Titulo original", "Descripcion original");
         item.EditarTitulo("TituloValido");
         Assert.AreEqual("TituloValido", item.Titulo);
-        ExcepcionDeItem error = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
         {
             item.EditarTitulo(null);
         });
@@ -256,7 +256,7 @@ public class ItemsPruebas
         Item item = new Item("Titulo original", "Descripcion original");
         item.EditarDescripcion("DescripcionValida");
         Assert.AreEqual("DescripcionValida", item.Descripcion);
-        ExcepcionDeItem exception = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        ExcepcionItem exception = Assert.ThrowsException<ExcepcionItem>(() =>
         {
             item.EditarDescripcion("");
         });
@@ -269,7 +269,7 @@ public class ItemsPruebas
         Item item = new Item("Titulo", "Descripcion");
         item.EditarMarca("MarcaValida");
         Assert.AreEqual("MarcaValida", item.Marca);
-        ExcepcionDeItem error = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
         {
             item.EditarMarca(new string('A', 61));
         });
@@ -281,7 +281,7 @@ public class ItemsPruebas
         Item item = new Item("Titulo", "Descripcion");
         item.EditarModelo("ModeloValido");
         Assert.AreEqual("ModeloValido", item.Modelo);
-        ExcepcionDeItem error = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
         {
             item.EditarModelo(new string('B', 61));
         });
@@ -294,7 +294,7 @@ public class ItemsPruebas
         Item item = new Item("Titulo", "Descripcion");
         item.EditarCategoria("CategoriaValida");
         Assert.AreEqual("CategoriaValida", item.Categoria);
-        ExcepcionDeItem error = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
         {
             item.EditarCategoria(new string('C', 41));
         });
@@ -357,7 +357,7 @@ public class ItemsPruebas
     {
         Item item = new Item("Titulo", "Descripcion");
         int idNuevo = 0;
-        ExcepcionDeItem error = Assert.ThrowsException<ExcepcionDeItem>(() =>
+        ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
         {
             item.AjustarId(idNuevo);
         });

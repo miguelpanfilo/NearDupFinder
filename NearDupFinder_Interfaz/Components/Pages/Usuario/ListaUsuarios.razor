@@ -1,10 +1,10 @@
 @page "/usuarios"
 
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
+@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
 @attribute [Authorize(Roles = "Administrador")]
-@inject Sistema Sistema
+@inject GestorUsuarios GestorUsuarios
 
 <PageTitle>Usuarios</PageTitle>
 
@@ -39,16 +39,16 @@
         <tbody>
         @foreach (var usuario in _usuarios!)
         {
-            var roles = Sistema.ObtenerRolesDeUsuario(usuario);
+            IReadOnlyCollection<string> roles = usuario.Roles;
             <tr>
                 <td>@usuario.Nombre</td>
                 <td>@usuario.Apellido</td>
-                <td>@usuario.Email.ToString()</td>
-                <td>@usuario.FechaNacimiento.ToString()</td>
+                <td>@usuario.Email</td>
+                <td>@usuario.FechaNacimiento</td>
                 <td>
                     @if (roles.Any())
                     {
-                        @string.Join(", ", roles.Select(r => r.ToString()))
+                        @string.Join(", ", roles.Select(rol => rol))
                     }
                     else
                     {
@@ -58,7 +58,7 @@
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
                         <a class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
-                           href="usuarios/@usuario.Id/editar"
+                           href="usuarios/@GestorUsuarios.ObtenerIdDeUsuario(usuario.Email)/editar"
                            aria-label="Editar" title="Editar">
                             <i class="bi bi-pencil-square fs-6 lh-1"></i>
                         </a>
@@ -77,22 +77,23 @@
 </div>
 
 @code {
-    private IReadOnlyList<Usuario>? _usuarios;
+    private IReadOnlyList<DatosPublicosUsuario>? _usuarios;
     private bool _error;
     private string _mensajeDeError = string.Empty;
 
 
     protected override void OnInitialized()
     {
-        _usuarios = Sistema.ObtenerUsuarios();
+        _usuarios = GestorUsuarios.ObtenerUsuarios();
     }
 
-    private void EliminarUsuario(Email correo)
+    private void EliminarUsuario(string correo)
     {
-        bool seEliminoElUsuario = Sistema.EliminarUsuario(correo.ToString());
+        bool seEliminoElUsuario = GestorUsuarios.BorrarUsuario(correo);
         if(!seEliminoElUsuario)
             NotificarError("Error al intentar eliminar el usuario.");
-        _usuarios = Sistema.ObtenerUsuarios();
+        
+        _usuarios = GestorUsuarios.ObtenerUsuarios();
         StateHasChanged();
     }
     
