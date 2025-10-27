@@ -69,6 +69,20 @@ namespace NearDupFinder_Pruebas.Servicios
                 "Los logs deberían estar ordenados por fecha ascendente.");
         }
 
+        [TestMethod]
+        public void GenerarCsvBytes_DeberiaGenerarArchivoConEncabezadosYDelimitadorCorrecto()
+        {
+            var bytes = _gestorExportacion.GenerarCsvBytes(
+                new DateTime(2025, 10, 25),
+                new DateTime(2025, 10, 28)
+            );
+
+            var contenido = System.Text.Encoding.UTF8.GetString(bytes);
+
+            StringAssert.Contains(contenido, "Fecha y hora | Usuario | Acción | Descripción");
+            StringAssert.Contains(contenido, "user@test.com");
+            Assert.IsTrue(contenido.Contains("|"), "El archivo debe usar '|' como delimitador.");
+        }
 
 
     }
