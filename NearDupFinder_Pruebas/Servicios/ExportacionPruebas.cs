@@ -83,6 +83,25 @@ namespace NearDupFinder_Pruebas.Servicios
             StringAssert.Contains(contenido, "user@test.com");
             Assert.IsTrue(contenido.Contains("|"), "El archivo debe usar '|' como delimitador.");
         }
+        
+        [TestMethod]
+        public void GenerarXlsxBytes_DeberiaCrearArchivoConHojaYDatosCorrectos()
+        {
+            var bytes = _gestorExportacion.GenerarXlsxBytes(
+                new DateTime(2025, 10, 25),
+                new DateTime(2025, 10, 28)
+            );
+
+            Assert.IsTrue(bytes.Length > 0, "El archivo XLSX no debería estar vacío.");
+
+            using var memoria = new MemoryStream(bytes);
+            using var hojaExcel = new XLWorkbook(stream);
+            var hoja = hojaExcel.Worksheets.First();
+
+            Assert.AreEqual("Auditorías", hoja.Name);
+            Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
+            Assert.AreEqual("user@test.com", hoja.Cell(2, 2).Value);
+        }
 
 
     }
