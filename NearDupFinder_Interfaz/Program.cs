@@ -1,5 +1,6 @@
 using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -91,6 +92,9 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddDbContext<SqlContext>(opts =>
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

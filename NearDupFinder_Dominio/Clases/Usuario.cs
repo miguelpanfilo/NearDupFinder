@@ -11,15 +11,15 @@ public enum Rol
 public class Usuario
 {
     private static int _nextId = 1;
-    public int Id { get; }
+    public int Id { get; set;}
     public string Nombre { get; set; }
     public string Apellido { get; set; }
-    public Email Email { get; }
+    public Email Email { get; set; }
     public Fecha FechaNacimiento { get; set; }
 
-    private readonly HashSet<Rol> _roles = new();
+    private HashSet<Rol> Roles { get; set; }
     
-    private Clave? _clave;
+    private Clave? Clave { get; set; }
     
     private Usuario(string nombre, string apellido, Email email, Fecha fechaNacimiento)
     {
@@ -27,8 +27,9 @@ public class Usuario
         Apellido = apellido;
         Email = email;
         FechaNacimiento = fechaNacimiento;
-        _clave = new Clave();
+        Clave = new Clave();
         Id = _nextId++;
+        Roles = new HashSet<Rol>();
     }
     
     public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
@@ -43,22 +44,22 @@ public class Usuario
 
     public void AgregarRol(Rol rol)
     {
-        _roles.Add(rol);
+        Roles.Add(rol);
     }
     
     public void RemoverRol(Rol rol)
     {
-        _roles.Remove(rol);
+        Roles.Remove(rol);
     }
 
     public bool TieneRol(Rol rol)
     {
-        return _roles.Contains(rol);
+        return Roles.Contains(rol);
     }
 
     public IReadOnlyCollection<Rol> ObtenerRoles()
     {
-        return _roles.ToList().AsReadOnly();
+        return Roles.ToList().AsReadOnly();
     }
     
     public bool Igual(Usuario otroUsuario)
@@ -70,12 +71,12 @@ public class Usuario
     {
         if(string.IsNullOrEmpty(clave))
             return false;
-        return _clave!.Verificar(clave);
+        return Clave!.Verificar(clave);
     }
     
     public bool CambiarClave(Clave nuevaClave)
     {
-        _clave = nuevaClave; 
+        Clave = nuevaClave; 
         return true;
     }
 }

@@ -5,15 +5,20 @@ namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Fecha
 {
-    private readonly int _anio;
-    private readonly int _mes;
-    private readonly int _dia;
+    private static int _siguienteId = 1;
+
+    private int Id { get; set; }
     
-    private Fecha(int anio, int mes, int dia)
+    private int Anio { get; set; }
+    private int Mes { get; set; }
+    private int Dia { get; set; }
+    
+    public Fecha(int anio, int mes, int dia)
     {
-        _anio = anio;
-        _mes  = mes;
-        _dia  = dia;
+        Anio = anio;
+        Mes  = mes;
+        Dia  = dia;
+        Id = _siguienteId++;
     }
     
     public static Fecha Crear(int anio, int mes, int dia)
@@ -31,11 +36,11 @@ public sealed class Fecha
 
     public override string ToString()
     {
-        return new DateTime(_anio, _mes, _dia).ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
+        return new DateTime(Anio, Mes, Dia).ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
     }
 
     public DateTime ToDateTime()
     {
-        return new DateTime(_anio, _mes, _dia);
+        return new DateTime(Anio, Mes, Dia);
     }
 }
