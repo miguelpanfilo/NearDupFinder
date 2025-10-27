@@ -57,6 +57,18 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.IsNotNull(resultado);
             Assert.AreEqual(0, resultado.Count, "No debería devolver logs fuera del rango.");
         }
+        [TestMethod]
+        public void FiltrarAuditoriasPorFecha_DeberiaOrdenarPorFechaAscendente()
+        {
+            var desde = new DateTime(2025, 10, 20);
+            var hasta = new DateTime(2025, 10, 30);
+
+            var resultado = _gestorExportacion.FiltrarAuditoriasPorFecha(desde, hasta);
+
+            Assert.IsTrue(resultado.SequenceEqual(resultado.OrderBy(l => l.Timestamp)),
+                "Los logs deberían estar ordenados por fecha ascendente.");
+        }
+
 
 
     }
