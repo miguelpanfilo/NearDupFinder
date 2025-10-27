@@ -25,14 +25,14 @@ public class GestorExportacionAuditoria
     
     public byte[] GenerarCsvBytes(DateTime fechaInicial, DateTime fechaFinal)
     {
-        var logs = FiltrarAuditoriasPorFecha(fechaInicial, fechaFinal);
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        var logsFiltrados = FiltrarAuditoriasPorFecha(fechaInicial, fechaFinal);
+        var configuracionDeLineasCsv = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             Delimiter = " | ", 
         };
-        using var ms = new MemoryStream();
-        using (var writer = new StreamWriter(ms))
-        using (var csv = new CsvWriter(writer, config))
+        using var archivoDeMemoriaVirtual = new MemoryStream();
+        using (var writer = new StreamWriter(archivoDeMemoriaVirtual))
+        using (var csv = new CsvWriter(writer, configuracionDeLineasCsv))
         {
             csv.WriteField("Fecha y hora");
             csv.WriteField("Usuario");
@@ -40,7 +40,7 @@ public class GestorExportacionAuditoria
             csv.WriteField("Descripción");
             csv.NextRecord();
 
-            foreach (var log in logs)
+            foreach (var log in logsFiltrados)
             {
                 csv.WriteField(log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
                 csv.WriteField(log.Usuario);
@@ -52,7 +52,7 @@ public class GestorExportacionAuditoria
             writer.Flush();
         }
 
-        return ms.ToArray();
+        return archivoDeMemoriaVirtual.ToArray();
     }
     
 }
