@@ -1,4 +1,5 @@
 using System.Globalization;
+using ClosedXML.Excel;
 using CsvHelper;
 using CsvHelper.Configuration;
 using NearDupFinder_Dominio.Clases;
@@ -54,5 +55,54 @@ public class GestorExportacionAuditoria
 
         return archivoDeMemoriaVirtual.ToArray();
     }
-    
+     public byte[] GenerarXlsxBytes(DateTime fechaInicial, DateTime fechaFinal)
+    {
+        var audtoriasLogueadas = FiltrarAuditoriasPorFecha(fechaInicial, fechaFinal);
+
+        using var hojaExcel = new XLWorkbook();
+        var hojaVirtualExcel = hojaExcel.Worksheets.Add("Auditorías");
+
+        hojaVirtualExcel.Cell(1, 1).Value = "Fecha y hora";
+        hojaVirtualExcel.Cell(1, 2).Value = "Usuario";
+        hojaVirtualExcel.Cell(1, 3).Value = "Acción";
+        hojaVirtualExcel.Cell(1, 4).Value = "Descripción";
+
+        var rangoEncabezado = hojaVirtualExcel.Range("A1:D1");
+        rangoEncabezado.Style.Font.Bold = true;
+        rangoEncabezado.Style.Fill.BackgroundColor = XLColor.LightGray;
+        rangoEncabezado.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        rangoEncabezado.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
+
+        const int columnaFecha = 1;
+        const int columnaUsuario = 2;
+        const int columnaAccion = 3;
+        const int columnaDescripcion = 4;
+
+        int filaActual = 2; 
+
+        foreach (var log in audtoriasLogueadas)
+        {
+            hojaVirtualExcel.Cell(filaActual, columnaFecha).Value = log.Timestamp;
+            hojaVirtualExcel.Cell(filaActual, columnaFecha).Style.DateFormat.Format = "dd/MM/yyyy HH:mm:ss";
+
+            hojaVirtualExcel.Cell(filaActual, columnaUsuario).Value = log.Usuario;
+            hojaVirtualExcel.Cell(filaActual, columnaAccion).Value = log.Accion.ToString();
+            hojaVirtualExcel.Cell(filaActual, columnaDescripcion).Value = log.Detalles;
+
+            filaActual++;
+        }
+
+        var tablaDeExcel = hojaVirtualExcel.Range(1, 1, filaActual - 1, 4);
+        tablaDeExcel.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+        tablaDeExcel.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+        hojaVirtualExcel.Columns().AdjustToContents();
+
+        hojaVirtualExcel.SheetView.FreezeRows(1);
+
+        using var archivoEnMemoriaRam = new MemoryStream();
+        hojaExcel.SaveAs(archivoEnMemoriaRam);
+        return archivoEnMemoriaRam.ToArray();
+    }
+
+
 }

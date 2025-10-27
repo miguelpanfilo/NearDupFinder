@@ -1,3 +1,4 @@
+using ClosedXML.Excel;
 using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_Dominio.Clases;
@@ -88,20 +89,21 @@ namespace NearDupFinder_Pruebas.Servicios
         public void GenerarXlsxBytes_DeberiaCrearArchivoConHojaYDatosCorrectos()
         {
             var bytes = _gestorExportacion.GenerarXlsxBytes(
-                new DateTime(2025, 10, 25),
+                new DateTime(2025, 10, 26),
                 new DateTime(2025, 10, 28)
             );
 
             Assert.IsTrue(bytes.Length > 0, "El archivo XLSX no debería estar vacío.");
 
             using var memoria = new MemoryStream(bytes);
-            using var hojaExcel = new XLWorkbook(stream);
+            using var hojaExcel = new XLWorkbook(memoria);
             var hoja = hojaExcel.Worksheets.First();
 
             Assert.AreEqual("Auditorías", hoja.Name);
             Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
             Assert.AreEqual("user@test.com", hoja.Cell(2, 2).Value);
         }
+
 
 
     }
