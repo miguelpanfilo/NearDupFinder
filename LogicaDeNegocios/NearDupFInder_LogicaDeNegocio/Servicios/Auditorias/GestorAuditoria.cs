@@ -43,6 +43,18 @@ public class GestorAuditoria
         };
         _auditoria.Add(entry);
     }
+    public void RegistrarLogManual(DateTime fecha, string usuario, EntradaDeLog.AccionLog accion, string detalles)
+    {
+        var log = new EntradaDeLog
+        {
+            Timestamp = fecha,
+            Usuario = usuario,
+            Accion = accion,
+            Detalles = detalles
+        };
+
+        _auditoria.Add(log);
+    }
 
     public IReadOnlyList<EntradaDeLog> ObtenerLogs() => _auditoria.AsReadOnly();
 }
