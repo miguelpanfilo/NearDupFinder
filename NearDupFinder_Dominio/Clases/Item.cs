@@ -3,12 +3,12 @@ namespace NearDupFinder_Dominio.Clases;
 public class Item
 {
     private static int _siguienteId = 1;
-    private string? _titulo;
-    private string? _descripcion;
-    private string? _marca;
-    private string? _modelo;
-    private string? _categoria;
-    public bool EstadoDuplicado = false;
+    private string? _titulo { get; set; }
+    private string? _descripcion { get; set; }
+    private string? _marca { get; set; }
+    private string? _modelo { get; set; }
+    private string? _categoria { get; set; }
+    public bool EstadoDuplicado { get; set; }
     public int Id { get; private set; }
     
     public Item()
@@ -23,6 +23,7 @@ public class Item
         Modelo = modelo;          
         Categoria = categoria;    
         Id = _siguienteId++;
+        EstadoDuplicado = false;
     }
     public string? Titulo
     {
