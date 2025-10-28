@@ -8,16 +8,11 @@ public sealed class Clave
 {
     private const int LargoMinimo = 8;
 
-    private static int _siguienteId = 1;
-
-    private int Id { get; set; }
+    public string Hash { get; private set; }
     
-    private string Hash { get; set; }
-
     public Clave()
     {
         Hash = String.Empty;
-        Id = _siguienteId++;
     }
 
     private Clave(string hash)

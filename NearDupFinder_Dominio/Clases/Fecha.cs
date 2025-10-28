@@ -5,20 +5,17 @@ namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Fecha
 {
-    private static int _siguienteId = 1;
+    private Fecha() {}
 
-    private int Id { get; set; }
-    
-    private int Anio { get; set; }
-    private int Mes { get; set; }
-    private int Dia { get; set; }
+    public int Anio { get; private set; }
+    public int Mes  { get; private set; }
+    public int Dia  { get; private set; }
     
     public Fecha(int anio, int mes, int dia)
     {
         Anio = anio;
         Mes  = mes;
         Dia  = dia;
-        Id = _siguienteId++;
     }
     
     public static Fecha Crear(int anio, int mes, int dia)
