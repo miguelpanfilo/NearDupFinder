@@ -10,7 +10,7 @@ public static class ExportacionEndPoints
             (DateTime fechaInicial, DateTime fechaFinal, GestorExportacionAuditoria exportador) =>
             {
                 var logsMemoriaCreado = exportador.GenerarCsvBytes(fechaInicial, fechaFinal);
-                var nombreCsvCreado = $"auditorias_{fechaInicial:yyyyMMdd}_{fechaFinal:yyyyMMdd}.csv";
+                var nombreCsvCreado = $"auditorias_{fechaInicial:dd-MM-yy}_al_{fechaFinal:dd-MM-yy}.csv";
 
                 return Results.File(
                     logsMemoriaCreado,
@@ -23,7 +23,7 @@ public static class ExportacionEndPoints
             (DateTime fechaInicial, DateTime fechaFinal, GestorExportacionAuditoria exportador) =>
             {
                 var logsMemoriaCreado = exportador.GenerarXlsxBytes(fechaInicial, fechaFinal);
-                var nombreXlsxCreado = $"auditorias_{fechaInicial:yyyyMMdd}_{fechaFinal:yyyyMMdd}.xlsx";
+                var nombreXlsxCreado = $"auditorias_{fechaInicial:dd-MM-yy}_al_{fechaFinal:dd-MM-yy}.xlsx";
 
                 return Results.File(
                     logsMemoriaCreado,

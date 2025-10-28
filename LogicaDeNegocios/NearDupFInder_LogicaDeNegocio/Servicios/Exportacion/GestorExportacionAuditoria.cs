@@ -32,25 +32,25 @@ public class GestorExportacionAuditoria
             Delimiter = " | ", 
         };
         using var archivoDeMemoriaVirtual = new MemoryStream();
-        using (var writer = new StreamWriter(archivoDeMemoriaVirtual))
-        using (var csv = new CsvWriter(writer, configuracionDeLineasCsv))
+        using (var escritorDelArchivoVirtual = new StreamWriter(archivoDeMemoriaVirtual))
+        using (var escritorDelCsvNuevo = new CsvWriter(escritorDelArchivoVirtual, configuracionDeLineasCsv))
         {
-            csv.WriteField("Fecha y hora");
-            csv.WriteField("Usuario");
-            csv.WriteField("Acción");
-            csv.WriteField("Descripción");
-            csv.NextRecord();
+            escritorDelCsvNuevo.WriteField("Fecha y hora");
+            escritorDelCsvNuevo.WriteField("Usuario");
+            escritorDelCsvNuevo.WriteField("Acción");
+            escritorDelCsvNuevo.WriteField("Descripción");
+            escritorDelCsvNuevo.NextRecord();
 
             foreach (var log in logsFiltrados)
             {
-                csv.WriteField(log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
-                csv.WriteField(log.Usuario);
-                csv.WriteField(log.Accion.ToString());
-                csv.WriteField(log.Detalles);
-                csv.NextRecord();
+                escritorDelCsvNuevo.WriteField(log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
+                escritorDelCsvNuevo.WriteField(log.Usuario);
+                escritorDelCsvNuevo.WriteField(log.Accion.ToString());
+                escritorDelCsvNuevo.WriteField(log.Detalles);
+                escritorDelCsvNuevo.NextRecord();
             }
 
-            writer.Flush();
+            escritorDelArchivoVirtual.Flush();
         }
 
         return archivoDeMemoriaVirtual.ToArray();
