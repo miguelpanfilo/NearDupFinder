@@ -62,10 +62,16 @@ public class GestorExportacionAuditoria
         using var hojaExcel = new XLWorkbook();
         var hojaVirtualExcel = hojaExcel.Worksheets.Add("Auditorías");
 
-        hojaVirtualExcel.Cell(1, 1).Value = "Fecha y hora";
-        hojaVirtualExcel.Cell(1, 2).Value = "Usuario";
-        hojaVirtualExcel.Cell(1, 3).Value = "Acción";
-        hojaVirtualExcel.Cell(1, 4).Value = "Descripción";
+        const int colEncabezado = 1;
+        const int columnaFechaEncabezado = 1;
+        const int columnaUsuarioEncabezado = 2;
+        const int columnaAccionEncabezado = 3;
+        const int columnaDescripcionEncabezado = 4;
+
+        hojaVirtualExcel.Cell(colEncabezado, columnaFechaEncabezado).Value = "Fecha y hora";
+        hojaVirtualExcel.Cell(colEncabezado, columnaUsuarioEncabezado).Value = "Usuario";
+        hojaVirtualExcel.Cell(colEncabezado, columnaAccionEncabezado).Value = "Acción";
+        hojaVirtualExcel.Cell(colEncabezado, columnaDescripcionEncabezado).Value = "Descripción";
 
         var rangoEncabezado = hojaVirtualExcel.Range("A1:D1");
         rangoEncabezado.Style.Font.Bold = true;
@@ -97,7 +103,8 @@ public class GestorExportacionAuditoria
         tablaDeExcel.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
         hojaVirtualExcel.Columns().AdjustToContents();
 
-        hojaVirtualExcel.SheetView.FreezeRows(1);
+        const int filaEncabezadoInmutable=1;
+        hojaVirtualExcel.SheetView.FreezeRows(filaEncabezadoInmutable);
 
         using var archivoEnMemoriaRam = new MemoryStream();
         hojaExcel.SaveAs(archivoEnMemoriaRam);
