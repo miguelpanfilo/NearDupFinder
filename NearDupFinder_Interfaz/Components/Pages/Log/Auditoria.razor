@@ -1,50 +1,137 @@
 @page "/logs"
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias
 @inject GestorAuditoria GestorAuditoria
+@inject NavigationManager Nav
 @rendermode InteractiveServer
 
 <PageTitle>Logs del Sistema</PageTitle>
 
 <h3>Historial de Logs</h3>
 
-@if (!_logs.Any())
+<div class="row g-3 mb-3 align-items-end">
+    <div class="col-auto">
+        <label class="form-label">Desde:</label>
+        <InputDate @bind-Value="Desde" class="form-control" @onchange="OnFechaCambiada" />
+    </div>
+
+    <div class="col-auto">
+        <label class="form-label">Hasta:</label>
+        <InputDate @bind-Value="Hasta" class="form-control" @onchange="OnFechaCambiada" />
+    </div>
+
+    <div class="col-auto d-flex gap-2">
+        <button class="btn btn-secondary" @onclick="ExportarCsv" disabled="@BotonDeshabilitado">
+            <i class="bi bi-filetype-csv"></i> Exportar CSV
+        </button>
+        <button class="btn btn-primary" @onclick="ExportarXlsx" disabled="@BotonDeshabilitado">
+            <i class="bi bi-file-earmark-excel"></i> Exportar XLSX
+        </button>
+    </div>
+</div>
+
+@if (FechaMinimaLogs != default && MensajeAdvertencia is not null)
 {
-    <div>No hay logs que mostrar.</div>
+    <div class="alert alert-warning mt-2">
+        @MensajeAdvertencia
+    </div>
+}
+
+@if (!_logsFiltrados.Any())
+{
+    <div class="alert alert-info">No hay logs en el rango seleccionado.</div>
 }
 else
 {
-    <table class="table table-striped table-sm">
-        <thead>
-        <tr>
-            <th>Fecha / Hora</th>
-            <th>Usuario</th>
-            <th>Acción</th>
-            <th>Detalles</th>
-        </tr>
+    <table class="table table-striped table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Fecha / Hora</th>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Detalles</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var log in _logs)
-        {
-            <tr>
-                <td>@log.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@log.Usuario</td>
-                <td>@log.Accion</td>
-                <td>@log.Detalles</td>
-            </tr>
-        }
+            @foreach (var log in _logsFiltrados)
+            {
+                <tr>
+                    <td>@log.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@log.Usuario</td>
+                    <td>@log.Accion</td>
+                    <td>@log.Detalles</td>
+                </tr>
+            }
         </tbody>
     </table>
 }
 
 @code {
     private List<EntradaDeLog> _logs = new();
+    private DateTime Desde = DateTime.Now.AddDays(-7);
+    private DateTime Hasta = DateTime.Now;
+    private DateTime FechaMinimaLogs;
+    private string? _mensajeAdvertencia;
+
+    private string? MensajeAdvertencia => _mensajeAdvertencia;
+
+    private IEnumerable<EntradaDeLog> _logsFiltrados =>
+        _logs.Where(l =>
+                l.Timestamp.ToLocalTime() >= Desde &&
+                l.Timestamp.ToLocalTime() <= Hasta)
+            .OrderByDescending(l => l.Timestamp);
+
+    private bool BotonDeshabilitado =>
+        !_logs.Any() ||
+        Desde > Hasta ||
+        Hasta > DateTime.Now ||
+        Desde < FechaMinimaLogs;
 
     protected override void OnInitialized()
     {
         _logs = GestorAuditoria.ObtenerLogs()
-            .OrderByDescending(l => l.Timestamp)
+            .OrderBy(l => l.Timestamp)
             .ToList();
+
+        if (_logs.Any())
+        {
+            FechaMinimaLogs = _logs.First().Timestamp.ToLocalTime();
+            Desde = FechaMinimaLogs;
+            Hasta = DateTime.Now;
+        }
+
+        ActualizarEstado();
+    }
+
+    private void OnFechaCambiada(ChangeEventArgs e)
+    {
+        ActualizarEstado();
+    }
+
+    private void ActualizarEstado()
+    {
+        if (Desde < FechaMinimaLogs)
+        {
+            _mensajeAdvertencia =
+                $"La fecha 'Desde' no puede ser anterior a {FechaMinimaLogs:dd/MM/yyyy HH:mm} (primera auditoría registrada).";
+        }
+        else
+        {
+            _mensajeAdvertencia = null;
+        }
+
+        StateHasChanged(); 
+    }
+
+    private void ExportarCsv()
+    {
+        var url = $"/api/auditorias/export/csv?fechaInicial={Desde:O}&fechaFinal={Hasta:O}";
+        Nav.NavigateTo(url, true);
+    }
+
+    private void ExportarXlsx()
+    {
+        var url = $"/api/auditorias/export/xlsx?fechaInicial={Desde:O}&fechaFinal={Hasta:O}";
+        Nav.NavigateTo(url, true);
     }
 }
