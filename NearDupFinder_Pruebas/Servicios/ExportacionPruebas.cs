@@ -12,7 +12,6 @@ namespace NearDupFinder_Pruebas.Servicios
         private GestorExportacionAuditoria _gestorExportacion;
         private GestorAuditoria _gestorAuditoria;
 
-      
         [TestInitialize]
         public void Setup()
         {
@@ -47,6 +46,17 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.AreEqual(1, resultado.Count);
             Assert.AreEqual("user@test.com", resultado[0].Usuario);
         }
+        [TestMethod]
+        public void FiltrarAuditoriasPorFecha_DeberiaIncluirFechasLimite()
+        {
+            var desde = new DateTime(2025, 10, 25, 10, 0, 0); 
+            var hasta = new DateTime(2025, 10, 27, 15, 30, 0); 
+
+            var resultado = _gestorExportacion.FiltrarAuditoriasPorFecha(desde, hasta);
+
+            Assert.AreEqual(2, resultado.Count, "Ambos logs deberían incluirse cuando coinciden con los límites del rango.");
+        }
+
         [TestMethod]
         public void FiltrarAuditoriasPorFecha_SinLogsEnRango_DeberiaDevolverListaVacia()
         {
@@ -131,7 +141,7 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
             Assert.IsTrue(hoja.Cell(2, 1).IsEmpty(), "No debería haber datos debajo del encabezado.");
         }
-        [TestMethod]
+       [TestMethod]
         public void GenerarXlsxBytes_DeberiaUsarFormatoDeFechaCorrecto()
         {
             var archivoDeDatosExcel = _gestorExportacion.GenerarXlsxBytes(
@@ -146,9 +156,6 @@ namespace NearDupFinder_Pruebas.Servicios
             var formato = hoja.Cell(2, 1).Style.DateFormat.Format;
             Assert.AreEqual("dd/MM/yyyy HH:mm:ss", formato);
         }
-
-
-
-
+        
     }
 }
