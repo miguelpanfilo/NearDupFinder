@@ -1,22 +1,54 @@
 @page "/logs"
 @using NearDupFinder_Dominio.Clases
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias
 @inject GestorAuditoria GestorAuditoria
+@inject NavigationManager Nav
 @rendermode InteractiveServer
 
 <PageTitle>Logs del Sistema</PageTitle>
 
 <h3>Historial de Logs</h3>
 
-@if (!_logs.Any())
+<div class="row g-3 mb-3 align-items-end">
+    <div class="col-auto">
+        <label class="form-label">Desde:</label>
+        <InputDate @bind-Value="Desde" class="form-control" @onchange="OnFechaCambiada" />
+    </div>
+
+    <div class="col-auto">
+        <label class="form-label">Hasta:</label>
+        <InputDate @bind-Value="Hasta" class="form-control" @onchange="OnFechaCambiada" />
+    </div>
+
+    <div class="col-auto d-flex gap-2">
+        <button class="btn btn-secondary" @onclick="ExportarCsv">
+            <i class="bi bi-filetype-csv"></i> Exportar CSV
+        </button>
+        <button class="btn btn-primary" @onclick="ExportarXlsx">
+            <i class="bi bi-file-earmark-excel"></i> Exportar XLSX
+        </button>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(MensajeAdvertencia))
 {
-    <div>No hay logs que mostrar.</div>
+    <div class="alert alert-warning mt-2">@MensajeAdvertencia</div>
+}
+else if (!_logs.Any())
+{
+    <div class="alert alert-info mt-2">
+        No hay registros de auditoría disponibles para exportar.
+    </div>
+}
+else if (!_logsFiltrados.Any())
+{
+    <div class="alert alert-info mt-2">
+        No hay logs en el rango seleccionado.
+    </div>
 }
 else
 {
-    <table class="table table-striped table-sm">
-        <thead>
+    <table class="table table-striped table-sm align-middle">
+        <thead class="table-light">
         <tr>
             <th>Fecha / Hora</th>
             <th>Usuario</th>
@@ -25,10 +57,10 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var log in _logs)
+        @foreach (var log in _logsFiltrados)
         {
             <tr>
-                <td>@log.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@log.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
                 <td>@log.Usuario</td>
                 <td>@log.Accion</td>
                 <td>@log.Detalles</td>
@@ -38,13 +70,86 @@ else
     </table>
 }
 
+
 @code {
     private List<EntradaDeLog> _logs = new();
+    private DateTime Desde = DateTime.Now.AddDays(-7);
+    private DateTime Hasta = DateTime.Now;
+    private DateTime FechaMinimaLogs;
+    private string? _mensajeAdvertencia;
+
+    private string? MensajeAdvertencia => _mensajeAdvertencia;
+
+    private IEnumerable<EntradaDeLog> _logsFiltrados =>
+        _logs.Where(l =>
+        {
+            var fecha = l.Timestamp.ToLocalTime();
+            return fecha >= Desde.Date && fecha <= Hasta.Date.AddDays(1).AddTicks(-1);
+        })
+        .OrderByDescending(l => l.Timestamp);
 
     protected override void OnInitialized()
     {
         _logs = GestorAuditoria.ObtenerLogs()
-            .OrderByDescending(l => l.Timestamp)
+            .OrderBy(l => l.Timestamp)
             .ToList();
+
+        if (_logs.Any())
+        {
+            FechaMinimaLogs = _logs.First().Timestamp.ToLocalTime();
+            Desde = FechaMinimaLogs;
+            Hasta = DateTime.Now;
+        }
+
+        ValidarFechas();
+    }
+
+    private void OnFechaCambiada(ChangeEventArgs e)
+    {
+        ValidarFechas();
+    }
+
+    private bool ValidarFechas()
+    {
+        var desde = Desde.Date;
+        var hasta = Hasta.Date;
+        var fechaMinima = FechaMinimaLogs.Date;
+        var hoy = DateTime.Now.Date;
+
+        if (desde < fechaMinima)
+        {
+            _mensajeAdvertencia = $"La fecha 'Desde' no puede ser anterior a {fechaMinima:dd/MM/yyyy}.";
+        }
+        else if (desde > hasta)
+        {
+            _mensajeAdvertencia = "La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.";
+        }
+        else if (hasta > hoy)
+        {
+            _mensajeAdvertencia = "La fecha 'Hasta' no puede ser futura.";
+        }
+        else
+        {
+            _mensajeAdvertencia = null;
+        }
+
+        StateHasChanged();
+        return string.IsNullOrEmpty(_mensajeAdvertencia);
+    }
+
+    private void ExportarCsv()
+    {
+        if (!ValidarFechas()) return;
+
+        var url = $"/api/auditorias/export/csv?fechaInicial={Desde:O}&fechaFinal={Hasta:O}";
+        Nav.NavigateTo(url, true);
+    }
+
+    private void ExportarXlsx()
+    {
+        if (!ValidarFechas()) return;
+
+        var url = $"/api/auditorias/export/xlsx?fechaInicial={Desde:O}&fechaFinal={Hasta:O}";
+        Nav.NavigateTo(url, true);
     }
 }

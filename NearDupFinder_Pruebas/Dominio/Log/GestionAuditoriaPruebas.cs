@@ -123,4 +123,26 @@ public class GestionAuditoriaPruebas
         Assert.AreEqual("segundo@correo.com", logs[0].Usuario);
     }
     
+    [TestMethod]
+    public void RegistrarLogManual_DeberiaRegistrarConFechaYUsuarioEspecificos()
+    {
+        
+        var fechaEsperada = new DateTime(2025, 10, 27, 15, 45, 0);
+        var usuarioEsperado = "manual@correo.com";
+        var accionEsperada = EntradaDeLog.AccionLog.FusionarCluster;
+        var detallesEsperados = "Test manual";
+
+        _gestorAuditoria.RegistrarLogManual(fechaEsperada, usuarioEsperado, accionEsperada, detallesEsperados);
+        var logs = _gestorAuditoria.ObtenerLogs();
+
+        Assert.AreEqual(1, logs.Count, "Debe haberse agregado exactamente un log manual.");
+        var log = logs.First();
+
+        Assert.AreEqual(fechaEsperada, log.Timestamp, "La fecha registrada no coincide.");
+        Assert.AreEqual(usuarioEsperado, log.Usuario, "El usuario registrado no coincide.");
+        Assert.AreEqual(accionEsperada, log.Accion, "La acción registrada no coincide.");
+        Assert.AreEqual(detallesEsperados, log.Detalles, "Los detalles registrados no coinciden.");
+    }
+
+    
 }

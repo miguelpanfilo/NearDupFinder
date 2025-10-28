@@ -2,6 +2,7 @@ using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Interfaz;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
@@ -11,6 +12,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,7 @@ builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddSingleton<GestorDuplicados>();
 builder.Services.AddSingleton<GestorAuditoria>();
+builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
 
@@ -116,6 +119,8 @@ app.UseAntiforgery();
 app.MapControllers();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+app.MapeoAuditoriasExportacionEndpoints();
 
 app.Run();
 
