@@ -11,26 +11,18 @@ public enum Rol
 public class Usuario
 {
     private static int _nextId = 1;
-    public int Id { get; set;}
-    public string Nombre { get; set; }
-    public string Apellido { get; set; }
-    public Email Email { get; set; }
-    public Fecha FechaNacimiento { get; set; }
+    public int Id { get;  set; }
+    public string Nombre { get; set; } = null!;
+    public string Apellido { get; set; } = null!;
+    public Email Email { get; set; } = null!;
+    public Fecha FechaNacimiento { get; set; } = null!;
+    public Clave Clave { get; set; } = null!;
+  
+    public ICollection<Rol> Roles { get; private set; } = new List<Rol>();
+    
+    public ICollection<RolPersistido> RolesPersistidos { get; private set; } = new List<RolPersistido>();
 
-    private HashSet<Rol> Roles { get; set; }
-    
-    private Clave? Clave { get; set; }
-    
-    private Usuario(string nombre, string apellido, Email email, Fecha fechaNacimiento)
-    {
-        Nombre = nombre;
-        Apellido = apellido;
-        Email = email;
-        FechaNacimiento = fechaNacimiento;
-        Clave = new Clave();
-        Id = _nextId++;
-        Roles = new HashSet<Rol>();
-    }
+    private Usuario() {} 
     
     public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
     {
@@ -38,24 +30,39 @@ public class Usuario
             throw new ExcepcionDeUsuario("El nombre no puede estar vacío.");
         if (string.IsNullOrWhiteSpace(apellido))
             throw new ExcepcionDeUsuario("El apellido no puede estar vacío.");
+        
+        Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.Id = _nextId++;
+        nuevoUsuario.Nombre = nombre.Trim();
+        nuevoUsuario.Apellido = apellido.Trim();
+        nuevoUsuario.Email = email;
+        nuevoUsuario.FechaNacimiento = fechaNacimiento;
+        nuevoUsuario.Clave = new Clave();
 
-        return new Usuario(nombre.Trim(), apellido.Trim(), email, fechaNacimiento);
+        return nuevoUsuario;
     }
 
     public void AgregarRol(Rol rol)
     {
-        Roles.Add(rol);
-    }
-    
-    public void RemoverRol(Rol rol)
-    {
-        Roles.Remove(rol);
+        if (!Roles.Contains(rol)) 
+            Roles.Add(rol);
+        
+        String rolTexto = rol.ToString();
+        if (!RolesPersistidos.Any(rolPersistido => string.Equals(rolPersistido.Valor, rolTexto, StringComparison.OrdinalIgnoreCase)))
+            RolesPersistidos.Add(new RolPersistido(rolTexto));
     }
 
-    public bool TieneRol(Rol rol)
+    public void RemoverRol(Rol rol)
     {
-        return Roles.Contains(rol);
+        if (Roles.Contains(rol)) 
+            Roles.Remove(rol);
+        
+        String rolTexto = rol.ToString();
+        RolPersistido? rolPersistido = RolesPersistidos.FirstOrDefault(rPersistido => string.Equals(rPersistido.Valor, rolTexto, StringComparison.OrdinalIgnoreCase));
+        if (rolPersistido != null) 
+            RolesPersistidos.Remove(rolPersistido);
     }
+    public bool TieneRol(Rol rol) => Roles.Contains(rol);
 
     public IReadOnlyCollection<Rol> ObtenerRoles()
     {

@@ -5,16 +5,13 @@ namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Email
 {
-    private static int _siguienteId = 1;
-
-    private int Id { get; set; }
-
-    private string Valor { get; set; }
+    private Email() { }
+    
+    public string Valor { get; private set; } = null!;
 
     public Email(string email)
     {    
         Valor = email;
-        Id = _siguienteId++;
     }
 
     public static Email Crear(string? email)

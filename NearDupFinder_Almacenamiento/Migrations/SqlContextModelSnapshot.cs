@@ -51,6 +51,123 @@ namespace NearDupFinder_Almacenamiento.Migrations
 
                     b.ToTable("Items");
                 });
+
+            modelBuilder.Entity("NearDupFinder_Dominio.Clases.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios", (string)null);
+                });
+
+            modelBuilder.Entity("NearDupFinder_Dominio.Clases.Usuario", b =>
+                {
+                    b.OwnsOne("NearDupFinder_Dominio.Clases.Clave", "Clave", b1 =>
+                        {
+                            b1.Property<int>("UsuarioId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Hash")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("HashClave");
+
+                            b1.HasKey("UsuarioId");
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.OwnsOne("NearDupFinder_Dominio.Clases.Email", "Email", b1 =>
+                        {
+                            b1.Property<int>("UsuarioId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Valor")
+                                .IsRequired()
+                                .HasMaxLength(320)
+                                .HasColumnType("nvarchar(320)")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("UsuarioId");
+
+                            b1.HasIndex("Valor")
+                                .IsUnique();
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.OwnsOne("NearDupFinder_Dominio.Clases.Fecha", "FechaNacimiento", b1 =>
+                        {
+                            b1.Property<int>("UsuarioId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Anio")
+                                .HasColumnType("int")
+                                .HasColumnName("AnioNacimiento");
+
+                            b1.Property<int>("Dia")
+                                .HasColumnType("int")
+                                .HasColumnName("DiaNacimiento");
+
+                            b1.Property<int>("Mes")
+                                .HasColumnType("int")
+                                .HasColumnName("MesNacimiento");
+
+                            b1.HasKey("UsuarioId");
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.OwnsMany("NearDupFinder_Dominio.Clases.RolPersistido", "RolesPersistidos", b1 =>
+                        {
+                            b1.Property<int>("UsuarioId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Valor")
+                                .HasMaxLength(64)
+                                .HasColumnType("nvarchar(64)")
+                                .HasColumnName("Rol");
+
+                            b1.HasKey("UsuarioId", "Valor");
+
+                            b1.ToTable("UsuarioRoles", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.Navigation("Clave")
+                        .IsRequired();
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("FechaNacimiento")
+                        .IsRequired();
+
+                    b.Navigation("RolesPersistidos");
+                });
 #pragma warning restore 612, 618
         }
     }
