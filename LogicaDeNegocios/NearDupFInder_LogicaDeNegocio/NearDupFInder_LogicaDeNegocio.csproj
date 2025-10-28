@@ -11,4 +11,9 @@
       <ProjectReference Include="..\..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="ClosedXML" Version="0.105.0" />
+      <PackageReference Include="CsvHelper" Version="33.1.0" />
+    </ItemGroup>
+
 </Project>

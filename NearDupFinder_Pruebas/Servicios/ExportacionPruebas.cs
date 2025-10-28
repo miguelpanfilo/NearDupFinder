@@ -84,7 +84,19 @@ namespace NearDupFinder_Pruebas.Servicios
             StringAssert.Contains(contenido, "user@test.com");
             Assert.IsTrue(contenido.Contains("|"), "El archivo debe usar '|' como delimitador.");
         }
-        
+        [TestMethod]
+        public void GenerarCsvBytes_SinLogs_DeberiaContenerSoloEncabezados()
+        {
+            var bytes = _gestorExportacion.GenerarCsvBytes(
+                new DateTime(2025, 11, 1),
+                new DateTime(2025, 11, 2)
+            );
+
+            var contenido = System.Text.Encoding.UTF8.GetString(bytes);
+            StringAssert.Contains(contenido, "Fecha y hora | Usuario | Acción | Descripción");
+            Assert.IsFalse(contenido.Contains("user@test.com"), "No debe contener datos de logs fuera del rango.");
+        }
+
         [TestMethod]
         public void GenerarXlsxBytes_DeberiaCrearArchivoConHojaYDatosCorrectos()
         {
@@ -103,6 +115,38 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
             Assert.AreEqual("user@test.com", hoja.Cell(2, 2).Value);
         }
+        [TestMethod]
+        public void GenerarXlsxBytes_SinLogs_DeberiaCrearSoloEncabezados()
+        {
+            var archivoDatos = _gestorExportacion.GenerarXlsxBytes(
+                new DateTime(2025, 11, 1),
+                new DateTime(2025, 11, 2)
+            );
+
+            using var memoria = new MemoryStream(archivoDatos);
+            using var hojaExcel = new XLWorkbook(memoria);
+            var hoja = hojaExcel.Worksheets.First();
+
+            Assert.AreEqual("Auditorías", hoja.Name);
+            Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
+            Assert.IsTrue(hoja.Cell(2, 1).IsEmpty(), "No debería haber datos debajo del encabezado.");
+        }
+        [TestMethod]
+        public void GenerarXlsxBytes_DeberiaUsarFormatoDeFechaCorrecto()
+        {
+            var archivoDeDatosExcel = _gestorExportacion.GenerarXlsxBytes(
+                new DateTime(2025, 10, 25),
+                new DateTime(2025, 10, 28)
+            );
+
+            using var memoriaVirtual = new MemoryStream(archivoDeDatosExcel);
+            using var hojaExcel = new XLWorkbook(memoriaVirtual);
+            var hoja = hojaExcel.Worksheets.First();
+
+            var formato = hoja.Cell(2, 1).Style.DateFormat.Format;
+            Assert.AreEqual("dd/MM/yyyy HH:mm:ss", formato);
+        }
+
 
 
 
