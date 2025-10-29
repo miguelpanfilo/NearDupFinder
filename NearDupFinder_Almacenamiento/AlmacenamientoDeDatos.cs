@@ -11,7 +11,6 @@ public class AlmacenamientoDeDatos
     {
         _usuarios = [];
         _catalogos = [];
-        CrearUsuarioAdmin();
     }
 
     public List<Usuario> ObtenerUsuarios()
@@ -57,17 +56,6 @@ public class AlmacenamientoDeDatos
             if (usuario.Id == id)
                 return usuario;
         return null;    
-    }
-    
-    public void CrearUsuarioAdmin()
-    {
-        Email email = Email.Crear("admin@gmail.com");
-        Fecha fecha = Fecha.Crear(1997,12,27);
-        Clave clave = Clave.Crear("123QWEasdzxc@");
-        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
-        adminUsuario.AgregarRol(Rol.Administrador);
-        adminUsuario.CambiarClave(clave);
-        AgregarUsuario(adminUsuario);
     }
 
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)

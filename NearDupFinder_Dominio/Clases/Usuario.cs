@@ -69,6 +69,35 @@ public class Usuario
         return Roles.ToList().AsReadOnly();
     }
     
+    public void SincronizarRolesDesdePersistencia()
+    {
+        Roles.Clear();
+
+        if (this.RolesPersistidos.Count == 0)
+            return;
+
+        foreach (RolPersistido rolPersistido in this.RolesPersistidos)
+        {
+            string valorPersistido = rolPersistido.Valor;
+            if (string.IsNullOrWhiteSpace(valorPersistido))
+                continue;
+
+            Rol rolConvertido;
+            bool sePudoConvertir = Enum.TryParse<Rol>(valorPersistido, true, out rolConvertido);
+            if (!sePudoConvertir)
+                continue;
+            
+            bool esUnValorValidoDelEnum = Enum.IsDefined(typeof(Rol), rolConvertido);
+            if (!esUnValorValidoDelEnum)
+                continue;
+
+            bool yaExisteEnLaColeccion = Roles.Contains(rolConvertido);
+            if (!yaExisteEnLaColeccion)
+                this.Roles.Add(rolConvertido);
+        }
+    }
+
+    
     public bool Igual(Usuario otroUsuario)
     {
         return Email.Igual(otroUsuario.Email);

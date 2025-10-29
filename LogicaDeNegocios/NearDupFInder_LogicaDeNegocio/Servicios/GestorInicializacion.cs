@@ -1,15 +1,17 @@
-using NearDupFinder_Almacenamiento;
+using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Interfaces;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios;
 
 public class GestorInicializacion
 {
-    private readonly AlmacenamientoDeDatos _almacenamiento;
+    private readonly IRepositorioUsuarios _repositorioUsuarios;
     private bool _inicializado;
+    private const string EmailAdmin = "admin@gmail.com";
 
-    public GestorInicializacion(AlmacenamientoDeDatos almacenamiento)
+    public GestorInicializacion(IRepositorioUsuarios repositorioUsuarios)
     {
-        _almacenamiento = almacenamiento;
+        _repositorioUsuarios = repositorioUsuarios;
     }
 
     public void AsegurarInicializacion()
@@ -17,8 +19,20 @@ public class GestorInicializacion
         if (_inicializado)
             return;
 
-        // Acá iría la carga inicial si la necesitás
+        if(!_repositorioUsuarios.ExisteEmail(EmailAdmin))
+            CrearUsuarioAdmin();
 
         _inicializado = true;
+    }
+    
+    public void CrearUsuarioAdmin()
+    {
+        Email email = Email.Crear(EmailAdmin);
+        Fecha fecha = Fecha.Crear(1997,12,27);
+        Clave clave = Clave.Crear("123QWEasdzxc@");
+        Usuario adminUsuario = Usuario.Crear("admin","admin",email,fecha);
+        adminUsuario.AgregarRol(Rol.Administrador);
+        adminUsuario.CambiarClave(clave);
+        _repositorioUsuarios.Agregar(adminUsuario);
     }
 }

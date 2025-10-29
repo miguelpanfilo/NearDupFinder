@@ -2,6 +2,8 @@ using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
+using NearDupFinder_Interfaces;
 using NearDupFinder_Interfaz;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -77,7 +79,7 @@ builder.Services.AddScoped<GestorLectorCsv>(sp =>
 
 builder.Services.AddScoped<ControladorLectorCsv>();
 builder.Services.AddScoped<GestorAutenticacionUsuario>();
-builder.Services.AddSingleton<GestorInicializacion>();
+builder.Services.AddScoped<GestorInicializacion>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -98,6 +100,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<SqlContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuariosEf>();
 
 var app = builder.Build();
 

@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
+      <ProjectReference Include="..\NearDupFinder_Interfaces\NearDupFinder_Interfaces.csproj" />
     </ItemGroup>
 
     <ItemGroup>
