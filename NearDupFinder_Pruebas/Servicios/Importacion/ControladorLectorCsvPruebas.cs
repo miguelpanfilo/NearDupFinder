@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlLectorCsv;
@@ -8,6 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Importacion;
 
@@ -22,10 +25,10 @@ public class ControladorLectorCsvPruebas
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorControlClusters _gestorControlClusters = null!;
     private List<ParDuplicado> _duplicadosGlobales = [];
-    private GestorDuplicados _gestorDuplicados = null!;
     private readonly HashSet<int> _idsItemsGlobal = [];
     private ControladorLectorCsv _controladorLectorCsv = null!;
     private ControladorItems _controladorItems = null!;
+    private GestorDuplicados _gestorDuplicados;
 
     
     [TestInitialize]
@@ -34,8 +37,10 @@ public class ControladorLectorCsvPruebas
         _almacenamientoDeDatos = new AlmacenamientoDeDatos();
         _gestorCatalogos = new GestorCatalogos(_almacenamientoDeDatos);
         _gestorAuditoria = new GestorAuditoria();
-        _gestorDuplicados = new GestorDuplicados();
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
+        var analyzer = new SnowballAnalyzer(LuceneVersion.LUCENE_48, "Spanish");
+        IProcesadorTexto procesador = new ProcesadorTexto(analyzer);
+
+        _gestorDuplicados = new GestorDuplicados(procesador);        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
         _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados,_gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
         _gestorItems = new GestorItems(_idsItemsGlobal);
         _controladorItems = new ControladorItems(_gestorItems,_gestorCatalogos,_controladorDuplicados,_gestorAuditoria, _idsItemsGlobal);

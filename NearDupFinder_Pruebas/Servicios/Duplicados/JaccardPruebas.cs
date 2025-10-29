@@ -1,12 +1,15 @@
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
 [TestClass]
 public class JaccardPruebas
 {
-    private GestorDuplicados _gestorDuplicados = null!;
+    private GestorDuplicados _gestorDuplicados;
     
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
         new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
@@ -21,8 +24,12 @@ public class JaccardPruebas
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
+        var analyzer = new SnowballAnalyzer(LuceneVersion.LUCENE_48, "Spanish");
+        IProcesadorTexto procesador = new ProcesadorTexto(analyzer);
+
+        _gestorDuplicados = new GestorDuplicados(procesador);
     }
+
 
     [TestMethod]
     public void CalcularJaccard_AmbosVacios_DevuelveCero()
@@ -51,12 +58,11 @@ public class JaccardPruebas
     [TestMethod]
     public void CalcularJaccard_AmbosNoVacios_RetornaValorEsperado()
     {
-        GestorDuplicados gestor = new GestorDuplicados();
         Item itemA = CrearItem("ab", "desc igual", "m", "x","cat");
         Item itemB = CrearItem("ab cd", "desc igual", "m", "x","cat");
 
         Catalogo catalogo = CrearCatalogo(itemA, itemB);
-        List<ParDuplicado> listaParesDuplicados = gestor.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado> listaParesDuplicados = _gestorDuplicados.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(1, listaParesDuplicados.Count);
         Assert.AreEqual(0.5f, listaParesDuplicados[0].JaccardTitulo, 1e-6);

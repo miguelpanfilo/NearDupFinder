@@ -1,5 +1,8 @@
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -24,8 +27,11 @@ public class ScorePruebas
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
-    }
+
+        var analyzer = new SnowballAnalyzer(LuceneVersion.LUCENE_48, "Spanish");
+        IProcesadorTexto procesador = new ProcesadorTexto(analyzer);
+
+        _gestorDuplicados = new GestorDuplicados(procesador);    }
 
     [TestMethod]
     public void CalcularScore_TituloYDescripcionUno_SinMarcaModelo_Retorna0_80()

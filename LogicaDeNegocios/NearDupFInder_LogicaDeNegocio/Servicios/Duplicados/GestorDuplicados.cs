@@ -1,6 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
@@ -43,6 +43,12 @@ public class GestorDuplicados
     private const string TokenPattern = @"\W+";
     private const float UmbralAlerta = 0.60f;
     private const float UmbralPosible = 0.75f;
+    private readonly IProcesadorTexto _procesadorTexto;
+
+    public GestorDuplicados(IProcesadorTexto  procesadorTexto)
+    {
+        _procesadorTexto = procesadorTexto;
+    }
 
     public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
@@ -141,15 +147,25 @@ public class GestorDuplicados
         texto = Regex.Replace(texto, @"\s+", " ").Trim();
         return texto;
     }
-
     private ItemTokenizado TokenizarItem(ItemNormalizado item)
     {
+        string[] tokensTitulo = Tokenizar(item.TituloNormalizado);
+        string[] tokensDescripcion = Tokenizar(item.DescripcionNormalizada);
+
+        tokensTitulo = _procesadorTexto.AplicarStopwordsYStemming(tokensTitulo);
+        tokensDescripcion = _procesadorTexto.AplicarStopwordsYStemming(tokensDescripcion);
+
+        Console.WriteLine($"TÍTULO tokens: {string.Join(", ", tokensTitulo)}");
+        Console.WriteLine($"DESCRIPCIÓN tokens: {string.Join(", ", tokensDescripcion)}");
+
         return new ItemTokenizado
         {
-            TokenTitulo = Tokenizar(item.TituloNormalizado),
-            TokenDescripcion = Tokenizar(item.DescripcionNormalizada)
+            TokenTitulo = tokensTitulo,
+            TokenDescripcion = tokensDescripcion
         };
     }
+
+
 
     private static string[] Tokenizar(string texto)
     {

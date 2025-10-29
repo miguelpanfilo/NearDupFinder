@@ -153,25 +153,26 @@ else
     private MarkupString ResaltarTokens(string? textoOriginal, string[]? tokensCompartidos)
     {
         string texto = textoOriginal ?? string.Empty;
-
         if (string.IsNullOrEmpty(texto) || tokensCompartidos == null || tokensCompartidos.Length == 0)
             return (MarkupString)texto;
 
-        string resultado = texto;
-
+        string textoAux = texto;
         foreach (string token in tokensCompartidos.Distinct())
         {
-            if (string.IsNullOrWhiteSpace(token)) 
+            if (string.IsNullOrWhiteSpace(token))
                 continue;
 
-            resultado = Regex.Replace(
-                resultado,
-                $@"\b{Regex.Escape(token)}\b",
-                $"<span class='bg-warning'>{token}</span>",
+            textoAux = Regex.Replace(
+                textoAux,
+                $@"({Regex.Escape(token)})",
+                "<span class='bg-warning'>$1</span>",
                 RegexOptions.IgnoreCase
             );
         }
-        return (MarkupString)resultado;
+
+        return (MarkupString)textoAux;
     }
+
+
 
 }

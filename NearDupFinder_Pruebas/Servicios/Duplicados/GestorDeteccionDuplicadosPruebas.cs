@@ -1,7 +1,10 @@
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -24,8 +27,12 @@ public class DeteccionDuplicadosPruebas
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
+        var analyzer = new SnowballAnalyzer(LuceneVersion.LUCENE_48, "Spanish");
+        IProcesadorTexto procesador = new ProcesadorTexto(analyzer);
+
+        _gestorDuplicados = new GestorDuplicados(procesador);
     }
+
 
     [TestMethod]
     public void DetectarDuplicados_CatalogoVacio_DevuelveListaVacia()
@@ -99,21 +106,50 @@ public class DeteccionDuplicadosPruebas
 
         Assert.AreEqual(TipoDuplicado.PosibleDuplicado, duplicados[0].Tipo);
     }
+[TestMethod]
+[TestCategory("Integracion")]
+public void DetectarDuplicados_TokensCompartidos_InterseccionSinRepetidos_Espanol()
+{
+   var a = CrearItem(
+        "canciones canciones rápido",
+        "rojo verde generación azul",
+        "Lenovo", "L14", "Notebooks");
 
-    [TestMethod]
-    public void DetectarDuplicados_TokensCompartidos_InterseccionSinRepetidos()
+    var b = CrearItem(
+        "rápidas canción canción",
+        "verde rojos generacion",
+        "lenovo", "l14", "notebooks");
+
+    var cat  = CrearCatalogo(a, b);
+    var dups = _gestorDuplicados.DetectarDuplicados(a, cat);
+
+    Assert.IsTrue(dups.Count > 0, "No se detectaron pares (score < umbral).");
+
+    string[] tit = dups[0].TokensCompartidosTitulo;
+    string[] des = dups[0].TokensCompartidosDescripcion;
+
+    bool tieneCancion = false, tieneRap = false, tieneRoj = false, tieneVerd = false, tieneGener = false;
+
+    for (int i = 0; i < tit.Length; i++)
     {
-        Item itemAComparar = CrearItem("alpha alpha beta", "rojo rojo verde azul", "Lenovo", "L14", "Notebooks");
-        Item itemB = CrearItem("beta alpha gamma alpha", "verde verde rojo", "lenovo", "l14", "notebooks");
-        Catalogo catalogo = CrearCatalogo(itemAComparar, itemB);
-        var esperadoTitulo = new[] { "alpha", "beta" };
-        var esperadoDescripcion = new[] { "rojo", "verde" };
-
-        List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
-        
-        CollectionAssert.AreEquivalent(esperadoTitulo, duplicados[0].TokensCompartidosTitulo);
-        CollectionAssert.AreEquivalent(esperadoDescripcion, duplicados[0].TokensCompartidosDescripcion);
+        if (tit[i].StartsWith("cancion")) tieneCancion = true;
+        if (tit[i].StartsWith("rap"))      tieneRap     = true; 
     }
+
+    for (int i = 0; i < des.Length; i++)
+    {
+        if (des[i].StartsWith("roj"))   tieneRoj   = true;
+        if (des[i].StartsWith("verd"))  tieneVerd  = true;
+        if (des[i].StartsWith("gener")) tieneGener = true;
+    }
+
+    Assert.IsTrue(tieneCancion, "Debe contener raíz de 'canción/canciones' (p.ej., 'cancion').");
+    Assert.IsTrue(tieneRap,     "Debe contener raíz de 'rápido/rápidas' (p.ej., 'rap', 'rapid').");
+    Assert.IsTrue(tieneRoj,     "Debe contener raíz de 'rojo/rojos' (p.ej., 'roj').");
+    Assert.IsTrue(tieneVerd,    "Debe contener raíz de 'verde' (p.ej., 'verd').");
+    Assert.IsTrue(tieneGener,   "Debe contener raíz de 'generación' (p.ej., 'gener').");
+}
+
 
     [TestMethod]
     public void DetectarDuplicados_TokensCompartidos_SiNoCoinciden_QuedanVacios()

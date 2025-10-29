@@ -5,7 +5,9 @@ using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
-
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
 public class ControladorDuplicados(

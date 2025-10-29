@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
@@ -8,6 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Items;
 
@@ -22,21 +25,24 @@ public class ControladorItemsPruebas
     private Catalogo _catalogo = null!;
     private HashSet<int> _idsItemsGlobal = null!;
     private List<ParDuplicado> _duplicadosGlobales = null!;
+    private GestorDuplicados _gestorDuplicados;
 
     [TestInitialize]
     public void Setup()
     {
         var almacenamiento = new AlmacenamientoDeDatos();
         _gestorAuditoria = new GestorAuditoria();
-        var gestorDuplicados = new GestorDuplicados();
+        var analyzer = new SnowballAnalyzer(LuceneVersion.LUCENE_48, "Spanish");
+        IProcesadorTexto procesador = new ProcesadorTexto(analyzer);
 
+        _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorCatalogos = new GestorCatalogos(almacenamiento);
         _idsItemsGlobal = new HashSet<int>();
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
         _duplicadosGlobales = new List<ParDuplicado>();
         var gestorControlDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
-            gestorDuplicados,
+            _gestorDuplicados,
             _gestorCatalogos,
             _gestorControlClusters
             , _duplicadosGlobales

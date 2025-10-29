@@ -1,13 +1,22 @@
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
-
 
 [TestClass]
 public class TokenizacionPruebas
 {
-   private GestorDuplicados _gestorDuplicados = null!;
+    private GestorDuplicados _gestorDuplicados = null!;
+    public class ProcesadorTextoSinFuncionalidad : IProcesadorTexto
+    {
+        public string[] AplicarStopwords(string[] tokensEntrada) => tokensEntrada;
+        public string[] AplicarStemming(string[] tokensEntrada) => tokensEntrada;
+        public string[] AplicarStopwordsYStemming(string[] tokensEntrada) => tokensEntrada;
+    }
+
 
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
         new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
@@ -15,14 +24,15 @@ public class TokenizacionPruebas
     private static Catalogo CrearCatalogo(params Item[] items)
     {
         Catalogo catalogo = new Catalogo("Catalogo");
-        foreach (Item item in items) catalogo.AgregarItem(item);
-            return catalogo;
+        foreach (Item item in items)
+            catalogo.AgregarItem(item);
+        return catalogo;
     }
 
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
+        _gestorDuplicados = new GestorDuplicados(new ProcesadorTextoSinFuncionalidad());
     }
 
     [TestMethod]
@@ -76,6 +86,7 @@ public class TokenizacionPruebas
         CollectionAssert.AreEquivalent(new[] { "iphone", "17" }, listaParesDuplicados[0].TokensCompartidosTitulo);
         CollectionAssert.AreEquivalent(new[] { "celular", "de", "ultima", "generacion" }, listaParesDuplicados[0].TokensCompartidosDescripcion);
     }
+
 
     [TestMethod]
     public void Tokenizar_TextoConNumeros_MantieneAlfanumericos()

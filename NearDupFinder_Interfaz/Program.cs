@@ -13,13 +13,20 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
+using Lucene.Net.Analysis.Snowball;
+using Lucene.Net.Util;
+using NearDupFinder_LogicaDeNegocio.Servicios.ProcesadorDeTexto;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
-builder.Services.AddSingleton<GestorDuplicados>();
+builder.Services.AddScoped<GestorDuplicados>(sp =>
+{
+    var procesador = sp.GetRequiredService<ProcesadorTexto>();
+    return new GestorDuplicados(procesador);
+});
 builder.Services.AddSingleton<GestorAuditoria>();
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
@@ -31,6 +38,12 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
     var cat = sp.GetRequiredService<GestorCatalogos>();
     var aud = sp.GetRequiredService<GestorAuditoria>();
     return new GestorControlClusters(cat, aud);
+});
+
+builder.Services.AddSingleton(_ =>
+{
+    var analyzer = new SnowballAnalyzer(LuceneVersion.LUCENE_48, "Spanish");
+    return new ProcesadorTexto(analyzer);
 });
 
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
