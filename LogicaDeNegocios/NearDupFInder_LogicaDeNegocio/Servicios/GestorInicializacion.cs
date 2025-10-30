@@ -19,7 +19,7 @@ public class GestorInicializacion
         if (_inicializado)
             return;
 
-        if(!_repositorioUsuarios.ExisteEmail(EmailAdmin))
+        if(_repositorioUsuarios.ObtenerUsuarioPorEmail(EmailAdmin) is null)
             CrearUsuarioAdmin();
 
         _inicializado = true;

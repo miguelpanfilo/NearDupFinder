@@ -4,28 +4,11 @@ namespace NearDupFinder_Almacenamiento;
 
 public class AlmacenamientoDeDatos
 {
-    private readonly List<Usuario> _usuarios;
     private readonly List<Catalogo> _catalogos;
 
     public AlmacenamientoDeDatos()
     {
-        _usuarios = [];
         _catalogos = [];
-    }
-
-    public List<Usuario> ObtenerUsuarios()
-    {
-        return _usuarios;
-    }
-
-    public void AgregarUsuario(Usuario usuario)
-    {
-        _usuarios.Add(usuario);
-    }
-
-    public void RemoverUsuario(Usuario usuario)
-    {
-        _usuarios.Remove(usuario);
     }
 
     public List<Catalogo> ObtenerCatalogos()
@@ -43,20 +26,6 @@ public class AlmacenamientoDeDatos
         _catalogos.Remove(catalogo);
     }
     
-    public Usuario? BuscarUsuarioPorEmail(Email email)
-    {
-        foreach (Usuario usuario in _usuarios)
-            if (usuario.Email.Igual(email))
-                return usuario;
-        return null;
-    }
-    public Usuario? BuscarUsuarioPorId(int id)
-    {
-        foreach (Usuario usuario in _usuarios)
-            if (usuario.Id == id)
-                return usuario;
-        return null;    
-    }
 
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
     {

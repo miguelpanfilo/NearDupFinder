@@ -1,6 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 
-namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
+namespace NearDupFInder_LogicaDeNegocio.DTOs.ParaUsuarios;
 
 public class DatosPublicosUsuario(
     string nombre,

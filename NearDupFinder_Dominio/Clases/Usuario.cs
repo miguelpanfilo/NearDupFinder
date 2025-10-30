@@ -79,24 +79,24 @@ public class Usuario
         foreach (RolPersistido rolPersistido in this.RolesPersistidos)
         {
             string valorPersistido = rolPersistido.Valor;
-            if (string.IsNullOrWhiteSpace(valorPersistido))
-                continue;
-
             Rol rolConvertido;
-            bool sePudoConvertir = Enum.TryParse<Rol>(valorPersistido, true, out rolConvertido);
-            if (!sePudoConvertir)
-                continue;
-            
-            bool esUnValorValidoDelEnum = Enum.IsDefined(typeof(Rol), rolConvertido);
-            if (!esUnValorValidoDelEnum)
-                continue;
-
+            Enum.TryParse(valorPersistido, true, out rolConvertido);
             bool yaExisteEnLaColeccion = Roles.Contains(rolConvertido);
             if (!yaExisteEnLaColeccion)
                 this.Roles.Add(rolConvertido);
         }
     }
 
+    public void SincronizarRolesParaPersistencia()
+    {
+        RolesPersistidos.Clear();
+        foreach (Rol rol in Roles)
+        {
+            string nombreRol = rol.ToString();
+            RolPersistido rolPersistido = new RolPersistido (nombreRol);
+            RolesPersistidos.Add(rolPersistido);
+        }
+    }
     
     public bool Igual(Usuario otroUsuario)
     {
@@ -107,7 +107,7 @@ public class Usuario
     {
         if(string.IsNullOrEmpty(clave))
             return false;
-        return Clave!.Verificar(clave);
+        return Clave.Verificar(clave);
     }
     
     public bool CambiarClave(Clave nuevaClave)
