@@ -12,8 +12,14 @@ public class SqlContext : DbContext
    
    public SqlContext(DbContextOptions<SqlContext> options) : base(options){
 
-       this.Database.Migrate(); //Ejecutara las migracione al crear la BD
-
+       if (Database.IsRelational())
+       {
+           Database.Migrate();
+       }
+       else
+       {
+           Database.EnsureCreated();
+       }
    }
    
    protected override void OnModelCreating(ModelBuilder modelBuilder)

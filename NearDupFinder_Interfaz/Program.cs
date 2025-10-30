@@ -101,7 +101,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<SqlContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuariosEf>();
+builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 
 var app = builder.Build();
 

@@ -1,45 +1,73 @@
+using Microsoft.EntityFrameworkCore;
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_Interfaces;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+using NearDupFinder_Pruebas.Utilidades;
 
 namespace NearDupFinder_Pruebas.Servicios.Usuarios;
 
 [TestClass]
 public class GestorAutenticacionUsuarioPruebas
 {
+    private static DbContextOptions<SqlContext> _opciones = null!;
+    private SqlContext _contexto = null!;
+    private IRepositorioUsuarios _repositorioUsuarios = null!;
+
     private GestorAutenticacionUsuario _gestorAutenticacionUsuario = null!;
-    private AlmacenamientoDeDatos _almacenamiento = null!;
-    
     private GestorUsuarios _gestorUsuarios = null!;
     private GestorAuditoria _gestorAuditoria = null!;
 
     private static DatosRegistroUsuario CrearDtoUsuario(string email, string clave)
     {
         return new DatosRegistroUsuario(
-            "Manuel", 
+            "Manuel",
             "Perez",
             email,
             1997,
             12,
             27,
             clave,
-            ["Administrador", "Revisor"]);
+            new List<string>() { "Administrador", "Revisor" }
+        );
+    }
+
+    [ClassInitialize]
+    public static void ClassInit(TestContext _)
+    {
+        _opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("bd_pruebas_autenticacion");
     }
 
     [TestInitialize]
     public void Setup()
     {
-        _almacenamiento = new AlmacenamientoDeDatos();
+        _contexto = SqlContextFactoryPruebas.CrearContexto(_opciones);
+
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
+
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+
         _gestorAuditoria = new GestorAuditoria();
-        _gestorAutenticacionUsuario = new GestorAutenticacionUsuario(_almacenamiento);
-        _gestorUsuarios = new GestorUsuarios(_almacenamiento, _gestorAuditoria,_gestorAutenticacionUsuario);
+        _gestorAutenticacionUsuario = new GestorAutenticacionUsuario(_repositorioUsuarios);
+        _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _gestorAuditoria, _gestorAutenticacionUsuario);
+
         _gestorAuditoria.AsignarUsuarioActual("manuel@gmail.com");
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        if (_contexto is not null)
+        {
+            _contexto.Dispose();
+            _contexto = null!;
+        }
     }
         
     [TestMethod]
