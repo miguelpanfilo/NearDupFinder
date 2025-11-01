@@ -8,7 +8,7 @@ public class Catalogo
 
     private int _nextClusterId = 1;
     private static int _nextId = 1;
-    public int Id { get; }
+    public int Id { get; private set;}
     public string Titulo { get; private set; } = null!;
     public string Descripcion { get; private set; } = string.Empty;
     private readonly List<Item> _items = new();
@@ -21,6 +21,8 @@ public class Catalogo
         EstablecerTitulo(titulo);
         _nextId++;
     }
+    
+    protected Catalogo() { }
 
     public void CambiarTitulo(string titulo)
     {

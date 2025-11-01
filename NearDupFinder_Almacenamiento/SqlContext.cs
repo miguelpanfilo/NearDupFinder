@@ -63,5 +63,64 @@ public class SqlContext : DbContext
 
            rolesPersistidosDelUsuario.HasKey("UsuarioId", "Valor");
        });
+       
+       var entidadCatalogo = modelBuilder.Entity<Catalogo>();
+       entidadCatalogo.ToTable("Catalogos");
+       entidadCatalogo.HasKey(c => c.Id);
+       entidadCatalogo.Property(c => c.Id).ValueGeneratedOnAdd();
+
+       entidadCatalogo.Property(c => c.Titulo)
+           .IsRequired()
+           .HasMaxLength(120)
+           .HasColumnType("nvarchar(120)");
+       entidadCatalogo.HasIndex(c => c.Titulo).IsUnique();
+
+       entidadCatalogo.Property(c => c.Descripcion)
+           .IsRequired(false)
+           .HasMaxLength(400)
+           .HasColumnType("nvarchar(400)");
+
+       modelBuilder.Entity<Item>(e =>
+       {
+           e.ToTable("Items");
+           e.HasKey(i => i.Id);
+           e.Property(i => i.Id).ValueGeneratedOnAdd();
+
+           e.HasOne<Catalogo>()
+               .WithMany(nameof(Catalogo.Items))
+               .HasForeignKey("CatalogoId")
+               .IsRequired()
+               .OnDelete(DeleteBehavior.Cascade);
+
+           e.HasIndex("CatalogoId");
+        
+           e.HasOne<Cluster>()
+               .WithMany(nameof(Cluster.PertenecientesCluster))
+               .HasForeignKey("ClusterId")
+               .OnDelete(DeleteBehavior.ClientSetNull);
+       });
+
+       modelBuilder.Entity<Cluster>(e =>
+       {
+           e.ToTable("Clusters");
+           e.HasKey(cl => cl.Id);
+           e.Property(cl => cl.Id).ValueGeneratedOnAdd();
+
+           e.HasOne<Catalogo>()
+               .WithMany(nameof(Catalogo.Clusters))
+               .HasForeignKey("CatalogoId")
+               .IsRequired()
+               .OnDelete(DeleteBehavior.Cascade);
+
+           e.HasIndex("CatalogoId");
+
+           e.Metadata.FindNavigation(nameof(Cluster.PertenecientesCluster))!
+               .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+           e.HasOne(c => c.Canonico)
+               .WithMany()
+               .HasForeignKey("CanonicoId")
+               .OnDelete(DeleteBehavior.ClientSetNull);
+       });
    }
 }   
