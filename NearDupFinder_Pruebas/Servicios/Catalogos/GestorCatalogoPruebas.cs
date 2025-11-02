@@ -242,4 +242,82 @@ public class GestorCatalogoPruebas
         Assert.IsNotNull(items, "La colección de ítems no debería ser null.");
         Assert.AreEqual(0, items.Count, "Un catálogo recién creado debería no tener ítems.");
     }
+    
+    [TestMethod]
+    public void ObtenerCatalogoDtoPorId_CuandoExiste_RetornaDtoCorrecto_OkTest()
+    {
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("CatDto1"));
+        var id = _gestorCatalogos.ObtenerCatalogoPorTitulo("CatDto1")!.Id;
+
+        var dto = _gestorCatalogos.ObtenerCatalogoDtoPorId(id);
+
+        Assert.IsNotNull(dto, "Debería retornar un DTO cuando el catálogo existe.");
+        Assert.AreEqual(id, dto!.Id);
+        Assert.AreEqual("CatDto1", dto.Titulo);
+    }
+
+    [TestMethod]
+    public void ObtenerCatalogoDtoPorId_CuandoNoExiste_RetornaNull_OkTest()
+    {
+        var dto = _gestorCatalogos.ObtenerCatalogoDtoPorId(999);
+
+        Assert.IsNull(dto, "Debe retornar null cuando el catálogo no existe.");
+    }
+    
+    [TestMethod]
+    public void ObtenerCatalogoDtoPorTitulo_CuandoExiste_RetornaDtoCorrecto()
+    {
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("CatDtoTitulo"));
+        
+        var dto = _gestorCatalogos.ObtenerCatalogoDtoPorTitulo("CatDtoTitulo");
+
+        Assert.IsNotNull(dto, "Debería retornar un DTO cuando el catálogo existe.");
+        Assert.AreEqual("CatDtoTitulo", dto!.Titulo);
+    }
+
+    [TestMethod]
+    public void ObtenerCatalogoDtoPorTitulo_CuandoNoExiste_RetornaNull()
+    {
+        var dto = _gestorCatalogos.ObtenerCatalogoDtoPorTitulo("Inexistente");
+
+        Assert.IsNull(dto, "Debe retornar null cuando el catálogo no existe.");
+    }
+
+    [TestMethod]
+    public void ObtenerCatalogos_SinCatalogos_RetornaColeccionVacia()
+    {
+        var resultado = _gestorCatalogos.ObtenerCatalogos();
+
+        Assert.IsNotNull(resultado, "El resultado no debería ser null.");
+        Assert.AreEqual(0, resultado.Count, "Debe retornar una colección vacía cuando no hay catálogos.");
+    }
+
+    [TestMethod]
+    public void ObtenerCatalogos_ConVariosCatalogos_RetornaTodosLosDtos()
+    {
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat1"));
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat2"));
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat3"));
+
+        var resultado = _gestorCatalogos.ObtenerCatalogos();
+
+        Assert.AreEqual(3, resultado.Count, "Debe retornar un DTO por cada catálogo existente.");
+        Assert.IsTrue(resultado.Any(d => d.Titulo == "Cat1"), "No se encontró el DTO correspondiente a 'Cat1'.");
+        Assert.IsTrue(resultado.Any(d => d.Titulo == "Cat2"), "No se encontró el DTO correspondiente a 'Cat2'.");
+        Assert.IsTrue(resultado.Any(d => d.Titulo == "Cat3"), "No se encontró el DTO correspondiente a 'Cat3'.");
+    }
+
+    [TestMethod]
+    public void ObtenerCatalogos_VerificaDatosDeLosDtos_CoincidenConCatalogosOriginales()
+    {
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("CatA", "DescA"));
+        _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("CatB", "DescB"));
+
+        var resultado = _gestorCatalogos.ObtenerCatalogos().ToList();
+
+        Assert.AreEqual("CatA", resultado[0].Titulo);
+        Assert.AreEqual("DescA", resultado[0].Descripcion);
+        Assert.AreEqual("CatB", resultado[1].Titulo);
+        Assert.AreEqual("DescB", resultado[1].Descripcion);
+    }
 }
