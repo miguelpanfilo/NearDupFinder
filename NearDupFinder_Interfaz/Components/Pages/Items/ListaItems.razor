@@ -1,9 +1,8 @@
 @page "/lista-items"
-@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
 @using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados
@@ -30,7 +29,7 @@
             @bind="_catalogoSeleccionadoTitulo" 
             @bind:after="CargarItemsDeCatalogo">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in GestorCatalogos.Catalogos)
+        @foreach (var cat in GestorCatalogos.ObtenerCatalogos())
         {
             <option value="@cat.Titulo">@cat.Titulo</option>
         }
@@ -149,7 +148,7 @@
     private string? _mensajeErrorModal = "";
     private bool _mostrarModalEditar;
     private DatosItemListaItems? _itemEditado;
-    private Catalogo? _catalogoSeleccionado;
+    private DatosPublicosCatalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
     private List<DatosItemListaItems> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
@@ -158,7 +157,7 @@
 
     private void CargarItemsDeCatalogo()
     {
-        _catalogoSeleccionado = GestorCatalogos.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
+        _catalogoSeleccionado = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(_catalogoSeleccionadoTitulo);
 
         if (_catalogoSeleccionado != null)
         {
@@ -302,7 +301,7 @@
         }
     }
     
-    private List<string> ObtenerCategoriasUnicas(Catalogo catalogo)
+    private List<string> ObtenerCategoriasUnicas(DatosPublicosCatalogo catalogo)
     {
         return GestorCatalogos.ObtenerItemsDelCatalogo(catalogo.Id)
             .Select(i => i.Categoria)

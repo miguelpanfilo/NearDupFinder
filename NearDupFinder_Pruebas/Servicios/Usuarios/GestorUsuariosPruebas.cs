@@ -2,6 +2,7 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
+using NearDupFInder_LogicaDeNegocio.DTOs.ParaUsuarios;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
