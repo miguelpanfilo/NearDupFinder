@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFinder_LogicaDeNegocio.Servicios.Items
 @inject GestorCatalogos GestorCatalogos;
@@ -22,7 +21,7 @@
     <label for="catalogoSelect">Seleccionar Catálogo:</label>
     <select id="catalogoSelect" class="form-select" @bind="_catalogoSeleccionadoId">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in GestorCatalogos.Catalogos)
+        @foreach (var cat in GestorCatalogos.ObtenerCatalogos())
         {
             <option value="@cat.Id">@cat.Titulo</option>
         }
