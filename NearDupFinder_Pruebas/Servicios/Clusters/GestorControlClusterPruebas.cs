@@ -4,7 +4,6 @@ using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -26,10 +25,10 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             _almacenamientoDeDatos = new AlmacenamientoDeDatos();
             _gestorCatalogos = new GestorCatalogos(_almacenamientoDeDatos);
             _gestorAuditoria = new GestorAuditoria();
-            
+
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
             _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
-            
+
             _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
         }
 
@@ -45,7 +44,8 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
                 itemUnicoConDescripcionDetallada.Id,
                 itemUnicoConDescripcionDetallada.Id);
 
-            var resultadoOperacionDeConfirmacion = _gestorControlClusters.ConfirmarCluster(datosDuplicadosQueApuntanAlMismoItem);
+            var resultadoOperacionDeConfirmacion =
+                _gestorControlClusters.ConfirmarCluster(datosDuplicadosQueApuntanAlMismoItem);
 
             Assert.IsFalse(resultadoOperacionDeConfirmacion);
             Assert.AreEqual(0, _catalogo.Clusters.Count);
@@ -67,7 +67,8 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
                 itemPrimeroYaEnCluster.Id,
                 itemSegundoYaEnCluster.Id);
 
-            var resultadoOperacionDeConfirmacion = _gestorControlClusters.ConfirmarCluster(datosDuplicadosReconfirmacion);
+            var resultadoOperacionDeConfirmacion =
+                _gestorControlClusters.ConfirmarCluster(datosDuplicadosReconfirmacion);
 
             Assert.IsTrue(resultadoOperacionDeConfirmacion);
             Assert.AreEqual(cantidadInicialDeClustersAntes, _catalogo.Clusters.Count);
@@ -154,7 +155,10 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
 
             var clusterUnificado = _catalogo.Clusters.First();
             CollectionAssert.AreEquivalent(
-                new[] { itemDelClusterA_Primero, itemDelClusterA_Segundo, itemDelClusterB_Primero, itemDelClusterB_Segundo },
+                new[]
+                {
+                    itemDelClusterA_Primero, itemDelClusterA_Segundo, itemDelClusterB_Primero, itemDelClusterB_Segundo
+                },
                 clusterUnificado.PertenecientesCluster.ToList());
         }
 
@@ -205,16 +209,18 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Assert.ThrowsException<ExcepcionItem>(() =>
                 _gestorControlClusters.ConfirmarCluster(datosDuplicadosConItemInexistente));
         }
-        
+
         [TestMethod]
-        public void BorrarItemDelCluster_ItemPerteneceACluster_EliminaItemDelClusterYSiQuedaBajoMinimoEliminaCluster_OkTest()
+        public void
+            BorrarItemDelCluster_ItemPerteneceACluster_EliminaItemDelClusterYSiQuedaBajoMinimoEliminaCluster_OkTest()
         {
             var itemQueDebePermanecerEnCluster = new Item { Titulo = "A", Descripcion = "d" };
             var itemQueDebeSerEliminadoDelCluster = new Item { Titulo = "B", Descripcion = "d" };
             _catalogo.AgregarItem(itemQueDebePermanecerEnCluster);
             _catalogo.AgregarItem(itemQueDebeSerEliminadoDelCluster);
 
-            _catalogo.CrearCluster(new HashSet<Item> { itemQueDebePermanecerEnCluster, itemQueDebeSerEliminadoDelCluster });
+            _catalogo.CrearCluster(new HashSet<Item>
+                { itemQueDebePermanecerEnCluster, itemQueDebeSerEliminadoDelCluster });
 
             var datosParaRemoverItemDelCluster = new DatosRemoverItemCluster(
                 itemQueDebeSerEliminadoDelCluster.Id, _catalogo.Id);
@@ -222,13 +228,15 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             _gestorControlClusters.BorrarItemDelCluster(datosParaRemoverItemDelCluster);
 
             Assert.AreEqual(0, _catalogo.Clusters.Count);
-            Assert.IsNotNull(_catalogo.ObtenerItemPorId(itemQueDebeSerEliminadoDelCluster.Id)); // el ítem sigue en el catálogo
+            Assert.IsNotNull(
+                _catalogo.ObtenerItemPorId(itemQueDebeSerEliminadoDelCluster.Id)); // el ítem sigue en el catálogo
         }
 
         [TestMethod]
         public void BorrarItemDelCluster_ItemRemovidoEraCanonico_NulificaCanonicoSiElClusterSigueExistiendo_OkTest()
         {
-            var itemQueDebeSerCanonicoInicial = new Item { Titulo = "Candidato", Descripcion = "descripcion mucho mas larga", Marca = "AC" };
+            var itemQueDebeSerCanonicoInicial = new Item
+                { Titulo = "Candidato", Descripcion = "descripcion mucho mas larga", Marca = "AC" };
             var itemNoCanonico = new Item { Titulo = "Otro", Descripcion = "descripcion" };
             var itemTerceroParaMantenerCluster = new Item { Titulo = "Tercero", Descripcion = "desc" };
 
@@ -236,7 +244,8 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             _catalogo.AgregarItem(itemNoCanonico);
             _catalogo.AgregarItem(itemTerceroParaMantenerCluster);
 
-            _catalogo.CrearCluster(new HashSet<Item> { itemQueDebeSerCanonicoInicial, itemNoCanonico, itemTerceroParaMantenerCluster });
+            _catalogo.CrearCluster(new HashSet<Item>
+                { itemQueDebeSerCanonicoInicial, itemNoCanonico, itemTerceroParaMantenerCluster });
             var clusterExistenteConCanonico = _catalogo.Clusters.First();
             clusterExistenteConCanonico.FusionarCanonico();
 
@@ -262,7 +271,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
 
             Assert.AreEqual(0, _catalogo.Clusters.Count);
         }
-        
+
         [TestMethod]
         public void FusionarItemsEnElCluster_SinCanonicoPrevio_AsignaCanonicoSegunReglas_OkTest()
         {
@@ -298,10 +307,6 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Assert.AreEqual(cantidadInicialDeClusters, _catalogo.Clusters.Count);
         }
 
-        // ------------------------------------------------------------------
-        // ItemEstaEnCluster
-        // ------------------------------------------------------------------
-
         [TestMethod]
         public void ItemEstaEnCluster_ItemPerteneceAAlguno_ReturnsTrue_OkTest()
         {
@@ -327,6 +332,107 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
                 itemQueNoPerteneceAClusters.Id);
 
             Assert.IsFalse(resultadoDePertenencia);
+        }
+
+        [TestMethod]
+        public void ObtenerClustersDtoCatalogo_SinClusters_RetornaColeccionVacia_OkTest()
+        {
+
+            var clustersDto = _gestorControlClusters.ObtenerClustersDtoCatalogo(_catalogo.Id);
+
+            Assert.IsNotNull(clustersDto);
+            Assert.AreEqual(0, clustersDto.Count);
+            Assert.AreEqual(0, _catalogo.Clusters.Count);
+        }
+
+        [TestMethod]
+        public void ObtenerClustersDtoCatalogo_ConClustersExistentes_RetornaCantidadEIdsCorrectos_OkTest()
+        {
+            var itemA = new Item { Titulo = "A", Descripcion = "desc A" };
+            var itemB = new Item { Titulo = "B", Descripcion = "desc B" };
+            var itemC = new Item { Titulo = "C", Descripcion = "desc C" };
+            var itemD = new Item { Titulo = "D", Descripcion = "desc D" };
+
+            _catalogo.AgregarItem(itemA);
+            _catalogo.AgregarItem(itemB);
+            _catalogo.AgregarItem(itemC);
+            _catalogo.AgregarItem(itemD);
+
+            var duplicadoAyB = new DatosDuplicados(_catalogo.Id, itemA.Id, itemB.Id);
+            var duplicadoCyD = new DatosDuplicados(_catalogo.Id, itemC.Id, itemD.Id);
+
+            var respuestaAyB = _gestorControlClusters.ConfirmarCluster(duplicadoAyB);
+            var respuestaCyD = _gestorControlClusters.ConfirmarCluster(duplicadoCyD);
+
+            Assert.IsTrue(respuestaAyB, "La confirmación del cluster A~B debería devolver true.");
+            Assert.IsTrue(respuestaCyD, "La confirmación del cluster C~D debería devolver true.");
+            Assert.AreEqual(2, _catalogo.Clusters.Count, "Deben existir 2 clusters en el catálogo.");
+
+            var idsClustersDominio = _catalogo.Clusters.Select(c => c.Id).OrderBy(x => x).ToArray();
+            
+            var clustersDto = _gestorControlClusters.ObtenerClustersDtoCatalogo(_catalogo.Id);
+            
+            Assert.AreEqual(2, clustersDto.Count, "La cantidad de DTOs debe coincidir con los clusters del dominio.");
+
+            var idsClustersDto = clustersDto.Select(d => d.Id).OrderBy(x => x).ToArray();
+            CollectionAssert.AreEqual(idsClustersDominio, idsClustersDto,
+                "Los IDs de clusters deben mapear 1:1 en los DTOs.");
+        }
+
+        [TestMethod]
+        public void ObtenerClustersDtoCatalogo_CatalogoInexistente_LanzaExcepcionCatalogo_OkTest()
+        {
+            var ex = Assert.ThrowsException<ExcepcionCatalogo>(
+                () => _gestorControlClusters.ObtenerClustersDtoCatalogo(9999));
+
+            Assert.AreEqual("Catálogo no encontrado (Id=9999).", ex.Message);
+        }
+        
+        [TestMethod]
+        public void DatosPublicosCluster_Id_MapeaIgual_OkTest()
+        {
+            var itemA = new Item { Titulo = "A", Descripcion = "desc A" };
+            var itemB = new Item { Titulo = "B", Descripcion = "desc B" };
+            _catalogo.AgregarItem(itemA);
+            _catalogo.AgregarItem(itemB);
+            _gestorControlClusters.ConfirmarCluster(new DatosDuplicados(_catalogo.Id, itemA.Id, itemB.Id));
+
+            var cluster = _catalogo.Clusters.First();
+            var dto = DatosPublicosCluster.FromEntity(cluster);
+
+            Assert.AreEqual(cluster.Id, dto.Id);
+        }
+
+        [TestMethod]
+        public void DatosPublicosCluster_Pertenecientes_CantidadCorrecta_OkTest()
+        {
+            var itemA = new Item { Titulo = "A", Descripcion = "desc A" };
+            var itemB = new Item { Titulo = "B", Descripcion = "desc B" };
+            _catalogo.AgregarItem(itemA);
+            _catalogo.AgregarItem(itemB);
+            _gestorControlClusters.ConfirmarCluster(new DatosDuplicados(_catalogo.Id, itemA.Id, itemB.Id));
+
+            var dto = DatosPublicosCluster.FromEntity(_catalogo.Clusters.First());
+
+            Assert.AreEqual(2, dto.PertenecientesCluster.Count);
+        }
+
+        [TestMethod]
+        public void DatosPublicosCluster_Canonico_NoEsNulo_OkTest()
+        {
+            var itemA = new Item { Titulo = "A", Descripcion = "desc A bien larga" };
+            var itemB = new Item { Titulo = "B", Descripcion = "desc B" };
+            _catalogo.AgregarItem(itemA);
+            _catalogo.AgregarItem(itemB);
+            _gestorControlClusters.ConfirmarCluster(new DatosDuplicados(_catalogo.Id, itemA.Id, itemB.Id));
+            
+            var cluster = _catalogo.Clusters.First();
+            
+            _gestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(_catalogo.Id, cluster.Id));
+
+            var dto = DatosPublicosCluster.FromEntity(_catalogo.Clusters.First());
+
+            Assert.IsNotNull(dto.Canonico);
         }
     }
 }
