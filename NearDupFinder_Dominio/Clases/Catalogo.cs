@@ -96,7 +96,7 @@ public class Catalogo
     {
         return _items.Count;
     }
-
+    
     public IReadOnlyCollection<Cluster> Clusters => _clusters.Values.ToList().AsReadOnly();
 
     public void CrearCluster(HashSet<Item> integrantes)

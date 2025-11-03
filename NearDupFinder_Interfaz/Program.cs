@@ -55,6 +55,7 @@ builder.Services.AddScoped<ControladorItems>(sp =>
     var gestorItems = sp.GetRequiredService<GestorItems>();
     var gestorCatalogos = sp.GetRequiredService<GestorCatalogos>();
     var controladorDuplicados = sp.GetRequiredService<ControladorDuplicados>();
+    var gestorControlClusters = sp.GetRequiredService<GestorControlClusters>();
     var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
     var appState = sp.GetRequiredService<AppState>();
 
@@ -62,6 +63,7 @@ builder.Services.AddScoped<ControladorItems>(sp =>
         gestorItems,
         gestorCatalogos,
         controladorDuplicados,
+        gestorControlClusters,
         gestorAuditoria,
         appState.IdsItemsGlobal
     );
