@@ -1,8 +1,10 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
+using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Items;
@@ -11,6 +13,7 @@ public class ControladorItems
 {
     private readonly GestorCatalogos _gestorCatalogos;
     private readonly ControladorDuplicados _controladorDuplicados;
+    private readonly GestorControlClusters _gestorControlClusters;
     private readonly GestorAuditoria _gestorAuditoria;
     private readonly HashSet<int> _idsItemsGlobal;
     private readonly GestorItems _gestorItems;
@@ -19,12 +22,14 @@ public class ControladorItems
         GestorItems gestorItems,
         GestorCatalogos gestorCatalogos,
         ControladorDuplicados controladorDuplicados,
+        GestorControlClusters gestorControlClusters,
         GestorAuditoria gestorAuditoria,
         HashSet<int> idsItemsGlobal)
     {
         _gestorItems=gestorItems;
         _gestorCatalogos = gestorCatalogos;
         _controladorDuplicados = controladorDuplicados;
+        _gestorControlClusters = gestorControlClusters;
         _gestorAuditoria = gestorAuditoria;
         _idsItemsGlobal = idsItemsGlobal;
     }
@@ -103,8 +108,10 @@ public class ControladorItems
 
         var itemAEliminar = catalogo.Items.FirstOrDefault(i => i.Id == itemDtoAEliminar.IdItem)
                             ?? throw new ExcepcionItem("El item no existe en el catálogo.");
-
+        
+        _gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemDtoAEliminar.IdItem, catalogo.Id));
         catalogo.EliminarItem(itemAEliminar);
+        
 
         _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);

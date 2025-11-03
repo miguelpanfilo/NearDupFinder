@@ -53,6 +53,7 @@ public class ControladorItemsPruebas
             _gestorItems,
             _gestorCatalogos,
             gestorControlDuplicados,
+            _gestorControlClusters,
             _gestorAuditoria,
             _idsItemsGlobal
         );

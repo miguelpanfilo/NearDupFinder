@@ -1,5 +1,4 @@
 @page "/Cluster"
-@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
@@ -64,7 +63,7 @@
                                 </ul>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button class="btn btn-sm btn-primary"
-                                            @onclick="() => FusionarCluster(_catalogo.Id, cluster.Id)" title="Fusionar">
+                                            @onclick="() => FusionarCluster(_catalogo, cluster.Id)" title="Fusionar">
                                         <i class="bi bi-arrow-repeat me-1"></i> Fusionar
                                     </button>
                                 </div>
@@ -81,7 +80,7 @@
     }
 @code {
     private IReadOnlyCollection<DatosPublicosCatalogo>? _catalogos;
-    private List<Cluster> _clustersFiltrados = new();
+    private IReadOnlyCollection<DatosPublicosCluster>? _clustersFiltrados;
     private DatosPublicosCatalogo? _catalogo;
 
     protected override void OnInitialized()
@@ -99,14 +98,21 @@
     {
         if (!string.IsNullOrWhiteSpace(titulo))
         {
-            _catalogo = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(titulo);
-            var _catalogoIntermedio = GestorCatalogos.ObtenerCatalogoPorTitulo(_catalogo.Titulo); // modificar con DtoCLusters
-            _clustersFiltrados = _catalogoIntermedio?.Clusters.ToList() ?? new();
+            var catalogo = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(titulo);
+
+            if (catalogo is null)
+            {
+                _catalogo = null;
+                _clustersFiltrados = Array.Empty<DatosPublicosCluster>();
+                return;
+            }
+
+            _catalogo = catalogo;
+            _clustersFiltrados = GestorControlClusters.ObtenerClustersDtoCatalogo(catalogo.Id);
         }
         else
         {
             _catalogo = null;
-            _clustersFiltrados.Clear();
         }
     }
 
@@ -119,9 +125,10 @@
         StateHasChanged(); 
     }
 
-    private void FusionarCluster(int idCatalogo, int idCluster)
+    private void FusionarCluster(DatosPublicosCatalogo catalogo, int idCluster)
     {
-        
-        GestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(idCatalogo,idCluster));
+        GestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(catalogo.Id,idCluster));
+
+        RefrescarClustersPorTitulo(catalogo.Titulo);
     }
 }

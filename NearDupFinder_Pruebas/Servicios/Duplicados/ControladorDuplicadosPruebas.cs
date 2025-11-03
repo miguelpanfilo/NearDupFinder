@@ -58,7 +58,7 @@ public class ControladorDuplicadosPruebas
 
         _gestorItems = new GestorItems(idsItems);
         _controladorItems = new ControladorItems(
-            _gestorItems, _gestorCatalogos, _controladorDuplicados, _gestorAuditoria, idsItems);
+            _gestorItems, _gestorCatalogos, _controladorDuplicados,_gestorControlClusters, _gestorAuditoria, idsItems);
     }
 
 

@@ -1,6 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
@@ -38,8 +39,8 @@ public class GestorControlClusters
         var catalogo = ObtenerCatalogo(datos.IdCatalogo);
         var itemA = ObtenerItem(catalogo, datos.IdItemAComparar);
         var itemB = ObtenerItem(catalogo, datos.IdItemPosibleDuplicado);
-        var clusterA = ObtenerClusters(catalogo, itemA);
-        var clusterB = ObtenerClusters(catalogo, itemB);
+        var clusterA = ObtenerCluster(catalogo, itemA);
+        var clusterB = ObtenerCluster(catalogo, itemB);
    
         return new ContextoCluster(catalogo, itemA, itemB, clusterA, clusterB);
     }
@@ -67,7 +68,24 @@ public class GestorControlClusters
     private Item ObtenerItem(Catalogo c, int id) =>
         c.ObtenerItemPorId(id) ?? throw new ExcepcionItem($"Ítem no encontrado (Id={id}).");
 
-    private Cluster? ObtenerClusters(Catalogo c, Item a) =>
+    public IReadOnlyCollection<DatosPublicosCluster> ObtenerClustersDtoCatalogo(int id)
+    {
+        List<DatosPublicosCluster> clustersDto = new List<DatosPublicosCluster>();
+        var catalogo =  ObtenerCatalogo(id);
+        IReadOnlyCollection<Cluster> clusters = ObtenerClustersCatalogo(catalogo);
+        foreach (var cluster in clusters)
+        {
+            clustersDto.Add(DatosPublicosCluster.FromEntity(cluster));
+        }
+        
+        return clustersDto;
+    }
+
+    public List<Cluster> ObtenerClustersCatalogo(Catalogo catalogo)
+    {
+        return catalogo.Clusters.ToList();
+    }
+    private Cluster? ObtenerCluster(Catalogo c, Item a) =>
         c.ObtenerClusterDe(a);
 
     private static bool SonMismoCluster(Cluster? a, Cluster? b) =>
