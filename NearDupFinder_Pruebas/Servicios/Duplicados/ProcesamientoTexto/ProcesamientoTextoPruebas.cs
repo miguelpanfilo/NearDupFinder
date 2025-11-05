@@ -27,5 +27,18 @@ namespace NearDupFinder_Pruebas.Servicios.Duplicados.ProcesamientoTexto
                 salida
             );
         }
+        [TestMethod]
+        public void AplicarStopwords_TextoConStopwordsJuntas_NoDeberiaEliminarSoloLasStopwords()
+        {
+            string[] entrada = { "elelelelel", "gato", "dede", "la", "casa" };
+
+            string[] salida = _procesador.AplicarStopwords(entrada);
+
+            CollectionAssert.AreEquivalent(
+                new[] { "elelelelel", "gato", "dede", "casa" },
+                salida
+            );
+        }
+
     }
 }
