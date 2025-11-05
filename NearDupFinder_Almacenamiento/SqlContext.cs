@@ -8,6 +8,7 @@ public class SqlContext : DbContext
    public DbSet<Item> Items { get; set; }
    
    public DbSet<Usuario> Usuarios { get; set; }
+   public DbSet<EntradaDeLog> Auditorias { get; set; }
 
    
    public SqlContext(DbContextOptions<SqlContext> options) : base(options){
@@ -18,6 +19,9 @@ public class SqlContext : DbContext
    
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
+       const int maximoLargoDeUnEmail = 320;
+       const int maximoLargoDetallesAuditorias = 300;
+       const int maximoLargoAccionAuditorias = 100;
        var entidadUsuario = modelBuilder.Entity<Usuario>();
        entidadUsuario.ToTable("Usuarios");
        entidadUsuario.HasKey(usuario => usuario.Id);
@@ -32,7 +36,7 @@ public class SqlContext : DbContext
            email.Property(correo => correo.Valor)
                .HasColumnName("Email")
                .IsRequired()
-               .HasMaxLength(320);
+               .HasMaxLength(maximoLargoDeUnEmail);
 
            email.HasIndex(correo => correo.Valor).IsUnique();
        });
@@ -122,5 +126,31 @@ public class SqlContext : DbContext
                .HasForeignKey("CanonicoId")
                .OnDelete(DeleteBehavior.ClientSetNull);
        });
+       modelBuilder.Entity<EntradaDeLog>(e =>
+       {
+           e.ToTable("Auditorias");
+           e.HasKey(a => a.Id);
+           e.Property(a => a.Id)
+               .ValueGeneratedOnAdd(); 
+
+           e.Property(a => a.Timestamp)
+               .IsRequired();
+
+           e.Property(a => a.Usuario)
+               .IsRequired()
+               .HasMaxLength(maximoLargoDeUnEmail);
+
+           e.Property(a => a.Accion)
+               .IsRequired()
+               .HasConversion<string>() 
+               .HasMaxLength(maximoLargoAccionAuditorias);
+
+           e.Property(a => a.Detalles)
+               .HasMaxLength(maximoLargoDetallesAuditorias);
+       });
+       
+       
+       
+       
    }
 }   
