@@ -152,4 +152,38 @@ public class DeteccionDuplicadosPruebas
         var error = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo));
         Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", error.Message);
     }
+    [TestMethod]
+    public void DetectarDuplicados_UsaProcesamientoDeTexto_StopwordsYStemming()
+    {
+        var itemA = CrearItem(
+            "Canción rápida",
+            "Los jugadores estaban jugando en el sistema nuevo",
+            "Sony", "X1", "Audio"
+        );
+
+        var itemB = CrearItem(
+            "Cancion rapida",
+            "jugador juega sistemas nuevos",
+            "Sony", "X1", "Audio"
+        );
+
+        Catalogo catalogo = CrearCatalogo(itemA, itemB);
+
+        var procesador = new ProcesadorTexto();
+        var gestor = new GestorDuplicados(procesador);
+
+        List<ParDuplicado> duplicados = gestor.DetectarDuplicados(itemA, catalogo);
+
+        Assert.AreEqual(1, duplicados.Count,
+            "Debería detectar al menos un posible duplicado, ya que ambos ítems son equivalentes lingüísticamente.");
+
+        string[] tokensTitulo = duplicados[0].TokensCompartidosTitulo;
+
+        CollectionAssert.Contains(tokensTitulo, "cancion",
+            "El token 'canción' debería haberse reducido correctamente a 'cancion' tras quitar tildes y aplicar stemming.");
+
+        CollectionAssert.Contains(tokensTitulo, "rap",
+            "El token 'rápida' debería haberse reducido correctamente a 'rap' tras aplicar stemming.");
+    }
+
 }
