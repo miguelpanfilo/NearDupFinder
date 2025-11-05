@@ -4,6 +4,7 @@ public interface IProcesadorTexto
 { 
     string[] AplicarStopwords(string[] tokensEntrada);
     string[] AplicarStemming(string[] tokensEntrada);
+    string[] AplicarStopwordsYStemming(string[] tokensEntrada);
 
     
 }

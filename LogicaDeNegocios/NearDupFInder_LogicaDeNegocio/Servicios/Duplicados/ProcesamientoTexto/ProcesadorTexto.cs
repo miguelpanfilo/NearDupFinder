@@ -35,6 +35,13 @@ public class ProcesadorTexto : IProcesadorTexto
         return resultado.Distinct().ToArray();
     }
 
+    public string[] AplicarStopwordsYStemming(string[] tokensEntrada)
+    {
+        var sinStopwords = AplicarStopwords(tokensEntrada);
+        return AplicarStemming(sinStopwords);
+        
+    }
+
     private static readonly HashSet<string> _stopwords = new(StringComparer.OrdinalIgnoreCase)
     {
         "el", "la", "los", "las", "de", "y", "en", "un", "una", "para", "por"
