@@ -39,6 +39,19 @@ namespace NearDupFinder_Pruebas.Servicios.Duplicados.ProcesamientoTexto
                 salida
             );
         }
+        [TestMethod]
+        public void AplicarStemming_PalabrasDerivadasRepetidasRaiz_DeberiaReducirUnaRaiz()
+        {
+            string[] entrada = { "jugando", "jugando", "jugando" };
+
+            string[] salida = _procesador.AplicarStemming(entrada);
+
+            CollectionAssert.AreEquivalent(
+                new[] { "jug" },
+                salida
+            );
+        }
+
 
     }
 }
