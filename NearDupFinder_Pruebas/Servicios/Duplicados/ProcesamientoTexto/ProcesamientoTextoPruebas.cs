@@ -67,6 +67,70 @@ namespace NearDupFinder_Pruebas.Servicios.Duplicados.ProcesamientoTexto
             );
         }
 
+        [TestMethod]
+        public void AplicarStopwordsYStemming_TextoConSoloStopwords_DeberiaDevolverVacio()
+        {
+            string[] entrada = { "el", "la", "los", "de", "en", "y" };
+
+            string[] salida = _procesador.AplicarStopwordsYStemming(entrada);
+
+            Assert.AreEqual(0, salida.Length, "No debería devolver tokens si todos son stopwords.");
+        }
+
+        [TestMethod]
+        public void AplicarStopwordsYStemming_TextoVacio_DeberiaDevolverArrayVacio()
+        {
+            string[] entrada = Array.Empty<string>();
+
+            string[] salida = _procesador.AplicarStopwordsYStemming(entrada);
+
+            Assert.AreEqual(0, salida.Length, "Debe devolver array vacío cuando la entrada está vacía.");
+        }
+        [TestMethod]
+        public void AplicarStopwordsYStemming_TextoConRepetidos_DeberiaEliminarDuplicados()
+        {
+            string[] entrada = { "jugar", "jugando", "jugador", "jugar" };
+
+            
+            string[] salida = _procesador.AplicarStopwordsYStemming(entrada);
+
+            var distintos = salida.Distinct().ToArray();
+            Assert.AreEqual(distintos.Length, salida.Length, "No debería haber tokens repetidos tras aplicar el stemming.");
+        }
+        [TestMethod]
+        public void AplicarStopwordsYStemming_TextoConAcentos_DeberiaReducirCorrectamente()
+        {
+            string[] entrada = { "canciones", "rápidas", "jugando" };
+
+            string[] salida = _procesador.AplicarStopwordsYStemming(entrada);
+
+            Assert.AreEqual(3, salida.Length, 
+                $"Se esperaban exactamente 3 tokens");
+
+            CollectionAssert.AreEquivalent(
+                new[] { "cancion", "rap", "jug" },
+                salida
+            );
+        }
+        [TestMethod]
+        public void AplicarStopwordsYStemming_FraseCoherente_DeberiaReducirYEliminarStopwordsCorrectamente()
+        {
+            string[] entrada = {
+                "Los", "niños", "rápidos", "jugaban", "en", "el", "parque", "con", "sus", "amigos"
+            };
+
+            string[] esperado = { "niñ", "rap", "jug", "parqu", "con", "sus", "amig" };
+
+            string[] salida = _procesador.AplicarStopwordsYStemming(entrada);
+
+            CollectionAssert.AreEqual(
+                esperado,
+                salida
+            );
+        }
+
+
+
 
 
 
