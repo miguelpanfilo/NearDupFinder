@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
@@ -38,7 +39,7 @@ public readonly record struct ParDuplicado(
     int IdCatalogo
 );
 
-public class GestorDuplicados
+public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
 {
     private const string TokenPattern = @"\W+";
     private const float UmbralAlerta = 0.60f;
@@ -74,9 +75,19 @@ public class GestorDuplicados
             if (score >= UmbralAlerta)
             {
                 string[] tokensCompartidosTitulo =
-                    itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
-                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion
-                    .Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
+                    itemTokenizadoA.TokenTitulo
+                        .Where(t => !string.IsNullOrWhiteSpace(t))
+                        .Intersect(itemTokenizadoB.TokenTitulo.Where(t => !string.IsNullOrWhiteSpace(t)))
+                        .Distinct()
+                        .ToArray();
+
+                string[] tokensCompartidosDescripcion =
+                    itemTokenizadoA.TokenDescripcion
+                        .Where(t => !string.IsNullOrWhiteSpace(t))
+                        .Intersect(itemTokenizadoB.TokenDescripcion.Where(t => !string.IsNullOrWhiteSpace(t)))
+                        .Distinct()
+                        .ToArray();
+
 
                 TipoDuplicado tipo = score >= UmbralPosible
                     ? TipoDuplicado.PosibleDuplicado
@@ -144,12 +155,49 @@ public class GestorDuplicados
 
     private ItemTokenizado TokenizarItem(ItemNormalizado item)
     {
+        string[] tokensTitulo = Tokenizar(item.TituloNormalizado);
+        string[] tokensDescripcion = Tokenizar(item.DescripcionNormalizada);
+
+        tokensTitulo = SacarTildesDeTokens(tokensTitulo);
+        tokensDescripcion = SacarTildesDeTokens(tokensDescripcion);
+
+        tokensTitulo = _procesadorTexto.AplicarStopwordsYStemming(tokensTitulo);
+        tokensDescripcion = _procesadorTexto.AplicarStopwordsYStemming(tokensDescripcion);
+
         return new ItemTokenizado
         {
-            TokenTitulo = Tokenizar(item.TituloNormalizado),
-            TokenDescripcion = Tokenizar(item.DescripcionNormalizada)
+            TokenTitulo = tokensTitulo,
+            TokenDescripcion = tokensDescripcion
         };
     }
+    private string QuitarTildes(string palabra)
+    {
+        if (string.IsNullOrEmpty(palabra))
+            return palabra;
+
+        return palabra
+            .Replace("á", "a").Replace("Á", "A")
+            .Replace("é", "e").Replace("É", "E")
+            .Replace("í", "i").Replace("Í", "I")
+            .Replace("ó", "o").Replace("Ó", "O")
+            .Replace("ú", "u").Replace("Ú", "U")
+            .Replace("ü", "u").Replace("Ü", "U")
+            .Replace("ñ", "n").Replace("Ñ", "N");
+    }
+
+    private string[] SacarTildesDeTokens(string[] tokens)
+    {
+        if (tokens == null || tokens.Length == 0)
+            return Array.Empty<string>();
+
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            tokens[i] = QuitarTildes(tokens[i]);
+        }
+
+        return tokens;
+    }
+
 
     private static string[] Tokenizar(string texto)
     {

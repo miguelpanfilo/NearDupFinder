@@ -11,7 +11,7 @@
 
 <h3>Detección de Duplicados</h3>
 
-@if (_duplicados.Count == 0 )
+@if (_duplicados.Count == 0)
 {
     <div>No se encontraron duplicados.</div>
 }
@@ -19,17 +19,17 @@ else
 {
     <table class="table table-striped table-sm">
         <thead>
-        <tr>
-            <th>Item</th>
-            <th>Posible duplicado</th>
-            <th>Jaccard Título</th>
-            <th>Jaccard Descripción</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Score Total</th>
-            <th>Estado</th> 
-            <th>Acciones</th>
-        </tr>
+            <tr>
+                <th>Item</th>
+                <th>Posible duplicado</th>
+                <th>Jaccard Título</th>
+                <th>Jaccard Descripción</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Score Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
         </thead>
         <tbody>
         @foreach (DatosParDuplicado duplicado in _duplicados)
@@ -67,6 +67,7 @@ else
         </tbody>
     </table>
 }
+
 @if (_mostrarModalComparar && _duplicadoSeleccionado is not null)
 {
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
@@ -120,7 +121,7 @@ else
 
     private void ConfirmarDuplicado(DatosParDuplicado duplicado)
     {
-        DatosDuplicados datosDuplicados = new DatosDuplicados(duplicado.IdCatalogo,
+        var datosDuplicados = new DatosDuplicados(duplicado.IdCatalogo,
             duplicado.IdItemAComparar,
             duplicado.IdItemPosibleDuplicado);
 
@@ -149,29 +150,44 @@ else
         _duplicadoSeleccionado = null;
         _mostrarModalComparar = false;
     }
-    
+
     private MarkupString ResaltarTokens(string? textoOriginal, string[]? tokensCompartidos)
     {
         string texto = textoOriginal ?? string.Empty;
-
         if (string.IsNullOrEmpty(texto) || tokensCompartidos == null || tokensCompartidos.Length == 0)
             return (MarkupString)texto;
 
-        string resultado = texto;
+        string textoAux = texto;
 
         foreach (string token in tokensCompartidos.Distinct())
         {
-            if (string.IsNullOrWhiteSpace(token)) 
+            if (string.IsNullOrWhiteSpace(token))
                 continue;
 
-            resultado = Regex.Replace(
-                resultado,
-                $@"\b{Regex.Escape(token)}\b",
-                $"<span class='bg-warning'>{token}</span>",
-                RegexOptions.IgnoreCase
-            );
+            string patronTolerante = CrearPatronToleranteAcentos(token);
+            textoAux = AplicarResaltado(textoAux, patronTolerante);
         }
-        return (MarkupString)resultado;
+
+        return (MarkupString)textoAux;
     }
 
+    private static string CrearPatronToleranteAcentos(string token)
+    {
+        return Regex.Escape(token)
+            .Replace("a", "[aá]")
+            .Replace("e", "[eé]")
+            .Replace("i", "[ií]")
+            .Replace("o", "[oó]")
+            .Replace("u", "[uúü]");
+    }
+
+    private static string AplicarResaltado(string texto, string patron)
+    {
+        return Regex.Replace(
+            texto,
+            $@"({patron})",
+            "<span class='bg-warning'>$1</span>",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
+        );
+    }
 }

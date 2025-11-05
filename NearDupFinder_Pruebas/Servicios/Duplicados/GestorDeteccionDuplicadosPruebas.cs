@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -24,7 +24,8 @@ public class DeteccionDuplicadosPruebas
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
+        var procesador = new ProcesadorTexto();
+        _gestorDuplicados = new GestorDuplicados(procesador);
     }
 
     [TestMethod]
@@ -99,21 +100,22 @@ public class DeteccionDuplicadosPruebas
 
         Assert.AreEqual(TipoDuplicado.PosibleDuplicado, duplicados[0].Tipo);
     }
-
     [TestMethod]
     public void DetectarDuplicados_TokensCompartidos_InterseccionSinRepetidos()
     {
         Item itemAComparar = CrearItem("alpha alpha beta", "rojo rojo verde azul", "Lenovo", "L14", "Notebooks");
         Item itemB = CrearItem("beta alpha gamma alpha", "verde verde rojo", "lenovo", "l14", "notebooks");
         Catalogo catalogo = CrearCatalogo(itemAComparar, itemB);
-        var esperadoTitulo = new[] { "alpha", "beta" };
-        var esperadoDescripcion = new[] { "rojo", "verde" };
+        
+        var esperadoTitulo = new[] { "alpha", "bet" };
+        var esperadoDescripcion = new[] { "roj", "verd" };
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
-        
+
         CollectionAssert.AreEquivalent(esperadoTitulo, duplicados[0].TokensCompartidosTitulo);
         CollectionAssert.AreEquivalent(esperadoDescripcion, duplicados[0].TokensCompartidosDescripcion);
     }
+
 
     [TestMethod]
     public void DetectarDuplicados_TokensCompartidos_SiNoCoinciden_QuedanVacios()
@@ -152,4 +154,38 @@ public class DeteccionDuplicadosPruebas
         var error = Assert.ThrowsException<InvalidOperationException>(() => _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo));
         Assert.AreEqual("El título y la descripción no pueden quedar vacío tras normalizar.", error.Message);
     }
+    [TestMethod]
+    public void DetectarDuplicados_UsaProcesamientoDeTexto_StopwordsYStemming()
+    {
+        var itemA = CrearItem(
+            "Canción rápida",
+            "Los jugadores estaban jugando en el sistema nuevo",
+            "Sony", "X1", "Audio"
+        );
+
+        var itemB = CrearItem(
+            "Cancion rapida",
+            "jugador juega sistemas nuevos",
+            "Sony", "X1", "Audio"
+        );
+
+        Catalogo catalogo = CrearCatalogo(itemA, itemB);
+
+        var procesador = new ProcesadorTexto();
+        var gestor = new GestorDuplicados(procesador);
+
+        List<ParDuplicado> duplicados = gestor.DetectarDuplicados(itemA, catalogo);
+
+        Assert.AreEqual(1, duplicados.Count,
+            "Debería detectar al menos un posible duplicado, ya que ambos ítems son equivalentes lingüísticamente.");
+
+        string[] tokensTitulo = duplicados[0].TokensCompartidosTitulo;
+
+        CollectionAssert.Contains(tokensTitulo, "cancion",
+            "El token 'canción' debería haberse reducido correctamente a 'cancion' tras quitar tildes y aplicar stemming.");
+
+        CollectionAssert.Contains(tokensTitulo, "rap",
+            "El token 'rápida' debería haberse reducido correctamente a 'rap' tras aplicar stemming.");
+    }
+
 }

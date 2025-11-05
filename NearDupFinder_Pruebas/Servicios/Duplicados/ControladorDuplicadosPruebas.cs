@@ -4,11 +4,11 @@ using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
@@ -44,11 +44,11 @@ public class ControladorDuplicadosPruebas
     [TestInitialize]
     public void Setup()
     {
-       
+        var procesador = new ProcesadorTexto();
         _almacenamiento = new AlmacenamientoDeDatos();
         var idsItems = new HashSet<int>();
         _gestorAuditoria = new GestorAuditoria();
-        _gestorDuplicados = new GestorDuplicados();
+        _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorCatalogos = new GestorCatalogos(_almacenamiento);
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
 
