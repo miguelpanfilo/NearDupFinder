@@ -9,7 +9,9 @@ public class ProcesadorTexto : IProcesadorTexto
 
     public string[] AplicarStopwords(string[] tokensEntrada)
     {
-        if (tokensEntrada == null || tokensEntrada.Length == 0)
+        const int cantidadTokensVacio = 0;
+
+        if (tokensEntrada == null || tokensEntrada.Length == cantidadTokensVacio)
             return Array.Empty<string>();
 
         return tokensEntrada
@@ -20,7 +22,8 @@ public class ProcesadorTexto : IProcesadorTexto
 
     public string[] AplicarStemming(string[] tokensEntrada)
     {
-        if (tokensEntrada == null || tokensEntrada.Length == 0)
+        const int cantidadTokensVacio = 0;
+        if (tokensEntrada == null || tokensEntrada.Length == cantidadTokensVacio)
             return Array.Empty<string>();
 
         var resultado = new List<string>();
