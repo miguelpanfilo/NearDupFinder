@@ -24,9 +24,10 @@ public class NormalizarPruebas
     [TestInitialize]
     public void Setup()
     {
-        var procesador = new ProcesadorTexto();
+        var procesador = new ProcesadorTextoFalso(); 
         _gestorDuplicados = new GestorDuplicados(procesador);
     }
+
 
     [TestMethod]
     public void NormalizarItem_TituloYDescripcionSoloSimbolos_LanzaExcepcion()

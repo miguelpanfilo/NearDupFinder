@@ -75,9 +75,19 @@ public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
             if (score >= UmbralAlerta)
             {
                 string[] tokensCompartidosTitulo =
-                    itemTokenizadoA.TokenTitulo.Intersect(itemTokenizadoB.TokenTitulo).ToArray();
-                string[] tokensCompartidosDescripcion = itemTokenizadoA.TokenDescripcion
-                    .Intersect(itemTokenizadoB.TokenDescripcion).ToArray();
+                    itemTokenizadoA.TokenTitulo
+                        .Where(t => !string.IsNullOrWhiteSpace(t))
+                        .Intersect(itemTokenizadoB.TokenTitulo.Where(t => !string.IsNullOrWhiteSpace(t)))
+                        .Distinct()
+                        .ToArray();
+
+                string[] tokensCompartidosDescripcion =
+                    itemTokenizadoA.TokenDescripcion
+                        .Where(t => !string.IsNullOrWhiteSpace(t))
+                        .Intersect(itemTokenizadoB.TokenDescripcion.Where(t => !string.IsNullOrWhiteSpace(t)))
+                        .Distinct()
+                        .ToArray();
+
 
                 TipoDuplicado tipo = score >= UmbralPosible
                     ? TipoDuplicado.PosibleDuplicado

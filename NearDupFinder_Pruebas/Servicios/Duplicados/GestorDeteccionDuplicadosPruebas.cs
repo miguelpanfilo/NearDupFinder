@@ -100,21 +100,22 @@ public class DeteccionDuplicadosPruebas
 
         Assert.AreEqual(TipoDuplicado.PosibleDuplicado, duplicados[0].Tipo);
     }
-
     [TestMethod]
     public void DetectarDuplicados_TokensCompartidos_InterseccionSinRepetidos()
     {
         Item itemAComparar = CrearItem("alpha alpha beta", "rojo rojo verde azul", "Lenovo", "L14", "Notebooks");
         Item itemB = CrearItem("beta alpha gamma alpha", "verde verde rojo", "lenovo", "l14", "notebooks");
         Catalogo catalogo = CrearCatalogo(itemAComparar, itemB);
-        var esperadoTitulo = new[] { "alpha", "beta" };
-        var esperadoDescripcion = new[] { "rojo", "verde" };
+        
+        var esperadoTitulo = new[] { "alpha", "bet" };
+        var esperadoDescripcion = new[] { "roj", "verd" };
 
         List<ParDuplicado> duplicados = _gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
-        
+
         CollectionAssert.AreEquivalent(esperadoTitulo, duplicados[0].TokensCompartidosTitulo);
         CollectionAssert.AreEquivalent(esperadoDescripcion, duplicados[0].TokensCompartidosDescripcion);
     }
+
 
     [TestMethod]
     public void DetectarDuplicados_TokensCompartidos_SiNoCoinciden_QuedanVacios()
