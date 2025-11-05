@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -22,7 +23,8 @@ public class TokenizacionPruebas
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
+        var procesador = new ProcesadorTexto();
+        _gestorDuplicados = new GestorDuplicados(procesador);
     }
 
     [TestMethod]

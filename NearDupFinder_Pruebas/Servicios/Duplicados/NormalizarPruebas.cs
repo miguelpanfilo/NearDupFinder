@@ -1,12 +1,13 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
 [TestClass]
 public class NormalizarPruebas
 {
-    private GestorDuplicados _gestorDuplicados = new GestorDuplicados();
+    private GestorDuplicados _gestorDuplicados = null!;
 
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria)
     {
@@ -19,6 +20,12 @@ public class NormalizarPruebas
         Catalogo catalogo = new Catalogo("Catalogo");
         foreach (Item item in items) catalogo.AgregarItem(item);
         return catalogo;
+    }
+    [TestInitialize]
+    public void Setup()
+    {
+        var procesador = new ProcesadorTexto();
+        _gestorDuplicados = new GestorDuplicados(procesador);
     }
 
     [TestMethod]

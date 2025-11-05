@@ -6,6 +6,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
@@ -31,10 +32,11 @@ public class ControladorLectorCsvPruebas
     [TestInitialize]
     public void Setup()
     {
+        var procesador = new ProcesadorTexto();
         _almacenamientoDeDatos = new AlmacenamientoDeDatos();
         _gestorCatalogos = new GestorCatalogos(_almacenamientoDeDatos);
         _gestorAuditoria = new GestorAuditoria();
-        _gestorDuplicados = new GestorDuplicados();
+        _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
         _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados,_gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
         _gestorItems = new GestorItems(_idsItemsGlobal);

@@ -7,6 +7,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_Pruebas.Servicios.Items;
@@ -26,9 +27,10 @@ public class ControladorItemsPruebas
     [TestInitialize]
     public void Setup()
     {
+        var procesador = new ProcesadorTexto();
         var almacenamiento = new AlmacenamientoDeDatos();
         _gestorAuditoria = new GestorAuditoria();
-        var gestorDuplicados = new GestorDuplicados();
+        var gestorDuplicados = new GestorDuplicados(procesador);
 
         _gestorCatalogos = new GestorCatalogos(almacenamiento);
         _idsItemsGlobal = new HashSet<int>();
