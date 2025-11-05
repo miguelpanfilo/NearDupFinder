@@ -51,6 +51,21 @@ namespace NearDupFinder_Pruebas.Servicios.Duplicados.ProcesamientoTexto
                 salida
             );
         }
+        
+        [TestMethod]
+        public void AplicarStopwordsYStemming_TextoComun_DeberiaReducirYEliminarStopwords()
+        {
+            string[] entrada = { "Los", "jugadores", "estaban", "jugando", "en", "el", "sistema", "nuevo" };
+
+            string[] salida = _procesador.AplicarStopwordsYStemming(entrada);
+
+            Assert.IsTrue(salida.Any(t => t.StartsWith("jug")), "Debería reducir 'jugadores' y 'jugando' a su raíz.");
+            Assert.IsTrue(salida.Any(t => t.StartsWith("sistem")), "Debería reducir 'sistema' a su raíz.");
+            Assert.IsFalse(salida.Contains("los"), "Debería eliminar la stopword 'los'.");
+            Assert.IsFalse(salida.Contains("en"), "Debería eliminar la stopword 'en'.");
+        }
+
+
 
 
     }
