@@ -232,12 +232,24 @@
         _itemEditado = null;
     }
 
+
     private void AbrirModalEditar(DatosItemListaItems listaItems)
     {
-        _itemEditado = listaItems;
+        _itemEditado = new DatosItemListaItems
+        {
+            Id = listaItems.Id,
+            Titulo = listaItems.Titulo,
+            Descripcion = listaItems.Descripcion,
+            Categoria = listaItems.Categoria,
+            Marca = listaItems.Marca,
+            Modelo = listaItems.Modelo,
+            EstadoDuplicado = listaItems.EstadoDuplicado
+        };
+
         _mostrarModalEditar = true;
         _mensajeErrorModal = null;
     }
+
 
     private void GuardarCambios()
     {
