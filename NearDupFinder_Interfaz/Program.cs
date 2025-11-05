@@ -8,6 +8,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
@@ -19,7 +20,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
-builder.Services.AddSingleton<GestorDuplicados>();
+builder.Services.AddSingleton<IProcesadorTexto, ProcesadorTexto>();
+
+builder.Services.AddSingleton<GestorDuplicados>(sp =>
+{
+    var procesador = sp.GetRequiredService<IProcesadorTexto>();
+    return new GestorDuplicados(procesador);
+});
 builder.Services.AddSingleton<GestorAuditoria>();
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
