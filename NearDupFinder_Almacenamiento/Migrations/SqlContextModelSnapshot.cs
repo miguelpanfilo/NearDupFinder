@@ -70,6 +70,37 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.ToTable("Clusters", (string)null);
                 });
 
+            modelBuilder.Entity("NearDupFinder_Dominio.Clases.EntradaDeLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Accion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Detalles")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Usuario")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Auditorias", (string)null);
+                });
+
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Item", b =>
                 {
                     b.Property<int>("Id")
