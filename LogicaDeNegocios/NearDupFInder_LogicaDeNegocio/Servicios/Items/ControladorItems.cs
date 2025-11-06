@@ -120,5 +120,16 @@ public class ControladorItems
             $"Item eliminado: '{itemAEliminar.Titulo}' del catálogo '{catalogo.Titulo}'");
     }
     
+    public List<DatosItemListaItems> ObtenerItemsDelCatalogo(int idCatalogo)
+    {
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(idCatalogo)
+                       ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={idCatalogo}).");
+
+        return catalogo.Items
+            .Select(item => DatosItemListaItems.FromEntity(item))
+            .ToList();
+    }
+
+    
     
 }
