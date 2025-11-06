@@ -161,9 +161,7 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
-                .Select(item => DatosItemListaItems.FromEntity(item))
-                .ToList();
+            _itemsFiltradosEnTabla = ControladorItems.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id);
 
             _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
             ActualizarEstadoDuplicados();
@@ -174,6 +172,7 @@
             _categorias.Clear();
         }
     }
+
 
     private void AplicarFiltros()
     {
