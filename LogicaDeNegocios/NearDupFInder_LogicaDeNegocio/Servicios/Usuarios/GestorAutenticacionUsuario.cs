@@ -1,11 +1,11 @@
-using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_Interfaces;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
-public class GestorAutenticacionUsuario(AlmacenamientoDeDatos almacenamiento)
+public class GestorAutenticacionUsuario(IRepositorioUsuarios repositorioUsuarios)
 {
     public Usuario? AutenticarUsuario(DatosAutenticacion datosAutenticacion)
     {
@@ -19,7 +19,7 @@ public class GestorAutenticacionUsuario(AlmacenamientoDeDatos almacenamiento)
             throw new ExcepcionDeUsuario("El email no es valido");
         }
         
-        Usuario? usuario = almacenamiento.BuscarUsuarioPorEmail(emailAValidar);
+        Usuario? usuario = repositorioUsuarios.ObtenerUsuarioPorEmail(emailAValidar.ToString());
         
         if (usuario is null)
             return null;

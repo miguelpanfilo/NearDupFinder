@@ -1,17 +1,16 @@
-using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_Interfaces;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
 using NearDupFInder_LogicaDeNegocio.DTOs.ParaUsuarios;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 
-public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorAuditoria gestorAuditoria, GestorAutenticacionUsuario gestorAutenticacionUsuario)
+public class GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, GestorAuditoria gestorAuditoria, GestorAutenticacionUsuario gestorAutenticacionUsuario)
 {
     public bool CrearUsuario(DatosRegistroUsuario datosRegistroUsuario)
     {
@@ -38,7 +37,7 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
 
         CambiarClaveDelUsuarioSiCorresponde(nuevoUsuario, claveDelUsuario);
         AgregarRolesAlUsuario(nuevoUsuario, datosRegistroUsuario.Roles);
-        AgregarALaListaDeUsuarios(nuevoUsuario);
+        PersistirUsuario(nuevoUsuario);
 
         gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, $"Usuario: '{datosRegistroUsuario.Email}'");
 
@@ -76,7 +75,7 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
         gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarUser,
             $"Usuario eliminado: '{email}'");
 
-        RemoverDeLaListaDeUsuarios(usuario);
+        RemoverUsuario(usuario);
 
         return true;
     }
@@ -84,7 +83,7 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
     public IReadOnlyList<DatosPublicosUsuario> ObtenerUsuarios()
     {
         List<DatosPublicosUsuario> listaDtoUsuarios = new List<DatosPublicosUsuario>();
-        IReadOnlyCollection<Usuario> listaUsuarios = almacenamientoDeDatos.ObtenerUsuarios().AsReadOnly();
+        IReadOnlyCollection<Usuario> listaUsuarios = repositorioUsuarios.ListarUsuarios();
         foreach (Usuario usuario in listaUsuarios)
             listaDtoUsuarios.Add(DatosPublicosUsuario.FromEntity(usuario));
         
@@ -93,7 +92,7 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
     
     public DatosPublicosUsuario ObtenerUsuarioPorId(int id)
     {
-        Usuario? usuario = almacenamientoDeDatos.BuscarUsuarioPorId(id);
+        Usuario? usuario = repositorioUsuarios.ObtenerUsuarioPorId(id);
         
         if (usuario is null)
             throw new ExcepcionDeUsuario("El usuario no existe");
@@ -152,10 +151,12 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
         Usuario? usuarioValidado = gestorAutenticacionUsuario.AutenticarUsuario(datosAutenticacion);
         if (usuarioValidado is not null)
         {
-            bool claveModificada = ModificarClaveInterno(usuarioValidado, datosCambioClave.ClaveNueva);
+            Usuario? usuarioPersistido = repositorioUsuarios.ObtenerUsuarioPorEmailParaEdicion(usuarioValidado.Email.ToString());
+            bool claveModificada = ModificarClaveInterno(usuarioPersistido!, datosCambioClave.ClaveNueva);
             if (claveModificada)
                 gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario,
                     $"Clave modificada para el usuario: '{datosCambioClave.Email}'");
+            repositorioUsuarios.Actualizar(usuarioPersistido!);
             return claveModificada;
         }
 
@@ -187,14 +188,14 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
 
     private bool ElEmailYaEstaRegistrado(Email email)
     {
-        if (almacenamientoDeDatos.BuscarUsuarioPorEmail(email) is not null)
+        if (ObtenerUsuarioPorEmail(email) is not null)
             return true;
         return false;
     }
 
     private Usuario? ObtenerUsuarioPorEmail(Email email)
     {
-        return almacenamientoDeDatos.BuscarUsuarioPorEmail(email);
+        return repositorioUsuarios.ObtenerUsuarioPorEmail(email.ToString());
     }
 
     private void AgregarRolesAlUsuario(Usuario usuario, IReadOnlyCollection<Rol> roles)
@@ -203,14 +204,14 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
             usuario.AgregarRol(rol);
     }
 
-    private void AgregarALaListaDeUsuarios(Usuario usuario)
+    private void PersistirUsuario(Usuario nuevoUsuario)
     {
-        almacenamientoDeDatos.AgregarUsuario(usuario);
+        repositorioUsuarios.Agregar(nuevoUsuario);
     }
 
-    private void RemoverDeLaListaDeUsuarios(Usuario usuario)
+    private void RemoverUsuario(Usuario usuario)
     {
-        almacenamientoDeDatos.RemoverUsuario(usuario);
+        repositorioUsuarios.Eliminar(usuario.Id);
     }
     
     private bool EditarDatosDelUsuario(DatosEdicionUsuario datosEdicionUsuario)
@@ -221,10 +222,11 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
         Usuario? usuarioAModificar;
         Clave? posibleNuevaClave = null;
         Fecha fecha;
+        
         try
         {
             Email correo = Email.Crear(datosEdicionUsuario.EmailActual);
-            usuarioAModificar = ObtenerUsuarioPorEmail(correo);
+            usuarioAModificar = repositorioUsuarios.ObtenerUsuarioPorEmailParaEdicion(correo.ToString());
             if (usuarioAModificar is null)
                 return false;
 
@@ -239,9 +241,10 @@ public class GestorUsuarios(AlmacenamientoDeDatos almacenamientoDeDatos, GestorA
         }
 
         ModificarUsuarioExistente(usuarioAModificar, datosEdicionUsuario, fecha);
-
         CambiarClaveDelUsuarioSiCorresponde(usuarioAModificar, posibleNuevaClave);
 
+        repositorioUsuarios.Actualizar(usuarioAModificar);
+        
         return true;
     }
     

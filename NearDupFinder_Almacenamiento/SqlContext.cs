@@ -7,14 +7,20 @@ namespace NearDupFinder_Almacenamiento;
 public class SqlContext : DbContext
 {
    public DbSet<Item> Items { get; set; }
-   
    public DbSet<Usuario> Usuarios { get; set; }
    public DbSet<EntradaDeLog> Auditorias { get; set; }
 
    
    public SqlContext(DbContextOptions<SqlContext> options) : base(options)
    {
-       this.Database.Migrate(); //Ejecutara las migraciones al crear la BD
+       if (Database.IsRelational())
+       {
+           Database.Migrate();
+       }
+       else
+       {
+           Database.EnsureCreated();
+       }
    }
    
    protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,6 +30,5 @@ public class SqlContext : DbContext
        new CatalogoConfiguraciones().Configure(modelBuilder.Entity<Catalogo>());
        new ClusterConfiguraciones().Configure(modelBuilder.Entity<Cluster>());
        new AuditoriaConfiguraciones().Configure(modelBuilder.Entity<EntradaDeLog>());
-
    }
 }   

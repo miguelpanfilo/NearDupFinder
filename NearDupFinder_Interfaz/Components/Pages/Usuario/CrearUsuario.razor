@@ -59,7 +59,7 @@
     </div>
     
     <div class="mt-3 d-flex gap-2">
-        <button type="button" class="btn btn-primary" @onclick="CrearNuevoUsuario">Guardar cambios</button>
+        <button type="button" class="btn btn-primary" @onclick="CrearNuevoUsuarioAsync">Guardar cambios</button>
         <button type="button" class="btn btn-secondary" @onclick="CancelarCambios">Cancelar</button>
     </div>
 </form>
@@ -77,29 +77,39 @@
     private bool _error;
     private string _mensajeDeError = string.Empty;
     
-    private void CrearNuevoUsuario()
+    private async Task CrearNuevoUsuarioAsync()
     {
-        if (!ValidarCampos(_nombre, _apellido, _email, _fecha))
-            return;
-
-        var roles = new List<String>();
-        if (_rolAdmin)   
-            roles.Add("Administrador");
-        if (_rolRevisor)
-            roles.Add("Revisor");
-
-        var datosRegistroUsuario = new DatosRegistroUsuario(_nombre, _apellido, _email,
-            _fecha!.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
-        bool seCreoUsuario = GestorUsuarios.CrearUsuario(datosRegistroUsuario);
-        
-        if (seCreoUsuario)
+        try
         {
-            Nav.NavigateTo("/usuarios");
+            if (!ValidarCampos(_nombre, _apellido, _email, _fecha))
+                return;
+
+            List<string> roles = new List<string>();
+            if (_rolAdmin)   roles.Add("Administrador");
+            if (_rolRevisor) roles.Add("Revisor");
+
+            DatosRegistroUsuario datosRegistroUsuario = new DatosRegistroUsuario(
+                _nombre, _apellido, _email,
+                _fecha!.Value.Year, _fecha.Value.Month, _fecha.Value.Day,
+                _clave, roles
+            );
+
+            bool seCreoUsuario = GestorUsuarios.CrearUsuario(datosRegistroUsuario);
+
+            if (seCreoUsuario)
+            {
+                Nav.NavigateTo("/usuarios");
+            }
+            else
+            {
+                NotificarError("El email o la contraseña no son válidos, por favor vuelva a ingresar los datos.");
+                await InvokeAsync(StateHasChanged);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            NotificarError("El email o la contraseña no son validos, por favor vuelva a ingresar los datos.");
-            StateHasChanged();
+            NotificarError($"Error creando usuario: {ex.Message}");
+            await InvokeAsync(StateHasChanged);
         }
     }
 

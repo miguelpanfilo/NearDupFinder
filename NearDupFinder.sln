@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFInder_LogicaDeNegoc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Almacenamiento", "NearDupFinder_Almacenamiento\NearDupFinder_Almacenamiento.csproj", "{452F7F8F-FA0C-4C76-BDD0-473E986AA243}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstracciones", "Abstracciones", "{C13746EE-983F-4A24-BBB1-562A20CAF6A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Interfaces", "NearDupFinder_Interfaces\NearDupFinder_Interfaces.csproj", "{0AA8DB11-B70B-45AB-A111-505D241A8239}"
+EndProject
 
 Global
 				GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +54,10 @@ Global
 								{452F7F8F-FA0C-4C76-BDD0-473E986AA243}.Debug|Any CPU.Build.0 = Debug|Any CPU
 								{452F7F8F-FA0C-4C76-BDD0-473E986AA243}.Release|Any CPU.ActiveCfg = Release|Any CPU
 								{452F7F8F-FA0C-4C76-BDD0-473E986AA243}.Release|Any CPU.Build.0 = Release|Any CPU
+					{0AA8DB11-B70B-45AB-A111-505D241A8239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+					{0AA8DB11-B70B-45AB-A111-505D241A8239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+					{0AA8DB11-B70B-45AB-A111-505D241A8239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+					{0AA8DB11-B70B-45AB-A111-505D241A8239}.Release|Any CPU.Build.0 = Release|Any CPU
 				EndGlobalSection
 				GlobalSection(NestedProjects) = preSolution
 								{1E54973F-2076-458C-A09F-61589487C4BE} = {C5B7097F-8BCC-4509-BA77-E9429330531D}
@@ -57,5 +65,6 @@ Global
 								{EBFCF140-A873-41B5-85DD-8D85A5047079} = {ECD35B09-A96E-4C9A-8EF6-95B557EF54FD}
 								{46C35828-8BF4-418A-8824-CBA5F87037A7} = {42F18886-A7CE-4BB8-BA7A-74B73D76BDD5}
 								{452F7F8F-FA0C-4C76-BDD0-473E986AA243} = {6FE0F227-957E-4D4E-BB5B-32FF10544F95}
+					{0AA8DB11-B70B-45AB-A111-505D241A8239} = {C13746EE-983F-4A24-BBB1-562A20CAF6A0}
 				EndGlobalSection
 EndGlobal

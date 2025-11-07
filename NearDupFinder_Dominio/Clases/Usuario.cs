@@ -11,6 +11,12 @@ public enum Rol
 public class Usuario
 {
     private static int _nextId = 1;
+
+    public static void InicializarGeneradorIds(int idInicial)
+    {
+        if (idInicial > _nextId) 
+            _nextId = idInicial;
+    }
     public int Id { get;  set; }
     public string Nombre { get; set; } = null!;
     public string Apellido { get; set; } = null!;
@@ -69,6 +75,35 @@ public class Usuario
         return Roles.ToList().AsReadOnly();
     }
     
+    public void SincronizarRolesDesdePersistencia()
+    {
+        Roles.Clear();
+
+        if (this.RolesPersistidos.Count == 0)
+            return;
+
+        foreach (RolPersistido rolPersistido in this.RolesPersistidos)
+        {
+            string valorPersistido = rolPersistido.Valor;
+            Rol rolConvertido;
+            Enum.TryParse(valorPersistido, true, out rolConvertido);
+            bool yaExisteEnLaColeccion = Roles.Contains(rolConvertido);
+            if (!yaExisteEnLaColeccion)
+                this.Roles.Add(rolConvertido);
+        }
+    }
+
+    public void SincronizarRolesParaPersistencia()
+    {
+        RolesPersistidos.Clear();
+        foreach (Rol rol in Roles)
+        {
+            string nombreRol = rol.ToString();
+            RolPersistido rolPersistido = new RolPersistido (nombreRol);
+            RolesPersistidos.Add(rolPersistido);
+        }
+    }
+    
     public bool Igual(Usuario otroUsuario)
     {
         return Email.Igual(otroUsuario.Email);
@@ -78,7 +113,7 @@ public class Usuario
     {
         if(string.IsNullOrEmpty(clave))
             return false;
-        return Clave!.Verificar(clave);
+        return Clave.Verificar(clave);
     }
     
     public bool CambiarClave(Clave nuevaClave)

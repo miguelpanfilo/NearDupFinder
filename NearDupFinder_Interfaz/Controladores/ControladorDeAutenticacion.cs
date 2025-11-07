@@ -18,8 +18,6 @@ public class ControladorDeAutenticacion : ControllerBase
     public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] GestorAutenticacionUsuario gestorAutenticacionUsuario,
         [FromServices] GestorInicializacion gestorInicializacion,[FromServices] GestorAuditoria gestorAuditoria)
     {
-        gestorInicializacion.AsegurarInicializacion();
-        
         DatosAutenticacion datosAutenticacion = new DatosAutenticacion(email, clave);
         bool elUsuarioExiste = gestorAutenticacionUsuario.AutenticarUsuarioBooleano(datosAutenticacion);
         if (!elUsuarioExiste)
