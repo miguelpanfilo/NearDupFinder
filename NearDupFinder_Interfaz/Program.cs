@@ -118,6 +118,13 @@ builder.Services.AddServerSideBlazor()
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var servicios = scope.ServiceProvider;
+    var gestorInit = servicios.GetRequiredService<GestorInicializacion>();
+    gestorInit.AsegurarInicializacion();
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

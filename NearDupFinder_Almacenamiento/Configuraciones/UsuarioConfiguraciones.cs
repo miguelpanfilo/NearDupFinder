@@ -8,51 +8,43 @@ public class UsuarioConfiguraciones: IEntityTypeConfiguration<Usuario>
 {
     public void Configure(EntityTypeBuilder<Usuario> builder)
     {
-        const int maximoLargoDeUnEmail = 320;
-        builder.ToTable("Usuarios");
-        builder.HasKey(usuario => usuario.Id);
-        builder.Property(usuario => usuario.Id).ValueGeneratedNever();
+        var entidadUsuario = builder;
+        entidadUsuario.ToTable("Usuarios");
+        entidadUsuario.HasKey(usuario => usuario.Id);
+        entidadUsuario.Property(usuario => usuario.Id).ValueGeneratedNever();
 
-
-        builder.Property(usuario => usuario.Nombre).IsRequired().HasMaxLength(100);
-        builder.Property(usuario => usuario.Apellido).IsRequired().HasMaxLength(100);
-
-        builder.OwnsOne(usuario => usuario.Email, email =>
+        entidadUsuario.OwnsOne(usuario => usuario.Email, email =>
         {
             email.Property(correo => correo.Valor)
                 .HasColumnName("Email")
-                .IsRequired()
-                .HasMaxLength(maximoLargoDeUnEmail);
-
+                .IsRequired();
+           
             email.HasIndex(correo => correo.Valor).IsUnique();
         });
 
-        builder.OwnsOne(usuario => usuario.FechaNacimiento, fechaDeNacimiento =>
+        entidadUsuario.OwnsOne(usuario => usuario.FechaNacimiento, fechaDeNacimiento =>
         {
             fechaDeNacimiento.Property(fecha => fecha.Anio).HasColumnName("AnioNacimiento");
             fechaDeNacimiento.Property(fecha => fecha.Mes ).HasColumnName("MesNacimiento");
             fechaDeNacimiento.Property(fecha => fecha.Dia ).HasColumnName("DiaNacimiento");
         });
 
-        builder.OwnsOne(usuario => usuario.Clave, c =>
+        entidadUsuario.OwnsOne(usuario => usuario.Clave, c =>
         {
-            c.Property(clave => clave.Hash).HasColumnName("HashClave").IsRequired();
+            c.Property(clave => clave.Hash).HasColumnName("HashClave");
         });
        
-        builder.Ignore(usuario => usuario.Roles);
+        entidadUsuario.Ignore(usuario => usuario.Roles);
 
-        builder.OwnsMany(usuario => usuario.RolesPersistidos, rolesPersistidosDelUsuario =>
+        entidadUsuario.OwnsMany(usuario => usuario.RolesPersistidos, rolesPersistidosDelUsuario =>
         {
             rolesPersistidosDelUsuario.ToTable("UsuarioRoles");
             rolesPersistidosDelUsuario.WithOwner().HasForeignKey("UsuarioId");
 
             rolesPersistidosDelUsuario.Property(rolPersistido => rolPersistido.Valor)
-                .HasColumnName("Rol")
-                .HasMaxLength(64)
-                .IsRequired();
-
+                .HasColumnName("Rol");
+           
             rolesPersistidosDelUsuario.HasKey("UsuarioId", "Valor");
         });
-
     }
 }
