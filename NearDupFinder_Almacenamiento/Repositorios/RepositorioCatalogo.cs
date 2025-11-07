@@ -1,0 +1,27 @@
+using NearDupFinder_Dominio.Clases;
+using Microsoft.EntityFrameworkCore;
+using NearDupFinder_Interfaces;                 
+
+namespace NearDupFinder_Almacenamiento.Repositorios
+{
+    public class RepositorioCatalogos : RepositorioGenerico<Catalogo>, IRepositorioCatalogos
+    {
+        public RepositorioCatalogos(SqlContext context) : base(context)
+        {
+        }
+
+        public Catalogo? ObtenerPorTitulo(string titulo)
+        {
+            return _context.Set<Catalogo>()
+                .Include(c => c.Items)
+                .FirstOrDefault(c => c.Titulo == titulo);
+        }
+
+        public Catalogo? ObtenerPorId(int id)
+        {
+            return _context.Set<Catalogo>()
+                .Include(c => c.Items)
+                .FirstOrDefault(c => c.Id == id);
+        }
+    }
+}
