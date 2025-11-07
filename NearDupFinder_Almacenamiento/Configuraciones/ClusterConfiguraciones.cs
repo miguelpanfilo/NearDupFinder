@@ -4,7 +4,7 @@ using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_Almacenamiento.Configuraciones;
 
-public class ClusterConfiguraciones: IEntityTypeConfiguration <Cluster>
+public class ClusterConfiguraciones : IEntityTypeConfiguration<Cluster>
 {
     public void Configure(EntityTypeBuilder<Cluster> builder)
     {
@@ -26,5 +26,6 @@ public class ClusterConfiguraciones: IEntityTypeConfiguration <Cluster>
         builder.HasOne(c => c.Canonico)
             .WithMany()
             .HasForeignKey("CanonicoId")
-            .OnDelete(DeleteBehavior.ClientSetNull);    }
+            .OnDelete(DeleteBehavior.ClientSetNull);
+    }
 }
