@@ -1,8 +1,6 @@
 @page "/CrearCatalogo"
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @inject GestorCatalogos GestorCatalogos;
 
@@ -72,7 +70,7 @@
 
 @code {
 
-    private IReadOnlyCollection<Catalogo>? _catalogos;
+    private IReadOnlyCollection<DatosPublicosCatalogo>? _catalogos;
     private string _titulo = string.Empty;
     private string _descripcion = string.Empty;
 
@@ -82,7 +80,7 @@
 
     protected override void OnInitialized()
     {
-        _catalogos = GestorCatalogos.Catalogos;
+        _catalogos = GestorCatalogos.ObtenerCatalogos();
     }
 
     public void EliminarCatalogo(int id)

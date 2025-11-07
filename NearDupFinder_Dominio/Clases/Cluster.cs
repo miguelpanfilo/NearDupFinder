@@ -2,16 +2,22 @@ namespace NearDupFinder_Dominio.Clases;
 
 public class Cluster
 {
-    public int Id { get; }
+    public int Id { get; private set; }
     private readonly HashSet<Item> _pertenecientesCluster;
-    public Item? Canonico { get; set; }
     public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
+    public Item? Canonico { get; set; }
 
     public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
         Id = id;
         _pertenecientesCluster = pertenecientesCluster;
     }
+    
+    protected Cluster()
+    {
+        _pertenecientesCluster = new HashSet<Item>();
+    }
+
 
     public void Agregar(Item item)
     {

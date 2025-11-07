@@ -74,6 +74,17 @@ public class GestorCatalogos
         _almacenamientoDeDatos.AgregarCatalogo(catalogo);
     }
 
+    public IReadOnlyCollection<DatosPublicosCatalogo> ObtenerCatalogos()
+    {
+        List<DatosPublicosCatalogo> catalogosDtos = new List<DatosPublicosCatalogo>();
+        IReadOnlyCollection<Catalogo> catalogos = Catalogos;
+
+        foreach (Catalogo catalogo in catalogos)
+        {
+            catalogosDtos.Add(DatosPublicosCatalogo.FromEntity(catalogo));
+        }
+        return catalogosDtos;
+    }
     public IReadOnlyCollection<Catalogo> Catalogos => _almacenamientoDeDatos.ObtenerCatalogos().AsReadOnly();
 
     public IReadOnlyCollection<Item> ObtenerItemsDelCatalogo(int id)
@@ -85,10 +96,23 @@ public class GestorCatalogos
         return catalogo.Items;
     }
 
+    public DatosPublicosCatalogo? ObtenerCatalogoDtoPorId(int id)
+    {
+        Catalogo? catalogo = ObtenerCatalogoPorId(id);
+        return  catalogo is null ? null : DatosPublicosCatalogo.FromEntity(catalogo);
+    }
+    
+    public DatosPublicosCatalogo? ObtenerCatalogoDtoPorTitulo(string? titulo)
+    {
+        Catalogo? catalogo = ObtenerCatalogoPorTitulo(titulo);
+        return catalogo is null ? null : DatosPublicosCatalogo.FromEntity(catalogo);
+    }
+
     public Catalogo? ObtenerCatalogoPorId(int id)
     {
         return _almacenamientoDeDatos.ObtenerCatalogoPorId(id);
     }
+    
     
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
     {

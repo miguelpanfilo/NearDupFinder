@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -21,7 +22,8 @@ public class JaccardPruebas
     [TestInitialize]
     public void Setup()
     {
-        _gestorDuplicados = new GestorDuplicados();
+        var procesador = new ProcesadorTexto();
+        _gestorDuplicados = new GestorDuplicados(procesador);
     }
 
     [TestMethod]
@@ -51,12 +53,11 @@ public class JaccardPruebas
     [TestMethod]
     public void CalcularJaccard_AmbosNoVacios_RetornaValorEsperado()
     {
-        GestorDuplicados gestor = new GestorDuplicados();
         Item itemA = CrearItem("ab", "desc igual", "m", "x","cat");
         Item itemB = CrearItem("ab cd", "desc igual", "m", "x","cat");
 
         Catalogo catalogo = CrearCatalogo(itemA, itemB);
-        List<ParDuplicado> listaParesDuplicados = gestor.DetectarDuplicados(itemA, catalogo);
+        List<ParDuplicado> listaParesDuplicados = _gestorDuplicados.DetectarDuplicados(itemA, catalogo);
 
         Assert.AreEqual(1, listaParesDuplicados.Count);
         Assert.AreEqual(0.5f, listaParesDuplicados[0].JaccardTitulo, 1e-6);

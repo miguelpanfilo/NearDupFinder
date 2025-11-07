@@ -2,6 +2,7 @@ namespace NearDupFinder_Dominio.Clases;
 
 public class EntradaDeLog
 {
+    public int Id { get; set; }
     public DateTime Timestamp { get; init; } = DateTime.Now;
     public string Usuario { get; init; } = "Desconocido";
     public AccionLog Accion { get; init; }

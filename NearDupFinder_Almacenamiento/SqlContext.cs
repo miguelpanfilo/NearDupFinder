@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NearDupFinder_Almacenamiento.Configuraciones;
 using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_Almacenamiento;
@@ -7,6 +8,8 @@ public class SqlContext : DbContext
 {
    public DbSet<Item> Items { get; set; }
    public DbSet<Usuario> Usuarios { get; set; }
+   public DbSet<EntradaDeLog> Auditorias { get; set; }
+
    
    public SqlContext(DbContextOptions<SqlContext> options) : base(options)
    {
@@ -23,6 +26,12 @@ public class SqlContext : DbContext
    
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
+       new UsuarioConfiguraciones().Configure(modelBuilder.Entity<Usuario>());
+       new ItemConfiguraciones().Configure(modelBuilder.Entity<Item>());
+       new CatalogoConfiguraciones().Configure(modelBuilder.Entity<Catalogo>());
+       new ClusterConfiguraciones().Configure(modelBuilder.Entity<Cluster>());
+       new AuditoriaConfiguraciones().Configure(modelBuilder.Entity<EntradaDeLog>());
+       
        var entidadUsuario = modelBuilder.Entity<Usuario>();
        entidadUsuario.ToTable("Usuarios");
        entidadUsuario.HasKey(usuario => usuario.Id);

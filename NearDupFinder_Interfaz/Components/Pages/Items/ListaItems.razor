@@ -1,9 +1,8 @@
 @page "/lista-items"
-@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
 @using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados
@@ -30,7 +29,7 @@
             @bind="_catalogoSeleccionadoTitulo" 
             @bind:after="CargarItemsDeCatalogo">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in GestorCatalogos.Catalogos)
+        @foreach (var cat in GestorCatalogos.ObtenerCatalogos())
         {
             <option value="@cat.Titulo">@cat.Titulo</option>
         }
@@ -149,7 +148,7 @@
     private string? _mensajeErrorModal = "";
     private bool _mostrarModalEditar;
     private DatosItemListaItems? _itemEditado;
-    private Catalogo? _catalogoSeleccionado;
+    private DatosPublicosCatalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
     private List<DatosItemListaItems> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
@@ -158,13 +157,11 @@
 
     private void CargarItemsDeCatalogo()
     {
-        _catalogoSeleccionado = GestorCatalogos.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
+        _catalogoSeleccionado = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(_catalogoSeleccionadoTitulo);
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
-                .Select(item => DatosItemListaItems.FromEntity(item))
-                .ToList();
+            _itemsFiltradosEnTabla = ControladorItems.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id);
 
             _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
             ActualizarEstadoDuplicados();
@@ -175,6 +172,7 @@
             _categorias.Clear();
         }
     }
+
 
     private void AplicarFiltros()
     {
@@ -233,12 +231,24 @@
         _itemEditado = null;
     }
 
+
     private void AbrirModalEditar(DatosItemListaItems listaItems)
     {
-        _itemEditado = listaItems;
+        _itemEditado = new DatosItemListaItems
+        {
+            Id = listaItems.Id,
+            Titulo = listaItems.Titulo,
+            Descripcion = listaItems.Descripcion,
+            Categoria = listaItems.Categoria,
+            Marca = listaItems.Marca,
+            Modelo = listaItems.Modelo,
+            EstadoDuplicado = listaItems.EstadoDuplicado
+        };
+
         _mostrarModalEditar = true;
         _mensajeErrorModal = null;
     }
+
 
     private void GuardarCambios()
     {
@@ -302,7 +312,7 @@
         }
     }
     
-    private List<string> ObtenerCategoriasUnicas(Catalogo catalogo)
+    private List<string> ObtenerCategoriasUnicas(DatosPublicosCatalogo catalogo)
     {
         return GestorCatalogos.ObtenerItemsDelCatalogo(catalogo.Id)
             .Select(i => i.Categoria)

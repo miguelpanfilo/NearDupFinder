@@ -1,7 +1,6 @@
 @page "/Cluster"
-@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
 @inject GestorCatalogos GestorCatalogos;
@@ -64,7 +63,7 @@
                                 </ul>
                                 <div class="d-flex justify-content-end mb-2">
                                     <button class="btn btn-sm btn-primary"
-                                            @onclick="() => FusionarCluster(_catalogo.Id, cluster.Id)" title="Fusionar">
+                                            @onclick="() => FusionarCluster(_catalogo, cluster.Id)" title="Fusionar">
                                         <i class="bi bi-arrow-repeat me-1"></i> Fusionar
                                     </button>
                                 </div>
@@ -80,13 +79,13 @@
         }
     }
 @code {
-    private List<Catalogo> _catalogos = new();
-    private List<Cluster> _clustersFiltrados = new();
-    private Catalogo? _catalogo;
+    private IReadOnlyCollection<DatosPublicosCatalogo>? _catalogos;
+    private IReadOnlyCollection<DatosPublicosCluster>? _clustersFiltrados;
+    private DatosPublicosCatalogo? _catalogo;
 
     protected override void OnInitialized()
     {
-        _catalogos = GestorCatalogos.Catalogos.ToList();
+        _catalogos = GestorCatalogos.ObtenerCatalogos();
     }
 
     private void FiltrarPorCatalogo(ChangeEventArgs e)
@@ -94,21 +93,30 @@
         string tituloSeleccionado = e.Value?.ToString() ?? "";
         RefrescarClustersPorTitulo(tituloSeleccionado);
     }
+    
     private void RefrescarClustersPorTitulo(string? titulo)
     {
         if (!string.IsNullOrWhiteSpace(titulo))
         {
-            _catalogo = GestorCatalogos.ObtenerCatalogoPorTitulo(titulo);
-            _clustersFiltrados = _catalogo?.Clusters.ToList() ?? new();
+            var catalogo = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(titulo);
+
+            if (catalogo is null)
+            {
+                _catalogo = null;
+                _clustersFiltrados = Array.Empty<DatosPublicosCluster>();
+                return;
+            }
+
+            _catalogo = catalogo;
+            _clustersFiltrados = GestorControlClusters.ObtenerClustersDtoCatalogo(catalogo.Id);
         }
         else
         {
             _catalogo = null;
-            _clustersFiltrados.Clear();
         }
     }
 
-    private void EliminarItemDelCluster(Catalogo catalogo, int idItem)
+    private void EliminarItemDelCluster(DatosPublicosCatalogo catalogo, int idItem)
     {
         GestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(idItem, catalogo.Id));
         
@@ -117,9 +125,10 @@
         StateHasChanged(); 
     }
 
-    private void FusionarCluster(int idCatalogo, int idCluster)
+    private void FusionarCluster(DatosPublicosCatalogo catalogo, int idCluster)
     {
-        
-        GestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(idCatalogo,idCluster));
+        GestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(catalogo.Id,idCluster));
+
+        RefrescarClustersPorTitulo(catalogo.Titulo);
     }
 }

@@ -1,8 +1,6 @@
 @page "/catalogos/{Id:int}/editar"
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
-@using NearDupFinder_LogicaDeNegocio.Servicios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @inject GestorCatalogos GestorCatalogos;
 @inject NavigationManager Nav
@@ -43,7 +41,7 @@ else
     [Parameter]
     public int Id { get; set;}
 
-    private Catalogo? _catalogo;
+    private DatosPublicosCatalogo? _catalogo;
     private string _titulo = string.Empty;
     private string _descripcion = string.Empty;
     private bool _error;
@@ -52,7 +50,7 @@ else
     protected override void OnParametersSet()
     {
         
-        _catalogo = GestorCatalogos.ObtenerCatalogoPorId(Id);
+        _catalogo = GestorCatalogos.ObtenerCatalogoDtoPorId(Id);
         
         if (_catalogo is null)
         {
