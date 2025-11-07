@@ -7,9 +7,13 @@ public interface IRepositorioUsuarios
     Usuario? ObtenerUsuarioPorId(int id);
     Usuario? ObtenerUsuarioPorEmail(string email);
     
+    Usuario? ObtenerUsuarioPorEmailParaEdicion(string email);
+    
     void Agregar(Usuario usuario);
     void Actualizar(Usuario usuario);
-    void Eliminar(Usuario usuario);
+    void Eliminar(int id);
+    
+    IReadOnlyList<Usuario> ListarUsuarios();
 
-    IReadOnlyList<Usuario> ListarUsuarios(); 
+    int ObtenerIdMaximo();
 }

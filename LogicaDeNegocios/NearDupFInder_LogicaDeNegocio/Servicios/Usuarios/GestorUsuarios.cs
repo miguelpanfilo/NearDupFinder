@@ -151,11 +151,12 @@ public class GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, GestorAudi
         Usuario? usuarioValidado = gestorAutenticacionUsuario.AutenticarUsuario(datosAutenticacion);
         if (usuarioValidado is not null)
         {
-            bool claveModificada = ModificarClaveInterno(usuarioValidado, datosCambioClave.ClaveNueva);
+            Usuario? usuarioPersistido = repositorioUsuarios.ObtenerUsuarioPorEmailParaEdicion(usuarioValidado.Email.ToString());
+            bool claveModificada = ModificarClaveInterno(usuarioPersistido!, datosCambioClave.ClaveNueva);
             if (claveModificada)
                 gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario,
                     $"Clave modificada para el usuario: '{datosCambioClave.Email}'");
-            repositorioUsuarios.Actualizar(usuarioValidado);
+            repositorioUsuarios.Actualizar(usuarioPersistido!);
             return claveModificada;
         }
 
@@ -210,7 +211,7 @@ public class GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, GestorAudi
 
     private void RemoverUsuario(Usuario usuario)
     {
-        repositorioUsuarios.Eliminar(usuario);
+        repositorioUsuarios.Eliminar(usuario.Id);
     }
     
     private bool EditarDatosDelUsuario(DatosEdicionUsuario datosEdicionUsuario)
@@ -221,10 +222,11 @@ public class GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, GestorAudi
         Usuario? usuarioAModificar;
         Clave? posibleNuevaClave = null;
         Fecha fecha;
+        
         try
         {
             Email correo = Email.Crear(datosEdicionUsuario.EmailActual);
-            usuarioAModificar = ObtenerUsuarioPorEmail(correo);
+            usuarioAModificar = repositorioUsuarios.ObtenerUsuarioPorEmailParaEdicion(correo.ToString());
             if (usuarioAModificar is null)
                 return false;
 
@@ -240,6 +242,7 @@ public class GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, GestorAudi
 
         ModificarUsuarioExistente(usuarioAModificar, datosEdicionUsuario, fecha);
         CambiarClaveDelUsuarioSiCorresponde(usuarioAModificar, posibleNuevaClave);
+
         repositorioUsuarios.Actualizar(usuarioAModificar);
         
         return true;

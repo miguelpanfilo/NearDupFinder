@@ -22,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddSingleton<GestorDuplicados>();
-builder.Services.AddSingleton<GestorAuditoria>();
+builder.Services.AddScoped<GestorAuditoria>();
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
@@ -102,6 +102,10 @@ builder.Services.AddDbContext<SqlContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
+
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => { options.DetailedErrors = true; });
+
 
 var app = builder.Build();
 

@@ -10,6 +10,7 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         {
             Usuario? usuario = contexto.Usuarios
                 .Include(u => u.RolesPersistidos)
+                .AsNoTracking()
                 .SingleOrDefault(u => u.Id == id);
 
             if (usuario is not null)
@@ -21,6 +22,21 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         }
 
         public Usuario? ObtenerUsuarioPorEmail(string email)
+        {
+            Usuario? usuario = contexto.Usuarios
+                .Include(u => u.RolesPersistidos)
+                .AsNoTracking()
+                .SingleOrDefault(u => u.Email.Valor == email);
+
+            if (usuario is not null)
+            {
+                usuario.SincronizarRolesDesdePersistencia();
+            }
+
+            return usuario;
+        }
+        
+        public Usuario? ObtenerUsuarioPorEmailParaEdicion(string email)
         {
             Usuario? usuario = contexto.Usuarios
                 .Include(u => u.RolesPersistidos)
@@ -48,7 +64,16 @@ namespace NearDupFinder_Almacenamiento.Repositorios
 
             return usuarios;
         }
-        
+
+        public int ObtenerIdMaximo()
+        {
+            int? idMaximo = contexto.Usuarios
+                .AsNoTracking()
+                .Select(usuario => (int?)usuario.Id)
+                .Max();
+
+            return idMaximo ?? 0;        }
+
         public void Agregar(Usuario usuario)
         {
             usuario.SincronizarRolesParaPersistencia();
@@ -59,13 +84,16 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         public void Actualizar(Usuario usuario)
         {
             usuario.SincronizarRolesParaPersistencia();
-            contexto.Usuarios.Update(usuario);
             contexto.SaveChanges();
         }
 
-        public void Eliminar(Usuario usuario)
+        public void Eliminar(int id)
         {
-            contexto.Usuarios.Remove(usuario);
+            Usuario? usuario = contexto.Usuarios
+                .Include(u => u.RolesPersistidos)
+                .SingleOrDefault(u => u.Id == id);
+
+            contexto.Usuarios.Remove(usuario!);
             contexto.SaveChanges();
         }
     }

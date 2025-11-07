@@ -18,6 +18,8 @@ public class GestorInicializacion
     {
         if (_inicializado)
             return;
+        
+        AsegurarInicializacionIds(_repositorioUsuarios);
 
         if(_repositorioUsuarios.ObtenerUsuarioPorEmail(EmailAdmin) is null)
             CrearUsuarioAdmin();
@@ -34,5 +36,11 @@ public class GestorInicializacion
         adminUsuario.AgregarRol(Rol.Administrador);
         adminUsuario.CambiarClave(clave);
         _repositorioUsuarios.Agregar(adminUsuario);
+    }
+    
+    public void AsegurarInicializacionIds(IRepositorioUsuarios repositorioUsuarios)
+    {
+        int idMaximo = repositorioUsuarios.ObtenerIdMaximo();
+        Usuario.InicializarGeneradorIds(idMaximo + 1);
     }
 }

@@ -11,6 +11,12 @@ public enum Rol
 public class Usuario
 {
     private static int _nextId = 1;
+
+    public static void InicializarGeneradorIds(int idInicial)
+    {
+        if (idInicial > _nextId) 
+            _nextId = idInicial;
+    }
     public int Id { get;  set; }
     public string Nombre { get; set; } = null!;
     public string Apellido { get; set; } = null!;

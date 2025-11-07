@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFInder_LogicaDeNegoc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Almacenamiento", "NearDupFinder_Almacenamiento\NearDupFinder_Almacenamiento.csproj", "{452F7F8F-FA0C-4C76-BDD0-473E986AA243}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{C13746EE-983F-4A24-BBB1-562A20CAF6A0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstracciones", "Abstracciones", "{C13746EE-983F-4A24-BBB1-562A20CAF6A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NearDupFinder_Interfaces", "NearDupFinder_Interfaces\NearDupFinder_Interfaces.csproj", "{0AA8DB11-B70B-45AB-A111-505D241A8239}"
 EndProject

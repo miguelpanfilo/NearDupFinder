@@ -48,9 +48,7 @@ public class GestorAutenticacionUsuarioPruebas
     public void Setup()
     {
         _contexto = SqlContextFactoryPruebas.CrearContexto(_opciones);
-
         SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
-
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
 
         _gestorAuditoria = new GestorAuditoria();
