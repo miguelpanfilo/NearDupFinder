@@ -1,7 +1,10 @@
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlLectorCsv;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -18,7 +21,6 @@ public class ControladorLectorCsvPruebas
     private GestorLectorCsv _gestorLectorCsv = null!;
     private GestorCatalogos _gestorCatalogos = null!;
     private GestorItems _gestorItems = null!;
-    private AlmacenamientoDeDatos _almacenamientoDeDatos = null!;
     private ControladorDuplicados _controladorDuplicados = null!;
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorControlClusters _gestorControlClusters = null!;
@@ -27,25 +29,32 @@ public class ControladorLectorCsvPruebas
     private readonly HashSet<int> _idsItemsGlobal = [];
     private ControladorLectorCsv _controladorLectorCsv = null!;
     private ControladorItems _controladorItems = null!;
+    private SqlContext _context = null!;
 
-    
     [TestInitialize]
     public void Setup()
     {
         var procesador = new ProcesadorTexto();
-        _almacenamientoDeDatos = new AlmacenamientoDeDatos();
-        _gestorCatalogos = new GestorCatalogos(_almacenamientoDeDatos);
-        _gestorAuditoria = new GestorAuditoria();
-        _gestorDuplicados = new GestorDuplicados(procesador);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
-        _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados,_gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
-        _gestorItems = new GestorItems(_idsItemsGlobal);
-        _controladorItems = new ControladorItems(_gestorItems,_gestorCatalogos,_controladorDuplicados,_gestorControlClusters,_gestorAuditoria, _idsItemsGlobal);
 
-        _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems,_controladorItems);
+        var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_LectorCsv");
+        _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
+        IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
+        IRepositorioItems repoItems = new RepositorioItems(_context);
+
+        _gestorAuditoria = new GestorAuditoria();
+        _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+        _gestorDuplicados = new GestorDuplicados(procesador);
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
+        _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados, _gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
+        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _controladorItems = new ControladorItems(_gestorItems, _gestorCatalogos, _controladorDuplicados, _gestorControlClusters, _gestorAuditoria, _idsItemsGlobal);
+
+        _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
     }
-    
+
     [TestMethod]
     public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
     {

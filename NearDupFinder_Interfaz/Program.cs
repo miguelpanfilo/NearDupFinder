@@ -55,9 +55,11 @@ builder.Services.AddScoped<ControladorDuplicados>(sp =>
 builder.Services.AddScoped<GestorItems>(sp =>
 {
     var state = sp.GetRequiredService<AppState>();
-    return new GestorItems( state.IdsItemsGlobal);
+    var repositorioItems = sp.GetRequiredService<IRepositorioItems>();
+    return new GestorItems(state.IdsItemsGlobal, repositorioItems);
 });
-
+builder.Services.AddScoped<IRepositorioCatalogos, RepositorioCatalogos>();
+builder.Services.AddScoped<IRepositorioItems, RepositorioItems>();
 
 builder.Services.AddScoped<ControladorItems>(sp =>
 {

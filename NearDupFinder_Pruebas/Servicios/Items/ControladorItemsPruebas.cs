@@ -3,6 +3,9 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -20,47 +23,57 @@ public class ControladorItemsPruebas
     private GestorCatalogos _gestorCatalogos = null!;
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorControlClusters _gestorControlClusters = null!;
+    private ControladorDuplicados _controladorDuplicados = null!;
+    private GestorDuplicados _gestorDuplicados = null!;
     private Catalogo _catalogo = null!;
     private HashSet<int> _idsItemsGlobal = null!;
     private List<ParDuplicado> _duplicadosGlobales = null!;
+    private SqlContext _context = null!;
 
     [TestInitialize]
     public void Setup()
     {
         var procesador = new ProcesadorTexto();
-        var almacenamiento = new AlmacenamientoDeDatos();
+
+        var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_ControladorItems");
+        _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
+        IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
+        IRepositorioItems repoItems = new RepositorioItems(_context);
+
         _gestorAuditoria = new GestorAuditoria();
-        var gestorDuplicados = new GestorDuplicados(procesador);
-
-        _gestorCatalogos = new GestorCatalogos(almacenamiento);
-        _idsItemsGlobal = new HashSet<int>();
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
+        _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+        _gestorDuplicados = new GestorDuplicados(procesador);
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
         _duplicadosGlobales = new List<ParDuplicado>();
-        var gestorControlDuplicados = new ControladorDuplicados(
+        _idsItemsGlobal = new HashSet<int>();
+
+        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+
+        _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
-            gestorDuplicados,
+            _gestorDuplicados,
             _gestorCatalogos,
-            _gestorControlClusters
-            , _duplicadosGlobales
+            _gestorControlClusters,
+            _duplicadosGlobales
         );
 
-        _gestorItems = new GestorItems(
-            _idsItemsGlobal
-        );
-
-        _catalogo = new Catalogo("Catálogo Auditoría Test");
-        almacenamiento.AgregarCatalogo(_catalogo);
-       
         _controladorItems = new ControladorItems(
             _gestorItems,
             _gestorCatalogos,
-            gestorControlDuplicados,
+            _controladorDuplicados,
             _gestorControlClusters,
             _gestorAuditoria,
             _idsItemsGlobal
         );
+
+        _catalogo = new Catalogo("Catálogo Auditoría Test");
+        repoCatalogos.Agregar(_catalogo);
+        repoCatalogos.GuardarCambios();
     }
-    
+
+
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
     {
@@ -73,6 +86,9 @@ public class ControladorItemsPruebas
 
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
+
+        _context.Items.Add(item);
+        _context.SaveChanges();
 
         var dto = new DatosActualizarItem(
             IdCatalogo: _catalogo.Id,
@@ -101,6 +117,8 @@ public class ControladorItemsPruebas
         };
 
         _catalogo.AgregarItem(item);
+        _context.Items.Add(item);
+        _context.SaveChanges();
 
         var dto = new DatosActualizarItem(
             IdCatalogo: _catalogo.Id,
@@ -116,6 +134,7 @@ public class ControladorItemsPruebas
         Assert.AreEqual("Marca 2", item.Marca);
         Assert.AreEqual("Modelo 2", item.Modelo);
     }
+
 
     [TestMethod]
     public void ActualizarItemEnCatalogo_ItemNoExiste_Excepcion()
@@ -335,6 +354,9 @@ public class ControladorItemsPruebas
         _catalogo.AgregarItem(item1);
         _catalogo.AgregarItem(item2);
 
+        _context.Items.AddRange(item1, item2);
+        _context.SaveChanges();
+
         var dtoEliminar = new DatosEliminarItem(
             idCatalogo: _catalogo.Id,
             idItem: item1.Id
@@ -345,6 +367,7 @@ public class ControladorItemsPruebas
         Assert.IsFalse(_catalogo.Items.Contains(item1), "Item1 debe ser eliminado del catálogo.");
         Assert.IsTrue(_catalogo.Items.Contains(item2), "Item2 debe estar en el catálogo.");
     }
+
     [TestMethod]
     public void CrearItem_DeberiaRegistrarLogDeAlta_Correcto()
     {
@@ -368,13 +391,15 @@ public class ControladorItemsPruebas
         Assert.AreEqual(detalleEsperado, logAlta.Detalles);
     }
 
-
     [TestMethod]
     public void ActualizarItem_DeberiaRegistrarLogDeEdicion()
     {
         var item = new Item("Original", "Desc original");
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
+
+        _context.Items.Add(item);
+        _context.SaveChanges();
 
         var dto = new DatosActualizarItem(
             IdCatalogo: _catalogo.Id,
@@ -386,13 +411,11 @@ public class ControladorItemsPruebas
         _controladorItems.ActualizarItemEnCatalogo(dto);
 
         var logs = _gestorAuditoria.ObtenerLogs();
-        const int primeraAuditoriaregistrada = 0;
-        const int cantidadDeAuditoria = 1;
-
-        Assert.AreEqual(cantidadDeAuditoria, logs.Count);
-        Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[primeraAuditoriaregistrada].Accion);
-        StringAssert.Contains(logs[primeraAuditoriaregistrada].Detalles, "Ítem actualizado");
+        Assert.AreEqual(1, logs.Count);
+        Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[0].Accion);
+        StringAssert.Contains(logs[0].Detalles, "Ítem actualizado");
     }
+
 
     [TestMethod]
     public void EliminarItem_DeberiaRegistrarLogDeEliminacion()
@@ -400,6 +423,9 @@ public class ControladorItemsPruebas
         var item = new Item("A borrar", "Descripción del item");
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
+
+        _context.Items.Add(item);
+        _context.SaveChanges();
 
         var dtoEliminar = new DatosEliminarItem(
             idCatalogo: _catalogo.Id,
@@ -410,12 +436,11 @@ public class ControladorItemsPruebas
 
         var logs = _gestorAuditoria.ObtenerLogs();
         const int primeraAuditoriaRegistrada = 0;
-      
+
         Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[primeraAuditoriaRegistrada].Accion);
         StringAssert.Contains(logs[primeraAuditoriaRegistrada].Detalles, "Item eliminado");
-   
     }
-
 }
+
   
 

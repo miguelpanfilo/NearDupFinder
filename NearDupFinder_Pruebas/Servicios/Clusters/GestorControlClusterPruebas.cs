@@ -1,9 +1,12 @@
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -13,7 +16,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
     [TestClass]
     public class GestorControlClusterPruebas
     {
-        private AlmacenamientoDeDatos _almacenamientoDeDatos = null!;
+        private SqlContext _context = null!;
         private GestorCatalogos _gestorCatalogos = null!;
         private GestorAuditoria _gestorAuditoria = null!;
         private GestorControlClusters _gestorControlClusters = null!;
@@ -22,16 +25,21 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         [TestInitialize]
         public void ConfigurarEscenarioDePruebas()
         {
-            _almacenamientoDeDatos = new AlmacenamientoDeDatos();
-            _gestorCatalogos = new GestorCatalogos(_almacenamientoDeDatos);
+            var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_Clusters");
+            _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+            SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
+            IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
+
             _gestorAuditoria = new GestorAuditoria();
+            _gestorCatalogos = new GestorCatalogos(repoCatalogos);
 
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
             _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
 
             _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
         }
-
+    
 
         [TestMethod]
         public void ConfirmarCluster_MismoItem_RetornaFalseYNoCreaClusters_OkTest()

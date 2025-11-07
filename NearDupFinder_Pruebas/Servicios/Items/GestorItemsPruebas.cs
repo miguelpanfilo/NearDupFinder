@@ -1,7 +1,10 @@
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -22,20 +25,28 @@ public class GestorItemPruebas
     private Catalogo _catalogo = null!;
     private HashSet<int> _idsItemsGlobal = null!;
     private List<ParDuplicado> _duplicadosGlobales = null!;
+    private SqlContext _context = null!;
 
     [TestInitialize]
     public void Setup()
     {
         var procesador = new ProcesadorTexto();
-        var almacenamiento = new AlmacenamientoDeDatos();
-        _gestorAuditoria = new GestorAuditoria();
-        var gestorDuplicados = new GestorDuplicados(procesador);
 
-        _gestorCatalogos = new GestorCatalogos(almacenamiento);
+        var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_GestorItems");
+        _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
+        IRepositorioItems repositorioItems = new RepositorioItems(_context);
+        IRepositorioCatalogos repositorioCatalogos = new RepositorioCatalogos(_context);
+
+        _gestorAuditoria = new GestorAuditoria();
+        _gestorCatalogos = new GestorCatalogos(repositorioCatalogos);
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
         _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos,_gestorAuditoria);
-        var gestorControlDuplicados = new ControladorDuplicados(
+
+        var gestorDuplicados = new GestorDuplicados(procesador);
+        var controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             gestorDuplicados,
             _gestorCatalogos,
@@ -43,23 +54,22 @@ public class GestorItemPruebas
             _duplicadosGlobales
         );
 
-        _gestorItems = new GestorItems(
-            _idsItemsGlobal
-        );
+        _gestorItems = new GestorItems(_idsItemsGlobal, repositorioItems);
 
         _catalogo = new Catalogo("Catálogo Auditoría Test");
-        almacenamiento.AgregarCatalogo(_catalogo);
-       
+        repositorioCatalogos.Agregar(_catalogo);
+        repositorioCatalogos.GuardarCambios();
+
         _controladorItems = new ControladorItems(
             _gestorItems,
             _gestorCatalogos,
-            gestorControlDuplicados,
+            controladorDuplicados,
             _gestorControlClusters,
             _gestorAuditoria,
             _idsItemsGlobal
         );
     }
-    
+
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
     {
@@ -72,6 +82,9 @@ public class GestorItemPruebas
 
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
+
+        _context.Items.Add(item);
+        _context.SaveChanges();
 
         var dto = new DatosActualizarItem(
             IdCatalogo: _catalogo.Id,
@@ -88,7 +101,7 @@ public class GestorItemPruebas
         Assert.AreEqual("Nuevo Título", item.Titulo);
         Assert.AreEqual("Nueva Descripción", item.Descripcion);
     }
-    
+
     [TestMethod]
     public void CantidadDeItemsGlobal_SinItems_RetornaCero()
     {
@@ -112,6 +125,7 @@ public class GestorItemPruebas
         Assert.AreNotEqual(0, numeroDeItems);
         Assert.AreEqual(1, numeroDeItems);
     }
+
     [TestMethod]
     public void IdExisteEnListaDeIdGlobal_ConItemNoExistente_RetornaFalso()
     {
@@ -122,7 +136,6 @@ public class GestorItemPruebas
         Assert.IsFalse(existeItem);
     }
 
-    
     [TestMethod]
     public void IdExisteEnListaDeIdGlobal_ConItemExistente_RetornaVerdadero()
     {
@@ -139,4 +152,3 @@ public class GestorItemPruebas
         Assert.IsTrue(existeItem);
     }
 }
-  
