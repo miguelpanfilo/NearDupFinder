@@ -120,4 +120,11 @@ public class Item
         _siguienteId--;
         Id = id;
     }
+    public static void ResetearContadorIdDesde(int nuevoValor)
+    {
+        if (nuevoValor > 0)
+            _siguienteId = nuevoValor;
+    }
+
+
 }

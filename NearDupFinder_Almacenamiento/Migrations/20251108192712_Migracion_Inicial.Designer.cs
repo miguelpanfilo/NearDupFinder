@@ -12,7 +12,7 @@ using NearDupFinder_Almacenamiento;
 namespace NearDupFinder_Almacenamiento.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20251108191029_Migracion_Inicial")]
+    [Migration("20251108192712_Migracion_Inicial")]
     partial class Migracion_Inicial
     {
         /// <inheritdoc />
