@@ -12,8 +12,8 @@ using NearDupFinder_Almacenamiento;
 namespace NearDupFinder_Almacenamiento.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20251105181019_MigracionAuditorias")]
-    partial class MigracionAuditorias
+    [Migration("20251108191029_Migracion_Inicial")]
+    partial class Migracion_Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,10 +28,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Catalogo", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Descripcion")
                         .HasMaxLength(400)
@@ -88,16 +85,16 @@ namespace NearDupFinder_Almacenamiento.Migrations
 
                     b.Property<string>("Detalles")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Usuario")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
 
                     b.HasKey("Id");
 
@@ -107,10 +104,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Item", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CatalogoId")
                         .HasColumnType("int");
@@ -152,13 +146,11 @@ namespace NearDupFinder_Almacenamiento.Migrations
 
                     b.Property<string>("Apellido")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -220,8 +212,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
 
                             b1.Property<string>("Valor")
                                 .IsRequired()
-                                .HasMaxLength(320)
-                                .HasColumnType("nvarchar(320)")
+                                .HasColumnType("nvarchar(450)")
                                 .HasColumnName("Email");
 
                             b1.HasKey("UsuarioId");
@@ -266,8 +257,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<string>("Valor")
-                                .HasMaxLength(64)
-                                .HasColumnType("nvarchar(64)")
+                                .HasColumnType("nvarchar(450)")
                                 .HasColumnName("Rol");
 
                             b1.HasKey("UsuarioId", "Valor");

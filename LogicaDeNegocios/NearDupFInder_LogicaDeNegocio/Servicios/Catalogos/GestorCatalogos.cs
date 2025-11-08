@@ -1,39 +1,38 @@
-using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_Interfaces;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 
 public class GestorCatalogos
 {
-    private AlmacenamientoDeDatos _almacenamientoDeDatos;
+    private readonly IRepositorioCatalogos _repositorioCatalogos;
 
-    public GestorCatalogos(AlmacenamientoDeDatos almacenamientoDeDatos)
+    public GestorCatalogos(IRepositorioCatalogos repositorioCatalogos)
     {
-        _almacenamientoDeDatos = almacenamientoDeDatos;
+        _repositorioCatalogos = repositorioCatalogos;
     }
 
     public void CrearCatalogo(DatosCatalogoCrear datosCatalogoCrear)
     {
         if (ElTituloYaEstaRegistrado(datosCatalogoCrear.Titulo))
-        {
             throw new ExcepcionCatalogo($"Ya existe un catálogo con el título '{datosCatalogoCrear.Titulo}'.");
-        }
 
         var nuevoCatalogo = new Catalogo(datosCatalogoCrear.Titulo);
-        
         CambiarDescripcionCatalogo(nuevoCatalogo, datosCatalogoCrear.Descripcion!);
 
-        AgregarALaListaDeCatalogo(nuevoCatalogo);
+        _repositorioCatalogos.Agregar(nuevoCatalogo);
+        _repositorioCatalogos.GuardarCambios();
     }
 
     public void BorrarCatalogo(DatosCatalogoEliminar datosCatalogoEliminar)
     {
-        var catalogoAEliminar = ObtenerCatalogoPorId(datosCatalogoEliminar.Id) ??
-                                throw new ExcepcionCatalogo($"No existe un catálogo con Id={datosCatalogoEliminar.Id}");
+        var catalogoAEliminar = ObtenerCatalogoPorId(datosCatalogoEliminar.Id)
+                                ?? throw new ExcepcionCatalogo($"No existe un catálogo con Id={datosCatalogoEliminar.Id}");
 
-        RemoverDeLaListaDeCatalogos(catalogoAEliminar);
+        _repositorioCatalogos.Eliminar(catalogoAEliminar);
+        _repositorioCatalogos.GuardarCambios();
     }
 
     public void ModificarCatalogo(DatosCatalogoEditar datosCatalogoEditar)
@@ -47,14 +46,15 @@ public class GestorCatalogos
 
         if (datosCatalogoEditar.Descripcion is not null)
             CambiarDescripcionCatalogo(catalogo, datosCatalogoEditar.Descripcion);
+
+        _repositorioCatalogos.Actualizar(catalogo);
+        _repositorioCatalogos.GuardarCambios();
     }
 
     private void CambiarTituloCatalogo(Catalogo catalogo, string titulo)
     {
         if (ElTituloYaEstaRegistrado(titulo))
-        {
             throw new ExcepcionCatalogo($"Ya existe un catálogo con el título '{titulo}'.");
-        }
 
         catalogo.CambiarTitulo(titulo);
     }
@@ -64,73 +64,49 @@ public class GestorCatalogos
         catalogo.CambiarDescripcion(descripcion);
     }
 
-    private void RemoverDeLaListaDeCatalogos(Catalogo catalogo)
-    {
-        _almacenamientoDeDatos.RemoverCatalogo(catalogo);
-    }
-
-    private void AgregarALaListaDeCatalogo(Catalogo catalogo)
-    {
-        _almacenamientoDeDatos.AgregarCatalogo(catalogo);
-    }
-
     public IReadOnlyCollection<DatosPublicosCatalogo> ObtenerCatalogos()
     {
-        List<DatosPublicosCatalogo> catalogosDtos = new List<DatosPublicosCatalogo>();
-        IReadOnlyCollection<Catalogo> catalogos = Catalogos;
-
-        foreach (Catalogo catalogo in catalogos)
-        {
-            catalogosDtos.Add(DatosPublicosCatalogo.FromEntity(catalogo));
-        }
-        return catalogosDtos;
+        var catalogos = _repositorioCatalogos.ObtenerTodos();
+        return catalogos.Select(DatosPublicosCatalogo.FromEntity).ToList();
     }
-    public IReadOnlyCollection<Catalogo> Catalogos => _almacenamientoDeDatos.ObtenerCatalogos().AsReadOnly();
 
     public IReadOnlyCollection<Item> ObtenerItemsDelCatalogo(int id)
     {
-        var catalogo = ObtenerCatalogoPorId(id);
-
-        if (catalogo is null) throw new ExcepcionCatalogo("El id no corresponde con ningun catalogo");
+        var catalogo = ObtenerCatalogoPorId(id)
+                       ?? throw new ExcepcionCatalogo("El id no corresponde con ningún catálogo");
 
         return catalogo.Items;
     }
 
     public DatosPublicosCatalogo? ObtenerCatalogoDtoPorId(int id)
     {
-        Catalogo? catalogo = ObtenerCatalogoPorId(id);
-        return  catalogo is null ? null : DatosPublicosCatalogo.FromEntity(catalogo);
+        var catalogo = ObtenerCatalogoPorId(id);
+        return catalogo is null ? null : DatosPublicosCatalogo.FromEntity(catalogo);
     }
-    
+
     public DatosPublicosCatalogo? ObtenerCatalogoDtoPorTitulo(string? titulo)
     {
-        Catalogo? catalogo = ObtenerCatalogoPorTitulo(titulo);
+        var catalogo = ObtenerCatalogoPorTitulo(titulo);
         return catalogo is null ? null : DatosPublicosCatalogo.FromEntity(catalogo);
     }
 
     public Catalogo? ObtenerCatalogoPorId(int id)
     {
-        return _almacenamientoDeDatos.ObtenerCatalogoPorId(id);
+        return _repositorioCatalogos.ObtenerPorId(id);
     }
-    
-    
+
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
     {
-        return _almacenamientoDeDatos.ObtenerCatalogoPorTitulo(titulo);
+        return _repositorioCatalogos.ObtenerPorTitulo(titulo!);
     }
 
     public int CantidadDeCatalogos()
     {
-        return _almacenamientoDeDatos.ObtenerCatalogos().Count;
+        return _repositorioCatalogos.ObtenerTodos().Count;
     }
 
     private bool ElTituloYaEstaRegistrado(string titulo)
     {
-        if (_almacenamientoDeDatos.ObtenerCatalogoPorTitulo(titulo) is not null)
-            return true;
-
-        return false;
+        return _repositorioCatalogos.ObtenerPorTitulo(titulo) is not null;
     }
-
-    
 }

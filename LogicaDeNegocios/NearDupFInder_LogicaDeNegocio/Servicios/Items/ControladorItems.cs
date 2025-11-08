@@ -26,7 +26,7 @@ public class ControladorItems
         GestorAuditoria gestorAuditoria,
         HashSet<int> idsItemsGlobal)
     {
-        _gestorItems=gestorItems;
+        _gestorItems = gestorItems;
         _gestorCatalogos = gestorCatalogos;
         _controladorDuplicados = controladorDuplicados;
         _gestorControlClusters = gestorControlClusters;
@@ -34,7 +34,7 @@ public class ControladorItems
         _idsItemsGlobal = idsItemsGlobal;
     }
     
-    public Item  CrearItem(DatosCrearItem datos)
+    public Item CrearItem(DatosCrearItem datos)
     {
         if (string.IsNullOrWhiteSpace(datos.Titulo) || string.IsNullOrWhiteSpace(datos.Descripcion))
             throw new ExcepcionItem("Título y Descripción son obligatorios.");
@@ -55,6 +55,7 @@ public class ControladorItems
         {
             if (_gestorItems.IdExisteEnListaDeIdGlobal(idImportado))
                 throw new ExcepcionItem($"El Id importado {idImportado} ya existe.");
+            
             item.ModificarIdEnCasoDeImportacion(idImportado);
             _idsItemsGlobal.Add(idImportado);
         }
@@ -64,6 +65,7 @@ public class ControladorItems
         }
 
         catalogo.AgregarItem(item);
+        _gestorItems.GuardarItem(item);
 
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.AltaItem,
@@ -71,7 +73,9 @@ public class ControladorItems
         );
 
         _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
-        
+
+        _gestorItems.ActualizarItem(item);
+
         return item;
     }
     
@@ -94,7 +98,7 @@ public class ControladorItems
         if (itemDtoActualizar.Modelo is not null)
             item.EditarModelo(itemDtoActualizar.Modelo);
         
-        
+        _gestorItems.ActualizarItem(item);
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.EditarItem,
             $"Ítem actualizado (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
@@ -111,10 +115,10 @@ public class ControladorItems
         
         _gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemDtoAEliminar.IdItem, catalogo.Id));
         catalogo.EliminarItem(itemAEliminar);
-        
 
         _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
+        _gestorItems.EliminarItem(itemAEliminar);
 
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EliminarItem,
             $"Item eliminado: '{itemAEliminar.Titulo}' del catálogo '{catalogo.Titulo}'");
@@ -126,10 +130,7 @@ public class ControladorItems
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={idCatalogo}).");
 
         return catalogo.Items
-            .Select(item => DatosItemListaItems.FromEntity(item))
+            .Select(DatosItemListaItems.FromEntity)
             .ToList();
     }
-
-    
-    
 }

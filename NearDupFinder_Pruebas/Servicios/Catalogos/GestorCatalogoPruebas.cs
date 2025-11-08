@@ -1,7 +1,9 @@
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
-using NearDupFinder_LogicaDeNegocio.Servicios;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 
 namespace NearDupFinder_Pruebas.Servicios.Catalogos;
@@ -10,16 +12,21 @@ namespace NearDupFinder_Pruebas.Servicios.Catalogos;
 public class GestorCatalogoPruebas
 {
     private GestorCatalogos _gestorCatalogos = null!;
-    private AlmacenamientoDeDatos _almacenamientoDeDatos = null!;
+    private SqlContext _context = null!;
 
     [TestInitialize]
     public void Setup()
     {
-        _almacenamientoDeDatos = new AlmacenamientoDeDatos();
-        _gestorCatalogos = new GestorCatalogos(_almacenamientoDeDatos);
-    }
+        var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_Catalogos");
+        _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
     
 
+    IRepositorioCatalogos repositorioCatalogos = new RepositorioCatalogos(_context);
+
+        _gestorCatalogos = new GestorCatalogos(repositorioCatalogos);
+    }
+    
     [TestMethod]
     public void AgregarCatalogo_OkTest()
     {
@@ -210,15 +217,19 @@ public class GestorCatalogoPruebas
     [TestMethod]
     public void Catalogos_DevuelveLosCatalogosExistentes_OkTest()
     {
+        // Arrange
         _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat1"));
         _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat2"));
 
-        var catalogos = _gestorCatalogos.Catalogos;
+        // Act
+        var catalogos = _gestorCatalogos.ObtenerCatalogos();
 
+        // Assert
         Assert.AreEqual(2, catalogos.Count, "La cantidad de catálogos devuelta no es la esperada.");
         Assert.IsTrue(catalogos.Any(c => c.Titulo == "Cat1"), "No se encontró el catálogo 'Cat1'.");
         Assert.IsTrue(catalogos.Any(c => c.Titulo == "Cat2"), "No se encontró el catálogo 'Cat2'.");
     }
+
 
     [TestMethod]
     public void ObtenerItemsDelCatalogo_CatalogoNoExiste_DeberiaLanzarExcepcion()
@@ -228,7 +239,8 @@ public class GestorCatalogoPruebas
         var ex = Assert.ThrowsException<ExcepcionCatalogo>(() => _gestorCatalogos.ObtenerItemsDelCatalogo(idInexistente)
         );
 
-        StringAssert.Contains(ex.Message, "El id no corresponde con ningun catalogo");
+        StringAssert.Contains(ex.Message, "El id no corresponde con ningún catálogo"
+        );
     }
 
     [TestMethod]

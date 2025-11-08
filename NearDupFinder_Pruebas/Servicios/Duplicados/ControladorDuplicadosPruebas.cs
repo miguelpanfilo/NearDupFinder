@@ -1,9 +1,12 @@
 using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -21,16 +24,17 @@ public class ControladorDuplicadosPruebas
     private GestorDuplicados _gestorDuplicados = null!;
     private GestorCatalogos _gestorCatalogos = null!;
     private GestorControlClusters _gestorControlClusters = null!;
-    private AlmacenamientoDeDatos _almacenamiento = null!;
     private List<ParDuplicado> _duplicadosGlobales = null!;
     private ControladorDuplicados _controladorDuplicados = null!;
     private GestorItems _gestorItems = null!;
     private ControladorItems _controladorItems = null!;
+    private SqlContext _context = null!;
+    private HashSet<int> _idsItemsGlobal = null!;
 
     private Item CrearItem(int catalogoId, string titulo, string desc, string marca, string modelo, string categoria)
     {
-        Item item = _controladorItems.CrearItem(new DatosCrearItem(catalogoId, titulo, desc,categoria, marca, modelo));
-
+        var dto = new DatosCrearItem(catalogoId, titulo, desc, categoria, marca, modelo);
+        Item item = _controladorItems.CrearItem(dto);
         return item;
     }
 
@@ -45,23 +49,41 @@ public class ControladorDuplicadosPruebas
     public void Setup()
     {
         var procesador = new ProcesadorTexto();
-        _almacenamiento = new AlmacenamientoDeDatos();
-        var idsItems = new HashSet<int>();
+
+        var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_Duplicados");
+        _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
+        IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
+        IRepositorioItems repoItems = new RepositorioItems(_context);
+
         _gestorAuditoria = new GestorAuditoria();
         _gestorDuplicados = new GestorDuplicados(procesador);
-        _gestorCatalogos = new GestorCatalogos(_almacenamiento);
+        _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
 
+        _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();
+
         _controladorDuplicados = new ControladorDuplicados(
-            _gestorAuditoria, _gestorDuplicados, _gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
+            _gestorAuditoria,
+            _gestorDuplicados,
+            _gestorCatalogos,
+            _gestorControlClusters,          
+            _duplicadosGlobales
+        );
 
-        _gestorItems = new GestorItems(idsItems);
+        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
         _controladorItems = new ControladorItems(
-            _gestorItems, _gestorCatalogos, _controladorDuplicados,_gestorControlClusters, _gestorAuditoria, idsItems);
+            _gestorItems,
+            _gestorCatalogos,
+            _controladorDuplicados,
+            _gestorControlClusters,
+            _gestorAuditoria,
+            _idsItemsGlobal
+        );
     }
-
-
+    
     [TestMethod]
     public void ProcesarDuplicadosPorAlta_CatalogoNoExiste_LanzaExcepcionCatalogo()
     {

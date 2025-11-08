@@ -41,7 +41,6 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
     var aud = sp.GetRequiredService<GestorAuditoria>();
     return new GestorControlClusters(cat, aud);
 });
-
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
 {
     var auditoria = sp.GetRequiredService<GestorAuditoria>();
@@ -49,15 +48,24 @@ builder.Services.AddScoped<ControladorDuplicados>(sp =>
     var gestorCat = sp.GetRequiredService<GestorCatalogos>();
     var gestorControlClusters = sp.GetRequiredService<GestorControlClusters>();
     var state = sp.GetRequiredService<AppState>();
-    return new ControladorDuplicados(auditoria, detector, gestorCat,gestorControlClusters, state.DuplicadosGlobales);
+
+    return new ControladorDuplicados(
+        auditoria,
+        detector,
+        gestorCat,
+        gestorControlClusters,          
+        state.DuplicadosGlobales
+    );
 });
 
 builder.Services.AddScoped<GestorItems>(sp =>
 {
     var state = sp.GetRequiredService<AppState>();
-    return new GestorItems( state.IdsItemsGlobal);
+    var repositorioItems = sp.GetRequiredService<IRepositorioItems>();
+    return new GestorItems(state.IdsItemsGlobal, repositorioItems);
 });
-
+builder.Services.AddScoped<IRepositorioCatalogos, RepositorioCatalogos>();
+builder.Services.AddScoped<IRepositorioItems, RepositorioItems>();
 
 builder.Services.AddScoped<ControladorItems>(sp =>
 {
