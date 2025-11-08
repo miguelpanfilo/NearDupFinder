@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NearDupFinder_Almacenamiento.Migrations
 {
     /// <inheritdoc />
-    public partial class Migracion_Config_FluentAPI : Migration
+    public partial class Migracion_Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
