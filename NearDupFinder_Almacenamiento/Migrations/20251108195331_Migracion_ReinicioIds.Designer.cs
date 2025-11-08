@@ -12,8 +12,8 @@ using NearDupFinder_Almacenamiento;
 namespace NearDupFinder_Almacenamiento.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20251108191029_Migracion_Inicial")]
-    partial class Migracion_Inicial
+    [Migration("20251108195331_Migracion_ReinicioIds")]
+    partial class Migracion_ReinicioIds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -121,4 +121,10 @@ public class Catalogo
     {
         return _clusters.TryGetValue(id, out var cluster) ? cluster : null;
     }
+    public static void ResetearContadorIdDesde(int nuevoValor)
+    {
+        if (nuevoValor > 0)
+            _nextId = nuevoValor;
+    }
+
 }

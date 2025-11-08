@@ -19,6 +19,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<IRepositorioSincronizacionIds, RepositorioSincronizacionIds>();
 
 builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
@@ -132,6 +133,7 @@ using (var scope = app.Services.CreateScope())
     var gestorInit = servicios.GetRequiredService<GestorInicializacion>();
     gestorInit.AsegurarInicializacion();
 }
+
 
 if (!app.Environment.IsDevelopment())
 {
