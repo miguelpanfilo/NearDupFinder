@@ -5,6 +5,7 @@ using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
+using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 

@@ -69,7 +69,7 @@ public class ControladorDuplicadosPruebas
             _gestorAuditoria,
             _gestorDuplicados,
             _gestorCatalogos,
-            _gestorControlClusters,
+            _gestorControlClusters,          
             _duplicadosGlobales
         );
 
@@ -83,9 +83,7 @@ public class ControladorDuplicadosPruebas
             _idsItemsGlobal
         );
     }
-
-
-
+    
     [TestMethod]
     public void ProcesarDuplicadosPorAlta_CatalogoNoExiste_LanzaExcepcionCatalogo()
     {

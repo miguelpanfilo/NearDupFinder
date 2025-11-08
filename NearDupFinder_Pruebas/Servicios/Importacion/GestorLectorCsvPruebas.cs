@@ -1,7 +1,6 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFinder_Pruebas.Utilidades;
 using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -45,6 +44,7 @@ public class GestorLectorCsvPruebas
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
+        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             _gestorDuplicados,
@@ -52,7 +52,7 @@ public class GestorLectorCsvPruebas
             _gestorControlClusters,
             _duplicadosGlobales
         );
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+     
         _controladorItems = new ControladorItems(
             _gestorItems,
             _gestorCatalogos,

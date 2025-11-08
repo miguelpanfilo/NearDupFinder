@@ -2,7 +2,6 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFinder_Pruebas.Utilidades;
 using NearDupFinder_Interfaces;
 using NearDupFinder_Almacenamiento.Repositorios;
@@ -415,7 +414,6 @@ public class ControladorItemsPruebas
         Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[0].Accion);
         StringAssert.Contains(logs[0].Detalles, "Ítem actualizado");
     }
-
 
     [TestMethod]
     public void EliminarItem_DeberiaRegistrarLogDeEliminacion()

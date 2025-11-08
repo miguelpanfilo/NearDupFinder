@@ -9,6 +9,5 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         {
         }
 
-        // Si algún día querés algo específico de Item, lo ponés acá.
     }
 }

@@ -26,8 +26,7 @@ public class GestorCatalogoPruebas
 
         _gestorCatalogos = new GestorCatalogos(repositorioCatalogos);
     }
-  
-
+    
     [TestMethod]
     public void AgregarCatalogo_OkTest()
     {

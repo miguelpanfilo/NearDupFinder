@@ -2,7 +2,6 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlLectorCsv;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFinder_Pruebas.Utilidades;
 using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -30,7 +29,6 @@ public class ControladorLectorCsvPruebas
     private ControladorLectorCsv _controladorLectorCsv = null!;
     private ControladorItems _controladorItems = null!;
     private SqlContext _context = null!;
-
     [TestInitialize]
     public void Setup()
     {
@@ -47,13 +45,31 @@ public class ControladorLectorCsvPruebas
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
-        _controladorDuplicados = new ControladorDuplicados(_gestorAuditoria, _gestorDuplicados, _gestorCatalogos, _gestorControlClusters, _duplicadosGlobales);
+
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
-        _controladorItems = new ControladorItems(_gestorItems, _gestorCatalogos, _controladorDuplicados, _gestorControlClusters, _gestorAuditoria, _idsItemsGlobal);
+        _duplicadosGlobales = new List<ParDuplicado>();
+
+        _controladorDuplicados = new ControladorDuplicados(
+            _gestorAuditoria,
+            _gestorDuplicados,
+            _gestorCatalogos,
+            _gestorControlClusters,        
+            _duplicadosGlobales
+        );
+
+        _controladorItems = new ControladorItems(
+            _gestorItems,
+            _gestorCatalogos,
+            _controladorDuplicados,
+            _gestorControlClusters,
+            _gestorAuditoria,
+            _idsItemsGlobal
+        );
 
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
     }
+
 
     [TestMethod]
     public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
