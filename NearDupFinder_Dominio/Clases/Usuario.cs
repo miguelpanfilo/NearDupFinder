@@ -5,7 +5,8 @@ namespace NearDupFinder_Dominio.Clases;
 public enum Rol
 {
     Administrador,
-    Revisor
+    Revisor,
+    Operario
 }
 
 public class Usuario
@@ -82,14 +83,14 @@ public class Usuario
         if (this.RolesPersistidos.Count == 0)
             return;
 
-        foreach (RolPersistido rolPersistido in this.RolesPersistidos)
+        foreach (RolPersistido rolPersistido in RolesPersistidos)
         {
             string valorPersistido = rolPersistido.Valor;
             Rol rolConvertido;
             Enum.TryParse(valorPersistido, true, out rolConvertido);
             bool yaExisteEnLaColeccion = Roles.Contains(rolConvertido);
             if (!yaExisteEnLaColeccion)
-                this.Roles.Add(rolConvertido);
+                Roles.Add(rolConvertido);
         }
     }
 

@@ -442,6 +442,25 @@ public class GestorUsuariosPruebas
     }
     
     [TestMethod]
+    public void ModificarUsuario_RolOperario_RetornaVerdadero()
+    {
+        string nombre = "Manuel";
+        string apellido = "Pérez";
+        string email = "manuel@gmail.com";
+        int anio = 1995;
+        int mes = 5;
+        int dia = 10;
+        string clave = "ClaveValida123!";
+        List<string> roles = ["Revisor"];
+        List<string> rolesNuevo = ["Operario"];
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, clave, roles));
+        
+        bool modificado = _gestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(email, nombre, apellido, anio, mes, dia, clave, rolesNuevo));
+
+        Assert.IsTrue(modificado);
+    }
+    
+    [TestMethod]
     public void RemoverUsuario_Existente_RetornaVerdadero()
     {
         string nombre = "Manuel";
@@ -666,6 +685,24 @@ public class GestorUsuariosPruebas
     }
     
     [TestMethod]
+    public void UsuarioTieneRol_RolOperario_RetornaVerdadero()
+    {
+        string nombre = "Manuel";
+        string apellido = "Pérez";
+        string email = "manuel@gmail.com";
+        string claveActual = "123QWEasdzxc@";
+        int anio = 1990;
+        int mes = 1;
+        int dia = 1;
+        List<string> roles = ["Operario"];
+        
+        _gestorUsuarios.CrearUsuario(new DatosRegistroUsuario(nombre, apellido, email, anio, mes, dia, claveActual, roles));
+        bool tieneRolOperario =  _gestorUsuarios.UsuarioTieneRol(email, "Operario");
+        
+        Assert.IsTrue(tieneRolOperario);
+    }
+    
+    [TestMethod]
     public void ObtenerUsuarios_DevuelveUsuariosExistentes()
     {
         var usuarioDto = CrearDtoUsuario();
@@ -744,4 +781,5 @@ public class GestorUsuariosPruebas
 
         StringAssert.Contains(ex.Message, "El usuario no existe");    
     }
+    
 }
