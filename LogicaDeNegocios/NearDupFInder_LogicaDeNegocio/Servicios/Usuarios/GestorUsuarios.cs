@@ -139,8 +139,10 @@ public class GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, GestorAudi
         Rol rolABuscar;
         if(string.Equals(rol, "Administrador"))
             rolABuscar = Rol.Administrador;
-        else
+        else if(string.Equals(rol, "Revisor"))
             rolABuscar = Rol.Revisor;
+        else
+            rolABuscar = Rol.Operario;
             
         return usuario.TieneRol(rolABuscar);
     }

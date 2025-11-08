@@ -51,6 +51,11 @@
             <input class="form-check-input" type="checkbox" id="rolRevisor" @bind="_rolRevisor" />
             <label class="form-check-label" for="rolRevisor">Revisor</label>
         </div>
+        
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rolOperario" @bind="_rolOperario" />
+            <label class="form-check-label" for="rolOperario">Operario</label>
+        </div>
     </div>
     
     <div class="mb-3">
@@ -73,6 +78,8 @@
     
     private bool _rolAdmin;
     private bool _rolRevisor;
+    private bool _rolOperario;
+
 
     private bool _error;
     private string _mensajeDeError = string.Empty;
@@ -85,8 +92,13 @@
                 return;
 
             List<string> roles = new List<string>();
-            if (_rolAdmin)   roles.Add("Administrador");
-            if (_rolRevisor) roles.Add("Revisor");
+            if (_rolAdmin)
+                roles.Add("Administrador");
+            if (_rolRevisor)
+                roles.Add("Revisor");
+            if (_rolOperario)
+                roles.Add("Operario");
+
 
             DatosRegistroUsuario datosRegistroUsuario = new DatosRegistroUsuario(
                 _nombre, _apellido, _email,

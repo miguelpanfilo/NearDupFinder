@@ -35,6 +35,10 @@ public class DatosEdicionUsuario(
             {
                 listaDeRoles.Add(Rol.Revisor);
             }
+            else if (string.Equals(rol, "Operario") && !listaDeRoles.Contains(Rol.Operario))
+            {
+                listaDeRoles.Add(Rol.Operario);
+            }
         }
 
         return listaDeRoles;
