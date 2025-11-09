@@ -12,8 +12,8 @@ using NearDupFinder_Almacenamiento;
 namespace NearDupFinder_Almacenamiento.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20251108195331_Migracion_ReinicioIds")]
-    partial class Migracion_ReinicioIds
+    [Migration("20251109151859_Migracion_Inicial")]
+    partial class Migracion_Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,10 +50,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Cluster", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CanonicoId")
                         .HasColumnType("int");
@@ -127,6 +124,9 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.Property<string>("Modelo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.Property<string>("Titulo")
                         .HasColumnType("nvarchar(max)");
 
@@ -161,7 +161,8 @@ namespace NearDupFinder_Almacenamiento.Migrations
                 {
                     b.HasOne("NearDupFinder_Dominio.Clases.Item", "Canonico")
                         .WithMany()
-                        .HasForeignKey("CanonicoId");
+                        .HasForeignKey("CanonicoId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("NearDupFinder_Dominio.Clases.Catalogo", null)
                         .WithMany("Clusters")
@@ -182,7 +183,8 @@ namespace NearDupFinder_Almacenamiento.Migrations
 
                     b.HasOne("NearDupFinder_Dominio.Clases.Cluster", null)
                         .WithMany("PertenecientesCluster")
-                        .HasForeignKey("ClusterId");
+                        .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Usuario", b =>

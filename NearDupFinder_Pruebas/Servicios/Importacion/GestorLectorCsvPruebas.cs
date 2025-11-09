@@ -39,11 +39,13 @@ public class GestorLectorCsvPruebas
 
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
-
+        IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+        
         _gestorAuditoria = new GestorAuditoria();
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, 
+            repoCatalogos,repoClusters,repoItems);
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,

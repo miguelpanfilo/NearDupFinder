@@ -41,6 +41,9 @@ public class GestorInicializacion
 
         int idMaximoCatalogo = _repositorioSincronizacion.ObtenerMaximoIdCatalogos();
         Catalogo.ResetearContadorIdDesde(idMaximoCatalogo + 1);
+
+        int idMaximoCluster = _repositorioSincronizacion.ObtenerMaximoIdCluster();
+        Catalogo.ResetearContadorIdClusterDesde(idMaximoCluster + 1);
     }
 
     private void CrearUsuarioAdmin()

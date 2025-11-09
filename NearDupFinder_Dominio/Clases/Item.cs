@@ -11,6 +11,8 @@ public class Item
     public bool EstadoDuplicado { get; set; }
     public int Id { get; private set; }
     
+    public int Stock { get; set; }
+    
     public Item()
     {
         Id = _siguienteId++;

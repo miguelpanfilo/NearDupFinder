@@ -10,7 +10,7 @@ public class ClusterConfiguraciones : IEntityTypeConfiguration<Cluster>
     {
         builder.ToTable("Clusters");
         builder.HasKey(cl => cl.Id);
-        builder.Property(cl => cl.Id).ValueGeneratedOnAdd();
+        builder.Property(cl => cl.Id).ValueGeneratedNever();
 
         builder.HasOne<Catalogo>()
             .WithMany(nameof(Catalogo.Clusters))
@@ -26,6 +26,7 @@ public class ClusterConfiguraciones : IEntityTypeConfiguration<Cluster>
         builder.HasOne(c => c.Canonico)
             .WithMany()
             .HasForeignKey("CanonicoId")
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

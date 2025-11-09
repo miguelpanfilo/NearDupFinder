@@ -19,7 +19,6 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<IRepositorioSincronizacionIds, RepositorioSincronizacionIds>();
 
 builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
@@ -38,10 +37,15 @@ builder.Services.AddScoped<GestorCatalogos>();
 
 builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
-    var cat = sp.GetRequiredService<GestorCatalogos>();
-    var aud = sp.GetRequiredService<GestorAuditoria>();
-    return new GestorControlClusters(cat, aud);
+    var cat          = sp.GetRequiredService<GestorCatalogos>();
+    var aud          = sp.GetRequiredService<GestorAuditoria>();
+    var repoCat      = sp.GetRequiredService<IRepositorioCatalogos>();
+    var repoClusters = sp.GetRequiredService<IRepositorioClusters>();   // <-- NUEVO
+    var repoItems    = sp.GetRequiredService<IRepositorioItems>();      // <-- NUEVO
+
+    return new GestorControlClusters(cat, aud, repoCat, repoClusters, repoItems);
 });
+
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
 {
     var auditoria = sp.GetRequiredService<GestorAuditoria>();
@@ -119,6 +123,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<SqlContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IRepositorioClusters, RepositorioClusters>();
+builder.Services.AddScoped<IRepositorioSincronizacionIds, RepositorioSincronizacionIds>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 
 builder.Services.AddServerSideBlazor()
@@ -133,7 +139,6 @@ using (var scope = app.Services.CreateScope())
     var gestorInit = servicios.GetRequiredService<GestorInicializacion>();
     gestorInit.AsegurarInicializacion();
 }
-
 
 if (!app.Environment.IsDevelopment())
 {

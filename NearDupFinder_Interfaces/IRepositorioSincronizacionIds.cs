@@ -4,4 +4,6 @@ public interface IRepositorioSincronizacionIds
 {
     int ObtenerMaximoIdItems();
     int ObtenerMaximoIdCatalogos();
+
+    int ObtenerMaximoIdCluster();
 }

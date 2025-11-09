@@ -21,6 +21,12 @@ public class ItemConfiguraciones : IEntityTypeConfiguration<Item>
 
         builder.HasIndex("CatalogoId");
 
-        
+        builder.Property<int?>("ClusterId");
+        builder.HasOne<Cluster>()
+            .WithMany(nameof(Cluster.PertenecientesCluster))
+            .HasForeignKey("ClusterId")
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
+        builder.HasIndex("ClusterId");
     }
 }
