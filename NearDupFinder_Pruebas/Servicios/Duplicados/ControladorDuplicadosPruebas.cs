@@ -57,12 +57,19 @@ public class ControladorDuplicadosPruebas
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); // ✅ agregado
 
-        _gestorAuditoria = new GestorAuditoria();
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
         _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, 
-            repoCatalogos,repoClusters,repoItems);
+
+        _gestorControlClusters = new GestorControlClusters(
+            _gestorCatalogos,
+            _gestorAuditoria,
+            repoCatalogos,
+            repoClusters,
+            repoItems
+        );
 
         _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();
@@ -71,11 +78,12 @@ public class ControladorDuplicadosPruebas
             _gestorAuditoria,
             _gestorDuplicados,
             _gestorCatalogos,
-            _gestorControlClusters,          
+            _gestorControlClusters,
             _duplicadosGlobales
         );
 
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+
         _controladorItems = new ControladorItems(
             _gestorItems,
             _gestorCatalogos,
@@ -85,7 +93,7 @@ public class ControladorDuplicadosPruebas
             _idsItemsGlobal
         );
     }
-    
+
     [TestMethod]
     public void ProcesarDuplicadosPorAlta_CatalogoNoExiste_LanzaExcepcionCatalogo()
     {

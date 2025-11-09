@@ -23,15 +23,20 @@ public class ControladorLectorCsvPruebas
     private ControladorDuplicados _controladorDuplicados = null!;
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorControlClusters _gestorControlClusters = null!;
-    private List<ParDuplicado> _duplicadosGlobales = [];
     private GestorDuplicados _gestorDuplicados = null!;
-    private readonly HashSet<int> _idsItemsGlobal = [];
     private ControladorLectorCsv _controladorLectorCsv = null!;
     private ControladorItems _controladorItems = null!;
     private SqlContext _context = null!;
+
+    private readonly HashSet<int> _idsItemsGlobal = new();     
+    private readonly List<ParDuplicado> _duplicadosGlobales = new(); 
+
     [TestInitialize]
     public void Setup()
     {
+        _idsItemsGlobal.Clear();
+        _duplicadosGlobales.Clear();
+
         var procesador = new ProcesadorTexto();
 
         var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_LectorCsv");
@@ -41,20 +46,26 @@ public class ControladorLectorCsvPruebas
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); // ✅ si querés persistir logs
 
-        _gestorAuditoria = new GestorAuditoria();
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria,repoCatalogos,repoClusters,repoItems);
+        _gestorControlClusters = new GestorControlClusters(
+            _gestorCatalogos,
+            _gestorAuditoria,
+            repoCatalogos,
+            repoClusters,
+            repoItems
+        );
 
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
-        _duplicadosGlobales = new List<ParDuplicado>();
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             _gestorDuplicados,
             _gestorCatalogos,
-            _gestorControlClusters,        
+            _gestorControlClusters,
             _duplicadosGlobales
         );
 
@@ -70,6 +81,7 @@ public class ControladorLectorCsvPruebas
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
     }
+
 
 
     [TestMethod]

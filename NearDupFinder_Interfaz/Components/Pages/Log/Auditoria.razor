@@ -90,7 +90,7 @@ else
 
     protected override void OnInitialized()
     {
-        _logs = GestorAuditoria.ObtenerLogs()
+        _logs = GestorAuditoria.ObtenerTodos()
             .OrderBy(l => l.Timestamp)
             .ToList();
 

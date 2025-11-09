@@ -41,14 +41,21 @@ public class ControladorItemsPruebas
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); 
 
-        _gestorAuditoria = new GestorAuditoria();
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, repoCatalogos,repoClusters,repoItems);
+        _gestorControlClusters = new GestorControlClusters(
+            _gestorCatalogos,
+            _gestorAuditoria,
+            repoCatalogos,
+            repoClusters,
+            repoItems
+        );
+
         _duplicadosGlobales = new List<ParDuplicado>();
         _idsItemsGlobal = new HashSet<int>();
-
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
@@ -72,6 +79,7 @@ public class ControladorItemsPruebas
         repoCatalogos.Agregar(_catalogo);
         repoCatalogos.GuardarCambios();
     }
+
 
 
     [TestMethod]
@@ -380,13 +388,13 @@ public class ControladorItemsPruebas
 
         var itemCreado = _controladorItems.CrearItem(dto);
 
-        var logs = _gestorAuditoria.ObtenerLogs();
+        var logs = _gestorAuditoria.ObtenerTodos();
         Assert.IsTrue(logs.Count >= cantidadValidaDeAuditoriasRegistradas, "Debe haberse registrado al menos un log por la creación del ítem.");
 
         var logAlta = logs.FirstOrDefault(l => l.Accion == EntradaDeLog.AccionLog.AltaItem);
         Assert.IsNotNull(logAlta, "Debe existir un log de AltaItem.");
 
-        var detalleEsperado = $"Alta de item: Item agregado: '{itemCreado.Titulo}' (Id={itemCreado.Id}) en catálogo '{_catalogo.Titulo}' (Id={_catalogo.Id}).";
+        var detalleEsperado = $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' (Id={itemCreado.Id}) en catálogo '{_catalogo.Titulo}' (Id={_catalogo.Id}).";
 
         Assert.AreEqual(detalleEsperado, logAlta.Detalles);
     }
@@ -410,7 +418,7 @@ public class ControladorItemsPruebas
 
         _controladorItems.ActualizarItemEnCatalogo(dto);
 
-        var logs = _gestorAuditoria.ObtenerLogs();
+        var logs = _gestorAuditoria.ObtenerTodos();
         Assert.AreEqual(1, logs.Count);
         Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[0].Accion);
         StringAssert.Contains(logs[0].Detalles, "Ítem actualizado");
@@ -433,7 +441,7 @@ public class ControladorItemsPruebas
 
         _controladorItems.EliminarItem(dtoEliminar);
 
-        var logs = _gestorAuditoria.ObtenerLogs();
+        var logs = _gestorAuditoria.ObtenerTodos();
         const int primeraAuditoriaRegistrada = 0;
 
         Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[primeraAuditoriaRegistrada].Accion);

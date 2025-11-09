@@ -18,7 +18,7 @@ public class GestorExportacionAuditoria
 
     public List<EntradaDeLog> FiltrarAuditoriasPorFecha(DateTime fechaInicial, DateTime fechaFinal)
     {
-        return _gestorAuditoria.ObtenerLogs()
+        return _gestorAuditoria.ObtenerTodos()
             .Where(l => l.Timestamp >= fechaInicial && l.Timestamp <= fechaFinal)
             .OrderBy(l => l.Timestamp)
             .ToList();

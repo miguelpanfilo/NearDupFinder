@@ -24,7 +24,7 @@ public class GestorLectorCsvPruebas
     private GestorControlClusters _gestorControlClusters = null!;
     private List<ParDuplicado> _duplicadosGlobales = [];
     private GestorDuplicados _gestorDuplicados = null!;
-    private readonly HashSet<int> _idsItemsGlobal = [];
+    private readonly HashSet<int> _idsItemsGlobal = new();    
     private ControladorItems _controladorItems = null!;
     private SqlContext _context = null!;
 
@@ -40,13 +40,23 @@ public class GestorLectorCsvPruebas
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
-        
-        _gestorAuditoria = new GestorAuditoria();
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, 
-            repoCatalogos,repoClusters,repoItems);
+        _gestorControlClusters = new GestorControlClusters(
+            _gestorCatalogos,
+            _gestorAuditoria,
+            repoCatalogos,
+            repoClusters,
+            repoItems
+        );
+
+        _idsItemsGlobal.Clear();
+        _duplicadosGlobales = new List<ParDuplicado>();
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             _gestorDuplicados,
@@ -54,7 +64,7 @@ public class GestorLectorCsvPruebas
             _gestorControlClusters,
             _duplicadosGlobales
         );
-     
+
         _controladorItems = new ControladorItems(
             _gestorItems,
             _gestorCatalogos,
@@ -63,8 +73,10 @@ public class GestorLectorCsvPruebas
             _gestorAuditoria,
             _idsItemsGlobal
         );
+
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
     }
+
 
     [TestMethod]
     public void Constructor_InicializaColeccionesVacias()

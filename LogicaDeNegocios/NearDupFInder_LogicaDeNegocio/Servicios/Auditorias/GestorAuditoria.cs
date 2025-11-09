@@ -1,26 +1,32 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Interfaces;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 
+
 public class GestorAuditoria
 {
-    private readonly List<EntradaDeLog> _auditoria = new();
+    private readonly IRepositorioAuditorias _repositorio;
+    private string _usuarioActual = "No hay usuario logueado";
 
     private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {
-        { EntradaDeLog.AccionLog.AltaUsuario, "Creacion de usuario" },
-        { EntradaDeLog.AccionLog.EditarUsuario, "Modificacion de usuario" },
-        { EntradaDeLog.AccionLog.AltaItem, "Alta de item" },
-        { EntradaDeLog.AccionLog.EliminarItem, "Eliminación de item" },
-        { EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección duplicados automatica" },
+        { EntradaDeLog.AccionLog.AltaUsuario, "Creación de usuario" },
+        { EntradaDeLog.AccionLog.EditarUsuario, "Modificación de usuario" },
+        { EntradaDeLog.AccionLog.AltaItem, "Alta de ítem" },
+        { EntradaDeLog.AccionLog.EliminarItem, "Eliminación de ítem" },
+        { EntradaDeLog.AccionLog.DeteccionDuplicados, "Detección de duplicados" },
         { EntradaDeLog.AccionLog.ConfirmarDuplicado, "Confirmación de duplicado" },
-        { EntradaDeLog.AccionLog.FusionarCluster, "Fusión de cluster" },
+        { EntradaDeLog.AccionLog.FusionarCluster, "Fusión de clúster" },
         { EntradaDeLog.AccionLog.DescartarDuplicado, "Descartar duplicado" },
-        { EntradaDeLog.AccionLog.EditarItem, "Editar item" },
-        { EntradaDeLog.AccionLog.EliminarUser, "Eliminacion de usuario" },
+        { EntradaDeLog.AccionLog.EditarItem, "Edición de ítem" },
+        { EntradaDeLog.AccionLog.EliminarUser, "Eliminación de usuario" },
     };
 
-    private string _usuarioActual = "No hay usuario logueado";
+    public GestorAuditoria(IRepositorioAuditorias repositorio)
+    {
+        _repositorio = repositorio;
+    }
 
     public void AsignarUsuarioActual(string email)
     {
@@ -34,18 +40,21 @@ public class GestorAuditoria
 
     public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles)
     {
-        var entry = new EntradaDeLog
+        var entrada = new EntradaDeLog
         {
             Timestamp = DateTime.UtcNow,
             Usuario = _usuarioActual,
             Accion = accion,
             Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
         };
-        _auditoria.Add(entry);
+
+        _repositorio.Agregar(entrada);
+        _repositorio.GuardarCambios();
     }
+
     public void RegistrarLogManual(DateTime fecha, string usuario, EntradaDeLog.AccionLog accion, string detalles)
     {
-        var log = new EntradaDeLog
+        var entrada = new EntradaDeLog
         {
             Timestamp = fecha,
             Usuario = usuario,
@@ -53,8 +62,22 @@ public class GestorAuditoria
             Detalles = detalles
         };
 
-        _auditoria.Add(log);
+        _repositorio.Agregar(entrada);
+        _repositorio.GuardarCambios();
     }
 
-    public IReadOnlyList<EntradaDeLog> ObtenerLogs() => _auditoria.AsReadOnly();
+    public IReadOnlyList<EntradaDeLog> ObtenerTodos()
+    {
+        return _repositorio.ObtenerTodos();
+    }
+
+    public IReadOnlyList<EntradaDeLog> ObtenerPorUsuario(string email)
+    {
+        return _repositorio.ObtenerPorUsuario(email);
+    }
+
+    public IReadOnlyList<EntradaDeLog> ObtenerPorRangoDeFechas(DateTime inicio, DateTime fin)
+    {
+        return _repositorio.ObtenerPorRangoDeFechas(inicio, fin);
+    }
 }

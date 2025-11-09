@@ -29,19 +29,20 @@ builder.Services.AddSingleton<GestorDuplicados>(sp =>
     var procesador = sp.GetRequiredService<IProcesadorTexto>();
     return new GestorDuplicados(procesador);
 });
-builder.Services.AddSingleton<GestorAuditoria>();
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
 
+builder.Services.AddScoped<IRepositorioAuditorias, RepositorioAuditorias>();
+builder.Services.AddScoped<GestorAuditoria>();
 
 builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
     var cat          = sp.GetRequiredService<GestorCatalogos>();
     var aud          = sp.GetRequiredService<GestorAuditoria>();
     var repoCat      = sp.GetRequiredService<IRepositorioCatalogos>();
-    var repoClusters = sp.GetRequiredService<IRepositorioClusters>();   // <-- NUEVO
-    var repoItems    = sp.GetRequiredService<IRepositorioItems>();      // <-- NUEVO
+    var repoClusters = sp.GetRequiredService<IRepositorioClusters>();   
+    var repoItems    = sp.GetRequiredService<IRepositorioItems>();      
 
     return new GestorControlClusters(cat, aud, repoCat, repoClusters, repoItems);
 });
