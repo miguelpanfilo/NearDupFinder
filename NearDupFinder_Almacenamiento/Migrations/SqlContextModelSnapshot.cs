@@ -47,10 +47,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Cluster", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CanonicoId")
                         .HasColumnType("int");
@@ -124,6 +121,9 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.Property<string>("Modelo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.Property<string>("Titulo")
                         .HasColumnType("nvarchar(max)");
 
@@ -158,7 +158,8 @@ namespace NearDupFinder_Almacenamiento.Migrations
                 {
                     b.HasOne("NearDupFinder_Dominio.Clases.Item", "Canonico")
                         .WithMany()
-                        .HasForeignKey("CanonicoId");
+                        .HasForeignKey("CanonicoId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("NearDupFinder_Dominio.Clases.Catalogo", null)
                         .WithMany("Clusters")
@@ -179,7 +180,8 @@ namespace NearDupFinder_Almacenamiento.Migrations
 
                     b.HasOne("NearDupFinder_Dominio.Clases.Cluster", null)
                         .WithMany("PertenecientesCluster")
-                        .HasForeignKey("ClusterId");
+                        .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Usuario", b =>
