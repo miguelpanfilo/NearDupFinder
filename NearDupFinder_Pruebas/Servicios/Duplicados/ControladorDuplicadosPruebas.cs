@@ -56,11 +56,13 @@ public class ControladorDuplicadosPruebas
 
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
+        IRepositorioClusters repoClusters = new RepositorioClusters(_context);
 
         _gestorAuditoria = new GestorAuditoria();
         _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
-        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, 
+            repoCatalogos,repoClusters,repoItems);
 
         _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();

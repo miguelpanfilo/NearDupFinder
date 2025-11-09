@@ -80,15 +80,14 @@
 
     protected override void OnInitialized()
     {
-        _catalogos = GestorCatalogos.ObtenerCatalogos();
+        TraerCatalogos();
     }
 
     public void EliminarCatalogo(int id)
     {
         
         GestorCatalogos.BorrarCatalogo(new DatosCatalogoEliminar(id));
-        
-        StateHasChanged();
+        TraerCatalogos();
     }
 
     private void OnCrearCatalogoClick()
@@ -98,7 +97,7 @@
             GestorCatalogos.CrearCatalogo(new DatosCatalogoCrear(_titulo, _descripcion));
             _error = false;
             LimpiarCampos();
-            StateHasChanged();
+            TraerCatalogos();
         }
         catch (InvalidOperationException ex)
         {
@@ -108,6 +107,10 @@
         {
             NotificarError(ex.Message);
         }
+    }
+    private void TraerCatalogos()
+    {
+        _catalogos = GestorCatalogos.ObtenerCatalogos();
     }
 
     public void CancelarCambios()

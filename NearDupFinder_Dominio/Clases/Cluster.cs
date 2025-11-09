@@ -28,7 +28,7 @@ public class Cluster
     {
         _pertenecientesCluster.Remove(item);
     }
-
+    public int StockActual => _pertenecientesCluster.Sum(item => item.Stock);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
 
     public bool FusionarCanonico()

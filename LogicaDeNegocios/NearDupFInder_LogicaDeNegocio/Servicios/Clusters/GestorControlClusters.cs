@@ -1,10 +1,10 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
+using NearDupFinder_Interfaces;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
+using NearDupFInder_LogicaDeNegocio.Servicios.ReservasStock;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 
@@ -12,13 +12,22 @@ public class GestorControlClusters
 {
     private readonly GestorCatalogos _gestorCatalogos;
     private readonly GestorAuditoria _gestorAuditoria;
+    private readonly IRepositorioCatalogos _repositorioCatalogos;
+    private readonly IRepositorioClusters _repoClusters;
+    private readonly IRepositorioItems _repoItems;
 
     public GestorControlClusters(
         GestorCatalogos gestorCatalogos,
-        GestorAuditoria gestorAuditoria)
+        GestorAuditoria gestorAuditoria,
+        IRepositorioCatalogos repositorioCatalogos,
+        IRepositorioClusters repoClusters,
+        IRepositorioItems repoItems)
     {
-        _gestorCatalogos = gestorCatalogos;
-        _gestorAuditoria = gestorAuditoria;
+        _gestorCatalogos       = gestorCatalogos;
+        _gestorAuditoria       = gestorAuditoria;
+        _repositorioCatalogos  = repositorioCatalogos;
+        _repoClusters          = repoClusters;
+        _repoItems             = repoItems;
     }
 
     public bool ConfirmarCluster(DatosDuplicados datos)
@@ -91,35 +100,60 @@ public class GestorControlClusters
     private static bool SonMismoCluster(Cluster? a, Cluster? b) =>
         a is not null && b is not null && a.Id == b.Id;
 
-    private bool AgregarItem(Catalogo c, Cluster destino, Item itemAgregar, Item itemOtro)
+    private bool AgregarItem(Catalogo catalogo, Cluster destino, Item itemAgregar, Item itemOtro)
     {
-        c.AgregarItemACluster(destino, itemAgregar);
-        LogConfirmacion(c, itemOtro, itemAgregar);
+        catalogo.AgregarItemACluster(destino, itemAgregar);
+        
+        _repoItems.AsignarCluster(itemAgregar.Id, destino.Id);
+        _repoItems.GuardarCambios();
+
+        LogConfirmacion(catalogo, itemOtro, itemAgregar);
         return true;
     }
 
-    private bool Fusionar(Catalogo c, Cluster a, Cluster b, Item itemA, Item itemB)
+    private bool Fusionar(Catalogo catalogo, Cluster a, Cluster b, Item itemA, Item itemB)
     {
-        foreach (var it in b.PertenecientesCluster.ToList())
-            c.AgregarItemACluster(a, it);
+        var itemsDeB = b.PertenecientesCluster.ToList();
 
-        c.EliminarCluster(b);
-        LogConfirmacion(c, itemA, itemB);
+        foreach (var it in itemsDeB)
+            catalogo.AgregarItemACluster(a, it);
+
+        foreach (var it in itemsDeB)
+            _repoItems.AsignarCluster(it.Id, a.Id);
+        _repoItems.GuardarCambios();
+
+        catalogo.EliminarCluster(b);
+
+        _repoClusters.Eliminar(b);
+        _repoClusters.GuardarCambios();
+
+        LogConfirmacion(catalogo, itemA, itemB);
         return true;
     }
 
-    private bool Crear(Catalogo c, Item itemA, Item itemB)
+    private bool Crear(Catalogo catalogo, Item itemA, Item itemB)
     {
-        c.CrearCluster(new HashSet<Item> { itemA, itemB });
-        LogConfirmacion(c, itemA, itemB);
+        catalogo.CrearCluster(new HashSet<Item> { itemA, itemB });
+        
+        var cluster = catalogo.ObtenerClusterDe(itemA)
+                      ?? throw new ExcepcionCatalogo("No se pudo obtener el cluster recién creado.");
+        
+        _repoClusters.Agregar(cluster);
+        _repoClusters.GuardarCambios();
+
+        _repoItems.AsignarCluster(itemA.Id, cluster.Id);
+        _repoItems.AsignarCluster(itemB.Id, cluster.Id);
+        _repoItems.GuardarCambios();
+
+        LogConfirmacion(catalogo, itemA, itemB);
         return true;
     }
 
-    private void LogConfirmacion(Catalogo c, Item a, Item b)
+    private void LogConfirmacion(Catalogo catalogo, Item a, Item b)
     {
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.ConfirmarDuplicado,
-            $"Confirmado duplicado en catálogo {c.Id}: '{a.Titulo}' (Id={a.Id}) ↔ '{b.Titulo}' (Id={b.Id})."
+            $"Confirmado duplicado en catálogo {catalogo.Id}: '{a.Titulo}' (Id={a.Id}) ↔ '{b.Titulo}' (Id={b.Id})."
         );
     }
 
@@ -136,12 +170,25 @@ public class GestorControlClusters
         bool esCanonico = cluster.Canonico is not null && cluster.Canonico.Equals(item);
         
         catalogo.RemoverItemDeCluster(cluster, item);
+        
+        _repoItems.AsignarCluster(item.Id, null);
+        _repoItems.GuardarCambios();
 
         if (cluster.PertenecientesCluster.Count() < catalogo.CantidadMinimaParaQueClusterExista)
+        {
             catalogo.EliminarCluster(cluster);
+            _repoClusters.Eliminar(cluster);
+            _repoClusters.GuardarCambios();
+            return;
+        }
         
         if (esCanonico)
+        {
             AsignarNuloCanonico(cluster);
+            _repoClusters.Actualizar(cluster);
+            _repoClusters.GuardarCambios();
+        }
+
     }
 
     private void AsignarNuloCanonico(Cluster? cluster)
@@ -153,17 +200,39 @@ public class GestorControlClusters
     public void FusionarItemsEnElCluster(DatosFusionarItems datosFusionarItem)
     {
         var catalogo = ObtenerCatalogo(datosFusionarItem.IdCatalogo);
-
-        var cluster = catalogo.ObtenerClusterPorId(datosFusionarItem.IdCluster);
-
-        if (cluster is null) return;
+        var cluster  = catalogo.ObtenerClusterPorId(datosFusionarItem.IdCluster)
+                       ?? throw new ExcepcionCatalogo("Cluster inexistente.");
 
         bool fusionado = cluster.FusionarCanonico();
-        if (!fusionado) return;
+        if (fusionado)
+        {
 
-        _gestorAuditoria.RegistrarLog(
-            EntradaDeLog.AccionLog.FusionarCluster,
-            $"Se fusionó el canónico del cluster '{cluster.Canonico?.Titulo}' con {cluster.PertenecientesCluster.Count()} ítems.");
+            _repoClusters.Actualizar(cluster);
+            _repoClusters.GuardarCambios();
+
+            _gestorAuditoria.RegistrarLog(
+                EntradaDeLog.AccionLog.FusionarCluster,
+                $"Se fusionó el canónico del cluster '{cluster.Canonico?.Titulo}' con {cluster.PertenecientesCluster.Count()} ítems.");
+        }
+    }
+    
+    public void ReservarStockEnCluster(int idcatalogo,int idCluster, int cantidad)
+    {
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(idcatalogo);
+        var cluster  = catalogo!.ObtenerClusterPorId(idCluster)
+                       ?? throw new ExcepcionCatalogo("Cluster inexistente.");
+
+        bool reservo = GestorReservas.Aplicar(cluster, cantidad);
+        if (reservo)
+        {
+
+            _repoClusters.Actualizar(cluster);
+            _repoClusters.GuardarCambios();
+
+            _gestorAuditoria.RegistrarLog(
+                EntradaDeLog.AccionLog.FusionarCluster,
+                $"Se reservó el stock del Item '{cluster.Canonico?.Titulo}' (Cluster Id={idCluster}).");
+        }
     }
 
     public bool ItemEstaEnCluster(int idCatalogo, int idItem)

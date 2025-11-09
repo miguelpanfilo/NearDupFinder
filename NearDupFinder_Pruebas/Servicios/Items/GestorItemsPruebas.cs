@@ -37,10 +37,11 @@ namespace NearDupFinder_Pruebas.Servicios.Items
 
             IRepositorioItems repoItems = new RepositorioItems(_context);
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
+            IRepositorioClusters repoClusters = new RepositorioClusters(_context);
 
             _gestorAuditoria = new GestorAuditoria();
             _gestorCatalogos = new GestorCatalogos(repoCatalogos);
-            _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria);
+            _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, repoCatalogos,repoClusters,repoItems);
             _idsItemsGlobal = new HashSet<int>();
             _duplicadosGlobales = new List<ParDuplicado>();
 

@@ -80,8 +80,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
                 name: "Clusters",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     CanonicoId = table.Column<int>(type: "int", nullable: true),
                     CatalogoId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -102,6 +101,7 @@ namespace NearDupFinder_Almacenamiento.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     EstadoDuplicado = table.Column<bool>(type: "bit", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
                     Titulo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Marca = table.Column<string>(type: "nvarchar(max)", nullable: true),

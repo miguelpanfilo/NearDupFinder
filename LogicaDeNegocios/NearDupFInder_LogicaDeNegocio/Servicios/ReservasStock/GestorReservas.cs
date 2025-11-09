@@ -1,0 +1,29 @@
+using NearDupFinder_Dominio.Clases;
+
+namespace NearDupFInder_LogicaDeNegocio.Servicios.ReservasStock;
+
+public static class GestorReservas
+{
+    public static bool Aplicar(Cluster cluster, int cantidad)
+    {
+        if (cantidad <= 0) throw new InvalidOperationException("Cantidad inválida.");
+        if (cluster.StockActual < cantidad) throw new InvalidOperationException("Stock insuficiente.");
+
+        int restante = cantidad;
+
+        var itemsOrdenados = cluster.PertenecientesCluster
+            .OrderBy(i => i.Stock)
+            .ThenBy(i => i.Id)
+            .ToList();
+
+        foreach (var item in itemsOrdenados)
+        {
+            if (restante == 0) break;
+            int tomar = Math.Min(item.Stock, restante);
+            item.Stock -= tomar;
+            restante   -= tomar;
+        }
+
+        return true;
+    }
+}

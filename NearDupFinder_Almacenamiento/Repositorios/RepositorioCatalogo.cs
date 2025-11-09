@@ -14,6 +14,8 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         {
             return _context.Set<Catalogo>()
                 .Include(c => c.Items)
+                .Include(c => c.Clusters)
+                .ThenInclude(cl => cl.PertenecientesCluster)
                 .FirstOrDefault(c => c.Titulo == titulo);
         }
 
@@ -21,6 +23,8 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         {
             return _context.Set<Catalogo>()
                 .Include(c => c.Items)
+                .Include(c => c.Clusters)
+                .ThenInclude(cl => cl.PertenecientesCluster)
                 .FirstOrDefault(c => c.Id == id);
         }
     }
