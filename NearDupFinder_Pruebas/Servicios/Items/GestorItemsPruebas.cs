@@ -38,13 +38,20 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             IRepositorioItems repoItems = new RepositorioItems(_context);
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+            IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); // 👈 agregado
 
-            _gestorAuditoria = new GestorAuditoria();
+            _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
             _gestorCatalogos = new GestorCatalogos(repoCatalogos);
-            _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, repoCatalogos,repoClusters,repoItems);
+            _gestorControlClusters = new GestorControlClusters(
+                _gestorCatalogos,
+                _gestorAuditoria,
+                repoCatalogos,
+                repoClusters,
+                repoItems
+            );
+
             _idsItemsGlobal = new HashSet<int>();
             _duplicadosGlobales = new List<ParDuplicado>();
-
             _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
 
             var gestorDuplicados = new GestorDuplicados(procesador);
@@ -70,6 +77,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
                 _idsItemsGlobal
             );
         }
+
 
         [TestMethod]
         public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()

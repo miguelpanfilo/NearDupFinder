@@ -28,16 +28,29 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory($"BD_Clusters_{Guid.NewGuid()}");
             _context = SqlContextFactoryPruebas.CrearContexto(opciones);
             SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
             Item.ResetearContadorId();
+
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
             IRepositorioItems repoItems = new RepositorioItems(_context);
-            _gestorAuditoria = new GestorAuditoria();
+            IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); 
+
+            _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
             _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
             _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
-            _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, repoCatalogos, repoClusters, repoItems);
+
+            _gestorControlClusters = new GestorControlClusters(
+                _gestorCatalogos,
+                _gestorAuditoria,
+                repoCatalogos,
+                repoClusters,
+                repoItems
+            );
         }
+
 
         private void Guardar() => _context.SaveChanges();
         private void RefrescarCatalogo() => _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;

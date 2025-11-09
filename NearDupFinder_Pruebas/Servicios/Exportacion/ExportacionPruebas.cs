@@ -1,7 +1,11 @@
 using ClosedXML.Excel;
+using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Interfaces;
+using NearDupFinder_Pruebas.Utilidades;
 
 
 namespace NearDupFinder_Pruebas.Servicios
@@ -9,13 +13,20 @@ namespace NearDupFinder_Pruebas.Servicios
     [TestClass]
     public class ExportacionPruebas
     {
-        private GestorExportacionAuditoria _gestorExportacion;
-        private GestorAuditoria _gestorAuditoria;
+        private GestorExportacionAuditoria _gestorExportacion = null!;
+        private GestorAuditoria _gestorAuditoria = null!;
+        private SqlContext _contexto = null!;
+        private IRepositorioAuditorias _repoAuditorias = null!;
 
         [TestInitialize]
         public void Setup()
         {
-            _gestorAuditoria = new GestorAuditoria();
+            var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_AuditoriaExportacion");
+            _contexto = SqlContextFactoryPruebas.CrearContexto(opciones);
+            SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
+
+            _repoAuditorias = new RepositorioAuditorias(_contexto);
+            _gestorAuditoria = new GestorAuditoria(_repoAuditorias);
 
             _gestorAuditoria.RegistrarLogManual(
                 new DateTime(2025, 10, 25, 10, 0, 0),
@@ -32,6 +43,12 @@ namespace NearDupFinder_Pruebas.Servicios
             );
 
             _gestorExportacion = new GestorExportacionAuditoria(_gestorAuditoria);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _contexto?.Dispose();
         }
 
         [TestMethod]
