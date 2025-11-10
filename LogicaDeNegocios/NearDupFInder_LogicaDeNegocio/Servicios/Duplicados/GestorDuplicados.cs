@@ -44,12 +44,13 @@ public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
     private const string TokenPattern = @"\W+";
     private const float UmbralAlerta = 0.60f;
     private const float UmbralPosible = 0.75f;
+    private const int CantidadItemsNula = 0;
 
     public List<ParDuplicado> DetectarDuplicados(Item itemA, Catalogo catalogo)
     {
         List<ParDuplicado> listaDuplicados = new List<ParDuplicado>();
 
-        if (catalogo.CantidadItems() == 0)
+        if (catalogo.CantidadItems() == CantidadItemsNula)
             return listaDuplicados;
 
         ItemNormalizado itemNormalizadoA = NormalizarItem(itemA);
@@ -187,7 +188,8 @@ public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
 
     private string[] SacarTildesDeTokens(string[] tokens)
     {
-        if (tokens == null || tokens.Length == 0)
+        const int cantidadTokensNula = 0;
+        if (tokens == null || tokens.Length == cantidadTokensNula)
             return Array.Empty<string>();
 
         for (int i = 0; i < tokens.Length; i++)
@@ -219,8 +221,9 @@ public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
 
     private float CalcularJaccard(string[] tokens1, string[] tokens2)
     {
+        const float numeroTokenUnionCero = 0;
         float numTokensUnion = CalcularNumTokensUnion(tokens1, tokens2);
-        if (numTokensUnion == 0)
+        if (numTokensUnion == numeroTokenUnionCero)
             return 0;
 
         float numTokensInterseccion = CalcularNumTokensInterseccion(tokens1, tokens2);

@@ -11,7 +11,8 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
-/*
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+
 namespace NearDupFinder_Pruebas.Servicios.Items;
 
 [TestClass]
@@ -41,11 +42,15 @@ public class ControladorItemsPruebas
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
-        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); 
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
 
-        _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
+        var sesionUsuario = new SesionUsuarioActual();
+        sesionUsuario.Asignar("tester@correo.com");
+
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
+
         _gestorControlClusters = new GestorControlClusters(
             _gestorCatalogos,
             _gestorAuditoria,
@@ -54,8 +59,8 @@ public class ControladorItemsPruebas
             repoItems
         );
 
-        _duplicadosGlobales = new List<ParDuplicado>();
         _idsItemsGlobal = new HashSet<int>();
+        _duplicadosGlobales = new List<ParDuplicado>();
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
@@ -79,8 +84,6 @@ public class ControladorItemsPruebas
         repoCatalogos.Agregar(_catalogo);
         repoCatalogos.GuardarCambios();
     }
-
-
 
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
@@ -394,7 +397,7 @@ public class ControladorItemsPruebas
         var logAlta = logs.FirstOrDefault(l => l.Accion == EntradaDeLog.AccionLog.AltaItem);
         Assert.IsNotNull(logAlta, "Debe existir un log de AltaItem.");
 
-        var detalleEsperado = $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' (Id={itemCreado.Id}) en catálogo '{_catalogo.Titulo}' (Id={_catalogo.Id}).";
+        var detalleEsperado = $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' en catálogo '{_catalogo.Titulo}'.";
 
         Assert.AreEqual(detalleEsperado, logAlta.Detalles);
     }
@@ -451,4 +454,3 @@ public class ControladorItemsPruebas
 
   
 
-*/

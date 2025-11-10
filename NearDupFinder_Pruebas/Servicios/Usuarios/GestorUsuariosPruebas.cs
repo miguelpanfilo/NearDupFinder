@@ -10,7 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
-/*
+
 namespace NearDupFinder_Pruebas.Servicios.Usuarios;
 
 [TestClass]
@@ -19,7 +19,6 @@ public class GestorUsuariosPruebas
     private static DbContextOptions<SqlContext> _opciones = null!;
     private SqlContext _contexto = null!;
     private IRepositorioUsuarios _repositorioUsuarios = null!;
-
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorUsuarios _gestorUsuarios = null!;
     private GestorAutenticacionUsuario _gestorAutenticacionUsuario = null!;
@@ -49,15 +48,19 @@ public class GestorUsuariosPruebas
         _contexto = SqlContextFactoryPruebas.CrearContexto(_opciones);
         SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
 
-        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         var repositorioAuditorias = new RepositorioAuditorias(_contexto);
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
 
-        _gestorAuditoria = new GestorAuditoria(repositorioAuditorias);
+        var sesionUsuario = new SesionUsuarioActual();
+        sesionUsuario.Asignar("tester@correo.com");
+
+        _gestorAuditoria = new GestorAuditoria(repositorioAuditorias, sesionUsuario);
         _gestorAutenticacionUsuario = new GestorAutenticacionUsuario(_repositorioUsuarios);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _gestorAuditoria, _gestorAutenticacionUsuario);
 
         _gestorAuditoria.AsignarUsuarioActual("manuel@gmail.com");
     }
+
 
 
     [TestCleanup]
@@ -784,4 +787,4 @@ public class GestorUsuariosPruebas
         StringAssert.Contains(ex.Message, "El usuario no existe");    
     }
     
-}*/
+}

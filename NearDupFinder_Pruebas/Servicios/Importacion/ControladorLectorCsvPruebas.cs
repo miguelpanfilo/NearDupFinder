@@ -11,7 +11,8 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
-/*
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+
 namespace NearDupFinder_Pruebas.Servicios.Importacion;
 
 [TestClass]
@@ -37,20 +38,23 @@ public class ControladorLectorCsvPruebas
         _idsItemsGlobal.Clear();
         _duplicadosGlobales.Clear();
 
-        var procesador = new ProcesadorTexto();
-
         var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_LectorCsv");
         _context = SqlContextFactoryPruebas.CrearContexto(opciones);
         SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
 
+        var sesionUsuario = new SesionUsuarioActual();
+        sesionUsuario.Asignar("tester@correo.com");
+        var procesador = new ProcesadorTexto();
+
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
-        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); // ✅ si querés persistir logs
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
 
-        _gestorAuditoria = new GestorAuditoria(repoAuditorias);
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
+
         _gestorControlClusters = new GestorControlClusters(
             _gestorCatalogos,
             _gestorAuditoria,
@@ -81,8 +85,6 @@ public class ControladorLectorCsvPruebas
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
     }
-
-
 
     [TestMethod]
     public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
@@ -143,4 +145,4 @@ public class ControladorLectorCsvPruebas
         Assert.AreEqual(0, _gestorLectorCsv.CantidadDeFilas);
     }
     
-}*/
+}

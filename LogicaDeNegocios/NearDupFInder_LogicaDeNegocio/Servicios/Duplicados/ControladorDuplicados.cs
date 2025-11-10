@@ -5,7 +5,6 @@ using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
-using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 
@@ -68,6 +67,7 @@ public class ControladorDuplicados(
     }
     public void DescartarParDuplicado(DatosDuplicados datos)
     {
+        const int noHayDuplicadoRemovido = 0;
         Catalogo catalogo = gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
                             ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
 
@@ -81,7 +81,7 @@ public class ControladorDuplicados(
             (p.ItemAComparar.Id == itemA.Id && p.ItemPosibleDuplicado.Id == itemB.Id) ||
             (p.ItemAComparar.Id == itemB.Id && p.ItemPosibleDuplicado.Id == itemA.Id));
 
-        if (removidos == 0)
+        if (removidos == noHayDuplicadoRemovido)
             throw new ExcepcionDuplicado($"El par (A={itemA.Id}, B={itemB.Id}) no estaba en la lista de duplicados.");
 
 
@@ -132,12 +132,12 @@ public class ControladorDuplicados(
 
     private List<ParDuplicado> DetectarDuplicados(Item itemAComparar, Catalogo catalogo)
     {
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var cronometroDuracionDeteccionDuplicados = System.Diagnostics.Stopwatch.StartNew();
         var duplicados = gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
-        stopwatch.Stop();
+        cronometroDuracionDeteccionDuplicados.Stop();
         gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.DeteccionDuplicados,
-            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo.Titulo}' completada en {stopwatch.ElapsedMilliseconds} ms."
+            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo.Titulo}' completada en {cronometroDuracionDeteccionDuplicados.ElapsedMilliseconds} ms."
         );
         
         return duplicados;
