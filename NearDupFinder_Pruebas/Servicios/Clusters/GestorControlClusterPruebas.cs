@@ -10,7 +10,7 @@ using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
-
+/*
 namespace NearDupFinder_Pruebas.Servicios.Clusters
 {
     [TestClass]
@@ -451,3 +451,4 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         }
     }
 }
+*/

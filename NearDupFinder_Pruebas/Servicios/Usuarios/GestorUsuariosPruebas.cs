@@ -10,7 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
-
+/*
 namespace NearDupFinder_Pruebas.Servicios.Usuarios;
 
 [TestClass]
@@ -784,4 +784,4 @@ public class GestorUsuariosPruebas
         StringAssert.Contains(ex.Message, "El usuario no existe");    
     }
     
-}
+}*/

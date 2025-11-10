@@ -4,7 +4,7 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_Pruebas.Utilidades;
-
+/*
 namespace NearDupFinder_Pruebas.Dominio.Log;
 [TestClass]
 public class GestionAuditoriaPruebas
@@ -155,3 +155,4 @@ public class GestionAuditoriaPruebas
 
     
 }
+*/

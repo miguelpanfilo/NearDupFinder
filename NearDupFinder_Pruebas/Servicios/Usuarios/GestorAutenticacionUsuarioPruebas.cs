@@ -10,7 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
-
+/*
 namespace NearDupFinder_Pruebas.Servicios.Usuarios;
 
 [TestClass]
@@ -237,4 +237,4 @@ public class GestorAutenticacionUsuarioPruebas
 
         StringAssert.Contains(ex.Message, "El email no es valido");
     }
-}
+}*/

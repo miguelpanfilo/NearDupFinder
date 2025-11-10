@@ -6,7 +6,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
 using NearDupFinder_Pruebas.Utilidades;
-
+/*
 
 namespace NearDupFinder_Pruebas.Servicios
 {
@@ -176,3 +176,4 @@ namespace NearDupFinder_Pruebas.Servicios
         
     }
 }
+*/

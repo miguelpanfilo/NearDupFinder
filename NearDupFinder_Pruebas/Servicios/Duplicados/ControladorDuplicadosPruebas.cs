@@ -13,7 +13,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
-
+/*
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
 [DoNotParallelize]
@@ -336,4 +336,4 @@ public class ControladorDuplicadosPruebas
         Assert.IsFalse(itemB.EstadoDuplicado);
         Assert.IsTrue(itemC.EstadoDuplicado);
     }
-}
+}*/

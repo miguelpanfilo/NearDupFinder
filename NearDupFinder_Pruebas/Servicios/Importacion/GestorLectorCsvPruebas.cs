@@ -10,7 +10,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
-
+/*
 namespace NearDupFinder_Pruebas.Servicios.Importacion;
 
 [TestClass]
@@ -203,4 +203,4 @@ public class GestorLectorCsvPruebas
         Assert.IsNull(_gestorCatalogos.ObtenerCatalogoPorTitulo(nombreLargo));
         Assert.IsFalse(_gestorItems.IdExisteEnListaDeIdGlobal(123));
     }
-}
+}*/

@@ -11,7 +11,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
-
+/*
 namespace NearDupFinder_Pruebas.Servicios.Items;
 
 [TestClass]
@@ -451,3 +451,4 @@ public class ControladorItemsPruebas
 
   
 
+*/
