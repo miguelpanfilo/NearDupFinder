@@ -50,10 +50,13 @@ public class GestorAutenticacionUsuarioPruebas
         _contexto = SqlContextFactoryPruebas.CrearContexto(_opciones);
         SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
 
-        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         var repositorioAuditorias = new RepositorioAuditorias(_contexto);
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
 
-        _gestorAuditoria = new GestorAuditoria(repositorioAuditorias);
+        var sesionUsuario = new SesionUsuarioActual();
+        sesionUsuario.Asignar("tester@correo.com");
+
+        _gestorAuditoria = new GestorAuditoria(repositorioAuditorias, sesionUsuario);
         _gestorAutenticacionUsuario = new GestorAutenticacionUsuario(_repositorioUsuarios);
         _gestorUsuarios = new GestorUsuarios(
             _repositorioUsuarios,
@@ -73,8 +76,7 @@ public class GestorAutenticacionUsuarioPruebas
             _contexto = null!;
         }
     }
-
-        
+    
     [TestMethod]
     public void AutenticoUsuario_CredencialesValidas_RetornaUsuario()
     {

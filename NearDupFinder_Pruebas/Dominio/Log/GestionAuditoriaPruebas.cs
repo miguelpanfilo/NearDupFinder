@@ -1,8 +1,8 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
 
 namespace NearDupFinder_Pruebas.Dominio.Log;
@@ -12,6 +12,7 @@ public class GestionAuditoriaPruebas
     private SqlContext _contexto = null!;
     private RepositorioAuditorias _repositorio = null!;
     private GestorAuditoria _gestorAuditoria = null!;
+    private SesionUsuarioActual _sesion = null!;
 
     [TestInitialize]
     public void Setup()
@@ -21,7 +22,11 @@ public class GestionAuditoriaPruebas
         SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
 
         _repositorio = new RepositorioAuditorias(_contexto);
-        _gestorAuditoria = new GestorAuditoria(_repositorio);
+
+        _sesion = new SesionUsuarioActual();
+        _sesion.Asignar("tester@correo.com");
+
+        _gestorAuditoria = new GestorAuditoria(_repositorio, _sesion);
     }
 
     [TestMethod]
@@ -38,22 +43,33 @@ public class GestionAuditoriaPruebas
     [TestMethod]
     public void RegistrarLog_DeberiaTenerLosDetalles_Correcto()
     {
-        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Acción de prueba");
+        _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "prueba");
 
         var logs = _gestorAuditoria.ObtenerTodos();
-        Assert.AreEqual("Creación de usuario: Acción de prueba", logs[0].Detalles);
+        Assert.AreEqual("Creación de usuario: prueba", logs[0].Detalles);
     }
     
     [TestMethod]
-    public void RegistrarLog_DeberiaTenerUsuarioPorDefecto_Correcto()
+    public void RegistrarLog_SinUsuarioAsignado_DeberiaUsarValorPorDefecto()
+    {
+        var sesion = new SesionUsuarioActual(); 
+        var gestor = new GestorAuditoria(_repositorio, sesion);
+
+        gestor.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "prueba");
+
+        var logs = gestor.ObtenerTodos();
+        Assert.AreEqual("No hay usuario logueado", logs[0].Usuario);
+    }
+
+    [TestMethod]
+    public void RegistrarLog_ConUsuarioAsignado_DeberiaRegistrarElUsuario()
     {
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Acción de prueba");
 
         var logs = _gestorAuditoria.ObtenerTodos();
-        Assert.AreEqual("No hay usuario logueado", logs[0].Usuario, 
-            "El usuario por defecto debe ser 'Anónimo'.");
+        Assert.AreEqual("tester@correo.com", logs[0].Usuario);
     }
-
+    
     [TestMethod]
     public void RegistrarLog_DeberiaAsignarAccionCorrectamente()
     {

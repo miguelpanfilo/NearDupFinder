@@ -13,6 +13,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados;
 
@@ -49,6 +50,8 @@ public class ControladorDuplicadosPruebas
     public void Setup()
     {
         var procesador = new ProcesadorTexto();
+        var sesionUsuario = new SesionUsuarioActual();
+        sesionUsuario.Asignar("tester@correo.com");
 
         var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_Duplicados");
         _context = SqlContextFactoryPruebas.CrearContexto(opciones);
@@ -57,11 +60,11 @@ public class ControladorDuplicadosPruebas
         IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
-        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); // ✅ agregado
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
 
-        _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
-        _gestorDuplicados = new GestorDuplicados(procesador);
+        _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+        _gestorDuplicados = new GestorDuplicados(procesador);
 
         _gestorControlClusters = new GestorControlClusters(
             _gestorCatalogos,
@@ -73,6 +76,7 @@ public class ControladorDuplicadosPruebas
 
         _idsItemsGlobal = new HashSet<int>();
         _duplicadosGlobales = new List<ParDuplicado>();
+        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
@@ -81,8 +85,6 @@ public class ControladorDuplicadosPruebas
             _gestorControlClusters,
             _duplicadosGlobales
         );
-
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
 
         _controladorItems = new ControladorItems(
             _gestorItems,

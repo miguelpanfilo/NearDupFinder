@@ -5,6 +5,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
 
 
@@ -26,7 +27,11 @@ namespace NearDupFinder_Pruebas.Servicios
             SqlContextFactoryPruebas.LimpiarBaseDeDatos(_contexto);
 
             _repoAuditorias = new RepositorioAuditorias(_contexto);
-            _gestorAuditoria = new GestorAuditoria(_repoAuditorias);
+
+            var sesionUsuario = new SesionUsuarioActual();
+            sesionUsuario.Asignar("tester@correo.com");
+
+            _gestorAuditoria = new GestorAuditoria(_repoAuditorias, sesionUsuario);
 
             _gestorAuditoria.RegistrarLogManual(
                 new DateTime(2025, 10, 25, 10, 0, 0),

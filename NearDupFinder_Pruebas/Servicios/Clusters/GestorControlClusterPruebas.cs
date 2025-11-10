@@ -10,6 +10,7 @@ using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Clusters
 {
@@ -23,7 +24,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         private Catalogo _catalogo = null!;
 
         [TestInitialize]
-        public void ConfigurarEscenarioDePruebas()
+        public void Setup()
         {
             var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory($"BD_Clusters_{Guid.NewGuid()}");
             _context = SqlContextFactoryPruebas.CrearContexto(opciones);
@@ -34,9 +35,12 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
             IRepositorioItems repoItems = new RepositorioItems(_context);
-            IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); 
+            IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
 
-            _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
+            var sesionUsuario = new SesionUsuarioActual();
+            sesionUsuario.Asignar("tester@correo.com");
+
+            _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
             _gestorCatalogos = new GestorCatalogos(repoCatalogos);
 
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
@@ -50,8 +54,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
                 repoItems
             );
         }
-
-
+      
         private void Guardar() => _context.SaveChanges();
         private void RefrescarCatalogo() => _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
 

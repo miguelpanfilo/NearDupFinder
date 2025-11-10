@@ -69,7 +69,7 @@ public class ControladorItems
 
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.AltaItem,
-            $"Item agregado: '{item.Titulo}' (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
+            $"Item agregado: '{item.Titulo}' en catálogo '{catalogo.Titulo}'."
         );
 
         _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
@@ -101,7 +101,7 @@ public class ControladorItems
         _gestorItems.ActualizarItem(item);
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.EditarItem,
-            $"Ítem actualizado (Id={item.Id}) en catálogo '{catalogo.Titulo}' (Id={catalogo.Id})."
+            $"Ítem actualizado (Id={item.Titulo}) en catálogo '{catalogo.Titulo}'."
         );
     }
     

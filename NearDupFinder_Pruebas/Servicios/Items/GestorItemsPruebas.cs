@@ -10,6 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_Pruebas.Utilidades;
 using NearDupFinder_Interfaces;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Items
 {
@@ -38,10 +39,14 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             IRepositorioItems repoItems = new RepositorioItems(_context);
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
-            IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context); // 👈 agregado
+            IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
 
-            _gestorAuditoria = new GestorAuditoria(repoAuditorias); 
+            var sesionUsuario = new SesionUsuarioActual();
+            sesionUsuario.Asignar("tester@correo.com");
+
+            _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
             _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+
             _gestorControlClusters = new GestorControlClusters(
                 _gestorCatalogos,
                 _gestorAuditoria,
@@ -77,7 +82,6 @@ namespace NearDupFinder_Pruebas.Servicios.Items
                 _idsItemsGlobal
             );
         }
-
 
         [TestMethod]
         public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
