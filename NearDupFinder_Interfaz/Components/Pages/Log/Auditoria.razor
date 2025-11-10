@@ -104,9 +104,10 @@ else
         ValidarFechas();
     }
 
-    private void OnFechaCambiada(ChangeEventArgs e)
+    private void OnFechaCambiada()
     {
-        ValidarFechas();
+        if (ValidarFechas())
+            StateHasChanged();
     }
 
     private bool ValidarFechas()
