@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 
@@ -8,7 +9,7 @@ public class GestorAuditoria
 {
     private readonly IRepositorioAuditorias _repositorio;
     private string _usuarioActual = "No hay usuario logueado";
-
+    private readonly SesionUsuarioActual _sesion;
     private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {
         { EntradaDeLog.AccionLog.AltaUsuario, "Creación de usuario" },
@@ -23,27 +24,19 @@ public class GestorAuditoria
         { EntradaDeLog.AccionLog.EliminarUser, "Eliminación de usuario" },
     };
 
-    public GestorAuditoria(IRepositorioAuditorias repositorio)
+    public GestorAuditoria(IRepositorioAuditorias repositorio, SesionUsuarioActual sesion)
     {
         _repositorio = repositorio;
+        _sesion = sesion;
     }
-
-    public void AsignarUsuarioActual(string email)
+    
+    public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles, string? email = null)
     {
-        _usuarioActual = email;
-    }
-
-    public void DesasignarUsuario()
-    {
-        _usuarioActual = "No hay usuario logueado";
-    }
-
-    public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles)
-    {
+        var usuario = email ?? _sesion.EmailActual ?? "No hay usuario logueado";
         var entrada = new EntradaDeLog
         {
             Timestamp = DateTime.UtcNow,
-            Usuario = _usuarioActual,
+            Usuario = usuario,
             Accion = accion,
             Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
         };
@@ -51,6 +44,7 @@ public class GestorAuditoria
         _repositorio.Agregar(entrada);
         _repositorio.GuardarCambios();
     }
+
 
     public void RegistrarLogManual(DateTime fecha, string usuario, EntradaDeLog.AccionLog accion, string detalles)
     {
@@ -80,4 +74,6 @@ public class GestorAuditoria
     {
         return _repositorio.ObtenerPorRangoDeFechas(inicio, fin);
     }
+    public void AsignarUsuarioActual(string email) => _sesion.Asignar(email);
+    public void DesasignarUsuario() => _sesion.Desasignar();
 }

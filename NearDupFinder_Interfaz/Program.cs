@@ -23,6 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddSingleton<IProcesadorTexto, ProcesadorTexto>();
+builder.Services.AddSingleton<SesionUsuarioActual>();
 
 builder.Services.AddSingleton<GestorDuplicados>(sp =>
 {
