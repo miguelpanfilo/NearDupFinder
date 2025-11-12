@@ -55,11 +55,11 @@ public class ControladorItems
         }
         else
         {
-            _gestorItems.AsegurarIdUnicoPublic(item);
+            _gestorItems.AsegurarIdUnicoPublico(item);
         }
 
-        catalogo.AgregarItem(item);
-        _gestorItems.GuardarItem(item);
+        _gestorItems.AgregarItemACatalogo(catalogo, item);
+      
 
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.AltaItem,
