@@ -8,7 +8,7 @@ using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
 
-/*
+
 namespace NearDupFinder_Pruebas.Servicios
 {
     [TestClass]
@@ -47,7 +47,10 @@ namespace NearDupFinder_Pruebas.Servicios
                 "Modificación de item prueba"
             );
 
-            _gestorExportacion = new GestorExportacionAuditoria(_gestorAuditoria);
+            _gestorExportacion = new GestorExportacionAuditoria(
+                _gestorAuditoria,
+                new EstrategiaExportarCsv()
+            );
         }
 
         [TestCleanup]
@@ -103,9 +106,14 @@ namespace NearDupFinder_Pruebas.Servicios
         }
 
         [TestMethod]
-        public void GenerarCsvBytes_DeberiaGenerarArchivoConEncabezadosYDelimitadorCorrecto()
+        public void ExportarAuditorias_Csv_DeberiaGenerarArchivoConEncabezadosYDelimitadorCorrecto()
         {
-            var bytes = _gestorExportacion.GenerarCsvBytes(
+            _gestorExportacion = new GestorExportacionAuditoria(
+                _gestorAuditoria,
+                new EstrategiaExportarCsv()
+            );
+
+            var bytes = _gestorExportacion.ExportarAuditorias(
                 new DateTime(2025, 10, 25),
                 new DateTime(2025, 10, 28)
             );
@@ -116,10 +124,16 @@ namespace NearDupFinder_Pruebas.Servicios
             StringAssert.Contains(contenido, "user@test.com");
             Assert.IsTrue(contenido.Contains("|"), "El archivo debe usar '|' como delimitador.");
         }
+
         [TestMethod]
         public void GenerarCsvBytes_SinLogs_DeberiaContenerSoloEncabezados()
         {
-            var bytes = _gestorExportacion.GenerarCsvBytes(
+            _gestorExportacion = new GestorExportacionAuditoria(
+                _gestorAuditoria,
+                new EstrategiaExportarCsv()
+            );
+
+            var bytes = _gestorExportacion.ExportarAuditorias(
                 new DateTime(2025, 11, 1),
                 new DateTime(2025, 11, 2)
             );
@@ -129,10 +143,16 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.IsFalse(contenido.Contains("user@test.com"), "No debe contener datos de logs fuera del rango.");
         }
 
+
         [TestMethod]
         public void GenerarXlsxBytes_DeberiaCrearArchivoConHojaYDatosCorrectos()
         {
-            var bytes = _gestorExportacion.GenerarXlsxBytes(
+            _gestorExportacion = new GestorExportacionAuditoria(
+                _gestorAuditoria,
+                new EstrategiaExportarXlsx()
+            );
+
+            var bytes = _gestorExportacion.ExportarAuditorias(
                 new DateTime(2025, 10, 26),
                 new DateTime(2025, 10, 28)
             );
@@ -147,10 +167,16 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
             Assert.AreEqual("user@test.com", hoja.Cell(2, 2).Value);
         }
+
         [TestMethod]
         public void GenerarXlsxBytes_SinLogs_DeberiaCrearSoloEncabezados()
         {
-            var archivoDatos = _gestorExportacion.GenerarXlsxBytes(
+            _gestorExportacion = new GestorExportacionAuditoria(
+                _gestorAuditoria,
+                new EstrategiaExportarXlsx()
+            );
+
+            var archivoDatos = _gestorExportacion.ExportarAuditorias(
                 new DateTime(2025, 11, 1),
                 new DateTime(2025, 11, 2)
             );
@@ -163,10 +189,16 @@ namespace NearDupFinder_Pruebas.Servicios
             Assert.AreEqual("Usuario", hoja.Cell(1, 2).Value);
             Assert.IsTrue(hoja.Cell(2, 1).IsEmpty(), "No debería haber datos debajo del encabezado.");
         }
-       [TestMethod]
+
+        [TestMethod]
         public void GenerarXlsxBytes_DeberiaUsarFormatoDeFechaCorrecto()
         {
-            var archivoDeDatosExcel = _gestorExportacion.GenerarXlsxBytes(
+            _gestorExportacion = new GestorExportacionAuditoria(
+                _gestorAuditoria,
+                new EstrategiaExportarXlsx()
+            );
+
+            var archivoDeDatosExcel = _gestorExportacion.ExportarAuditorias(
                 new DateTime(2025, 10, 25),
                 new DateTime(2025, 10, 28)
             );
@@ -178,7 +210,7 @@ namespace NearDupFinder_Pruebas.Servicios
             var formato = hoja.Cell(2, 1).Style.DateFormat.Format;
             Assert.AreEqual("dd/MM/yyyy HH:mm:ss", formato);
         }
+
         
     }
 }
-*/
