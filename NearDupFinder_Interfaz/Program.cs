@@ -33,6 +33,7 @@ builder.Services.AddSingleton<GestorDuplicados>(sp =>
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
+builder.Services.AddScoped<IEstrategiaExportacionAuditoria, EstrategiaExportarCsv>();
 
 builder.Services.AddScoped<IRepositorioAuditorias, RepositorioAuditorias>();
 builder.Services.AddScoped<GestorAuditoria>();
