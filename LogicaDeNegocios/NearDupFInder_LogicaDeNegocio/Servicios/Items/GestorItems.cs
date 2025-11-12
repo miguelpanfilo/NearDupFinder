@@ -15,13 +15,18 @@ public class GestorItems
         _repositorioItems = repositorioItems;
     }
 
-    public void AsegurarIdUnicoPublic(Item item)
+    public void AsegurarIdUnicoPublico(Item item)
     {
         int idApropiado = item.Id;
         while (IdExisteEnListaDeIdGlobal(idApropiado))
             idApropiado++;
         item.AjustarId(idApropiado);
         _idsItemsGlobal.Add(idApropiado);
+    }
+    public void AgregarItemACatalogo(Catalogo catalogo, Item item)
+    {
+        catalogo.AgregarItem(item);
+        GuardarItem(item);
     }
 
     public bool IdExisteEnListaDeIdGlobal(int id)
