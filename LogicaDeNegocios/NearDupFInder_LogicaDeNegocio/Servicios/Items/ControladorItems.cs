@@ -42,14 +42,8 @@ public class ControladorItems
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
 
-        var item = new Item()
-        {
-            Titulo = datos.Titulo,
-            Descripcion = datos.Descripcion,
-            Categoria = datos.Categoria,
-            Marca = datos.Marca,
-            Modelo = datos.Modelo
-        };
+        var item = _gestorItems.CrearEntidad(datos);
+
 
         if (datos.IdImportado is int idImportado)
         {

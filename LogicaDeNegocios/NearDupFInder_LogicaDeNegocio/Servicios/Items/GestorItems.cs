@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
@@ -45,4 +46,10 @@ public class GestorItems
         _repositorioItems.Eliminar(item);
         _repositorioItems.GuardarCambios();
     }
+    public Item CrearEntidad(DatosCrearItem datos)
+    {
+        return datos.ToEntity();
+    }
+
+
 }
