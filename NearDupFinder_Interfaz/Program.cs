@@ -30,6 +30,8 @@ builder.Services.AddSingleton<GestorDuplicados>(sp =>
     var procesador = sp.GetRequiredService<IProcesadorTexto>();
     return new GestorDuplicados(procesador);
 });
+builder.Services.AddScoped<IEstrategiaExportacionAuditoria, EstrategiaExportarCsv>();
+
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
