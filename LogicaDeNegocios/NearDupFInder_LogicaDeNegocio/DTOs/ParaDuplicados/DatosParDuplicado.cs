@@ -1,4 +1,4 @@
-using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_Dominio.Clases;
 
 namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 

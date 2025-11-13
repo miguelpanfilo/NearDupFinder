@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_Interfaces;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -13,7 +15,7 @@ public class ControladorDuplicados(
     GestorDuplicados gestorDuplicados,
     GestorCatalogos gestorCatalogos,
     GestorControlClusters gestorControlClusters,
-    List<ParDuplicado> duplicadosGlobales)
+    IRepositorioDuplicados repositorioDuplicados)
 {
     public void ProcesarDuplicados(int idCatalogo, int idItem)
     {
@@ -24,16 +26,20 @@ public class ControladorDuplicados(
                    ?? throw new ExcepcionItem($"Ítem no encontrado (Id={idItem}).");
 
         List<ParDuplicado> duplicados = DetectarDuplicados(item, catalogo);
-        AgregarDuplicadosADuplicadosGlobales(duplicados);
+        AgregarDuplicados(duplicados);
+        ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
     
     public void ActualizarEstadoDuplicadosEnCatalogo(Catalogo catalogo)
     {
-        foreach (Item item in catalogo.Items)
+        var paresDelCatalogo = repositorioDuplicados.ObtenerListaDeDuplicados()
+            .Where(p => p.IdCatalogo == catalogo.Id)
+            .ToList();
+
+        foreach (var item in catalogo.Items)
         {
-            bool tieneDuplicados = duplicadosGlobales.Any(duplicado =>
-                duplicado.ItemAComparar.Id == item.Id || duplicado.ItemPosibleDuplicado.Id == item.Id);
-            item.EstadoDuplicado = tieneDuplicados;
+            item.EstadoDuplicado = paresDelCatalogo.Any(parDuplicado =>
+                parDuplicado.ItemAComparar.Id == item.Id || parDuplicado.ItemPosibleDuplicado.Id == item.Id);
         }
     }
 
@@ -47,13 +53,12 @@ public class ControladorDuplicados(
         Item itemEditado = catalogo.ObtenerItemPorId(datosActualizarDuplicados.IdItem)
                            ?? throw new ExcepcionItem($"Ítem no encontrado (Id={datosActualizarDuplicados.IdItem}).");
 
-        EliminarDuplicadosPrevios(itemEditado);
-        
+        EliminarDuplicadosPrevios(itemEditado, catalogo.Id);
+
         gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemEditado.Id, catalogo.Id));
 
         List<ParDuplicado> nuevosDuplicados = DetectarDuplicados(itemEditado, catalogo);
-        AgregarDuplicadosADuplicadosGlobales(nuevosDuplicados);
-
+        AgregarDuplicados(nuevosDuplicados);
         ActualizarEstadoDuplicadosEnCatalogo(catalogo);
     }
 
@@ -63,7 +68,7 @@ public class ControladorDuplicados(
         if (confirmado)
         {
             DescartarParDuplicado(datosDuplicados);
-        };
+        }
     }
     public void DescartarParDuplicado(DatosDuplicados datos)
     {
@@ -77,69 +82,74 @@ public class ControladorDuplicados(
         Item itemB = catalogo.ObtenerItemPorId(datos.IdItemPosibleDuplicado)
                      ?? throw new ExcepcionItem($"Ítem no encontrado (Id={datos.IdItemPosibleDuplicado}).");
 
-        int removidos = duplicadosGlobales.RemoveAll(p =>
-            (p.ItemAComparar.Id == itemA.Id && p.ItemPosibleDuplicado.Id == itemB.Id) ||
-            (p.ItemAComparar.Id == itemB.Id && p.ItemPosibleDuplicado.Id == itemA.Id));
+        var paresPersistidos = repositorioDuplicados.ObtenerListaDeDuplicados()
+            .Where(p => p.IdCatalogo == catalogo.Id)
+            .ToList();
 
-        if (removidos == noHayDuplicadoRemovido)
-            throw new ExcepcionDuplicado($"El par (A={itemA.Id}, B={itemB.Id}) no estaba en la lista de duplicados.");
+        ParDuplicado? par = paresPersistidos.FirstOrDefault(parDuplicado =>
+            parDuplicado.ItemAComparar.Id == itemA.Id && parDuplicado.ItemPosibleDuplicado.Id == itemB.Id);
 
+        if (par is null)
+            throw new ExcepcionDuplicado($"El par (A={itemA.Id}, B={itemB.Id}) no estaba persistido.");
 
-        itemA.EstadoDuplicado = ExisteParConItem(itemA.Id);
-        itemB.EstadoDuplicado = ExisteParConItem(itemB.Id);
+        repositorioDuplicados.EliminarDuplicado(par);
 
+        // refrescar flags SOLO con lo que haya en BD
+        itemA.EstadoDuplicado = ExisteParConItemEnBd(catalogo.Id, itemA.Id);
+        itemB.EstadoDuplicado = ExisteParConItemEnBd(catalogo.Id, itemB.Id);
 
         gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.DescartarDuplicado,
             $"Se descartó el par de posibles duplicados: '{itemA.Titulo}' (Id={itemA.Id}) y '{itemB.Titulo}' (Id={itemB.Id}) en catálogo Id={catalogo.Id}."
         );
     }
-    
-    public void EliminarDuplicadosPrevios(Item item)
+
+    public void EliminarDuplicadosPrevios(Item item, int idCatalogo)
     {
-        var duplicadosABorrar = duplicadosGlobales
-            .Where(duplicado => duplicado.ItemAComparar.Id == item.Id || duplicado.ItemPosibleDuplicado.Id == item.Id)
+        var paresDelItem = repositorioDuplicados.ObtenerListaDeDuplicados()
+            .Where(parDuplicado => parDuplicado.IdCatalogo == idCatalogo && (parDuplicado.ItemAComparar.Id == item.Id || parDuplicado.ItemPosibleDuplicado.Id == item.Id))
             .ToList();
-        foreach (ParDuplicado duplicado in duplicadosABorrar)
-            duplicadosGlobales.Remove(duplicado);
+
+        foreach (var par in paresDelItem)
+            repositorioDuplicados.EliminarDuplicado(par);
+    }
+    
+    private bool ExisteParConItemEnBd(int idCatalogo, int idItem)
+    {
+        return repositorioDuplicados.ObtenerListaDeDuplicados()
+            .Any(p => p.IdCatalogo == idCatalogo && (p.ItemAComparar.Id == idItem || p.ItemPosibleDuplicado.Id == idItem));
     }
 
     public List<DatosParDuplicado> ObtenerDuplicadosOrdenados()
     {
-        List<ParDuplicado> listaDuplicadosOrdenada = duplicadosGlobales
-            .OrderByDescending(d => d.Score)
+        List<ParDuplicado> listaDuplicadosOrdenada = repositorioDuplicados.ObtenerListaDeDuplicados()
+            .OrderByDescending(parDuplicado => parDuplicado.Score)
             .ToList();
-        
-        List<DatosParDuplicado> listaDtosParDuplicado = [];
+
+        List<DatosParDuplicado> listaDtos = new();
         foreach (ParDuplicado duplicado in listaDuplicadosOrdenada)
-            listaDtosParDuplicado.Add(DatosParDuplicado.FromEntity(duplicado));
-        
-        return listaDtosParDuplicado;
+            listaDtos.Add(DatosParDuplicado.FromEntity(duplicado));
+
+        return listaDtos;
     }
 
-    private void AgregarDuplicadosADuplicadosGlobales(IEnumerable<ParDuplicado> duplicados)
+    private void AgregarDuplicados(IEnumerable<ParDuplicado> duplicados)
     {
-        foreach (ParDuplicado dup in duplicados)
-        {
-            duplicadosGlobales.Add(dup);
-            dup.ItemAComparar.EstadoDuplicado = true;
-            dup.ItemPosibleDuplicado.EstadoDuplicado = true;
-        }
+        foreach (ParDuplicado parDuplicado in duplicados)
+            repositorioDuplicados.AgregarDuplicado(parDuplicado);
     }
-
-    private bool ExisteParConItem(int itemId) =>
-        duplicadosGlobales.Any(p => p.ItemAComparar.Id == itemId || p.ItemPosibleDuplicado.Id == itemId);
 
     private List<ParDuplicado> DetectarDuplicados(Item itemAComparar, Catalogo catalogo)
     {
-        var cronometroDuracionDeteccionDuplicados = System.Diagnostics.Stopwatch.StartNew();
-        var duplicados = gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
-        cronometroDuracionDeteccionDuplicados.Stop();
+        var cronometro = Stopwatch.StartNew();
+        List<ParDuplicado> duplicados = gestorDuplicados.DetectarDuplicados(itemAComparar, catalogo);
+        cronometro.Stop();
+
         gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.DeteccionDuplicados,
-            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo.Titulo}' completada en {cronometroDuracionDeteccionDuplicados.ElapsedMilliseconds} ms."
+            $"Detección de duplicados para item '{itemAComparar.Titulo}' en catálogo '{catalogo.Titulo}' completada en {cronometro.ElapsedMilliseconds} ms."
         );
-        
+
         return duplicados;
     }
 }

@@ -20,7 +20,6 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<AlmacenamientoDeDatos>();
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddSingleton<IProcesadorTexto, ProcesadorTexto>();
 builder.Services.AddSingleton<SesionUsuarioActual>();
@@ -41,30 +40,29 @@ builder.Services.AddScoped<GestorAuditoria>();
 
 builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
-    var cat          = sp.GetRequiredService<GestorCatalogos>();
-    var aud          = sp.GetRequiredService<GestorAuditoria>();
-    var repoCat      = sp.GetRequiredService<IRepositorioCatalogos>();
+    var gestorCatalogo = sp.GetRequiredService<GestorCatalogos>();
+    var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
+    var repoCatalogo = sp.GetRequiredService<IRepositorioCatalogos>();
     var repoClusters = sp.GetRequiredService<IRepositorioClusters>();   
-    var repoItems    = sp.GetRequiredService<IRepositorioItems>();      
+    var repoItems = sp.GetRequiredService<IRepositorioItems>();      
 
-    return new GestorControlClusters(cat, aud, repoCat, repoClusters, repoItems);
+    return new GestorControlClusters(gestorCatalogo, gestorAuditoria, repoCatalogo, repoClusters, repoItems);
 });
 
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
 {
-    var auditoria = sp.GetRequiredService<GestorAuditoria>();
-    var detector = sp.GetRequiredService<GestorDuplicados>();
-    var gestorCat = sp.GetRequiredService<GestorCatalogos>();
-    var gestorControlClusters = sp.GetRequiredService<GestorControlClusters>();
-    var state = sp.GetRequiredService<AppState>();
+    var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
+    var gestorDuplicados = sp.GetRequiredService<GestorDuplicados>();
+    var gestorCatalogo = sp.GetRequiredService<GestorCatalogos>();
+    var gestorControlClusters = sp.GetRequiredService<GestorControlClusters>();    
+    var repoDuplicados = sp.GetRequiredService<IRepositorioDuplicados>();
 
     return new ControladorDuplicados(
-        auditoria,
-        detector,
-        gestorCat,
-        gestorControlClusters,          
-        state.DuplicadosGlobales
-    );
+        gestorAuditoria,
+        gestorDuplicados,
+        gestorCatalogo,
+        gestorControlClusters,
+        repoDuplicados);
 });
 
 builder.Services.AddScoped<GestorItems>(sp =>
@@ -130,6 +128,8 @@ builder.Services.AddDbContext<SqlContext>(opts =>
 builder.Services.AddScoped<IRepositorioClusters, RepositorioClusters>();
 builder.Services.AddScoped<IRepositorioSincronizacionIds, RepositorioSincronizacionIds>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
+builder.Services.AddScoped<IRepositorioDuplicados, RepositorioDuplicados>();
+
 
 builder.Services.AddServerSideBlazor()
     .AddCircuitOptions(options => { options.DetailedErrors = true; });
@@ -169,6 +169,5 @@ app.Run();
 
 public class AppState
 {
-    public List<ParDuplicado> DuplicadosGlobales { get; } = new();
     public HashSet<int> IdsItemsGlobal { get; } = new();
 }
