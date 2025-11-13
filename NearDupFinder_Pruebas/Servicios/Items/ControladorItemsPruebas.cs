@@ -27,7 +27,7 @@ public class ControladorItemsPruebas
     private GestorDuplicados _gestorDuplicados = null!;
     private Catalogo _catalogo = null!;
     private HashSet<int> _idsItemsGlobal = null!;
-    private List<ParDuplicado> _duplicadosGlobales = null!;
+    private IRepositorioDuplicados _repoDuplicados = null!;
     private SqlContext _context = null!;
 
     [TestInitialize]
@@ -60,16 +60,18 @@ public class ControladorItemsPruebas
         );
 
         _idsItemsGlobal = new HashSet<int>();
-        _duplicadosGlobales = new List<ParDuplicado>();
         _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+
+        _repoDuplicados = new RepositorioDuplicados(_context);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             _gestorDuplicados,
             _gestorCatalogos,
             _gestorControlClusters,
-            _duplicadosGlobales
+            _repoDuplicados
         );
+
 
         _controladorItems = new ControladorItems(
             _gestorItems,
@@ -234,55 +236,36 @@ public class ControladorItemsPruebas
     }
 
     [TestMethod]
-    public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnListaGlobal()
+    public void AltaItemConAltaDuplicados_AgregaItemYGeneraDuplicadoEnBD()
     {
-        var dto1 = new DatosCrearItem(
-            IdCatalogo: _catalogo.Id,
-            Titulo: "Titulo 1",
-            Descripcion: "Descripcion 1"
-        );
+        var dto1 = new DatosCrearItem(_catalogo.Id, "Titulo 1", "Descripcion 1");
         _controladorItems.CrearItem(dto1);
 
-        var dto2 = new DatosCrearItem(
-            IdCatalogo: _catalogo.Id,
-            Titulo: "Titulo 1",
-            Descripcion: "Descripcion 1"
-        );
+        var dto2 = new DatosCrearItem(_catalogo.Id, "Titulo 1", "Descripcion 1");
         _controladorItems.CrearItem(dto2);
-        const int cantidadDeItemEnElCatalogo = 2;
 
+        var duplicados = _repoDuplicados.ObtenerListaDeDuplicados();
 
-        Assert.AreEqual(cantidadDeItemEnElCatalogo, _catalogo.Items.Count, "El catálogo contiene los dos ítems esperados.");
-        Assert.IsTrue(_duplicadosGlobales.Count == 1, "No se generó ningún duplicado en la lista global.");
+        Assert.AreEqual(2, _catalogo.Items.Count, "El catálogo debe contener ambos ítems.");
+        Assert.AreEqual(1, duplicados.Count, "Debe haberse generado exactamente un duplicado en BD.");
     }
 
     [TestMethod]
     public void AltaItemConDuplicados_ItemTieneDuplicado_EstadoDuplicadoEsTrue()
     {
-        var dto1 = new DatosCrearItem(
-            IdCatalogo: _catalogo.Id,
-            Titulo: "Titulo 1",
-            Descripcion: "Descripcion 1"
-        );
-
-        var dto2 = new DatosCrearItem(
-            IdCatalogo: _catalogo.Id,
-            Titulo: "Titulo 1",
-            Descripcion: "Descripcion 1"
-        );
+        var dto1 = new DatosCrearItem(_catalogo.Id, "Titulo 1", "Descripcion 1");
+        var dto2 = new DatosCrearItem(_catalogo.Id, "Titulo 1", "Descripcion 1");
 
         var item1 = _controladorItems.CrearItem(dto1);
         var item2 = _controladorItems.CrearItem(dto2);
-        const int cantidadDeItemEnElCatalogo = 2;
 
-        const int duplicadosGlobalesVacio = 0;
+        var duplicados = _repoDuplicados.ObtenerListaDeDuplicados();
 
-        Assert.AreEqual(cantidadDeItemEnElCatalogo, _catalogo.Items.Count, "El catálogo contiene los dos ítems esperados.");
-        Assert.IsTrue(item1.EstadoDuplicado, "Item1 debería estar marcado como duplicado.");
-        Assert.IsTrue(item2.EstadoDuplicado, "Item2 debería estar marcado como duplicado.");
-        Assert.IsTrue(_duplicadosGlobales.Count > duplicadosGlobalesVacio);
+        Assert.AreEqual(2, _catalogo.Items.Count);
+        Assert.IsTrue(item1.EstadoDuplicado);
+        Assert.IsTrue(item2.EstadoDuplicado);
+        Assert.IsTrue(duplicados.Count > 0, "Debe existir al menos un par duplicado persistido.");
     }
-
   
     [TestMethod]
     public void AltaItemConDuplicados_AgregaItemConIdNoValido_LanzaExcepcion()
@@ -321,9 +304,12 @@ public class ControladorItemsPruebas
         var item1 = _controladorItems.CrearItem(dto1);
         var item2 = _controladorItems.CrearItem(dto2);
 
+        Assert.IsTrue(_repoDuplicados.ObtenerListaDeDuplicados().Any());
+
         _controladorItems.EliminarItem(new DatosEliminarItem(_catalogo.Id, item1.Id));
 
-        Assert.IsFalse(item2.EstadoDuplicado, "El item duplicado debería dejar de estar marcado en false después de eliminar el item1.");
+        Assert.IsFalse(item2.EstadoDuplicado, "El item duplicado debe quedar en false tras eliminar el otro.");
+        Assert.IsFalse(_repoDuplicados.ObtenerListaDeDuplicados().Any(), "El par duplicado debe haberse eliminado.");
     }
 
     [TestMethod]
@@ -422,9 +408,10 @@ public class ControladorItemsPruebas
         _controladorItems.ActualizarItemEnCatalogo(dto);
 
         var logs = _gestorAuditoria.ObtenerTodos();
-        Assert.AreEqual(1, logs.Count);
-        Assert.AreEqual(EntradaDeLog.AccionLog.EditarItem, logs[0].Accion);
-        StringAssert.Contains(logs[0].Detalles, "Ítem actualizado");
+        var logsEditar = logs.Where(l => l.Accion == EntradaDeLog.AccionLog.EditarItem).ToList();
+
+        Assert.AreEqual(1, logsEditar.Count, "Debe registrarse exactamente 1 log de edición.");
+        StringAssert.Contains(logsEditar[0].Detalles, "Ítem actualizado");
     }
 
     [TestMethod]
@@ -449,6 +436,22 @@ public class ControladorItemsPruebas
 
         Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[primeraAuditoriaRegistrada].Accion);
         StringAssert.Contains(logs[primeraAuditoriaRegistrada].Detalles, "Item eliminado");
+    }
+    
+    [TestMethod]
+    public void AgregarDuplicado_SePersisteEnBaseDeDatos()
+    {
+        var itemA = new Item("Notebook", "Intel i5");
+        var itemB = new Item("Notebook", "Intel i5");
+        _context.Items.AddRange(itemA, itemB);
+        _context.SaveChanges();
+
+        var par = new ParDuplicado(itemA, itemB, 0.9f, TipoDuplicado.PosibleDuplicado, 1, 1, 1, 1,
+            new[] { "notebook" }, new[] { "intel" }, _catalogo.Id);
+        _repoDuplicados.AgregarDuplicado(par);
+
+        var duplicados = _repoDuplicados.ObtenerListaDeDuplicados();
+        Assert.AreEqual(1, duplicados.Count);
     }
 }
 

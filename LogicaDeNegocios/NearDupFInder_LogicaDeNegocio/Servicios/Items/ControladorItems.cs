@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -67,7 +68,6 @@ public class ControladorItems
         );
 
         _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
-
         _gestorItems.ActualizarItem(item);
 
         return item;
@@ -93,6 +93,9 @@ public class ControladorItems
             item.EditarModelo(itemDtoActualizar.Modelo);
         
         _gestorItems.ActualizarItem(item);
+        _controladorDuplicados.ActualizarDuplicadosPara(
+            new DatosActualizarDuplicados(itemDtoActualizar.IdCatalogo, itemDtoActualizar.IdItem)
+        );
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.EditarItem,
             $"Ítem actualizado (Id={item.Titulo}) en catálogo '{catalogo.Titulo}'."
@@ -110,7 +113,7 @@ public class ControladorItems
         _gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemDtoAEliminar.IdItem, catalogo.Id));
         catalogo.EliminarItem(itemAEliminar);
 
-        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
+        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar, catalogo.Id);
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
         _gestorItems.EliminarItem(itemAEliminar);
 

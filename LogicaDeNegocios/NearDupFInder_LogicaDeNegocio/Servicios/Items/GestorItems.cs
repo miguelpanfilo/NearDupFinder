@@ -48,7 +48,11 @@ public class GestorItems
 
     public void EliminarItem(Item item)
     {
-        _repositorioItems.Eliminar(item);
+        Item? itemPersistido = _repositorioItems.ObtenerPorId(item.Id);
+        if (itemPersistido is null) 
+            return;
+
+        _repositorioItems.Eliminar(itemPersistido);
         _repositorioItems.GuardarCambios();
     }
     public Item CrearEntidad(DatosCrearItem datos)

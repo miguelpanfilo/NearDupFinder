@@ -136,6 +136,60 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.ToTable("Items", (string)null);
                 });
 
+            modelBuilder.Entity("NearDupFinder_Dominio.Clases.ParDuplicado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdCatalogo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemACompararId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemPosibleDuplicadoId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("JaccardDescripcion")
+                        .HasColumnType("real");
+
+                    b.Property<float>("JaccardTitulo")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Score")
+                        .HasColumnType("real");
+
+                    b.Property<int>("ScoreMarca")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScoreModelo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TokensCompartidosDescripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TokensCompartidosTitulo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdCatalogo");
+
+                    b.HasIndex("ItemACompararId");
+
+                    b.HasIndex("ItemPosibleDuplicadoId");
+
+                    b.ToTable("ParesDuplicados", (string)null);
+                });
+
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -182,6 +236,31 @@ namespace NearDupFinder_Almacenamiento.Migrations
                         .WithMany("PertenecientesCluster")
                         .HasForeignKey("ClusterId")
                         .OnDelete(DeleteBehavior.NoAction);
+                });
+
+            modelBuilder.Entity("NearDupFinder_Dominio.Clases.ParDuplicado", b =>
+                {
+                    b.HasOne("NearDupFinder_Dominio.Clases.Catalogo", null)
+                        .WithMany()
+                        .HasForeignKey("IdCatalogo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NearDupFinder_Dominio.Clases.Item", "ItemAComparar")
+                        .WithMany()
+                        .HasForeignKey("ItemACompararId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("NearDupFinder_Dominio.Clases.Item", "ItemPosibleDuplicado")
+                        .WithMany()
+                        .HasForeignKey("ItemPosibleDuplicadoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ItemAComparar");
+
+                    b.Navigation("ItemPosibleDuplicado");
                 });
 
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.Usuario", b =>

@@ -22,10 +22,12 @@ namespace NearDupFinder_Pruebas.Servicios.Items
         private GestorCatalogos _gestorCatalogos = null!;
         private GestorAuditoria _gestorAuditoria = null!;
         private GestorControlClusters _gestorControlClusters = null!;
+        private ControladorDuplicados _controladorDuplicados = null!;
+        private GestorDuplicados _gestorDuplicados = null!;
         private Catalogo _catalogo = null!;
         private HashSet<int> _idsItemsGlobal = null!;
-        private List<ParDuplicado> _duplicadosGlobales = null!;
         private SqlContext _context = null!;
+        private IRepositorioDuplicados _repoDuplicados = null!;
 
         [TestInitialize]
         public void Setup()
@@ -40,6 +42,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
             IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+            _repoDuplicados = new RepositorioDuplicados(_context);
 
             var sesionUsuario = new SesionUsuarioActual();
             sesionUsuario.Asignar("tester@correo.com");
@@ -56,17 +59,16 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             );
 
             _idsItemsGlobal = new HashSet<int>();
-            _duplicadosGlobales = new List<ParDuplicado>();
             _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
 
-            var gestorDuplicados = new GestorDuplicados(procesador);
+            _gestorDuplicados = new GestorDuplicados(procesador);
 
-            var controladorDuplicados = new ControladorDuplicados(
+            _controladorDuplicados = new ControladorDuplicados(
                 _gestorAuditoria,
-                gestorDuplicados,
+                _gestorDuplicados,
                 _gestorCatalogos,
                 _gestorControlClusters,
-                _duplicadosGlobales
+                _repoDuplicados
             );
 
             _catalogo = new Catalogo("Catálogo Auditoría Test");
@@ -76,7 +78,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             _controladorItems = new ControladorItems(
                 _gestorItems,
                 _gestorCatalogos,
-                controladorDuplicados,
+                _controladorDuplicados,
                 _gestorControlClusters,
                 _gestorAuditoria,
                 _idsItemsGlobal
@@ -118,7 +120,6 @@ namespace NearDupFinder_Pruebas.Servicios.Items
         public void CantidadDeItemsGlobal_SinItems_RetornaCero()
         {
             int numeroDeItems = _idsItemsGlobal.Count;
-
             Assert.AreEqual(0, numeroDeItems);
         }
 
@@ -132,7 +133,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             );
             _controladorItems.CrearItem(dto);
             int numeroDeItems = _idsItemsGlobal.Count;
-            
+
             Assert.AreEqual(1, numeroDeItems);
         }
 
@@ -155,7 +156,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
                 Descripcion: "Descripción 1"
             );
             var item = _controladorItems.CrearItem(dto);
-            
+
             bool existeItem = _gestorItems.IdExisteEnListaDeIdGlobal(item.Id);
 
             Assert.IsTrue(existeItem);
