@@ -111,22 +111,21 @@ public class Item
         int idItemInexistente = 0;
         if (id == idItemInexistente)
             throw new ExcepcionItem("El id no es valido");
+        
         Id = id;
-        _siguienteId = id + 1;
     }
     public void ModificarIdEnCasoDeImportacion(int id)
     {
         int idItemInexistente = 0;
         if (id == idItemInexistente)
             throw new ExcepcionItem("El id no es valido");
+        
         _siguienteId--;
         Id = id;
     }
-    public static void ResetearContadorIdDesde(int nuevoValor)
+    public static void ResetearContadorId(int nuevoValor)
     {
         if (nuevoValor > 0)
             _siguienteId = nuevoValor;
     }
-
-
 }

@@ -20,24 +20,19 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<AppState>();
 builder.Services.AddSingleton<IProcesadorTexto, ProcesadorTexto>();
 builder.Services.AddSingleton<SesionUsuarioActual>();
-
 builder.Services.AddSingleton<GestorDuplicados>(sp =>
 {
     var procesador = sp.GetRequiredService<IProcesadorTexto>();
     return new GestorDuplicados(procesador);
 });
 builder.Services.AddScoped<IEstrategiaExportacionAuditoria, EstrategiaExportarCsv>();
-
 builder.Services.AddScoped<GestorExportacionAuditoria>();
 builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
-
 builder.Services.AddScoped<IRepositorioAuditorias, RepositorioAuditorias>();
 builder.Services.AddScoped<GestorAuditoria>();
-
 builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
     var gestorCatalogo = sp.GetRequiredService<GestorCatalogos>();
@@ -48,7 +43,6 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
 
     return new GestorControlClusters(gestorCatalogo, gestorAuditoria, repoCatalogo, repoClusters, repoItems);
 });
-
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
 {
     var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
@@ -64,16 +58,13 @@ builder.Services.AddScoped<ControladorDuplicados>(sp =>
         gestorControlClusters,
         repoDuplicados);
 });
-
 builder.Services.AddScoped<GestorItems>(sp =>
 {
-    var state = sp.GetRequiredService<AppState>();
     var repositorioItems = sp.GetRequiredService<IRepositorioItems>();
-    return new GestorItems(state.IdsItemsGlobal, repositorioItems);
+    return new GestorItems(repositorioItems);
 });
 builder.Services.AddScoped<IRepositorioCatalogos, RepositorioCatalogos>();
 builder.Services.AddScoped<IRepositorioItems, RepositorioItems>();
-
 builder.Services.AddScoped<ControladorItems>(sp =>
 {
     var gestorItems = sp.GetRequiredService<GestorItems>();
@@ -81,18 +72,14 @@ builder.Services.AddScoped<ControladorItems>(sp =>
     var controladorDuplicados = sp.GetRequiredService<ControladorDuplicados>();
     var gestorControlClusters = sp.GetRequiredService<GestorControlClusters>();
     var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
-    var appState = sp.GetRequiredService<AppState>();
 
     return new ControladorItems(
         gestorItems,
         gestorCatalogos,
         controladorDuplicados,
         gestorControlClusters,
-        gestorAuditoria,
-        appState.IdsItemsGlobal
-    );
+        gestorAuditoria);
 });
-
 builder.Services.AddScoped<GestorLectorCsv>(sp =>
 {
     var gestorCatalogos = sp.GetRequiredService<GestorCatalogos>();
@@ -100,7 +87,6 @@ builder.Services.AddScoped<GestorLectorCsv>(sp =>
     var controladorItems= sp.GetRequiredService<ControladorItems>();
     return new GestorLectorCsv(gestorCatalogos, gestorItems, controladorItems);
 });
-
 builder.Services.AddScoped<ControladorLectorCsv>();
 builder.Services.AddScoped<GestorAutenticacionUsuario>();
 builder.Services.AddScoped<GestorInicializacion>();
@@ -166,8 +152,3 @@ app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.MapeoAuditoriasExportacionEndpoints();
 
 app.Run();
-
-public class AppState
-{
-    public HashSet<int> IdsItemsGlobal { get; } = new();
-}

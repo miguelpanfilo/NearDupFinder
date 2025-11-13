@@ -60,7 +60,7 @@ public class GestorLectorCsvPruebas
         );
 
         _idsItemsGlobal.Clear();
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _gestorItems = new GestorItems(repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
@@ -75,9 +75,7 @@ public class GestorLectorCsvPruebas
             _gestorCatalogos,
             _controladorDuplicados,
             _gestorControlClusters,
-            _gestorAuditoria,
-            _idsItemsGlobal
-        );
+            _gestorAuditoria);
 
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
     }
@@ -149,7 +147,7 @@ public class GestorLectorCsvPruebas
 
         _gestorLectorCsv.ImportarItems();
 
-        Assert.IsTrue(_gestorItems.IdExisteEnListaDeIdGlobal(42));
+        Assert.IsTrue(_gestorItems.ExisteItemConEseId(42));
     }
 
     [TestMethod]
@@ -160,7 +158,7 @@ public class GestorLectorCsvPruebas
 
         _gestorLectorCsv.ImportarItems();
 
-        Assert.IsFalse(_gestorItems.IdExisteEnListaDeIdGlobal(0));
+        Assert.IsFalse(_gestorItems.ExisteItemConEseId(0));
     }
 
     [TestMethod]
@@ -172,7 +170,7 @@ public class GestorLectorCsvPruebas
         _gestorLectorCsv.ImportarItems();
 
         Assert.IsNotNull(_gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Invalido"));
-        Assert.IsFalse(_gestorItems.IdExisteEnListaDeIdGlobal(1));
+        Assert.IsFalse(_gestorItems.ExisteItemConEseId(1));
     }
     
     [TestMethod]
@@ -191,7 +189,7 @@ public class GestorLectorCsvPruebas
         _gestorLectorCsv.ImportarItems();
         Catalogo catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat D")!;
         
-        Assert.IsTrue(_gestorItems.IdExisteEnListaDeIdGlobal(5));
+        Assert.IsTrue(_gestorItems.ExisteItemConEseId(5));
         Assert.AreEqual("t1", catalogo.ObtenerItemPorId(5)!.Titulo);
     }
     
@@ -205,6 +203,6 @@ public class GestorLectorCsvPruebas
         _gestorLectorCsv.ImportarItems();
 
         Assert.IsNull(_gestorCatalogos.ObtenerCatalogoPorTitulo(nombreLargo));
-        Assert.IsFalse(_gestorItems.IdExisteEnListaDeIdGlobal(123));
+        Assert.IsFalse(_gestorItems.ExisteItemConEseId(123));
     }
 }

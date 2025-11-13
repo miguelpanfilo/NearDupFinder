@@ -60,7 +60,7 @@ public class ControladorItemsPruebas
         );
 
         _idsItemsGlobal = new HashSet<int>();
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _gestorItems = new GestorItems(repoItems);
 
         _repoDuplicados = new RepositorioDuplicados(_context);
 
@@ -78,9 +78,7 @@ public class ControladorItemsPruebas
             _gestorCatalogos,
             _controladorDuplicados,
             _gestorControlClusters,
-            _gestorAuditoria,
-            _idsItemsGlobal
-        );
+            _gestorAuditoria);
 
         _catalogo = new Catalogo("Catálogo Auditoría Test");
         repoCatalogos.Agregar(_catalogo);

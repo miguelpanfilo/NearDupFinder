@@ -109,7 +109,7 @@ public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestor
     {
         if (IdEsValido(id))
         {
-            bool idYaExiste = gestorItems.IdExisteEnListaDeIdGlobal(int.Parse(id));
+            bool idYaExiste = gestorItems.ExisteItemConEseId(int.Parse(id));
             if (idYaExiste)
                 return true;
         }

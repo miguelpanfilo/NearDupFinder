@@ -78,7 +78,7 @@ public class ControladorDuplicadosPruebas
         _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, repoCatalogos, repoClusters, repoItems);
 
         _idsItemsGlobal = new HashSet<int>();
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _gestorItems = new GestorItems(repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
@@ -93,9 +93,7 @@ public class ControladorDuplicadosPruebas
             _gestorCatalogos,
             _controladorDuplicados,
             _gestorControlClusters,
-            _gestorAuditoria,
-            _idsItemsGlobal
-        );
+            _gestorAuditoria);
     }
 
     [TestMethod]
