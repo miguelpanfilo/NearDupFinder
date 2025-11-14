@@ -9,7 +9,7 @@ namespace NearDupFinder_Almacenamiento.Repositorios
         public RepositorioCatalogos(SqlContext context) : base(context)
         {
         }
-
+    
         public Catalogo? ObtenerPorTitulo(string titulo)
         {
             return _context.Set<Catalogo>()
@@ -26,6 +26,18 @@ namespace NearDupFinder_Almacenamiento.Repositorios
                 .Include(c => c.Clusters)
                 .ThenInclude(cl => cl.PertenecientesCluster)
                 .FirstOrDefault(c => c.Id == id);
+        }
+        
+        public Catalogo? ObtenerParaEliminacionPorId(int idCatalogo)
+        {
+            return _context.Set<Catalogo>()
+                .AsNoTracking()
+                .FirstOrDefault(c => c.Id == idCatalogo);
+        }
+        
+        public void LimpiarSeguimiento()
+        {
+            _context.ChangeTracker.Clear();
         }
     }
 }

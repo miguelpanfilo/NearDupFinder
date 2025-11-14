@@ -41,7 +41,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             sesionUsuario.Asignar("tester@correo.com");
 
             _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-            _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+            _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
 
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
             _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;

@@ -7,11 +7,18 @@ namespace NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 
 public class GestorCatalogos
 {
-    private readonly IRepositorioCatalogos _repositorioCatalogos;
+    private readonly IRepositorioCatalogos _repoCatalogos;
+    private readonly IRepositorioClusters  _repoClusters;
+    private readonly IRepositorioItems     _repoItems;
 
-    public GestorCatalogos(IRepositorioCatalogos repositorioCatalogos)
+    public GestorCatalogos(
+        IRepositorioCatalogos repoCatalogos,
+        IRepositorioClusters repoClusters,
+        IRepositorioItems repoItems)
     {
-        _repositorioCatalogos = repositorioCatalogos;
+        _repoCatalogos = repoCatalogos;
+        _repoClusters  = repoClusters;
+        _repoItems     = repoItems;
     }
 
     public void CrearCatalogo(DatosCatalogoCrear datosCatalogoCrear)
@@ -22,17 +29,22 @@ public class GestorCatalogos
         var nuevoCatalogo = new Catalogo(datosCatalogoCrear.Titulo);
         CambiarDescripcionCatalogo(nuevoCatalogo, datosCatalogoCrear.Descripcion!);
 
-        _repositorioCatalogos.Agregar(nuevoCatalogo);
-        _repositorioCatalogos.GuardarCambios();
+        _repoCatalogos.Agregar(nuevoCatalogo);
+        _repoCatalogos.GuardarCambios();
     }
 
     public void BorrarCatalogo(DatosCatalogoEliminar datosCatalogoEliminar)
     {
-        var catalogoAEliminar = ObtenerCatalogoPorId(datosCatalogoEliminar.Id)
+        var catalogoAEliminar = _repoCatalogos.ObtenerParaEliminacionPorId(datosCatalogoEliminar.Id)
                                 ?? throw new ExcepcionCatalogo($"No existe un catálogo con Id={datosCatalogoEliminar.Id}");
-
-        _repositorioCatalogos.Eliminar(catalogoAEliminar);
-        _repositorioCatalogos.GuardarCambios();
+        
+        _repoClusters.LimpiarCanonicoPorCatalogo(catalogoAEliminar.Id); // Clusters.CanonicoId = NULL
+        _repoItems.OrfanearPorCatalogo(catalogoAEliminar.Id);
+        
+        _repoCatalogos.LimpiarSeguimiento();
+        
+        _repoCatalogos.Eliminar(catalogoAEliminar);
+        _repoCatalogos.GuardarCambios();
     }
 
     public void ModificarCatalogo(DatosCatalogoEditar datosCatalogoEditar)
@@ -47,8 +59,8 @@ public class GestorCatalogos
         if (datosCatalogoEditar.Descripcion is not null)
             CambiarDescripcionCatalogo(catalogo, datosCatalogoEditar.Descripcion);
 
-        _repositorioCatalogos.Actualizar(catalogo);
-        _repositorioCatalogos.GuardarCambios();
+        _repoCatalogos.Actualizar(catalogo);
+        _repoCatalogos.GuardarCambios();
     }
 
     private void CambiarTituloCatalogo(Catalogo catalogo, string titulo)
@@ -66,7 +78,7 @@ public class GestorCatalogos
 
     public IReadOnlyCollection<DatosPublicosCatalogo> ObtenerCatalogos()
     {
-        var catalogos = _repositorioCatalogos.ObtenerTodos();
+        var catalogos = _repoCatalogos.ObtenerTodos();
         return catalogos.Select(DatosPublicosCatalogo.FromEntity).ToList();
     }
 
@@ -92,21 +104,21 @@ public class GestorCatalogos
 
     public Catalogo? ObtenerCatalogoPorId(int id)
     {
-        return _repositorioCatalogos.ObtenerPorId(id);
+        return _repoCatalogos.ObtenerPorId(id);
     }
 
     public Catalogo? ObtenerCatalogoPorTitulo(string? titulo)
     {
-        return _repositorioCatalogos.ObtenerPorTitulo(titulo!);
+        return _repoCatalogos.ObtenerPorTitulo(titulo!);
     }
 
     public int CantidadDeCatalogos()
     {
-        return _repositorioCatalogos.ObtenerTodos().Count;
+        return _repoCatalogos.ObtenerTodos().Count;
     }
 
     private bool ElTituloYaEstaRegistrado(string titulo)
     {
-        return _repositorioCatalogos.ObtenerPorTitulo(titulo) is not null;
+        return _repoCatalogos.ObtenerPorTitulo(titulo) is not null;
     }
 }

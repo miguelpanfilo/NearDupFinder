@@ -24,7 +24,10 @@ public class GestorCatalogoPruebas
 
     IRepositorioCatalogos repositorioCatalogos = new RepositorioCatalogos(_context);
 
-        _gestorCatalogos = new GestorCatalogos(repositorioCatalogos);
+    IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+    IRepositorioItems repoItems = new RepositorioItems(_context);
+
+    _gestorCatalogos = new GestorCatalogos(repositorioCatalogos, repoClusters, repoItems);
     }
     
     [TestMethod]

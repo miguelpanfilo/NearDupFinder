@@ -45,7 +45,7 @@ public class GestorLectorCsvPruebas
         var sesionUsuario = new SesionUsuarioActual();
         sesionUsuario.Asignar("tester@correo.com");
         _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-        _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+        _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
         _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorControlClusters = new GestorControlClusters(
             _gestorCatalogos,

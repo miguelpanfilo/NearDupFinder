@@ -25,6 +25,21 @@ namespace NearDupFinder_Almacenamiento.Repositorios
             entry.Property<int?>("ClusterId").CurrentValue = idCluster;
             entry.Property<int?>("ClusterId").IsModified   = true;
         }
+        
+        public void OrfanearPorCatalogo(int idCatalogo)
+        {
+            var items = _items
+                .Where(i => EF.Property<int>(i, "CatalogoId") == idCatalogo
+                            && EF.Property<int?>(i, "ClusterId") != null)
+                .ToList();
+
+            foreach (var item in items)
+            {
+                _context.Entry(item).Property("ClusterId").CurrentValue = null;
+            }
+
+            _context.SaveChanges();
+        }
 
     }
 }
