@@ -12,15 +12,4 @@ public record DatosCrearItem(
     int? IdImportado = null
 )
 {
-    public Item ToEntity()
-    {
-        return new Item
-        {
-            Titulo = Titulo,
-            Descripcion = Descripcion,
-            Categoria = Categoria,
-            Marca = Marca,
-            Modelo = Modelo
-        };
-    }
 }

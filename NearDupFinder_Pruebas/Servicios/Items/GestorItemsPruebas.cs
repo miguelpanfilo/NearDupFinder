@@ -59,7 +59,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             );
 
             _idsItemsGlobal = new HashSet<int>();
-            _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+            _gestorItems = new GestorItems(repoItems);
 
             _gestorDuplicados = new GestorDuplicados(procesador);
 
@@ -80,9 +80,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
                 _gestorCatalogos,
                 _controladorDuplicados,
                 _gestorControlClusters,
-                _gestorAuditoria,
-                _idsItemsGlobal
-            );
+                _gestorAuditoria);
         }
 
         [TestMethod]
@@ -124,25 +122,11 @@ namespace NearDupFinder_Pruebas.Servicios.Items
         }
 
         [TestMethod]
-        public void CantidadDeItemsGlobal_ConItems_RetornaDistintoDeCero()
-        {
-            var dto = new DatosCrearItem(
-                IdCatalogo: _catalogo.Id,
-                Titulo: "Item 1",
-                Descripcion: "Descripción 1"
-            );
-            _controladorItems.CrearItem(dto);
-            int numeroDeItems = _idsItemsGlobal.Count;
-
-            Assert.AreEqual(1, numeroDeItems);
-        }
-
-        [TestMethod]
         public void IdExisteEnListaDeIdGlobal_ConItemNoExistente_RetornaFalso()
         {
             var nuevoItem = new Item("Item 1", "Descripción 1");
 
-            bool existeItem = _gestorItems.IdExisteEnListaDeIdGlobal(nuevoItem.Id);
+            bool existeItem = _gestorItems.ExisteItemConEseId(nuevoItem.Id);
 
             Assert.IsFalse(existeItem);
         }
@@ -157,7 +141,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             );
             var item = _controladorItems.CrearItem(dto);
 
-            bool existeItem = _gestorItems.IdExisteEnListaDeIdGlobal(item.Id);
+            bool existeItem = _gestorItems.ExisteItemConEseId(item.Id);
 
             Assert.IsTrue(existeItem);
         }

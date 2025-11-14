@@ -16,7 +16,6 @@ public class ControladorItems
     private readonly ControladorDuplicados _controladorDuplicados;
     private readonly GestorControlClusters _gestorControlClusters;
     private readonly GestorAuditoria _gestorAuditoria;
-    private readonly HashSet<int> _idsItemsGlobal;
     private readonly GestorItems _gestorItems;
     
     public ControladorItems(
@@ -24,15 +23,13 @@ public class ControladorItems
         GestorCatalogos gestorCatalogos,
         ControladorDuplicados controladorDuplicados,
         GestorControlClusters gestorControlClusters,
-        GestorAuditoria gestorAuditoria,
-        HashSet<int> idsItemsGlobal)
+        GestorAuditoria gestorAuditoria)
     {
         _gestorItems = gestorItems;
         _gestorCatalogos = gestorCatalogos;
         _controladorDuplicados = controladorDuplicados;
         _gestorControlClusters = gestorControlClusters;
         _gestorAuditoria = gestorAuditoria;
-        _idsItemsGlobal = idsItemsGlobal;
     }
     
     public Item CrearItem(DatosCrearItem datos)
@@ -43,25 +40,23 @@ public class ControladorItems
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
 
-        var item = _gestorItems.CrearEntidad(datos);
+        var item = _gestorItems.CrearNuevoItem(datos);
 
-
-        if (datos.IdImportado is int idImportado)
+        if (ElItemFueImportado(datos))
         {
-            if (_gestorItems.IdExisteEnListaDeIdGlobal(idImportado))
+            int idImportado = (int)datos.IdImportado;
+            if (_gestorItems.ExisteItemConEseId(idImportado))
                 throw new ExcepcionItem($"El Id importado {idImportado} ya existe.");
             
             item.ModificarIdEnCasoDeImportacion(idImportado);
-            _idsItemsGlobal.Add(idImportado);
         }
         else
         {
-            _gestorItems.AsegurarIdUnicoPublico(item);
+            _gestorItems.AsegurarIdUnico(item);
         }
 
         _gestorItems.AgregarItemACatalogo(catalogo, item);
-      
-
+        
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.AltaItem,
             $"Item agregado: '{item.Titulo}' en catálogo '{catalogo.Titulo}'."
@@ -129,5 +124,10 @@ public class ControladorItems
         return catalogo.Items
             .Select(DatosItemListaItems.FromEntity)
             .ToList();
+    }
+
+    private bool ElItemFueImportado(DatosCrearItem datos)
+    {
+        return datos.IdImportado is int idImportado;
     }
 }

@@ -10,9 +10,9 @@ public class DeteccionDuplicadosPruebas
 {
     private GestorDuplicados _gestorDuplicados = null!;
     private GestorCatalogos gestorCatalogos = null!;
-    
+
     private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
-        new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
+        Item.Crear(titulo, desc, marca, modelo, categoria);
 
     private static Catalogo CrearCatalogo(params Item[] items)
     {

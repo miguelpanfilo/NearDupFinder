@@ -63,7 +63,7 @@ public class ControladorLectorCsvPruebas
             repoItems
         );
 
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _gestorItems = new GestorItems(repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
@@ -78,9 +78,7 @@ public class ControladorLectorCsvPruebas
             _gestorCatalogos,
             _controladorDuplicados,
             _gestorControlClusters,
-            _gestorAuditoria,
-            _idsItemsGlobal
-        );
+            _gestorAuditoria);
 
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
@@ -113,7 +111,7 @@ public class ControladorLectorCsvPruebas
 
         _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
 
-        Assert.IsTrue(_gestorItems.IdExisteEnListaDeIdGlobal(101));
+        Assert.IsTrue(_gestorItems.ExisteItemConEseId(101));
     }
 
     [TestMethod]

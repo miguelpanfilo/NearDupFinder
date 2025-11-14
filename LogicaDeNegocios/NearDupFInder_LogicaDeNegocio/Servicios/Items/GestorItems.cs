@@ -6,22 +6,20 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 public class GestorItems
 {
-    private readonly HashSet<int> _idsItemsGlobal;
     private readonly IRepositorioItems _repositorioItems;
 
-    public GestorItems(HashSet<int> idsItemsGlobal, IRepositorioItems repositorioItems)
+    public GestorItems(IRepositorioItems repositorioItems)
     {
-        _idsItemsGlobal = idsItemsGlobal;
         _repositorioItems = repositorioItems;
     }
 
-    public void AsegurarIdUnicoPublico(Item item)
+    public void AsegurarIdUnico(Item item)
     {
         int idApropiado = item.Id;
-        while (IdExisteEnListaDeIdGlobal(idApropiado))
+        while (ExisteItemConEseId(idApropiado))
             idApropiado++;
+        
         item.AjustarId(idApropiado);
-        _idsItemsGlobal.Add(idApropiado);
     }
     public void AgregarItemACatalogo(Catalogo catalogo, Item item)
     {
@@ -29,9 +27,10 @@ public class GestorItems
         GuardarItem(item);
     }
 
-    public bool IdExisteEnListaDeIdGlobal(int id)
+    public bool ExisteItemConEseId(int id)
     {
-        return _idsItemsGlobal.Contains(id);
+        bool existe = _repositorioItems.ObtenerPorId(id) != null;
+        return existe;
     }
 
     public void GuardarItem(Item item)
@@ -55,10 +54,8 @@ public class GestorItems
         _repositorioItems.Eliminar(itemPersistido);
         _repositorioItems.GuardarCambios();
     }
-    public Item CrearEntidad(DatosCrearItem datos)
+    public Item CrearNuevoItem(DatosCrearItem datos)
     {
-        return datos.ToEntity();
+        return Item.Crear(datos.Titulo, datos.Descripcion, datos.Categoria, datos.Marca, datos.Modelo);
     }
-
-
 }
