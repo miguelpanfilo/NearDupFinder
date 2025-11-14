@@ -343,8 +343,8 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void EliminarItem_EliminaItemDelCatalogo()
     {
-        var item1 = new Item("Item 1", "Desc 1");
-        var item2 = new Item("Item 2", "Desc 2");
+        Item item1 = Item.Crear("Item 1", "Desc 1" ,"Categoria", "Marca", "Modelo");
+        Item item2 = Item.Crear("Item 2", "Desc 2" ,"Categoria", "Marca", "Modelo");
 
         _catalogo.AgregarItem(item1);
         _catalogo.AgregarItem(item2);
@@ -439,8 +439,9 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void AgregarDuplicado_SePersisteEnBaseDeDatos()
     {
-        var itemA = new Item("Notebook", "Intel i5");
-        var itemB = new Item("Notebook", "Intel i5");
+        Item itemA = Item.Crear("Notebook", "Intel i5" ,"Categoria", "Marca", "Modelo");
+        Item itemB = Item.Crear("Notebook", "Intel i5" ,"Categoria", "Marca", "Modelo");
+        
         _context.Items.AddRange(itemA, itemB);
         _context.SaveChanges();
 

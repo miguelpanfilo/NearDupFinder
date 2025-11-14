@@ -173,8 +173,9 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_CrearAsignarIdAutoincremental_Ok()
     {
-        Item item1 = new Item { Titulo = "Item 1", Descripcion = "Desc 1" };
-        Item item2 = new Item { Titulo = "Item 2", Descripcion = "Desc 2" };
+        Item item1 = Item.Crear("Item 1", "Desc 1");
+        Item item2 = Item.Crear("Item 2", "Desc 2");
+
         Assert.AreEqual(1, item1.Id);
         Assert.AreEqual(2, item2.Id);
         Assert.AreNotEqual(item1.Id, item2.Id);
@@ -183,12 +184,15 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_ResetearIdContador_Ok()
     {
-        var item1 = new Item { Titulo = "Uno", Descripcion = "Desc" , Categoria = "Categoria",  Marca = "Marca", Modelo = "Modelo" };
-        var item2 = new Item { Titulo = "Dos", Descripcion = "Desc",  Categoria = "Categoria", Marca = "Marca", Modelo = "Modelo" };
+        Item item1 = Item.Crear("Uno", "Desc" ,"Categoria", "Marca", "Modelo");
+        Item item2 = Item.Crear("Dos", "Desc" ,"Categoria", "Marca", "Modelo");
+        
         Assert.AreEqual(1, item1.Id);
         Assert.AreEqual(2, item2.Id);
+        
         Item.ResetearContadorId();
-        var item3 = new Item { Titulo = "Tres", Descripcion = "Desc"};
+        Item item3 = Item.Crear("tres", "Desc" ,"Categoria", "Marca", "Modelo");
+        
         Assert.AreEqual(1, item3.Id); 
     }
   
@@ -366,8 +370,9 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_Equals_DistintoId_RetornaFalse()
     {
-        Item item1 = new Item("Titulo1", "Desc1");
-        Item item2 = new Item("Titulo2", "Desc2");
+        Item item1 = Item.Crear("Item 1", "Desc 1");
+        Item item2 = Item.Crear("Item 2", "Desc 2");
+        
         Assert.IsFalse(item1.Equals(item2));
     }
     [TestMethod]
