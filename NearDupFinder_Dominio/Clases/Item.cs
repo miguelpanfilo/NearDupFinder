@@ -10,12 +10,20 @@ public class Item
     private string? _categoria { get; set; }
     public bool EstadoDuplicado { get; set; }
     public int Id { get; private set; }
-    
     public int Stock { get; set; }
     
-    public Item()
+    public static Item Crear(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
     {
-        Id = _siguienteId++;
+        var item = new Item(titulo, descripcion, marca, modelo, categoria);
+        item.AsignarId(_siguienteId++);
+        return item;
+    }
+    
+    public Item() { }
+    
+    private void AsignarId(int id)
+    {
+        Id = id;
     }
     public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
     {
@@ -24,7 +32,6 @@ public class Item
         Marca = marca;            
         Modelo = modelo;          
         Categoria = categoria;    
-        Id = _siguienteId++;
         EstadoDuplicado = false;
     }
     public string? Titulo

@@ -56,13 +56,6 @@ public class GestorItems
     }
     public Item CrearNuevoItem(DatosCrearItem datos)
     {
-        return new Item
-        {
-            Titulo = datos.Titulo,
-            Descripcion = datos.Descripcion,
-            Categoria = datos.Categoria,
-            Marca = datos.Marca,
-            Modelo = datos.Modelo
-        };
+        return Item.Crear(datos.Titulo, datos.Descripcion, datos.Categoria, datos.Marca, datos.Modelo);
     }
 }
