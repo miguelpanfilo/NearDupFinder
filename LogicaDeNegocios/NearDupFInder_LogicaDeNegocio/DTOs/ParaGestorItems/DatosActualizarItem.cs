@@ -7,5 +7,6 @@ public record DatosActualizarItem(
     string? Descripcion = null,
     string? Categoria = null,
     string? Marca = null,
-    string? Modelo = null
+    string? Modelo = null,
+    int? Stock = null
 );

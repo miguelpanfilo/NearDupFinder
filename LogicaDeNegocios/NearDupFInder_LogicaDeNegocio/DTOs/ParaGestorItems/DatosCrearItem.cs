@@ -9,7 +9,8 @@ public record DatosCrearItem(
     string? Categoria = null,
     string? Marca = null,
     string? Modelo = null,
-    int? IdImportado = null
+    int? IdImportado = null,
+    int? Stock = null
 )
 {
 }

@@ -11,10 +11,11 @@ public class Item
     public bool EstadoDuplicado { get; set; }
     public int Id { get; private set; }
     public int Stock { get; set; }
-    
-    public static Item Crear(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
+    public static Item Crear(string titulo, string descripcion, string? marca = null, 
+        string? modelo = null, string? categoria = null, int? stock = null)
     {
-        var item = new Item(titulo, descripcion, marca, modelo, categoria);
+        int stockFinal = stock ?? 0;
+        var item = new Item(titulo, descripcion, stockFinal, marca, modelo, categoria);
         item.AsignarId(_siguienteId++);
         return item;
     }
@@ -25,13 +26,14 @@ public class Item
     {
         Id = id;
     }
-    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
+    public Item(string titulo, string descripcion, int stock, string? marca = null, string? modelo = null, string? categoria = null)
     {
         Titulo = titulo;    
         Descripcion = descripcion; 
         Marca = marca;            
         Modelo = modelo;          
-        Categoria = categoria;    
+        Categoria = categoria;
+        Stock = stock;
         EstadoDuplicado = false;
     }
     public string? Titulo

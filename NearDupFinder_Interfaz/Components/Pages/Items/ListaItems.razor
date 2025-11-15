@@ -134,6 +134,10 @@
                         <label>Modelo:</label>
                         <input class="form-control" @bind="_itemEditado.Modelo"/>
                     </div>
+                    <div class="mb-3">
+                        <label>Stock:</label>
+                        <input class="form-control" type="number" min="0" @bind="_itemEditado.Stock"/>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" @onclick="GuardarCambios">Guardar</button>
@@ -142,6 +146,8 @@
             </div>
         </div>
     </div>
+    
+    
 }
 
 @code {
@@ -270,7 +276,8 @@
                     Descripcion: _itemEditado.Descripcion,
                     Categoria: _itemEditado.Categoria,
                     Marca: _itemEditado.Marca,
-                    Modelo: _itemEditado.Modelo
+                    Modelo: _itemEditado.Modelo,
+                    Stock: _itemEditado.Stock
                 )
             );
             

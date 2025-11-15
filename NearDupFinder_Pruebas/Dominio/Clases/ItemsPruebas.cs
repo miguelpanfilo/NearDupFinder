@@ -17,7 +17,7 @@ public class ItemsPruebas
     {
         string tituloLargo = new string('a', 121);
         var error = Assert.ThrowsException<ExcepcionItem>(() =>
-            new Item(tituloLargo, "Descripcion válida")
+            new Item(tituloLargo, "Descripcion válida", 0)
         );
         Assert.AreEqual("El Título no puede superar 120 caracteres.", error.Message);
     }
@@ -43,14 +43,14 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItems_CrearItemTitulo_Vacio_Fallo()
     {
-        var error = Assert.ThrowsException<ExcepcionItem>(() => new Item("", "Descripcion"));
+        var error = Assert.ThrowsException<ExcepcionItem>(() => new Item("", "Descripcion", 0));
         Assert.AreEqual("El Título es obligatorio", error.Message);
     }
 
     [TestMethod]
     public void TestItems_CrearItemTituloSoloEspacios_Fallo()
     {
-        var error = Assert.ThrowsException<ExcepcionItem>(() => new Item("   ", "Descripcion"));
+        var error = Assert.ThrowsException<ExcepcionItem>(() => new Item("   ", "Descripcion", 0));
         Assert.AreEqual("El Título es obligatorio", error.Message);
     }
     
@@ -60,7 +60,8 @@ public class ItemsPruebas
         var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item(
                 "Titulo válido",
-                "",          
+                "", 
+                0,
                 "Marca",
                 "Modelo",
                 "Categoria"
@@ -75,7 +76,8 @@ public class ItemsPruebas
         var error = Assert.ThrowsException<ExcepcionItem>(() => 
             new Item(
                 "Titulo válido",
-                "   ",       
+                "   ", 
+                0,
                 "Marca",
                 "Modelo",
                 "Categoria"
@@ -89,7 +91,7 @@ public class ItemsPruebas
     {
         string descripcion = new string('A', 401);
         var error = Assert.ThrowsException<ExcepcionItem>(() => 
-            new Item("Titulo", descripcion) 
+            new Item("Titulo", descripcion, 0) 
         );
         Assert.AreEqual("La descripcion no puede superar 400 caracteres.", error.Message);
     }
@@ -99,7 +101,7 @@ public class ItemsPruebas
     {
         string marca = new string('A', 61);
         var error = Assert.ThrowsException<ExcepcionItem>(() => 
-            new Item("Titulo", "descripcion", marca) 
+            new Item("Titulo", "descripcion", 0, marca) 
         );
         Assert.AreEqual("La marca no puede superar 60 caracteres.", error.Message);
     }
@@ -109,7 +111,7 @@ public class ItemsPruebas
     {
         string modelo = new string('A', 61);
         var error = Assert.ThrowsException<ExcepcionItem>(() => 
-            new Item("Titulo", "descripcion", null, modelo) 
+            new Item("Titulo", "descripcion", 0, null, modelo) 
         );
         Assert.AreEqual("El modelo no puede superar 60 caracteres.", error.Message);
     }
@@ -119,7 +121,7 @@ public class ItemsPruebas
     {
         string categoria = new string('A', 41);
         var error = Assert.ThrowsException<ExcepcionItem>(() => 
-            new Item("Titulo", "descripcion", null, null, categoria) 
+            new Item("Titulo", "descripcion", 0, null, null, categoria) 
         );
         Assert.AreEqual("La categoria no puede superar 40 caracteres.", error.Message);
     }
@@ -243,7 +245,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarTitulo_Fallo()
     {
-        Item item = new Item("Titulo original", "Descripcion original");
+        Item item = new Item("Titulo original", "Descripcion original", 0);
         item.EditarTitulo("TituloValido");
         Assert.AreEqual("TituloValido", item.Titulo);
         ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
@@ -257,7 +259,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarDescripcion_Fallo()
     {
-        Item item = new Item("Titulo original", "Descripcion original");
+        Item item = new Item("Titulo original", "Descripcion original", 0);
         item.EditarDescripcion("DescripcionValida");
         Assert.AreEqual("DescripcionValida", item.Descripcion);
         ExcepcionItem exception = Assert.ThrowsException<ExcepcionItem>(() =>
@@ -270,7 +272,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarMarca_Fallo()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         item.EditarMarca("MarcaValida");
         Assert.AreEqual("MarcaValida", item.Marca);
         ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
@@ -282,7 +284,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarModelo_Fallo()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         item.EditarModelo("ModeloValido");
         Assert.AreEqual("ModeloValido", item.Modelo);
         ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
@@ -295,7 +297,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarCategoria_Fallo()
     { 
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         item.EditarCategoria("CategoriaValida");
         Assert.AreEqual("CategoriaValida", item.Categoria);
         ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
@@ -308,7 +310,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarTitulo_Ok()
     {
-        Item item = new Item("Titulo original", "Descripcion original");
+        Item item = new Item("Titulo original", "Descripcion original", 0);
         item.EditarTitulo("Nuevo Titulo");
         Assert.AreEqual("Nuevo Titulo", item.Titulo);
     }
@@ -316,7 +318,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarDescripcion_Ok()
     {
-        Item item = new Item("Titulo", "Descripcion original");
+        Item item = new Item("Titulo", "Descripcion original", 0);
         item.EditarDescripcion("Nueva Descripcion");
         Assert.AreEqual("Nueva Descripcion", item.Descripcion);
     }
@@ -324,7 +326,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarMarca_Ok()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         item.EditarMarca("NuevaMarca");
         Assert.AreEqual("NuevaMarca", item.Marca);
     }
@@ -332,7 +334,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarModelo_Ok()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         item.EditarModelo("NuevoModelo");
         Assert.AreEqual("NuevoModelo", item.Modelo);
     }
@@ -340,7 +342,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_EditarCategoria_Ok()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         item.EditarCategoria("NuevaCategoria");
         Assert.AreEqual("NuevaCategoria", item.Categoria);
     }
@@ -348,7 +350,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_ModificarId_Ok()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         int idViejo = item.Id;
         int idNuevo = idViejo + 100;
         item.AjustarId(idNuevo);
@@ -359,7 +361,7 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_ModificarIdCero_Fallo()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         int idNuevo = 0;
         ExcepcionItem error = Assert.ThrowsException<ExcepcionItem>(() =>
         {
@@ -378,15 +380,23 @@ public class ItemsPruebas
     [TestMethod]
     public void TestItem_Equals_Null_RetornaFalse()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         Assert.IsFalse(item.Equals(null));
     }
     [TestMethod]
     public void TestItem_Equals_OtroTipo_RetornaFalse()
     {
-        Item item = new Item("Titulo", "Descripcion");
+        Item item = new Item("Titulo", "Descripcion", 0);
         object obj = new object();
         Assert.IsFalse(item.Equals(obj));
+    }
+    
+    [TestMethod]
+    public void TestItem_CrearConStock_StockSeAsignaCorrectamente()
+    {
+        Item item = new Item("Titulo", "Descripcion", 50);
+
+        Assert.AreEqual(50, item.Stock);
     }
 
 }
