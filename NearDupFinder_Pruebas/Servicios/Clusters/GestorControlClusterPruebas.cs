@@ -440,7 +440,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
 
             var cantidad = 4;
-            _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, cluster.Id, cantidad);
+            _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, cantidad);
             RefrescarCatalogo();
 
             var clusterRef = _catalogo.Clusters.First();
@@ -455,8 +455,12 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         [TestMethod]
         public void ReservarStockEnCluster_ClusterInexistente_LanzaExcepcionCatalogo_OkTest()
         {
+            Item i1 = Item.Crear("A", "d1");
+            i1.Stock = 5;
+            
+            _catalogo.AgregarItem(i1);
             var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
-                _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, 123456789, 1)
+                _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, 1)
             );
             Assert.AreEqual("Cluster inexistente.", ex.Message);
         }
@@ -481,7 +485,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var cluster = _catalogo.Clusters.First();
 
             var ex = Assert.ThrowsException<InvalidOperationException>(() =>
-                _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, cluster.Id, cantidadInvalida)
+                _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, cantidadInvalida)
             );
             Assert.IsTrue(ex.Message.ToLower().Contains("cantidad inválida"));
         }
