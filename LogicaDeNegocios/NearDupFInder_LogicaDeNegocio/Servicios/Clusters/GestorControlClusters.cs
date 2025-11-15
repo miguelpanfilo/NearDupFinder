@@ -94,8 +94,10 @@ public class GestorControlClusters
     {
         return catalogo.Clusters.ToList();
     }
+
     private Cluster? ObtenerCluster(Catalogo c, Item a) =>
         c.ObtenerClusterDe(a);
+        
 
     private static bool SonMismoCluster(Cluster? a, Cluster? b) =>
         a is not null && b is not null && a.Id == b.Id;
@@ -216,10 +218,13 @@ public class GestorControlClusters
         }
     }
     
-    public void ReservarStockEnCluster(int idcatalogo,int idCluster, int cantidad)
+    public void ReservarStockEnCluster(int idcatalogo,int idItemCanonico, int cantidad)
     {
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(idcatalogo);
-        var cluster  = catalogo!.ObtenerClusterPorId(idCluster)
+        
+        var item = ObtenerItem(catalogo!,idItemCanonico);
+        
+        var cluster  = catalogo!.ObtenerClusterDe(item)
                        ?? throw new ExcepcionCatalogo("Cluster inexistente.");
 
         bool reservo = GestorReservas.Aplicar(cluster, cantidad);
@@ -231,8 +236,18 @@ public class GestorControlClusters
 
             _gestorAuditoria.RegistrarLog(
                 EntradaDeLog.AccionLog.FusionarCluster,
-                $"Se reservó el stock del Item '{cluster.Canonico?.Titulo}' (Cluster Id={idCluster}).");
+                $"Se reservó el stock del Item '{cluster.Canonico?.Titulo}' (Cluster Id={cluster.Id}).");
         }
+    }
+
+    public int? StockDelCluster(int caltaogoId, int itemId)
+    {
+        var catalogo = ObtenerCatalogo(caltaogoId);
+        var item = ObtenerItem(catalogo, itemId);
+        var cluster = ObtenerCluster(catalogo,item) 
+                      ?? throw new ExcepcionCatalogo($"El ítem (Id={item.Id}) no pertenece a ningún cluster.");;
+        
+        return cluster.StockActual;
     }
 
     public bool ItemEstaEnCluster(int idCatalogo, int idItem)

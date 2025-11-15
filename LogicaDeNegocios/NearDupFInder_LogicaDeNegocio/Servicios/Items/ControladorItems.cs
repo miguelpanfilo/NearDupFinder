@@ -1,3 +1,4 @@
+using System.Reflection;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
@@ -86,6 +87,13 @@ public class ControladorItems
             item.EditarMarca(itemDtoActualizar.Marca);
         if (itemDtoActualizar.Modelo is not null)
             item.EditarModelo(itemDtoActualizar.Modelo);
+        if (itemDtoActualizar.Stock is int nuevoStock)
+        {
+            if (nuevoStock < 0)
+                throw new ExcepcionItem("El stock no puede ser negativo.");
+
+            item.Stock = nuevoStock;
+        }
         
         _gestorItems.ActualizarItem(item);
         _controladorDuplicados.ActualizarDuplicadosPara(

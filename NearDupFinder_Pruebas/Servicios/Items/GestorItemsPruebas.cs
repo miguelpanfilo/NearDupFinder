@@ -48,7 +48,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             sesionUsuario.Asignar("tester@correo.com");
 
             _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-            _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+            _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
 
             _gestorControlClusters = new GestorControlClusters(
                 _gestorCatalogos,
@@ -86,7 +86,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
         [TestMethod]
         public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
         {
-            var item = new Item("Original", "Descripción original")
+            var item = new Item("Original", "Descripción original",0)
             {
                 Categoria = "Cat 1",
                 Marca = "Marca 1",
@@ -124,7 +124,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
         [TestMethod]
         public void IdExisteEnListaDeIdGlobal_ConItemNoExistente_RetornaFalso()
         {
-            var nuevoItem = new Item("Item 1", "Descripción 1");
+            var nuevoItem = new Item("Item 1", "Descripción 1",0);
 
             bool existeItem = _gestorItems.ExisteItemConEseId(nuevoItem.Id);
 

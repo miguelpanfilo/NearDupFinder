@@ -1,0 +1,195 @@
+@page "/ReservaStock"
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
+@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
+@using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
+@using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
+@inject GestorCatalogos GestorCatalogos
+@inject GestorControlClusters GestorControlClusters
+@rendermode InteractiveServer
+
+<PageTitle>Reserva de Stock</PageTitle>
+
+<div class="mb-3">
+    <label for="catalogoSelect" class="form-label">Filtrar por catálogo:</label>
+    <select id="catalogoSelect" class="form-select" @onchange="FiltrarPorCatalogo">
+        <option value="">Seleccione un Catalogo</option>
+        @if (_catalogos is not null)
+        {
+            @foreach (var cat in _catalogos)
+            {
+                <option value="@cat.Titulo">@cat.Titulo</option>
+            }
+        }
+    </select>
+</div>
+
+@if (_catalogo is not null)
+{
+    <div class="text-center my-3">
+        <h3>Items canónicos del catálogo @_catalogo.Titulo</h3>
+    </div>
+
+    @if (_clustersFiltrados?.Any(c => c.Canonico is not null) == true)
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var cluster in _clustersFiltrados)
+            {
+                if (cluster?.Canonico is null)
+                {
+                    continue;
+                }
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm rounded-4">
+                        <div class="card-body">
+                            <h5 class="card-title">@cluster.Canonico.Titulo</h5>
+                            
+                            <ul class="list-unstyled">
+                                <li><b>Descripción:</b> @cluster.Canonico.Descripcion</li>
+                                <li><b>Categoría:</b> @cluster.Canonico.Categoria</li>
+                                
+                                <li><b>Stock:</b> @GestorControlClusters.StockDelCluster(_catalogo.Id, cluster.Canonico.Id)</li>
+                            </ul>
+
+                            <div class="text-end text-nowrap">
+                                <div class="d-inline-flex gap-2">
+                                    <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                            @onclick="() => ReservarStock(cluster.Canonico.Id)"
+                                            title="Reservar Stock">
+                                        <i class="bi bi-bag-check fs-6 lh-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No hay ítems canónicos para mostrar.</p>
+    }
+}
+
+@if (_mostrarModalReserva)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reservar stock</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalReserva"></button>
+                </div>
+
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(_mensajeErrorReserva))
+                    {
+                        <div class="alert alert-danger">@_mensajeErrorReserva</div>
+                    }
+
+                    <div class="mb-3">
+                        <label for="cantidadReserva" class="form-label">Cantidad a reservar:</label>
+                        <input id="cantidadReserva"
+                               type="number"
+                               class="form-control"
+                               min="1"
+                               @bind="_cantidadReserva" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @onclick="ConfirmarReserva">
+                        Confirmar
+                    </button>
+                    <button class="btn btn-secondary" @onclick="CerrarModalReserva">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@code {
+    private IReadOnlyCollection<DatosPublicosCatalogo>? _catalogos;
+    private IReadOnlyCollection<DatosPublicosCluster>? _clustersFiltrados = Array.Empty<DatosPublicosCluster>();
+    private DatosPublicosCatalogo? _catalogo;
+    private bool _mostrarModalReserva;
+    private int _cantidadReserva;
+    private int _itemIdParaReserva;
+    private string? _mensajeErrorReserva;
+
+    protected override void OnInitialized()
+    {
+        _catalogos = GestorCatalogos.ObtenerCatalogos();
+    }
+
+    private void FiltrarPorCatalogo(ChangeEventArgs e)
+    {
+        string tituloSeleccionado = e.Value?.ToString() ?? "";
+        RefrescarClustersPorTitulo(tituloSeleccionado);
+    }
+
+    private void RefrescarClustersPorTitulo(string? titulo)
+    {
+        if (!string.IsNullOrWhiteSpace(titulo))
+        {
+            var catalogo = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(titulo);
+
+            if (catalogo is null)
+            {
+                _catalogo = null;
+                _clustersFiltrados = Array.Empty<DatosPublicosCluster>();
+                return;
+            }
+
+            _catalogo = catalogo;
+            _clustersFiltrados = GestorControlClusters.ObtenerClustersDtoCatalogo(catalogo.Id);
+        }
+        else
+        {
+            _catalogo = null;
+            _clustersFiltrados = Array.Empty<DatosPublicosCluster>();
+        }
+    }
+
+    private void AbrirModalEditar(int idItem)
+    {
+        // TODO: abrir modal de edición de item canónico
+    }
+
+    private void ReservarStock(int idItem)
+    {
+        _itemIdParaReserva = idItem;
+        _cantidadReserva = 0;
+        _mensajeErrorReserva = null;
+        _mostrarModalReserva = true;
+    }
+
+    private void ConfirmarReserva()
+    {
+        if (_cantidadReserva <= 0)
+        {
+            _mensajeErrorReserva = "La cantidad debe ser mayor a cero.";
+            return;
+        }
+
+        try
+        {
+            GestorControlClusters.ReservarStockEnCluster(_catalogo!.Id, _itemIdParaReserva, _cantidadReserva);
+            _mostrarModalReserva = false;
+        }
+        catch (Exception ex)
+        {
+            _mensajeErrorReserva = ex.Message;
+        }
+    }
+
+    private void CerrarModalReserva()
+    {
+        _mostrarModalReserva = false;
+        _mensajeErrorReserva = null;
+    }
+
+}
+}

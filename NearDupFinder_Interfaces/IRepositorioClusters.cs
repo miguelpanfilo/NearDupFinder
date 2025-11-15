@@ -4,5 +4,5 @@ namespace NearDupFinder_Interfaces;
 
 public interface IRepositorioClusters : IRepositorioGenerico<Cluster>
 {
-    
+    void LimpiarCanonicoPorCatalogo(int idCatalogo);
 }

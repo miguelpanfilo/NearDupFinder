@@ -11,6 +11,8 @@ public class DatosItemListaItems
     public string? Marca { get; set; } = string.Empty;
     public string? Modelo { get; set; } = string.Empty;
     
+    public int Stock { get; set; }
+    
     public bool EstadoDuplicado { get; set; }
     
     public static DatosItemListaItems FromEntity(Item item)

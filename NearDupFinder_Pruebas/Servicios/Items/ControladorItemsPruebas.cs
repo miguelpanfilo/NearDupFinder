@@ -48,7 +48,7 @@ public class ControladorItemsPruebas
         sesionUsuario.Asignar("tester@correo.com");
 
         _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-        _gestorCatalogos = new GestorCatalogos(repoCatalogos);
+        _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
         _gestorDuplicados = new GestorDuplicados(procesador);
 
         _gestorControlClusters = new GestorControlClusters(
@@ -88,7 +88,7 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
     {
-        var item = new Item("Original", "Descripción original")
+        var item = new Item("Original", "Descripción original",0)
         {
             Categoria = "Cat 1",
             Marca = "Marca 1",
@@ -120,7 +120,7 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaCategoriaMarcaModelo()
     {
-        var item = new Item("Original", "Descripcion original")
+        var item = new Item("Original", "Descripcion original", 0)
         {
             Categoria = "Cat 1",
             Marca = "Marca 1",
@@ -389,7 +389,7 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void ActualizarItem_DeberiaRegistrarLogDeEdicion()
     {
-        var item = new Item("Original", "Desc original");
+        var item = new Item("Original", "Desc original",0);
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
 
@@ -415,7 +415,7 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void EliminarItem_DeberiaRegistrarLogDeEliminacion()
     {
-        var item = new Item("A borrar", "Descripción del item");
+        var item = new Item("A borrar", "Descripción del item",0);
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
 

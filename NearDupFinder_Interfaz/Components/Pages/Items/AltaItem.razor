@@ -53,6 +53,11 @@
     <input class="form-control" @bind="_modelo" />
 </div>
 
+<div class="mb-3">
+    <label>Stock:</label>
+    <input class="form-control" @bind="_stock" />
+</div>
+
 <button class="btn btn-primary" @onclick="GuardarItem">Guardar</button>
 <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 
@@ -64,6 +69,7 @@
     private string _modelo = "";
     private int? _catalogoSeleccionadoId;
     private string _mensajeError = "";
+    private int _stock;
 
     private void GuardarItem()
     {
@@ -75,7 +81,8 @@
                 Descripcion: _descripcion,
                 Categoria: string.IsNullOrWhiteSpace(_categoria) ? null : _categoria,
                 Marca: string.IsNullOrWhiteSpace(_marca) ? null : _marca,
-                Modelo: string.IsNullOrWhiteSpace(_modelo) ? null : _modelo
+                Modelo: string.IsNullOrWhiteSpace(_modelo) ? null : _modelo,
+                Stock: _stock
             );
 
             ControladorItems.CrearItem(datos);
