@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Dominio.Excepciones;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -15,7 +16,6 @@ public class ControladorItems
     private readonly ControladorDuplicados _controladorDuplicados;
     private readonly GestorControlClusters _gestorControlClusters;
     private readonly GestorAuditoria _gestorAuditoria;
-    private readonly HashSet<int> _idsItemsGlobal;
     private readonly GestorItems _gestorItems;
     
     public ControladorItems(
@@ -23,15 +23,13 @@ public class ControladorItems
         GestorCatalogos gestorCatalogos,
         ControladorDuplicados controladorDuplicados,
         GestorControlClusters gestorControlClusters,
-        GestorAuditoria gestorAuditoria,
-        HashSet<int> idsItemsGlobal)
+        GestorAuditoria gestorAuditoria)
     {
         _gestorItems = gestorItems;
         _gestorCatalogos = gestorCatalogos;
         _controladorDuplicados = controladorDuplicados;
         _gestorControlClusters = gestorControlClusters;
         _gestorAuditoria = gestorAuditoria;
-        _idsItemsGlobal = idsItemsGlobal;
     }
     
     public Item CrearItem(DatosCrearItem datos)
@@ -42,38 +40,29 @@ public class ControladorItems
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
                        ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
 
-        var item = new Item()
-        {
-            Titulo = datos.Titulo,
-            Descripcion = datos.Descripcion,
-            Categoria = datos.Categoria,
-            Marca = datos.Marca,
-            Modelo = datos.Modelo
-        };
+        var item = _gestorItems.CrearNuevoItem(datos);
 
-        if (datos.IdImportado is int idImportado)
+        if (ElItemFueImportado(datos))
         {
-            if (_gestorItems.IdExisteEnListaDeIdGlobal(idImportado))
+            int idImportado = (int)datos.IdImportado;
+            if (_gestorItems.ExisteItemConEseId(idImportado))
                 throw new ExcepcionItem($"El Id importado {idImportado} ya existe.");
             
             item.ModificarIdEnCasoDeImportacion(idImportado);
-            _idsItemsGlobal.Add(idImportado);
         }
         else
         {
-            _gestorItems.AsegurarIdUnicoPublic(item);
+            _gestorItems.AsegurarIdUnico(item);
         }
 
-        catalogo.AgregarItem(item);
-        _gestorItems.GuardarItem(item);
-
+        _gestorItems.AgregarItemACatalogo(catalogo, item);
+        
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.AltaItem,
             $"Item agregado: '{item.Titulo}' en catálogo '{catalogo.Titulo}'."
         );
 
         _controladorDuplicados.ProcesarDuplicados(catalogo.Id, item.Id);
-
         _gestorItems.ActualizarItem(item);
 
         return item;
@@ -99,6 +88,9 @@ public class ControladorItems
             item.EditarModelo(itemDtoActualizar.Modelo);
         
         _gestorItems.ActualizarItem(item);
+        _controladorDuplicados.ActualizarDuplicadosPara(
+            new DatosActualizarDuplicados(itemDtoActualizar.IdCatalogo, itemDtoActualizar.IdItem)
+        );
         _gestorAuditoria.RegistrarLog(
             EntradaDeLog.AccionLog.EditarItem,
             $"Ítem actualizado (Id={item.Titulo}) en catálogo '{catalogo.Titulo}'."
@@ -116,7 +108,7 @@ public class ControladorItems
         _gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemDtoAEliminar.IdItem, catalogo.Id));
         catalogo.EliminarItem(itemAEliminar);
 
-        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar);
+        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar, catalogo.Id);
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
         _gestorItems.EliminarItem(itemAEliminar);
 
@@ -132,5 +124,10 @@ public class ControladorItems
         return catalogo.Items
             .Select(DatosItemListaItems.FromEntity)
             .ToList();
+    }
+
+    private bool ElItemFueImportado(DatosCrearItem datos)
+    {
+        return datos.IdImportado is int idImportado;
     }
 }

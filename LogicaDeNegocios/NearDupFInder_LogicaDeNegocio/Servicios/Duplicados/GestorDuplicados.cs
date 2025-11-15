@@ -1,15 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
-
-public enum TipoDuplicado
-{
-    AlertaDuplicado,
-    PosibleDuplicado
-}
 
 public struct ItemTokenizado
 {
@@ -25,21 +18,7 @@ public struct ItemNormalizado
     public string ModeloNormalizado { get; init; }
 }
 
-public readonly record struct ParDuplicado(
-    Item ItemAComparar,
-    Item ItemPosibleDuplicado,
-    float Score,
-    TipoDuplicado Tipo,
-    float JaccardTitulo,
-    float JaccardDescripcion,
-    int ScoreMarca,
-    int ScoreModelo,
-    string[] TokensCompartidosTitulo,
-    string[] TokensCompartidosDescripcion,
-    int IdCatalogo
-);
-
-public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
+public class GestorDuplicados (IProcesadorTexto procesadorTexto)
 {
     private const string TokenPattern = @"\W+";
     private const float UmbralAlerta = 0.60f;
@@ -162,8 +141,8 @@ public class GestorDuplicados (IProcesadorTexto _procesadorTexto)
         tokensTitulo = SacarTildesDeTokens(tokensTitulo);
         tokensDescripcion = SacarTildesDeTokens(tokensDescripcion);
 
-        tokensTitulo = _procesadorTexto.AplicarStopwordsYStemming(tokensTitulo);
-        tokensDescripcion = _procesadorTexto.AplicarStopwordsYStemming(tokensDescripcion);
+        tokensTitulo = procesadorTexto.AplicarStopwordsYStemming(tokensTitulo);
+        tokensDescripcion = procesadorTexto.AplicarStopwordsYStemming(tokensDescripcion);
 
         return new ItemTokenizado
         {

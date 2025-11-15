@@ -25,7 +25,7 @@ public class ControladorDuplicadosPruebas
     private GestorDuplicados _gestorDuplicados = null!;
     private GestorCatalogos _gestorCatalogos = null!;
     private GestorControlClusters _gestorControlClusters = null!;
-    private List<ParDuplicado> _duplicadosGlobales = null!;
+    private IRepositorioDuplicados _repoDuplicados = null!;
     private ControladorDuplicados _controladorDuplicados = null!;
     private GestorItems _gestorItems = null!;
     private ControladorItems _controladorItems = null!;
@@ -45,11 +45,19 @@ public class ControladorDuplicadosPruebas
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo(titulo);
         return catalogo!;
     }
+    
+    private List<ParDuplicado> Duplicados(int idCatalogo)
+        => _repoDuplicados
+            .ObtenerListaDeDuplicados()
+            .Where(p => p.IdCatalogo == idCatalogo)
+            .ToList();    
+    
+    private int CantDuplicados(int idCatalogo) => Duplicados(idCatalogo).Count; 
 
     [TestInitialize]
     public void Setup()
     {
-        var procesador = new ProcesadorTexto();
+        var procesador    = new ProcesadorTexto();
         var sesionUsuario = new SesionUsuarioActual();
         sesionUsuario.Asignar("tester@correo.com");
 
@@ -62,28 +70,22 @@ public class ControladorDuplicadosPruebas
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
         IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
 
+        _repoDuplicados = new RepositorioDuplicados(_context);
         _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
         _gestorDuplicados = new GestorDuplicados(procesador);
 
-        _gestorControlClusters = new GestorControlClusters(
-            _gestorCatalogos,
-            _gestorAuditoria,
-            repoCatalogos,
-            repoClusters,
-            repoItems
-        );
+        _gestorControlClusters = new GestorControlClusters(_gestorCatalogos, _gestorAuditoria, repoCatalogos, repoClusters, repoItems);
 
         _idsItemsGlobal = new HashSet<int>();
-        _duplicadosGlobales = new List<ParDuplicado>();
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _gestorItems = new GestorItems(repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             _gestorDuplicados,
             _gestorCatalogos,
             _gestorControlClusters,
-            _duplicadosGlobales
+            _repoDuplicados
         );
 
         _controladorItems = new ControladorItems(
@@ -91,9 +93,7 @@ public class ControladorDuplicadosPruebas
             _gestorCatalogos,
             _controladorDuplicados,
             _gestorControlClusters,
-            _gestorAuditoria,
-            _idsItemsGlobal
-        );
+            _gestorAuditoria);
     }
 
     [TestMethod]
@@ -121,15 +121,13 @@ public class ControladorDuplicadosPruebas
     }
 
     [TestMethod]
-    public void ProcesarDuplicadosPorAlta_DetectaYAgregaADuplicadosGlobales_YSeteaEstadoEnItems()
+    public void ProcesarDuplicadosPorAlta_DetectaYAgregaADuplicadosPersistidos_YSeteaEstadoEnItems()
     {
         Catalogo catalogo = CrearCatalogo("Cat");
-        Item itemA = CrearItem(catalogo.Id, "Notebook Lenovo L14", "intel i5 8gb 256gb ssd", "Lenovo", "L14",
-            "Notebooks");
-        Item itemB = CrearItem(catalogo.Id, "notebook lenovo l14", "intel i5 8gb 256gb ssd", "lenovo", "l14",
-            "notebooks");
+        Item itemA = CrearItem(catalogo.Id, "Notebook Lenovo L14", "intel i5 8gb 256gb ssd", "Lenovo", "L14", "Notebooks");
+        Item itemB = CrearItem(catalogo.Id, "notebook lenovo l14", "intel i5 8gb 256gb ssd", "lenovo", "l14", "notebooks");
 
-        Assert.AreEqual(1, _duplicadosGlobales.Count);
+        Assert.AreEqual(1, CantDuplicados(catalogo.Id));
         Assert.IsTrue(itemA.EstadoDuplicado);
         Assert.IsTrue(itemB.EstadoDuplicado);
     }
@@ -165,8 +163,8 @@ public class ControladorDuplicadosPruebas
         Item itemA = CrearItem(catalogo.Id, "alpha beta", "lorem ipsum", "m", "x", "c");
         Item itemB = CrearItem(catalogo.Id, "alpha beta", "lorem ipsum", "m", "x", "c");
         Item itemC = CrearItem(catalogo.Id, "gamma delta", "otro texto", "", "", "c");
-        
-        _duplicadosGlobales.Add(new ParDuplicado(
+
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(
             itemA, itemB, 0.95f, TipoDuplicado.PosibleDuplicado,
             1.0f, 1.0f, 1, 1,
             new[] { "alpha", "beta" }, new[] { "lorem", "ipsum" },
@@ -178,13 +176,14 @@ public class ControladorDuplicadosPruebas
         itemA.Descripcion = "otro texto";
         itemA.Marca = "";
         itemA.Modelo = "";
+        _gestorItems.ActualizarItem(itemA);
 
-        DatosActualizarDuplicados datos = new DatosActualizarDuplicados(catalogo.Id, itemA.Id);
-        
+        var datos = new DatosActualizarDuplicados(catalogo.Id, itemA.Id);
         _controladorDuplicados.ActualizarDuplicadosPara(datos);
-            
-        Assert.AreEqual(1, _duplicadosGlobales.Count);
-        Assert.AreEqual(itemC.Id, _duplicadosGlobales[0].ItemPosibleDuplicado.Id);
+
+        var duplicados = Duplicados(catalogo.Id);
+        Assert.AreEqual(1, duplicados.Count);
+        Assert.AreEqual(itemC.Id, duplicados[0].ItemPosibleDuplicado.Id);
 
         Assert.IsTrue(itemA.EstadoDuplicado);
         Assert.IsFalse(itemB.EstadoDuplicado);
@@ -200,18 +199,15 @@ public class ControladorDuplicadosPruebas
         Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
         Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
-        _duplicadosGlobales.Add(new ParDuplicado(
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(
             itemA, itemB, 0.70f, TipoDuplicado.AlertaDuplicado,
-            0.8f, 0.6f, 1, 0,
-            new[] { "a" }, new[] { "d" },
-            catalogo.Id));
-        _duplicadosGlobales.Add(new ParDuplicado(
-            itemA, itemC, 0.90f, TipoDuplicado.PosibleDuplicado,
-            1.0f, 0.8f, 1, 1,
-            new[] { "a" }, new[] { "d" },
-            catalogo.Id));
+            0.8f, 0.6f, 1, 0, new[] { "a" }, new[] { "d" }, catalogo.Id));
 
-        List<DatosParDuplicado> listaDtos = _controladorDuplicados.ObtenerDuplicadosOrdenados();
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(
+            itemA, itemC, 0.90f, TipoDuplicado.PosibleDuplicado,
+            1.0f, 0.8f, 1, 1, new[] { "a" }, new[] { "d" }, catalogo.Id));
+
+        var listaDtos = _controladorDuplicados.ObtenerDuplicadosOrdenados();
 
         Assert.AreEqual(2, listaDtos.Count);
         Assert.IsTrue(listaDtos[0].Score >= listaDtos[1].Score);
@@ -228,14 +224,14 @@ public class ControladorDuplicadosPruebas
         Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
         Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
-        _duplicadosGlobales.Add(new ParDuplicado(itemA, itemB, 0.80f, TipoDuplicado.AlertaDuplicado,
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(itemA, itemB, 0.80f, TipoDuplicado.AlertaDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
-        _duplicadosGlobales.Add(new ParDuplicado(itemC, itemA, 0.90f, TipoDuplicado.PosibleDuplicado,
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(itemC, itemA, 0.90f, TipoDuplicado.PosibleDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
 
-        _controladorDuplicados.EliminarDuplicadosPrevios(itemA);
+        _controladorDuplicados.EliminarDuplicadosPrevios(itemA, catalogo.Id);
 
-        Assert.AreEqual(0, _duplicadosGlobales.Count);
+        Assert.AreEqual(0, CantDuplicados(catalogo.Id));
     }
 
     [TestMethod]
@@ -247,11 +243,17 @@ public class ControladorDuplicadosPruebas
         Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
         Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
-        _duplicadosGlobales.Add(new ParDuplicado(itemA, itemB, 0.88f, TipoDuplicado.PosibleDuplicado,
-            1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
+        // Sembrar el par en BD (no en memoria)
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(
+            itemA, itemB, 0.88f, TipoDuplicado.PosibleDuplicado,
+            1.0f, 1.0f, 1, 1,
+            new[] { "t" }, new[] { "d" },
+            catalogo.Id));
 
+        // Act
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
+        // Assert
         Assert.IsTrue(itemA.EstadoDuplicado);
         Assert.IsTrue(itemB.EstadoDuplicado);
         Assert.IsFalse(itemC.EstadoDuplicado);
@@ -297,42 +299,37 @@ public class ControladorDuplicadosPruebas
     public void DescartarParDuplicado_ParNoExiste_LanzaExcepcionDuplicado()
     {
         Catalogo catalogo = CrearCatalogo("Cat");
-
         Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
         Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
 
-        DatosDuplicados datos = new DatosDuplicados(catalogo.Id, itemA.Id, itemB.Id);
+        var datos = new DatosDuplicados(catalogo.Id, itemA.Id, itemB.Id);
 
-        ExcepcionDuplicado error = Assert.ThrowsException<ExcepcionDuplicado>(() =>
+        var error = Assert.ThrowsException<ExcepcionDuplicado>(() =>
             _controladorDuplicados.DescartarParDuplicado(datos));
-        StringAssert.Contains(error.Message,
-            $"El par (A={itemA.Id}, B={itemB.Id}) no estaba en la lista de duplicados.");
+        StringAssert.Contains(error.Message, $"El par (A={itemA.Id}, B={itemB.Id}) no estaba persistido.");
     }
 
     [TestMethod]
     public void DescartarParDuplicado_EliminaPar_ActualizaEstados()
     {
         Catalogo catalogo = CrearCatalogo("Cat");
-
         Item itemA = CrearItem(catalogo.Id, "a", "d", "m", "x", "c");
         Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
         Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
-
-        _duplicadosGlobales.Add(new ParDuplicado(itemA, itemB, 0.80f, TipoDuplicado.AlertaDuplicado,
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(itemA, itemB, 0.80f, TipoDuplicado.AlertaDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
-        _duplicadosGlobales.Add(new ParDuplicado(itemA, itemC, 0.90f, TipoDuplicado.PosibleDuplicado,
+        _repoDuplicados.AgregarDuplicado(new ParDuplicado(itemA, itemC, 0.90f, TipoDuplicado.PosibleDuplicado,
             1.0f, 1.0f, 1, 1, new[] { "t" }, new[] { "d" }, catalogo.Id));
-        itemA.EstadoDuplicado = true;
-        itemB.EstadoDuplicado = true;
-        itemC.EstadoDuplicado = true;
 
-        DatosDuplicados datos = new DatosDuplicados(catalogo.Id, itemA.Id, itemB.Id);
+        itemA.EstadoDuplicado = itemB.EstadoDuplicado = itemC.EstadoDuplicado = true;
 
+        var datos = new DatosDuplicados(catalogo.Id, itemA.Id, itemB.Id);
         _controladorDuplicados.DescartarParDuplicado(datos);
 
-        Assert.AreEqual(1, _duplicadosGlobales.Count);
-        Assert.AreEqual(itemC.Id, _duplicadosGlobales[0].ItemPosibleDuplicado.Id);
+        var restantes = Duplicados(catalogo.Id);
+        Assert.AreEqual(1, restantes.Count);
+        Assert.AreEqual(itemC.Id, restantes[0].ItemPosibleDuplicado.Id);
 
         Assert.IsTrue(itemA.EstadoDuplicado);
         Assert.IsFalse(itemB.EstadoDuplicado);

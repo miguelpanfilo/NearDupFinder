@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Clases;
+
 namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 
 public record DatosCrearItem(
@@ -8,5 +10,6 @@ public record DatosCrearItem(
     string? Marca = null,
     string? Modelo = null,
     int? IdImportado = null
-);
-
+)
+{
+}

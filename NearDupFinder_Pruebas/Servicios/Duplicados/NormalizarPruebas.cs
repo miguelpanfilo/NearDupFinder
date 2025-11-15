@@ -9,11 +9,8 @@ public class NormalizarPruebas
 {
     private GestorDuplicados _gestorDuplicados = null!;
 
-    private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria)
-    {
-        Item item = new Item { Titulo = titulo, Descripcion = desc, Marca = marca, Modelo = modelo, Categoria = categoria };
-        return item;
-    }
+    private static Item CrearItem(string titulo, string desc, string marca, string modelo, string categoria) =>
+        Item.Crear(titulo, desc, marca, modelo, categoria);
 
     private static Catalogo CrearCatalogo(params Item[] items)
     {

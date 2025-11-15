@@ -30,13 +30,12 @@ public class ControladorLectorCsvPruebas
     private SqlContext _context = null!;
 
     private readonly HashSet<int> _idsItemsGlobal = new();     
-    private readonly List<ParDuplicado> _duplicadosGlobales = new(); 
-
+    private IRepositorioDuplicados _repoDuplicados = null!;
+    
     [TestInitialize]
     public void Setup()
     {
         _idsItemsGlobal.Clear();
-        _duplicadosGlobales.Clear();
 
         var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_LectorCsv");
         _context = SqlContextFactoryPruebas.CrearContexto(opciones);
@@ -46,13 +45,14 @@ public class ControladorLectorCsvPruebas
         sesionUsuario.Asignar("tester@correo.com");
         var procesador = new ProcesadorTexto();
 
-        IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
-        IRepositorioItems repoItems = new RepositorioItems(_context);
-        IRepositorioClusters repoClusters = new RepositorioClusters(_context);
+        IRepositorioCatalogos repoCatalogos   = new RepositorioCatalogos(_context);
+        IRepositorioItems repoItems           = new RepositorioItems(_context);
+        IRepositorioClusters repoClusters     = new RepositorioClusters(_context);
         IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+        _repoDuplicados = new RepositorioDuplicados(_context);
 
-        _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-        _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
+        _gestorAuditoria  = new GestorAuditoria(repoAuditorias, sesionUsuario);
+        _gestorCatalogos  = new GestorCatalogos(repoCatalogos);
         _gestorDuplicados = new GestorDuplicados(procesador);
 
         _gestorControlClusters = new GestorControlClusters(
@@ -63,14 +63,14 @@ public class ControladorLectorCsvPruebas
             repoItems
         );
 
-        _gestorItems = new GestorItems(_idsItemsGlobal, repoItems);
+        _gestorItems = new GestorItems(repoItems);
 
         _controladorDuplicados = new ControladorDuplicados(
             _gestorAuditoria,
             _gestorDuplicados,
             _gestorCatalogos,
             _gestorControlClusters,
-            _duplicadosGlobales
+            _repoDuplicados
         );
 
         _controladorItems = new ControladorItems(
@@ -78,9 +78,7 @@ public class ControladorLectorCsvPruebas
             _gestorCatalogos,
             _controladorDuplicados,
             _gestorControlClusters,
-            _gestorAuditoria,
-            _idsItemsGlobal
-        );
+            _gestorAuditoria);
 
         _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
         _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
@@ -89,11 +87,11 @@ public class ControladorLectorCsvPruebas
     [TestMethod]
     public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
     {
-        List<string> titulos = new List<string> { "id", "titulo" };
-        List<Fila> filas = new List<Fila> {
+        List<string> titulos = new() { "id", "titulo" };
+        List<Fila> filas = new() {
             new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import")
         };
-        DatosImportarCsv datos = new DatosImportarCsv(titulos, 1, filas);
+        var datos = new DatosImportarCsv(titulos, 1, filas);
 
         _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
 
@@ -105,25 +103,25 @@ public class ControladorLectorCsvPruebas
     [TestMethod]
     public void ImportarItemsDesdeCsv_RegistraIdGlobal()
     {
-        List<string> titulos = new List<string> { "id", "titulo" };
-        List<Fila> filas = new List<Fila> {
+        List<string> titulos = new() { "id", "titulo" };
+        List<Fila> filas = new() {
             new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import")
         };
-        DatosImportarCsv datos = new DatosImportarCsv(titulos, 1, filas);
+        var datos = new DatosImportarCsv(titulos, 1, filas);
 
         _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
 
-        Assert.IsTrue(_gestorItems.IdExisteEnListaDeIdGlobal(101));
+        Assert.IsTrue(_gestorItems.ExisteItemConEseId(101));
     }
 
     [TestMethod]
     public void ImportarItemsDesdeCsv_LimpiaListasDelLector()
     {
-        List<string> titulos = new List<string> { "id", "titulo" };
-        List<Fila> filas = new List<Fila> {
+        List<string> titulos = new() { "id", "titulo" };
+        List<Fila> filas = new() {
             new Fila("1", "t", "m", "x", "d", "c", "Cat")
         };
-        DatosImportarCsv datos = new DatosImportarCsv(titulos, 1, filas);
+        var datos = new DatosImportarCsv(titulos, 1, filas);
 
         _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
 
@@ -134,15 +132,14 @@ public class ControladorLectorCsvPruebas
     [TestMethod]
     public void ImportarItemsDesdeCsv_ReseteaCantidadDeFilas()
     {
-        List<string> titulos = new List<string> { "id", "titulo" };
-        List<Fila> filas = new List<Fila> {
+        List<string> titulos = new() { "id", "titulo" };
+        List<Fila> filas = new() {
             new Fila("1", "t", "m", "x", "d", "c", "Cat")
         };
-        DatosImportarCsv datos = new DatosImportarCsv(titulos, 1, filas);
+        var datos = new DatosImportarCsv(titulos, 1, filas);
 
         _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
 
         Assert.AreEqual(0, _gestorLectorCsv.CantidadDeFilas);
     }
-    
 }

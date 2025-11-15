@@ -37,7 +37,7 @@ public class GestorInicializacion
         Usuario.InicializarGeneradorIds(idMaximoUsuario + 1);
 
         int idMaximoItem = _repositorioSincronizacion.ObtenerMaximoIdItems();
-        Item.ResetearContadorIdDesde(idMaximoItem + 1);
+        Item.ResetearContadorId(idMaximoItem + 1);
 
         int idMaximoCatalogo = _repositorioSincronizacion.ObtenerMaximoIdCatalogos();
         Catalogo.ResetearContadorIdDesde(idMaximoCatalogo + 1);

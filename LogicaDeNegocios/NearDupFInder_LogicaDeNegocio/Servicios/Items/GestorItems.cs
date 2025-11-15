@@ -1,31 +1,36 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
+using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems;
 
 namespace NearDupFinder_LogicaDeNegocio.Servicios.Items;
 
 public class GestorItems
 {
-    private readonly HashSet<int> _idsItemsGlobal;
     private readonly IRepositorioItems _repositorioItems;
 
-    public GestorItems(HashSet<int> idsItemsGlobal, IRepositorioItems repositorioItems)
+    public GestorItems(IRepositorioItems repositorioItems)
     {
-        _idsItemsGlobal = idsItemsGlobal;
         _repositorioItems = repositorioItems;
     }
 
-    public void AsegurarIdUnicoPublic(Item item)
+    public void AsegurarIdUnico(Item item)
     {
         int idApropiado = item.Id;
-        while (IdExisteEnListaDeIdGlobal(idApropiado))
+        while (ExisteItemConEseId(idApropiado))
             idApropiado++;
+        
         item.AjustarId(idApropiado);
-        _idsItemsGlobal.Add(idApropiado);
+    }
+    public void AgregarItemACatalogo(Catalogo catalogo, Item item)
+    {
+        catalogo.AgregarItem(item);
+        GuardarItem(item);
     }
 
-    public bool IdExisteEnListaDeIdGlobal(int id)
+    public bool ExisteItemConEseId(int id)
     {
-        return _idsItemsGlobal.Contains(id);
+        bool existe = _repositorioItems.ObtenerPorId(id) != null;
+        return existe;
     }
 
     public void GuardarItem(Item item)
@@ -42,7 +47,15 @@ public class GestorItems
 
     public void EliminarItem(Item item)
     {
-        _repositorioItems.Eliminar(item);
+        Item? itemPersistido = _repositorioItems.ObtenerPorId(item.Id);
+        if (itemPersistido is null) 
+            return;
+
+        _repositorioItems.Eliminar(itemPersistido);
         _repositorioItems.GuardarCambios();
+    }
+    public Item CrearNuevoItem(DatosCrearItem datos)
+    {
+        return Item.Crear(datos.Titulo, datos.Descripcion, datos.Categoria, datos.Marca, datos.Modelo);
     }
 }

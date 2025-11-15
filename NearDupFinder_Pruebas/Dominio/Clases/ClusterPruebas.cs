@@ -15,14 +15,7 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             string? modelo = null,
             string? categoria = null)
         {
-            return new Item
-            {
-                Titulo = titulo,
-                Descripcion = descripcion,
-                Marca = marca,
-                Modelo = modelo,
-                Categoria = categoria
-            };
+            return Item.Crear(titulo, descripcion, marca, modelo, categoria);
         }
 
         [TestMethod]

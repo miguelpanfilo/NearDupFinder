@@ -1,6 +1,5 @@
 namespace NearDupFinder_Interfaces;
 
-
     public interface IRepositorioGenerico<T> where T : class
     {
         T? ObtenerPorId(int id);
