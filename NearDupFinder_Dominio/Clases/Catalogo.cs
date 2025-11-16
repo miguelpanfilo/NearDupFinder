@@ -139,5 +139,4 @@ public class Catalogo
         if (nuevoValor > hayClusterConIdYaIngresados)
             _nextClusterId = nuevoValor;
     }
-
 }

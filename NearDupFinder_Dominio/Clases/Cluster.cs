@@ -17,8 +17,7 @@ public class Cluster
     {
         _pertenecientesCluster = new HashSet<Item>();
     }
-
-
+    
     public void Agregar(Item item)
     {
         _pertenecientesCluster.Add(item);

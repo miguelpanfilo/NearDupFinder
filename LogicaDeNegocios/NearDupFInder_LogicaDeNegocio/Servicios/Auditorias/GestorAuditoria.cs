@@ -4,7 +4,6 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 
-
 public class GestorAuditoria
 {
     private readonly IRepositorioAuditorias _repositorio;

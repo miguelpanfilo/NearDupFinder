@@ -123,6 +123,4 @@ public class Usuario
         Clave = nuevaClave; 
         return true;
     }
-   
-
 }
