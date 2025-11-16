@@ -115,11 +115,18 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.Property<bool>("EstadoDuplicado")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ImagenBase64")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ImagenBase64");
+
                     b.Property<string>("Marca")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Modelo")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Precio")
+                        .HasColumnType("int");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");

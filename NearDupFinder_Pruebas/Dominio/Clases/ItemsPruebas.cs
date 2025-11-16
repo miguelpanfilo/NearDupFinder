@@ -398,5 +398,66 @@ public class ItemsPruebas
 
         Assert.AreEqual(50, item.Stock);
     }
+    
+    [TestMethod]
+    public void Crear_ItemConPrecioEImagen_SeteaCamposCorrectamente()
+    {
+        string titulo = "Item 1";
+        string descripcion = "Descripcion";
+        int stock = 5;
+        int precio = 100;
+        string base64 = Convert.ToBase64String(new byte[] { 1, 2, 3 });
 
+        var item = Item.Crear(
+            titulo: titulo,
+            descripcion: descripcion,
+            marca: "MarcaX",
+            modelo: "ModeloY",
+            categoria: "CategoriaZ",
+            stock: stock,
+            precio: precio,
+            imagenBase64: base64
+        );
+
+        Assert.AreEqual(titulo, item.Titulo);
+        Assert.AreEqual(descripcion, item.Descripcion);
+        Assert.AreEqual(stock, item.Stock);
+        Assert.AreEqual(precio, item.Precio);
+        Assert.AreEqual(base64, item.ImagenBase64);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionItem))]
+    public void EditarPrecio_Negativo_LanzaExcepcion()
+    {
+        var item = Item.Crear("Item", "Desc");
+        item.EditarPrecio(-10);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionItem))]
+    public void EditarStock_Negativo_LanzaExcepcion()
+    {
+        var item = Item.Crear("Item", "Desc");
+        item.EditarStock(-1);
+    }
+
+    [TestMethod]
+    public void EditarImagen_Null_BorraImagen()
+    {
+        string base64 = Convert.ToBase64String(new byte[] { 1, 2, 3 });
+        var item = Item.Crear("Item", "Desc", imagenBase64: base64);
+
+        item.EditarImagen(null);
+
+        Assert.IsNull(item.ImagenBase64);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionItem))]
+    public void EditarImagen_Base64Invalido_LanzaExcepcion()
+    {
+        var item = Item.Crear("Item", "Desc");
+        item.EditarImagen("no-es-base64");
+    }
 }

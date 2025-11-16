@@ -8,5 +8,7 @@ public record DatosActualizarItem(
     string? Categoria = null,
     string? Marca = null,
     string? Modelo = null,
-    int? Stock = null
+    int? Stock = null,
+    int? Precio = null,
+    string? ImagenBase64 = null
 );

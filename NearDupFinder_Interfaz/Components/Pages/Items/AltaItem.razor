@@ -55,8 +55,27 @@
 
 <div class="mb-3">
     <label>Stock:</label>
-    <input class="form-control" @bind="_stock" />
+    <input class="form-control" type="number" @bind="_stock" />
 </div>
+
+<div class="mb-3">
+    <label>Precio:</label>
+    <input class="form-control" type="number" @bind="_precio" />
+</div>
+
+<div class="mb-3">
+    <label>Imagen:</label>
+    <InputFile OnChange="OnInputFileChange" />
+</div>
+
+@if (!string.IsNullOrEmpty(_imagenBase64))
+{
+    <div class="mb-3">
+        <label>Vista previa:</label><br />
+        <img src="data:image/png;base64,@_imagenBase64"
+             style="max-width: 200px; max-height: 200px;" />
+    </div>
+}
 
 <button class="btn btn-primary" @onclick="GuardarItem">Guardar</button>
 <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
@@ -70,19 +89,50 @@
     private int? _catalogoSeleccionadoId;
     private string _mensajeError = "";
     private int _stock;
+    private int? _precio;
+    private string? _imagenBase64;
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        _mensajeError = "";
+
+        var file = e.File;
+        if (file is null)
+        {
+            _imagenBase64 = null;
+            return;
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(maxAllowedSize: 1024 * 1024);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+
+            _imagenBase64 = Convert.ToBase64String(bytes);
+        }
+        catch (Exception)
+        {
+            _mensajeError = "Error al cargar la imagen. Verifique el tamaño y el formato.";
+            _imagenBase64 = null;
+        }
+    }
 
     private void GuardarItem()
     {
         try
         {
             var datos = new DatosCrearItem(
-                IdCatalogo: _catalogoSeleccionadoId ?? 0, 
+                IdCatalogo: _catalogoSeleccionadoId ?? 0,
                 Titulo: _titulo,
                 Descripcion: _descripcion,
                 Categoria: string.IsNullOrWhiteSpace(_categoria) ? null : _categoria,
                 Marca: string.IsNullOrWhiteSpace(_marca) ? null : _marca,
                 Modelo: string.IsNullOrWhiteSpace(_modelo) ? null : _modelo,
-                Stock: _stock
+                Stock: _stock,
+                Precio: _precio,
+                ImagenBase64: _imagenBase64
             );
 
             ControladorItems.CrearItem(datos);
@@ -92,7 +142,8 @@
         catch (ExcepcionItem ex)
         {
             _mensajeError = ex.Message;
-        }catch (ExcepcionCatalogo ex)
+        }
+        catch (ExcepcionCatalogo ex)
         {
             _mensajeError = ex.Message;
         }
@@ -102,5 +153,4 @@
     {
         Nav.NavigateTo("/lista-items");
     }
-
 }

@@ -253,5 +253,26 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             Assert.AreEqual("M2", itemCanonicoLuegoDeRecalculo.Modelo);
             Assert.AreEqual("X", itemCanonicoLuegoDeRecalculo.Categoria);
         }
+        
+        [TestMethod]
+        public void StockActual_SumaStockDeTodosLosMiembros_OkTest()
+        {
+            Item.ResetearContadorId();
+
+            var item1 = CrearItemConCamposDetallados("A", "DescA");
+            var item2 = CrearItemConCamposDetallados("B", "DescB");
+            var item3 = CrearItemConCamposDetallados("C", "DescC");
+
+            item1.EditarStock(2);
+            item2.EditarStock(3);
+            item3.EditarStock(5);
+
+            var miembros = new HashSet<Item> { item1, item2, item3 };
+            var clusterBajoPrueba = new Cluster(1, miembros);
+
+            var stockActual = clusterBajoPrueba.StockActual;
+
+            Assert.AreEqual(2 + 3 + 5, stockActual);
+        }
     }
 }

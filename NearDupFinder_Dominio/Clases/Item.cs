@@ -11,12 +11,20 @@ public class Item
     public bool EstadoDuplicado { get; set; }
     public int Id { get; private set; }
     public int Stock { get; set; }
-    public static Item Crear(string titulo, string descripcion, string? marca = null, 
-        string? modelo = null, string? categoria = null, int? stock = null)
+    public int Precio { get; set; }
+    public string? ImagenBase64 { get; set; }
+
+    public static Item Crear(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null, int? stock = null, int? precio = null, string? imagenBase64 = null)
     {
         int stockFinal = stock ?? 0;
+        int precioFinal = precio ?? 0;
+
         var item = new Item(titulo, descripcion, stockFinal, marca, modelo, categoria);
         item.AsignarId(_siguienteId++);
+
+        item.EditarPrecio(precioFinal);
+        item.EditarImagen(imagenBase64);
+
         return item;
     }
     
@@ -26,6 +34,7 @@ public class Item
     {
         Id = id;
     }
+    
     public Item(string titulo, string descripcion, int stock, string? marca = null, string? modelo = null, string? categoria = null)
     {
         Titulo = titulo;    
@@ -35,6 +44,7 @@ public class Item
         Categoria = categoria;
         Stock = stock;
         EstadoDuplicado = false;
+        Precio = 0;
     }
     public string? Titulo
     {
@@ -111,10 +121,36 @@ public class Item
         _siguienteId = primerIdDeUnItemCreado;
     }
     public void EditarTitulo(string? nuevoTitulo) => Titulo = nuevoTitulo;
+    
     public void EditarDescripcion(string? nuevaDescripcion) => Descripcion = nuevaDescripcion;
+    
     public void EditarMarca(string? nuevaMarca) => Marca = nuevaMarca;
+    
     public void EditarModelo(string? nuevoModelo) => Modelo = nuevoModelo;
+    
     public void EditarCategoria(string? nuevaCategoria) => Categoria = nuevaCategoria;
+    
+    public void EditarImagen(string? nuevaImagenBase64)
+    {
+        CambiarImagenDesdeBase64(nuevaImagenBase64);
+    }
+
+    public void EditarPrecio(int nuevoPrecio)
+    {
+        if (nuevoPrecio < 0)
+            throw new ExcepcionItem("El precio no puede ser negativo.");
+
+        Precio = nuevoPrecio;
+    }
+
+    public void EditarStock(int nuevoStock)
+    {
+        if (nuevoStock < 0)
+            throw new ExcepcionItem("El stock no puede ser negativo.");
+
+        Stock = nuevoStock;
+    }
+    
     public void AjustarId(int id)
     {
         int idItemInexistente = 0;
@@ -136,5 +172,17 @@ public class Item
     {
         if (nuevoValor > 0)
             _siguienteId = nuevoValor;
+    }
+    
+    private void CambiarImagenDesdeBase64(string? base64)
+    {
+        if (string.IsNullOrWhiteSpace(base64))
+        {
+            ImagenBase64 = null;
+            return;
+        }
+
+        Imagen imagen = Imagen.CrearDesdeBase64(base64);
+        ImagenBase64 = imagen.Base64;
     }
 }
