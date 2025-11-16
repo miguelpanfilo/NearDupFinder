@@ -78,9 +78,10 @@ public class Usuario
     
     public void SincronizarRolesDesdePersistencia()
     {
+        const int cantidadNulaRolesPersistidos = 0;
         Roles.Clear();
 
-        if (this.RolesPersistidos.Count == 0)
+        if (this.RolesPersistidos.Count == cantidadNulaRolesPersistidos)
             return;
 
         foreach (RolPersistido rolPersistido in RolesPersistidos)
@@ -122,10 +123,6 @@ public class Usuario
         Clave = nuevaClave; 
         return true;
     }
-    public static void ResetearContadorIdDesde(int nuevoValor)
-    {
-        if (nuevoValor > 0)
-            _nextId = nuevoValor;
-    }
+   
 
 }
