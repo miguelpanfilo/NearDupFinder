@@ -28,5 +28,15 @@ public class ClusterConfiguraciones : IEntityTypeConfiguration<Cluster>
             .HasForeignKey("CanonicoId")
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
+        
+        builder.Property(c => c.ImagenCanonicaBase64)
+            .HasColumnType("nvarchar(max)")
+            .HasColumnName("ImagenCanonicaBase64");
+
+        builder.Property(c => c.StockMinimoCanonico)
+            .HasColumnName("StockMinimoCanonico");
+
+        builder.Property(c => c.PrecioCanonico)
+            .HasColumnName("PrecioCanonico");
     }
 }

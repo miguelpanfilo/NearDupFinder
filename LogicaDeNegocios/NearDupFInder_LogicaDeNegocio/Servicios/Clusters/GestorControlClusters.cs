@@ -29,6 +29,14 @@ public class GestorControlClusters
         _repoClusters          = repoClusters;
         _repoItems             = repoItems;
     }
+    
+    private record ContextoCluster(
+        Catalogo Catalogo,
+        Item ItemA,
+        Item ItemB,
+        Cluster? ClusterA,
+        Cluster? ClusterB
+    );
 
     public bool ConfirmarCluster(DatosDuplicados datos)
     {
@@ -186,17 +194,14 @@ public class GestorControlClusters
         
         if (esCanonico)
         {
-            AsignarNuloCanonico(cluster);
+            cluster.Canonico = null;
+            cluster.ImagenCanonicaBase64 = null;
+            cluster.StockMinimoCanonico = null;
+            cluster.PrecioCanonico = null;
+
             _repoClusters.Actualizar(cluster);
             _repoClusters.GuardarCambios();
         }
-
-    }
-
-    private void AsignarNuloCanonico(Cluster? cluster)
-    {
-        if (cluster is not null)
-            cluster.Canonico = null;
     }
 
     public void FusionarItemsEnElCluster(DatosFusionarItems datosFusionarItem)
@@ -208,6 +213,16 @@ public class GestorControlClusters
         bool fusionado = cluster.FusionarCanonico();
         if (fusionado)
         {
+            if (cluster.Canonico is not null)
+            {
+                if (cluster.ImagenCanonicaBase64 is not null)
+                    cluster.Canonico.EditarImagen(cluster.ImagenCanonicaBase64);
+                else
+                    cluster.Canonico.EditarImagen(null);
+
+                if (cluster.PrecioCanonico.HasValue)
+                    cluster.Canonico.EditarPrecio(cluster.PrecioCanonico.Value);
+            }
 
             _repoClusters.Actualizar(cluster);
             _repoClusters.GuardarCambios();
@@ -217,6 +232,7 @@ public class GestorControlClusters
                 $"Se fusionó el canónico del cluster '{cluster.Canonico?.Titulo}' con {cluster.PertenecientesCluster.Count()} ítems.");
         }
     }
+
     
     public void ReservarStockEnCluster(int idcatalogo,int idItemCanonico, int cantidad)
     {
@@ -259,11 +275,43 @@ public class GestorControlClusters
         return catalogo.ObtenerClusterDe(item) is not null;
     }
     
-    private record ContextoCluster(
-        Catalogo Catalogo,
-        Item ItemA,
-        Item ItemB,
-        Cluster? ClusterA,
-        Cluster? ClusterB
-    );
+    public void ConfigurarCanonicoCluster(DatosConfigurarCanonicoCluster datos)
+    {
+        var catalogo = ObtenerCatalogo(datos.IdCatalogo);
+        var cluster = catalogo.ObtenerClusterPorId(datos.IdCluster)
+                      ?? throw new ExcepcionCatalogo("Cluster inexistente.");
+
+        if (datos.StockMinimo is < 0)
+            throw new ExcepcionItem("El stock mínimo no puede ser negativo.");
+
+        if (datos.PrecioSeleccionado is < 0)
+            throw new ExcepcionItem("El precio no puede ser negativo.");
+
+        if (datos.PrecioSeleccionado is int precioSel &&
+            cluster.PertenecientesCluster.All(i => i.Precio != precioSel))
+        {
+            throw new ExcepcionItem("El precio seleccionado no pertenece a ningún ítem del cluster.");
+        }
+
+        string? imagenBase64Seleccionada = null;
+
+        if (datos.IdItemImagenSeleccionada is int idItemImagen)
+        {
+            var itemImagen = cluster.PertenecientesCluster
+                                 .SingleOrDefault(i => i.Id == idItemImagen)
+                             ?? throw new ExcepcionItem($"El ítem (Id={idItemImagen}) no pertenece al cluster.");
+
+            imagenBase64Seleccionada = itemImagen.ImagenBase64;
+        }
+
+        cluster.ConfigurarCanonico(
+            imagenBase64: imagenBase64Seleccionada,
+            stockMinimo: datos.StockMinimo,
+            precio: datos.PrecioSeleccionado
+        );
+
+        _repoClusters.Actualizar(cluster);
+        _repoClusters.GuardarCambios();
+    }
+
 }

@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Excepciones;
+
 namespace NearDupFinder_Dominio.Clases;
 
 public class Cluster
@@ -6,6 +8,9 @@ public class Cluster
     private readonly HashSet<Item> _pertenecientesCluster;
     public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
     public Item? Canonico { get; set; }
+    public string? ImagenCanonicaBase64 { get; set; }
+    public int? StockMinimoCanonico { get; set; }
+    public int? PrecioCanonico { get; set; }
 
     public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
@@ -29,6 +34,35 @@ public class Cluster
     }
     public int StockActual => _pertenecientesCluster.Sum(item => item.Stock);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
+    
+    public void ConfigurarCanonico(string? imagenBase64, int? stockMinimo, int? precio)
+    {
+        if (stockMinimo is < 0)
+            throw new ExcepcionItem("El stock mínimo no puede ser negativo.");
+
+        if (precio is < 0)
+            throw new ExcepcionItem("El precio no puede ser negativo.");
+
+        if (!string.IsNullOrWhiteSpace(imagenBase64))
+        {
+            try
+            {
+                byte[] bytes = Convert.FromBase64String(imagenBase64);
+
+                const int MaxBytes = 1 * 1024 * 1024;
+                if (bytes.Length > MaxBytes)
+                    throw new ExcepcionItem("La imagen del canónico no puede superar 1 MB.");
+            }
+            catch (FormatException)
+            {
+                throw new ExcepcionItem("La imagen del canónico no tiene un formato Base64 válido.");
+            }
+        }
+
+        ImagenCanonicaBase64 = imagenBase64;
+        StockMinimoCanonico = stockMinimo;
+        PrecioCanonico = precio;
+    }
 
     public bool FusionarCanonico()
     {
