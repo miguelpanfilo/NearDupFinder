@@ -173,7 +173,7 @@ public class Item
         if (nuevoValor > 0)
             _siguienteId = nuevoValor;
     }
-    
+
     private void CambiarImagenDesdeBase64(string? base64)
     {
         if (string.IsNullOrWhiteSpace(base64))

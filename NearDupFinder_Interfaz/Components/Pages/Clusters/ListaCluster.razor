@@ -1,6 +1,7 @@
 @page "/Cluster"
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
+@using NearDupFinder_Dominio.Excepciones
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
 @inject GestorCatalogos GestorCatalogos;
@@ -12,7 +13,7 @@
 <div class="mb-3">
     <label for="catalogoSelect" class="form-label">Filtrar por catálogo:</label>
     <select id="catalogoSelect" class="form-select" @onchange="FiltrarPorCatalogo">
-        <option value="">Seleccione un Catalogo</option>
+        <option value="">Seleccione un catálogo</option>
         @foreach (var cat in _catalogos)
         {
             <option value="@cat.Titulo">@cat.Titulo</option>
@@ -20,68 +21,208 @@
     </select>
 </div>
 
-    @if (_catalogo is not null)
+@if (_catalogo is not null)
+{
+    <div class="text-center my-3">
+        <h3>Clusters del Catálogo @_catalogo.Titulo</h3>
+    </div>
+
+    @if (_clustersFiltrados.Any())
     {
-        <div class="text-center my-3">
-            <h3>Clusters del Catálogo @_catalogo.Titulo</h3>
-        </div>
-        @if (_clustersFiltrados.Any())
-        {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var cluster in _clustersFiltrados)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm rounded-4">
+                        <div class="card-body">
 
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ">
-                @foreach (var cluster in _clustersFiltrados)
-                {
-                    <div class="col ">
-                        <div class="card h-100 shadow-sm rounded-4">
-                            <div class="card-body">
-                                @if (cluster.Canonico is not null)
-                                {
-                                    <h5 class="card-title">Cluster de @cluster.Canonico.Titulo</h5>
-
-                                    <h6>Item Canónico:</h6>
-                                    <p><strong>@cluster.Canonico.Titulo</strong></p>
-                                    <ul class="list-unstyled">
-                                        <li><b>Descripcion:</b> @cluster.Canonico.Descripcion</li>
-                                        <li><b>Marca:</b> @cluster.Canonico.Marca</li>
-                                        <li><b>Modelo:</b> @cluster.Canonico.Modelo</li>
-                                        <li><b>Categoría:</b> @cluster.Canonico.Categoria</li>
-                                    </ul>
-                                }
-
-                                <h6><b>Items del Cluster:</b></h6>
-                                <ul class="list-unstyled">
-                                    @foreach (var item in cluster.PertenecientesCluster)
-                                    {
-                                        <li class="d-flex justify-content-between align-items-center mb-1">
-                                            <span>@item.Titulo</span>
-                                            <button class="btn btn-sm btn-danger"
-                                                    @onclick="() => EliminarItemDelCluster(_catalogo, item.Id)" title="Eliminar">
-                                                <i class="bi bi-trash3 fs-6 lh-1"></i>
-                                            </button>
-                                        </li>
-                                    }
-                                </ul>
-                                <div class="d-flex justify-content-end mb-2">
-                                    <button class="btn btn-sm btn-primary"
-                                            @onclick="() => FusionarCluster(_catalogo, cluster.Id)" title="Fusionar">
-                                        <i class="bi bi-arrow-repeat me-1"></i> Fusionar
-                                    </button>
+                            @* Imagen canónica, si existe *@
+                            @if (!string.IsNullOrWhiteSpace(cluster.ImagenCanonicaBase64))
+                            {
+                                <div class="mb-3 text-center">
+                                    <img src="@($"data:image/png;base64,{cluster.ImagenCanonicaBase64}")"
+                                         class="img-fluid rounded"
+                                         style="max-height: 160px;" />
                                 </div>
+                            }
+
+                            @if (cluster.Canonico is not null)
+                            {
+                                <h5 class="card-title">Cluster de @cluster.Canonico.Titulo</h5>
+
+                                <h6>Item Canónico:</h6>
+                                <p><strong>@cluster.Canonico.Titulo</strong></p>
+                                <ul class="list-unstyled">
+                                    <li><b>Descripcion:</b> @cluster.Canonico.Descripcion</li>
+                                    <li><b>Marca:</b> @cluster.Canonico.Marca</li>
+                                    <li><b>Modelo:</b> @cluster.Canonico.Modelo</li>
+                                    <li><b>Categoría:</b> @cluster.Canonico.Categoria</li>
+                                    <li><b>Stock total del cluster:</b> @cluster.StockTotal</li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <h5 class="card-title">Cluster sin canónico</h5>
+                            }
+
+                            @if (cluster.PrecioCanonico.HasValue || cluster.StockMinimoCanonico.HasValue)
+                            {
+                                <div class="mb-2">
+                                    @if (cluster.PrecioCanonico.HasValue)
+                                    {
+                                        <div><b>Precio canónico:</b> @cluster.PrecioCanonico</div>
+                                    }
+                                    @if (cluster.StockMinimoCanonico.HasValue)
+                                    {
+                                        <div><b>Stock mínimo:</b> @cluster.StockMinimoCanonico</div>
+                                    }
+                                </div>
+                            }
+
+                            <h6><b>Items del Cluster:</b></h6>
+                            <ul class="list-unstyled">
+                                @foreach (var item in cluster.PertenecientesCluster)
+                                {
+                                    <li class="d-flex justify-content-between align-items-center mb-1">
+                                        <span>@item.Titulo</span>
+                                        <button class="btn btn-sm btn-danger"
+                                                @onclick="() => EliminarItemDelCluster(_catalogo, item.Id)" title="Eliminar">
+                                            <i class="bi bi-trash3 fs-6 lh-1"></i>
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+
+                            <div class="d-flex justify-content-end mb-2">
+                                <button class="btn btn-sm btn-primary"
+                                        @onclick="() => AbrirModalCluster(cluster)"
+                                        title="@(cluster.Canonico is null ? "Fusionar cluster" : "Editar cluster")">
+                                    @if (cluster.Canonico is null)
+                                    {
+                                        <i class="bi bi-arrow-repeat me-1"></i>
+                                        <span>Fusionar</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        <span>Editar cluster</span>
+                                    }
+                                </button>
                             </div>
+
                         </div>
                     </div>
-                }
-            </div>
-        }
-        else
-        {
-            <p>No hay clusters para mostrar.</p>
-        }
+                </div>
+            }
+        </div>
     }
+    else
+    {
+        <p>No hay clusters para mostrar.</p>
+    }
+}
+
+@* Modal para configurar imagen/precio/stock del canónico *@
+@if (_mostrarModalCluster && _clusterSeleccionado is not null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @(_soloEditarConfig ? "Editar configuración del cluster" : "Configurar y fusionar cluster")
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalCluster"></button>
+                </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(_mensajeErrorModalCluster))
+                    {
+                        <div class="alert alert-danger">@_mensajeErrorModalCluster</div>
+                    }
+
+                    <h6>Imagen del producto canónico</h6>
+                    <p class="text-muted">Elegí la imagen de alguno de los ítems del cluster o dejá “Sin imagen”.</p>
+
+                    <div class="mb-3">
+                        @foreach (var item in _clusterSeleccionado.PertenecientesCluster)
+                        {
+                            <div class="form-check mb-2">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="imagenCanonica"
+                                       value="@item.Id"
+                                       checked="@(_idItemImagenSeleccionada == item.Id)"
+                                       @onchange="() => _idItemImagenSeleccionada = item.Id" />
+                                <label class="form-check-label">
+                                    @item.Titulo
+                                </label>
+
+                                @if (!string.IsNullOrWhiteSpace(item.ImagenBase64))
+                                {
+                                    <img src="@($"data:image/png;base64,{item.ImagenBase64}")"
+                                         style="max-height: 80px; display:block; margin-top:4px;" />
+                                }
+                            </div>
+                        }
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="imagenCanonica"
+                                   value=""
+                                   checked="@(_idItemImagenSeleccionada is null)"
+                                   @onchange="() => _idItemImagenSeleccionada = null" />
+                            <label class="form-check-label">
+                                Sin imagen
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Precio del producto canónico</label>
+                        <select class="form-select" @bind="_precioSeleccionado">
+                            <option value="">Seleccione un precio</option>
+
+                            @foreach (var item in _clusterSeleccionado.PertenecientesCluster)
+                            {
+                                <option value="@item.Precio">@item.Precio</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Umbral de stock mínimo</label>
+                        <input type="number"
+                               class="form-control"
+                               min="0"
+                               @bind="_stockMinimo" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @onclick="ConfirmarConfiguracionCluster">
+                        @(_soloEditarConfig ? "Guardar cambios" : "Configurar y fusionar")
+                    </button>
+                    <button class="btn btn-secondary" @onclick="CerrarModalCluster">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private IReadOnlyCollection<DatosPublicosCatalogo>? _catalogos;
     private IReadOnlyCollection<DatosPublicosCluster>? _clustersFiltrados;
     private DatosPublicosCatalogo? _catalogo;
+
+    private bool _mostrarModalCluster;
+    private DatosPublicosCluster? _clusterSeleccionado;
+    private bool _soloEditarConfig;
+    private int? _idItemImagenSeleccionada;
+    private int? _precioSeleccionado;
+    private int? _stockMinimo;
+    private string? _mensajeErrorModalCluster;
 
     protected override void OnInitialized()
     {
@@ -93,7 +234,7 @@
         string tituloSeleccionado = e.Value?.ToString() ?? "";
         RefrescarClustersPorTitulo(tituloSeleccionado);
     }
-    
+
     private void RefrescarClustersPorTitulo(string? titulo)
     {
         if (!string.IsNullOrWhiteSpace(titulo))
@@ -119,16 +260,78 @@
     private void EliminarItemDelCluster(DatosPublicosCatalogo catalogo, int idItem)
     {
         GestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(idItem, catalogo.Id));
-        
         RefrescarClustersPorTitulo(catalogo.Titulo);
-        
-        StateHasChanged(); 
+        StateHasChanged();
     }
 
-    private void FusionarCluster(DatosPublicosCatalogo catalogo, int idCluster)
+    private void AbrirModalCluster(DatosPublicosCluster cluster)
     {
-        GestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(catalogo.Id,idCluster));
+        _clusterSeleccionado = cluster;
+        _mostrarModalCluster = true;
+        _mensajeErrorModalCluster = null;
 
-        RefrescarClustersPorTitulo(catalogo.Titulo);
+        _soloEditarConfig = cluster.Canonico is not null;
+
+        _stockMinimo = cluster.StockMinimoCanonico;
+        _precioSeleccionado = cluster.PrecioCanonico;
+
+        if (!string.IsNullOrWhiteSpace(cluster.ImagenCanonicaBase64))
+        {
+            var itemConImagen = cluster.PertenecientesCluster
+                .FirstOrDefault(i => i.ImagenBase64 == cluster.ImagenCanonicaBase64);
+
+            _idItemImagenSeleccionada = itemConImagen?.Id;
+        }
+        else
+        {
+            _idItemImagenSeleccionada = null;
+        }
+    }
+
+    private void CerrarModalCluster()
+    {
+        _mostrarModalCluster = false;
+        _clusterSeleccionado = null;
+        _mensajeErrorModalCluster = null;
+        _idItemImagenSeleccionada = null;
+        _precioSeleccionado = null;
+        _stockMinimo = null;
+    }
+
+    private void ConfirmarConfiguracionCluster()
+    {
+        if (_catalogo is null || _clusterSeleccionado is null)
+            return;
+
+        try
+        {
+            var datos = new DatosConfigurarCanonicoCluster(
+                idCatalogo: _catalogo.Id,
+                idCluster: _clusterSeleccionado.Id,
+                idItemImagenSeleccionada: _idItemImagenSeleccionada,
+                stockMinimo: _stockMinimo,
+                precioSeleccionado: _precioSeleccionado
+            );
+
+            GestorControlClusters.ConfigurarCanonicoCluster(datos);
+
+            if (!_soloEditarConfig)
+            {
+                GestorControlClusters.FusionarItemsEnElCluster(
+                    new DatosFusionarItems(_catalogo.Id, _clusterSeleccionado.Id));
+            }
+
+            CerrarModalCluster();
+            RefrescarClustersPorTitulo(_catalogo.Titulo);
+            StateHasChanged();
+        }
+        catch (ExcepcionItem ex)
+        {
+            _mensajeErrorModalCluster = ex.Message;
+        }
+        catch (ExcepcionCatalogo ex)
+        {
+            _mensajeErrorModalCluster = ex.Message;
+        }
     }
 }
