@@ -16,6 +16,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
+using NearDupFInder_LogicaDeNegocio.Servicios.Inicializacion;
 
 
 var builder = WebApplication.CreateBuilder(args);

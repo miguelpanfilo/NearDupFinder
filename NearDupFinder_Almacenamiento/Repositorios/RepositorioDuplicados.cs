@@ -27,8 +27,6 @@ public class RepositorioDuplicados(SqlContext contexto) : IRepositorioDuplicados
     public void EliminarDuplicado(ParDuplicado parDuplicado)
     {
         ParDuplicado? existente = contexto.Set<ParDuplicado>().Find(parDuplicado.Id);
-        if (existente is null)
-            throw new InvalidOperationException("El par duplicado no existe o ya fue eliminado.");
 
         contexto.Remove(existente);
         contexto.SaveChanges();

@@ -1,7 +1,7 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
 
-namespace NearDupFinder_LogicaDeNegocio.Servicios;
+namespace NearDupFInder_LogicaDeNegocio.Servicios.Inicializacion;
 
 public class GestorInicializacion
 {

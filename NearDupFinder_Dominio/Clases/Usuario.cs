@@ -122,10 +122,4 @@ public class Usuario
         Clave = nuevaClave; 
         return true;
     }
-    public static void ResetearContadorIdDesde(int nuevoValor)
-    {
-        if (nuevoValor > 0)
-            _nextId = nuevoValor;
-    }
-
 }

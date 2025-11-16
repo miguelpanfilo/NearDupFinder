@@ -4,7 +4,6 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 
-
 public class GestorAuditoria
 {
     private readonly IRepositorioAuditorias _repositorio;
@@ -64,16 +63,7 @@ public class GestorAuditoria
     {
         return _repositorio.ObtenerTodos();
     }
-
-    public IReadOnlyList<EntradaDeLog> ObtenerPorUsuario(string email)
-    {
-        return _repositorio.ObtenerPorUsuario(email);
-    }
-
-    public IReadOnlyList<EntradaDeLog> ObtenerPorRangoDeFechas(DateTime inicio, DateTime fin)
-    {
-        return _repositorio.ObtenerPorRangoDeFechas(inicio, fin);
-    }
+    
     public void AsignarUsuarioActual(string email) => _sesion.Asignar(email);
     public void DesasignarUsuario() => _sesion.Desasignar();
 }
