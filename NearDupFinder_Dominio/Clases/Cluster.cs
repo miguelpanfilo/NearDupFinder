@@ -33,7 +33,8 @@ public class Cluster
 
     public bool FusionarCanonico()
     {
-        if (_pertenecientesCluster.Count == 0)
+        const int cantidadVaciaEnCluster = 0;
+        if (_pertenecientesCluster.Count == cantidadVaciaEnCluster)
         {
             Canonico = null;
             return false;
@@ -64,11 +65,12 @@ public class Cluster
 
     private static string? ElegirMejorCampo(string? actualCanonico, IEnumerable<string?> candidatos)
     {
+        const int largoStringVacio = 0;
         if (!string.IsNullOrWhiteSpace(actualCanonico)) return actualCanonico;
 
         var mejor = candidatos
             .Select(AseguraLargo)
-            .Where(v => v.Length > 0)
+            .Where(v => v.Length > largoStringVacio)
             .OrderByDescending(v => v.Length)
             .ThenBy(v => v, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();

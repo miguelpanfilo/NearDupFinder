@@ -72,7 +72,6 @@ public class ControladorDuplicados(
     }
     public void DescartarParDuplicado(DatosDuplicados datos)
     {
-        const int noHayDuplicadoRemovido = 0;
         Catalogo catalogo = gestorCatalogos.ObtenerCatalogoPorId(datos.IdCatalogo)
                             ?? throw new ExcepcionCatalogo($"Catálogo no encontrado (Id={datos.IdCatalogo}).");
 
@@ -94,7 +93,6 @@ public class ControladorDuplicados(
 
         repositorioDuplicados.EliminarDuplicado(par);
 
-        // refrescar flags SOLO con lo que haya en BD
         itemA.EstadoDuplicado = ExisteParConItemEnBd(catalogo.Id, itemA.Id);
         itemB.EstadoDuplicado = ExisteParConItemEnBd(catalogo.Id, itemB.Id);
 

@@ -29,7 +29,6 @@ public class GestorAuditoria
         _repositorio = repositorio;
         _sesion = sesion;
     }
-    
     public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles, string? email = null)
     {
         var usuario = email ?? _sesion.EmailActual ?? "No hay usuario logueado";
@@ -44,8 +43,6 @@ public class GestorAuditoria
         _repositorio.Agregar(entrada);
         _repositorio.GuardarCambios();
     }
-
-
     public void RegistrarLogManual(DateTime fecha, string usuario, EntradaDeLog.AccionLog accion, string detalles)
     {
         var entrada = new EntradaDeLog
@@ -64,16 +61,7 @@ public class GestorAuditoria
     {
         return _repositorio.ObtenerTodos();
     }
-
-    public IReadOnlyList<EntradaDeLog> ObtenerPorUsuario(string email)
-    {
-        return _repositorio.ObtenerPorUsuario(email);
-    }
-
-    public IReadOnlyList<EntradaDeLog> ObtenerPorRangoDeFechas(DateTime inicio, DateTime fin)
-    {
-        return _repositorio.ObtenerPorRangoDeFechas(inicio, fin);
-    }
+    
     public void AsignarUsuarioActual(string email) => _sesion.Asignar(email);
     public void DesasignarUsuario() => _sesion.Desasignar();
 }

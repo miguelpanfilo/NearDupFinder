@@ -18,7 +18,8 @@ public static class GestorReservas
 
         foreach (var item in itemsOrdenados)
         {
-            if (restante == 0) break;
+            const int cantidadItemsVacio = 0;
+            if (restante == cantidadItemsVacio) break;
             int tomar = Math.Min(item.Stock, restante);
             item.Stock -= tomar;
             restante   -= tomar;
