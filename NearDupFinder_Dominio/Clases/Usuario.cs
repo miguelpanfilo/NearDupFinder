@@ -78,9 +78,10 @@ public class Usuario
     
     public void SincronizarRolesDesdePersistencia()
     {
+        const int cantidadNulaRolesPersistidos = 0;
         Roles.Clear();
 
-        if (this.RolesPersistidos.Count == 0)
+        if (this.RolesPersistidos.Count == cantidadNulaRolesPersistidos)
             return;
 
         foreach (RolPersistido rolPersistido in RolesPersistidos)

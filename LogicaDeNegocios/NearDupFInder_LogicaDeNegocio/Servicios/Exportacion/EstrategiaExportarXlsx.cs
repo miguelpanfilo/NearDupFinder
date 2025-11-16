@@ -10,16 +10,16 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios.Exportacion
             using var hojaExcel = new XLWorkbook();
             var hojaVirtualExcel = hojaExcel.Worksheets.Add("Auditorías");
 
-            const int colEncabezado = 1;
+            const int filaDelEncabezado = 1;
             const int columnaFechaEncabezado = 1;
             const int columnaUsuarioEncabezado = 2;
             const int columnaAccionEncabezado = 3;
             const int columnaDescripcionEncabezado = 4;
 
-            hojaVirtualExcel.Cell(colEncabezado, columnaFechaEncabezado).Value = "Fecha y hora";
-            hojaVirtualExcel.Cell(colEncabezado, columnaUsuarioEncabezado).Value = "Usuario";
-            hojaVirtualExcel.Cell(colEncabezado, columnaAccionEncabezado).Value = "Acción";
-            hojaVirtualExcel.Cell(colEncabezado, columnaDescripcionEncabezado).Value = "Descripción";
+            hojaVirtualExcel.Cell(filaDelEncabezado, columnaFechaEncabezado).Value = "Fecha y hora";
+            hojaVirtualExcel.Cell(filaDelEncabezado, columnaUsuarioEncabezado).Value = "Usuario";
+            hojaVirtualExcel.Cell(filaDelEncabezado, columnaAccionEncabezado).Value = "Acción";
+            hojaVirtualExcel.Cell(filaDelEncabezado, columnaDescripcionEncabezado).Value = "Descripción";
 
             var rangoEncabezado = hojaVirtualExcel.Range("A1:D1");
             rangoEncabezado.Style.Font.Bold = true;

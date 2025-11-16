@@ -22,8 +22,10 @@ public class GestorExportacionAuditoria
 
     public List<EntradaDeLog> FiltrarAuditoriasPorFecha(DateTime fechaInicial, DateTime fechaFinal)
     {
+    const int incluirDiaCompleto = 1;
+    const int incluirUltimoInstanteDelDia = -1;
         var inicio = fechaInicial.Date;
-        var fin = fechaFinal.Date.AddDays(1).AddTicks(-1);
+        var fin = fechaFinal.Date.AddDays(incluirDiaCompleto).AddTicks(incluirUltimoInstanteDelDia);
 
         return _gestorAuditoria.ObtenerTodos()
             .Where(l => l.Timestamp >= inicio && l.Timestamp <= fin)

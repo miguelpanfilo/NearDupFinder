@@ -127,13 +127,16 @@ public class Catalogo
     }
     public static void ResetearContadorIdDesde(int nuevoValor)
     {
-        if (nuevoValor > 0)
+        const int hayCatalogosConIdYaIngresados = 0;
+        if (nuevoValor > hayCatalogosConIdYaIngresados)
             _nextId = nuevoValor;
     }
     
     public static void ResetearContadorIdClusterDesde(int nuevoValor)
     {
-        if (nuevoValor > 0)
+        const int hayClusterConIdYaIngresados = 0;
+
+        if (nuevoValor > hayClusterConIdYaIngresados)
             _nextClusterId = nuevoValor;
     }
 }

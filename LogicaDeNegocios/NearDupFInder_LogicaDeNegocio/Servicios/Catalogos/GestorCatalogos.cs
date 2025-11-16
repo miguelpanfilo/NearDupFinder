@@ -38,7 +38,7 @@ public class GestorCatalogos
         var catalogoAEliminar = _repoCatalogos.ObtenerParaEliminacionPorId(datosCatalogoEliminar.Id)
                                 ?? throw new ExcepcionCatalogo($"No existe un catálogo con Id={datosCatalogoEliminar.Id}");
         
-        _repoClusters.LimpiarCanonicoPorCatalogo(catalogoAEliminar.Id); // Clusters.CanonicoId = NULL
+        _repoClusters.LimpiarCanonicoPorCatalogo(catalogoAEliminar.Id); 
         _repoItems.OrfanearPorCatalogo(catalogoAEliminar.Id);
         
         _repoCatalogos.LimpiarSeguimiento();

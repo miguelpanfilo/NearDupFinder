@@ -13,10 +13,10 @@ namespace NearDupFinder_Almacenamiento.Repositorios
             return _dbSet.Where(a => a.Usuario == email).ToList();
         }
 
-        public List<EntradaDeLog> ObtenerPorRangoDeFechas(DateTime inicio, DateTime fin)
+        public List<EntradaDeLog> ObtenerPorRangoDeFechas(DateTime fechaInicio, DateTime fechaFinal)
         {
             return _dbSet
-                .Where(a => a.Timestamp >= inicio && a.Timestamp <= fin)
+                .Where(a => a.Timestamp >= fechaInicio && a.Timestamp <= fechaFinal)
                 .OrderBy(a => a.Timestamp)
                 .ToList();
         }

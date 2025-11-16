@@ -11,12 +11,13 @@ public class RepositorioSincronizacionIds : IRepositorioSincronizacionIds
         _context = context;
     }
 
+    private const int listaVacia = 0;
     public int ObtenerMaximoIdItems()
-        => _context.Items.Any() ? _context.Items.Max(i => i.Id) : 0;
+        => _context.Items.Any() ? _context.Items.Max(i => i.Id) : listaVacia;
 
     public int ObtenerMaximoIdCatalogos()
-        => _context.Catalogos.Any() ? _context.Catalogos.Max(c => c.Id) : 0;
+        => _context.Catalogos.Any() ? _context.Catalogos.Max(c => c.Id) : listaVacia;
 
     public int ObtenerMaximoIdCluster()
-        => _context.Clusters.Any() ? _context.Clusters.Max(c => c.Id) : 0;
+        => _context.Clusters.Any() ? _context.Clusters.Max(c => c.Id) : listaVacia;
 }
