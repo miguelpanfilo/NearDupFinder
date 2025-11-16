@@ -59,6 +59,9 @@
             <th>Título</th>
             <th>Descripción</th>
             <th>Categoría</th>
+            <th>Stock</th>
+            <th>Precio</th>
+            <th>Imagen</th> 
             <th>Estado Duplicado</th>
             <th>Está en un cluster</th>
             <th class="text-end">Acciones</th>
@@ -72,6 +75,15 @@
                 <td>@itemDto.Titulo</td>
                 <td>@itemDto.Descripcion</td>
                 <td>@itemDto.Categoria</td>
+                <td>@itemDto.Stock</td>
+                <td>@itemDto.Precio</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(itemDto.ImagenBase64))
+                    {
+                        <img src="data:image/png;base64,@itemDto.ImagenBase64"
+                             style="max-width: 50px; max-height: 50px;" />
+                    }
+                </td>
                 <td>@(itemDto.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
                 <td>
                     @(GestorControlClusters.ItemEstaEnCluster(_catalogoSeleccionado.Id, itemDto.Id)
@@ -138,6 +150,21 @@
                         <label>Stock:</label>
                         <input class="form-control" type="number" min="0" @bind="_itemEditado.Stock"/>
                     </div>
+                    <div class="mb-3">
+                        <label>Precio:</label>
+                        <input class="form-control" type="number" min="0" @bind="_itemEditado.Precio"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Imagen:</label>
+                        <InputFile OnChange="OnInputFileChangeEditar"/>
+                        @if (!string.IsNullOrEmpty(_itemEditado?.ImagenBase64))
+                        {
+                            <div class="mt-2">
+                                <img src="data:image/png;base64,@_itemEditado.ImagenBase64"
+                                     style="max-width: 150px; max-height: 150px;" />
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" @onclick="GuardarCambios">Guardar</button>
@@ -146,8 +173,6 @@
             </div>
         </div>
     </div>
-    
-    
 }
 
 @code {
@@ -178,7 +203,6 @@
             _categorias.Clear();
         }
     }
-
 
     private void AplicarFiltros()
     {
@@ -236,8 +260,7 @@
         _mostrarModalEditar = false;
         _itemEditado = null;
     }
-
-
+    
     private void AbrirModalEditar(DatosItemListaItems listaItems)
     {
         _itemEditado = new DatosItemListaItems
@@ -248,14 +271,16 @@
             Categoria = listaItems.Categoria,
             Marca = listaItems.Marca,
             Modelo = listaItems.Modelo,
+            Stock = listaItems.Stock,
+            Precio = listaItems.Precio,
+            ImagenBase64 = listaItems.ImagenBase64,
             EstadoDuplicado = listaItems.EstadoDuplicado
         };
 
         _mostrarModalEditar = true;
         _mensajeErrorModal = null;
     }
-
-
+    
     private void GuardarCambios()
     {
         if (_itemEditado == null || _catalogoSeleccionado == null) return;
@@ -270,21 +295,20 @@
 
             ControladorItems.ActualizarItemEnCatalogo(
                 new DatosActualizarItem(
-                    _catalogoSeleccionado.Id,
-                    _itemEditado.Id,
+                    IdCatalogo: _catalogoSeleccionado.Id,
+                    IdItem: _itemEditado.Id,
                     Titulo: _itemEditado.Titulo,
                     Descripcion: _itemEditado.Descripcion,
                     Categoria: _itemEditado.Categoria,
                     Marca: _itemEditado.Marca,
                     Modelo: _itemEditado.Modelo,
-                    Stock: _itemEditado.Stock
+                    Stock: _itemEditado.Stock,
+                    Precio: _itemEditado.Precio,
+                    ImagenBase64: _itemEditado.ImagenBase64
                 )
             );
-            
-            ControladorDuplicados.ActualizarDuplicadosPara(new DatosActualizarDuplicados(_catalogoSeleccionado.Id, _itemEditado.Id));
 
             ActualizarEstadoDuplicados();
-
             ReconstruirCategorias();
             AplicarFiltros();
 
@@ -340,5 +364,34 @@
         
         StateHasChanged();
     }
+    
+    private async Task OnInputFileChangeEditar(InputFileChangeEventArgs e)
+    {
+        _mensajeErrorModal = "";
 
+        if (_itemEditado is null)
+            return;
+
+        var file = e.File;
+        if (file is null)
+        {
+            _itemEditado.ImagenBase64 = null;
+            return;
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(maxAllowedSize: 1024 * 1024);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+
+            _itemEditado.ImagenBase64 = Convert.ToBase64String(bytes);
+        }
+        catch
+        {
+            _mensajeErrorModal = "Error al cargar la imagen. Verifique el tamaño y el formato.";
+            _itemEditado.ImagenBase64 = null;
+        }
+    }
 }

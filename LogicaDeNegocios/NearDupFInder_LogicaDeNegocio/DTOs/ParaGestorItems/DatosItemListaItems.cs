@@ -10,9 +10,11 @@ public class DatosItemListaItems
     public string? Categoria { get; set; } = string.Empty;
     public string? Marca { get; set; } = string.Empty;
     public string? Modelo { get; set; } = string.Empty;
-    
+
     public int Stock { get; set; }
-    
+    public int Precio { get; set; }
+    public string? ImagenBase64 { get; set; }
+
     public bool EstadoDuplicado { get; set; }
     
     public static DatosItemListaItems FromEntity(Item item)
@@ -25,8 +27,10 @@ public class DatosItemListaItems
             Categoria = item.Categoria ?? string.Empty,
             Marca = item.Marca ?? string.Empty,
             Modelo = item.Modelo ?? string.Empty,
+            Stock = item.Stock,
+            Precio = item.Precio,
+            ImagenBase64 = item.ImagenBase64,
             EstadoDuplicado = item.EstadoDuplicado
         };
     }
-
 }
