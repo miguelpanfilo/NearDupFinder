@@ -55,6 +55,18 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.Property<int>("CatalogoId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImagenCanonicaBase64")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ImagenCanonicaBase64");
+
+                    b.Property<int?>("PrecioCanonico")
+                        .HasColumnType("int")
+                        .HasColumnName("PrecioCanonico");
+
+                    b.Property<int?>("StockMinimoCanonico")
+                        .HasColumnType("int")
+                        .HasColumnName("StockMinimoCanonico");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CanonicoId");
