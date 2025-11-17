@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LogicaDeNegocios\NearDupFInder_LogicaDeNegocio\NearDupFInder_LogicaDeNegocio.csproj" />
-      <ProjectReference Include="..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
     </ItemGroup>
 
     <ItemGroup>

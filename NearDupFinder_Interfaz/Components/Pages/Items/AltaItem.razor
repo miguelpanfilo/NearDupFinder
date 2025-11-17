@@ -1,6 +1,5 @@
 @page "/alta-item"
 @rendermode InteractiveServer
-@using NearDupFinder_Dominio.Excepciones
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFinder_LogicaDeNegocio.Servicios.Items
@@ -139,14 +138,11 @@
 
             Nav.NavigateTo("/lista-items");
         }
-        catch (ExcepcionItem ex)
+        catch (Exception ex)
         {
             _mensajeError = ex.Message;
         }
-        catch (ExcepcionCatalogo ex)
-        {
-            _mensajeError = ex.Message;
-        }
+        
     }
     
     private void Cancelar()
