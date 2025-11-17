@@ -5,6 +5,7 @@ using NearDupFinder_Almacenamiento;
 using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Interfaces;
 using NearDupFinder_Interfaz;
+using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
@@ -15,6 +16,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Items;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.Inicializacion;
 
 
@@ -37,11 +39,12 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
     var gestorCatalogo = sp.GetRequiredService<GestorCatalogos>();
     var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
-    var repoCatalogo = sp.GetRequiredService<IRepositorioCatalogos>();
+    var gestorNotificaciones = sp.GetRequiredService<GestorNotificaciones>();
+    var sesionUsuarioActual = sp.GetRequiredService<SesionUsuarioActual>();
     var repoClusters = sp.GetRequiredService<IRepositorioClusters>();   
     var repoItems = sp.GetRequiredService<IRepositorioItems>();      
 
-    return new GestorControlClusters(gestorCatalogo, gestorAuditoria, repoCatalogo, repoClusters, repoItems);
+    return new GestorControlClusters(gestorCatalogo, gestorAuditoria, gestorNotificaciones,sesionUsuarioActual, repoClusters, repoItems);
 });
 builder.Services.AddScoped<ControladorAuditoria>();
 builder.Services.AddScoped<ControladorDuplicados>(sp =>

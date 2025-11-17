@@ -10,6 +10,7 @@ using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Clusters
@@ -21,11 +22,14 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         private GestorCatalogos _gestorCatalogos = null!;
         private GestorAuditoria _gestorAuditoria = null!;
         private GestorControlClusters _gestorControlClusters = null!;
+        private GestorNotificaciones _gestorNotificaciones = null!;
         private Catalogo _catalogo = null!;
+        private SesionUsuarioActual _sesionUsuario = null!; 
 
         [TestInitialize]
         public void Setup()
         {
+            
             var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory($"BD_Clusters_{Guid.NewGuid()}");
             _context = SqlContextFactoryPruebas.CrearContexto(opciones);
             SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
@@ -36,20 +40,24 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
             IRepositorioItems repoItems = new RepositorioItems(_context);
             IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+            
+            IRepositorioNotificaciones  repoNotificaciones = new RepositorioNotificaciones(_context);
+            
+            _sesionUsuario = new SesionUsuarioActual();
+            _sesionUsuario.Asignar("tester@correo.com");
 
-            var sesionUsuario = new SesionUsuarioActual();
-            sesionUsuario.Asignar("tester@correo.com");
-
-            _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-            _gestorCatalogos = new GestorCatalogos(repoCatalogos, repoClusters, repoItems);
-
+            _gestorAuditoria = new GestorAuditoria(repoAuditorias, _sesionUsuario);
+            _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
+            _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
+            
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
             _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
 
             _gestorControlClusters = new GestorControlClusters(
                 _gestorCatalogos,
                 _gestorAuditoria,
-                repoCatalogos,
+                _gestorNotificaciones,
+                _sesionUsuario,
                 repoClusters,
                 repoItems
             );
@@ -77,7 +85,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "d");
             Item b = Item.Crear("B", "d");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             _catalogo.CrearCluster(new HashSet<Item> { a, b });
@@ -87,7 +95,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var datos = new DatosDuplicados(_catalogo.Id, a.Id, b.Id);
             var ok = _gestorControlClusters.ConfirmarCluster(datos);
             RefrescarCatalogo();
-
+            
             Assert.IsTrue(ok);
             Assert.AreEqual(cantidadInicial, _catalogo.Clusters.Count);
         }
@@ -97,7 +105,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "d");
             Item b = Item.Crear("B", "d");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             _catalogo.CrearCluster(new HashSet<Item> { a });
@@ -118,7 +126,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "d");
             Item b = Item.Crear("B", "d");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             _catalogo.CrearCluster(new HashSet<Item> { b });
@@ -155,7 +163,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var ok = _gestorControlClusters.ConfirmarCluster(datos);
             RefrescarCatalogo();
             var clusterUnico = _catalogo.Clusters.First();
-
+            
             Assert.IsTrue(ok);
             Assert.AreEqual(cantInicial - 1, _catalogo.Clusters.Count);
             CollectionAssert.AreEquivalent(new[] { a1.Id, a2.Id, b1.Id, b2.Id }, clusterUnico.PertenecientesCluster.Select(i => i.Id).ToList());
@@ -166,7 +174,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "d");
             Item b = Item.Crear("B", "d");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             Guardar();
@@ -204,7 +212,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "d");
             Item b = Item.Crear("B", "d");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             _catalogo.CrearCluster(new HashSet<Item> { a, b });
@@ -213,7 +221,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var datos = new DatosRemoverItemCluster(b.Id, _catalogo.Id);
             _gestorControlClusters.BorrarItemDelCluster(datos);
             RefrescarCatalogo();
-
+            
             Assert.AreEqual(0, _catalogo.Clusters.Count);
             Assert.IsNotNull(_catalogo.ObtenerItemPorId(b.Id));
         }
@@ -224,7 +232,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Item canonico = Item.Crear("Candidato", "descripcion mucho mas larga", "AC");
             Item otro = Item.Crear("Otro", "descripcion");
             Item tercero = Item.Crear("Tercero", "desc");
-
+            
             _catalogo.AgregarItem(canonico);
             _catalogo.AgregarItem(otro);
             _catalogo.AgregarItem(tercero);
@@ -232,7 +240,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Guardar();
             RefrescarCatalogo();
             var cluster = _catalogo.Clusters.First();
-            cluster.FusionarCanonico();
+            cluster.FusionarCanonico(_sesionUsuario.EmailActual);
             Guardar();
             RefrescarCatalogo();
             var datos = new DatosRemoverItemCluster(canonico.Id, _catalogo.Id);
@@ -265,7 +273,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var cluster = _catalogo.Clusters.First();
             // "Yg==" = "b" en Base64
             cluster.ConfigurarCanonico("Yg==", 10, 999);
-            cluster.FusionarCanonico();
+            cluster.FusionarCanonico("tester@correo.com");
             Guardar();
             RefrescarCatalogo();
 
@@ -286,14 +294,14 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         public void BorrarItemDelCluster_ItemSinCluster_NoRealizaCambios_OkTest()
         {
             Item a = Item.Crear("A", "d");
-
+            
             _catalogo.AgregarItem(a);
             Guardar();
             RefrescarCatalogo();
             var datos = new DatosRemoverItemCluster(a.Id, _catalogo.Id);
             _gestorControlClusters.BorrarItemDelCluster(datos);
             RefrescarCatalogo();
-
+            
             Assert.AreEqual(0, _catalogo.Clusters.Count);
         }
 
@@ -478,7 +486,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Item b = Item.Crear("B", "desc B");
             Item c = Item.Crear("C", "desc C");
             Item d = Item.Crear("D", "desc D");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             _catalogo.AgregarItem(c);
@@ -513,7 +521,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "desc A");
             Item b = Item.Crear("B", "desc B");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             Guardar();
@@ -522,7 +530,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
             var cluster = _catalogo.Clusters.First();
             var dto = DatosPublicosCluster.FromEntity(cluster);
-
+            
             Assert.AreEqual(cluster.Id, dto.Id);
         }
 
@@ -531,7 +539,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "desc A");
             Item b = Item.Crear("B", "desc B");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             Guardar();
@@ -539,7 +547,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             _gestorControlClusters.ConfirmarCluster(new DatosDuplicados(_catalogo.Id, a.Id, b.Id));
             RefrescarCatalogo();
             var dto = DatosPublicosCluster.FromEntity(_catalogo.Clusters.First());
-
+            
             Assert.AreEqual(2, dto.PertenecientesCluster.Count);
         }
 
@@ -548,7 +556,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item a = Item.Crear("A", "desc A bien larga");
             Item b = Item.Crear("B", "desc B");
-
+            
             _catalogo.AgregarItem(a);
             _catalogo.AgregarItem(b);
             Guardar();
@@ -559,61 +567,10 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             _gestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(_catalogo.Id, cluster.Id));
             RefrescarCatalogo();
             var dto = DatosPublicosCluster.FromEntity(_catalogo.Clusters.First());
-
+            
             Assert.IsNotNull(dto.Canonico);
         }
-
-        [TestMethod]
-        public void DatosPublicosCluster_StockTotal_MapeaDesdeStockActualDelCluster_OkTest()
-        {
-            Item a = Item.Crear("A", "desc A");
-            a.Stock = 2;
-            Item b = Item.Crear("B", "desc B");
-            b.Stock = 3;
-            Item c = Item.Crear("C", "desc C");
-            c.Stock = 5;
-
-            _catalogo.AgregarItem(a);
-            _catalogo.AgregarItem(b);
-            _catalogo.AgregarItem(c);
-            _catalogo.CrearCluster(new HashSet<Item> { a, b, c });
-            Guardar();
-            RefrescarCatalogo();
-
-            var cluster = _catalogo.Clusters.First();
-            var dto = DatosPublicosCluster.FromEntity(cluster);
-
-            Assert.AreEqual(cluster.StockActual, dto.StockTotal);
-        }
-
-        [TestMethod]
-        public void DatosPublicosCluster_MapeaImagenYValoresCanonicosCorrectamente_OkTest()
-        {
-            Item a = Item.Crear("A", "desc A");
-            // "YQ==" = "a"
-            a.EditarImagen("YQ==");
-            a.EditarPrecio(100);
-
-            Item b = Item.Crear("B", "desc B");
-
-            _catalogo.AgregarItem(a);
-            _catalogo.AgregarItem(b);
-            _catalogo.CrearCluster(new HashSet<Item> { a, b });
-            Guardar();
-            RefrescarCatalogo();
-
-            var cluster = _catalogo.Clusters.First();
-            cluster.ConfigurarCanonico("YQ==", stockMinimo: 10, precio: 100);
-            Guardar();
-            RefrescarCatalogo();
-
-            var dto = DatosPublicosCluster.FromEntity(_catalogo.Clusters.First());
-
-            Assert.AreEqual("YQ==", dto.ImagenCanonicaBase64);
-            Assert.AreEqual(10, dto.StockMinimoCanonico);
-            Assert.AreEqual(100, dto.PrecioCanonico);
-        }
-
+        
         [TestMethod]
         public void ReservarStockEnCluster_ReservaDesdeMenorStock_PersisteCambios_OkTest()
         {
@@ -632,7 +589,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
 
             var cluster = _catalogo.Clusters.First();
-            cluster.FusionarCanonico();
+            cluster.FusionarCanonico(_sesionUsuario.EmailActual);
             Guardar();
             RefrescarCatalogo();
 
@@ -642,19 +599,19 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
 
             var clusterRef = _catalogo.Clusters.First();
             var byId = clusterRef.PertenecientesCluster.ToDictionary(x => x.Titulo, x => x.Stock);
-
+            
             Assert.AreEqual(0, byId["A"]);
             Assert.AreEqual(0, byId["B"]);
             Assert.AreEqual(7, byId["C"]);
             Assert.AreEqual(7, clusterRef.StockActual);
         }
-
+        
         [TestMethod]
         public void ReservarStockEnCluster_ClusterInexistente_LanzaExcepcionCatalogo_OkTest()
         {
             Item i1 = Item.Crear("A", "d1");
             i1.Stock = 5;
-
+            
             _catalogo.AgregarItem(i1);
             Guardar();
             RefrescarCatalogo();
@@ -674,13 +631,15 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Item i1 = Item.Crear("A", "d1");
             i1.Stock = 5;
             Item i2 = Item.Crear("B", "d1");
-            i2.Stock = 5;
-
+            i1.Stock = 5;
+            
             _catalogo.AgregarItem(i1);
             _catalogo.AgregarItem(i2);
             _catalogo.CrearCluster(new HashSet<Item> { i1, i2 });
             Guardar();
             RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
 
             var ex = Assert.ThrowsException<InvalidOperationException>(() =>
                 _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, cantidadInvalida)

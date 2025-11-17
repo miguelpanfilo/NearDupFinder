@@ -1,4 +1,6 @@
+
 using NearDupFinder_Dominio.Clases;
+
 using NearDupFinder_Dominio.Excepciones;
 
 
@@ -7,6 +9,8 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
     [TestClass]
     public class ClusterPruebas
     {
+        private const string EmailUsuarioDummy = "usuario@prueba.com";
+
         private static Item CrearItemConCamposDetallados(
             string titulo,
             string descripcion,
@@ -27,7 +31,9 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             var clusterBajoPrueba = new Cluster(id: 10, conjuntoInicialDeMiembros);
 
             Assert.AreEqual(10, clusterBajoPrueba.Id);
-            CollectionAssert.AreEquivalent(new[] { primerItemDePrueba, segundoItemDePrueba }, clusterBajoPrueba.PertenecientesCluster.ToList());
+            CollectionAssert.AreEquivalent(
+                new[] { primerItemDePrueba, segundoItemDePrueba },
+                clusterBajoPrueba.PertenecientesCluster.ToList());
             Assert.IsNull(clusterBajoPrueba.Canonico);
         }
 
@@ -93,7 +99,7 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
         {
             var clusterSinMiembros = new Cluster(1, new HashSet<Item>());
 
-            var resultadoHuboCambioDeCanonico = clusterSinMiembros.FusionarCanonico();
+            var resultadoHuboCambioDeCanonico = clusterSinMiembros.FusionarCanonico(EmailUsuarioDummy);
 
             Assert.IsFalse(resultadoHuboCambioDeCanonico);
             Assert.IsNull(clusterSinMiembros.Canonico);
@@ -115,7 +121,7 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
 
             var clusterBajoPrueba = new Cluster(1, conjuntoMiembrosParaEvaluarCriterios);
 
-            var resultadoHuboCambioDeCanonico = clusterBajoPrueba.FusionarCanonico();
+            var resultadoHuboCambioDeCanonico = clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
 
             Assert.IsTrue(resultadoHuboCambioDeCanonico);
             Assert.AreSame(itemConDescripcionMasLarga, clusterBajoPrueba.Canonico);
@@ -128,8 +134,8 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             var itemConDescripcionMasCorta = CrearItemConCamposDetallados("B", "Corta");
             var clusterBajoPrueba = new Cluster(1, new HashSet<Item> { itemQueDebeSerCanonicoInicial, itemConDescripcionMasCorta });
 
-            var resultadoPrimeraFusione = clusterBajoPrueba.FusionarCanonico();
-            var resultadoSegundaFusione = clusterBajoPrueba.FusionarCanonico();
+            var resultadoPrimeraFusione = clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
+            var resultadoSegundaFusione = clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
 
             Assert.IsTrue(resultadoPrimeraFusione);
             Assert.IsFalse(resultadoSegundaFusione);
@@ -142,13 +148,13 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             var itemCanonicoTemporal = CrearItemConCamposDetallados("A", "media");
             var clusterBajoPrueba = new Cluster(1, new HashSet<Item> { itemCanonicoTemporal });
 
-            clusterBajoPrueba.FusionarCanonico();
+            clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
             Assert.AreSame(itemCanonicoTemporal, clusterBajoPrueba.Canonico);
 
             var itemConDescripcionAunMasLargaParaDesplazarCanonico = CrearItemConCamposDetallados("B", "mucho mas larga");
             clusterBajoPrueba.Agregar(itemConDescripcionAunMasLargaParaDesplazarCanonico);
 
-            var resultadoHuboCambioDeCanonico = clusterBajoPrueba.FusionarCanonico();
+            var resultadoHuboCambioDeCanonico = clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
 
             Assert.IsTrue(resultadoHuboCambioDeCanonico);
             Assert.AreSame(itemConDescripcionAunMasLargaParaDesplazarCanonico, clusterBajoPrueba.Canonico);
@@ -160,9 +166,13 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             var itemCandidatoCanonicoConCamposDefinidos = CrearItemConCamposDetallados("A", "muy larga", marca: "AC", modelo: "M1", categoria: "X");
             var itemMiembroConCamposMasLargosPeroNoDebenPisar = CrearItemConCamposDetallados("B", "media", marca: "ACMECORP", modelo: "M999", categoria: "Categoria Enorme");
 
-            var clusterBajoPrueba = new Cluster(1, new HashSet<Item> { itemCandidatoCanonicoConCamposDefinidos, itemMiembroConCamposMasLargosPeroNoDebenPisar });
+            var clusterBajoPrueba = new Cluster(1, new HashSet<Item>
+            {
+                itemCandidatoCanonicoConCamposDefinidos,
+                itemMiembroConCamposMasLargosPeroNoDebenPisar
+            });
 
-            clusterBajoPrueba.FusionarCanonico();
+            clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
             var itemCanonicoLuegoDeFusion = clusterBajoPrueba.Canonico!;
 
             Assert.AreEqual("AC", itemCanonicoLuegoDeFusion.Marca);
@@ -186,19 +196,25 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
                 itemConCamposMasLargos
             });
 
-            clusterBajoPrueba.FusionarCanonico();
+            clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
             var itemCanonicoLuegoDeFusion = clusterBajoPrueba.Canonico!;
 
             Assert.AreEqual("ACMECO", itemCanonicoLuegoDeFusion.Marca);
             Assert.AreEqual("M123", itemCanonicoLuegoDeFusion.Modelo);
             Assert.AreEqual("Categoria Larguísima", itemCanonicoLuegoDeFusion.Categoria);
 
+            // Caso específico de empate de longitud en Marca con canónico vacío
             var itemCanonicoVacíoParaEmpate = CrearItemConCamposDetallados("X", "super larga", marca: "", modelo: "", categoria: "");
             var itemMarcaEmpateLexicoMenor = CrearItemConCamposDetallados("Y", "m", marca: "Beta", modelo: "", categoria: "");
             var itemMarcaEmpateLexicoMayor = CrearItemConCamposDetallados("Z", "m", marca: "Zeta", modelo: "", categoria: "");
-            var clusterParaProbarEmpateLexicografico = new Cluster(2, new HashSet<Item> { itemCanonicoVacíoParaEmpate, itemMarcaEmpateLexicoMenor, itemMarcaEmpateLexicoMayor });
+            var clusterParaProbarEmpateLexicografico = new Cluster(2, new HashSet<Item>
+            {
+                itemCanonicoVacíoParaEmpate,
+                itemMarcaEmpateLexicoMenor,
+                itemMarcaEmpateLexicoMayor
+            });
 
-            clusterParaProbarEmpateLexicografico.FusionarCanonico();
+            clusterParaProbarEmpateLexicografico.FusionarCanonico(EmailUsuarioDummy);
             var itemCanonicoEnEscenarioDeEmpate = clusterParaProbarEmpateLexicografico.Canonico!;
 
             Assert.AreEqual("Beta", itemCanonicoEnEscenarioDeEmpate.Marca);
@@ -207,12 +223,27 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
         [TestMethod]
         public void FusionarCampos_IgnoraCadenasVaciasONulasYAplicaTrim_OkTest()
         {
-            var itemCandidatoCanonicoConCamposVaciosYEspacios = CrearItemConCamposDetallados("A", "larguísima", marca: "  ", modelo: "", categoria: null);
-            var itemMiembroProveedorDeValoresValidosConEspacios = CrearItemConCamposDetallados("B", "media", marca: " AC ", modelo: "  M1", categoria: " X  ");
+            var itemCandidatoCanonicoConCamposVaciosYEspacios = CrearItemConCamposDetallados(
+                "A",
+                "larguísima",
+                marca: "  ",
+                modelo: "",
+                categoria: null);
 
-            var clusterBajoPrueba = new Cluster(1, new HashSet<Item> { itemCandidatoCanonicoConCamposVaciosYEspacios, itemMiembroProveedorDeValoresValidosConEspacios });
+            var itemMiembroProveedorDeValoresValidosConEspacios = CrearItemConCamposDetallados(
+                "B",
+                "media",
+                marca: " AC ",
+                modelo: "  M1",
+                categoria: " X  ");
 
-            clusterBajoPrueba.FusionarCanonico();
+            var clusterBajoPrueba = new Cluster(1, new HashSet<Item>
+            {
+                itemCandidatoCanonicoConCamposVaciosYEspacios,
+                itemMiembroProveedorDeValoresValidosConEspacios
+            });
+
+            clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
             var itemCanonicoLuegoDeFusion = clusterBajoPrueba.Canonico!;
 
             Assert.AreEqual("AC", itemCanonicoLuegoDeFusion.Marca);
@@ -236,12 +267,12 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
 
             var clusterBajoPrueba = new Cluster(1, conjuntoInicialDeMiembros);
 
-            clusterBajoPrueba.FusionarCanonico();
+            clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
             Assert.AreSame(itemQueDebeSerCanonicoInicialPorDescripcion, clusterBajoPrueba.Canonico);
 
             clusterBajoPrueba.Remover(itemQueDebeSerCanonicoInicialPorDescripcion);
 
-            var resultadoHuboCambioDeCanonico = clusterBajoPrueba.FusionarCanonico();
+            var resultadoHuboCambioDeCanonico = clusterBajoPrueba.FusionarCanonico(EmailUsuarioDummy);
 
             Assert.IsTrue(resultadoHuboCambioDeCanonico);
             Assert.AreSame(itemConDescripcionCasiLargaQuePuedeVolverseCanonico, clusterBajoPrueba.Canonico);

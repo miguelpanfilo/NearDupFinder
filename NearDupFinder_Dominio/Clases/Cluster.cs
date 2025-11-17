@@ -12,6 +12,9 @@ public class Cluster
     public int? StockMinimoCanonico { get; set; }
     public int? PrecioCanonico { get; set; }
 
+    public int? UmbralStock { get; set; } = 5; // para prueba
+    public string? EmailRevisorCreador { get; set; }// test
+
     public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
         Id = id;
@@ -56,7 +59,7 @@ public class Cluster
     }
 
 
-    public bool FusionarCanonico()
+    public bool FusionarCanonico(string emailUsuario)
     {
         const int cantidadVaciaEnCluster = 0;
         if (_pertenecientesCluster.Count == cantidadVaciaEnCluster)
@@ -75,10 +78,14 @@ public class Cluster
         Canonico = nuevoCanonico;
 
         FusionarCampos(Canonico, _pertenecientesCluster);
+        if (cambio)
+        {
+            EmailRevisorCreador = emailUsuario;
+        }
 
         return cambio;
     }
-
+    
     private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
     {
         canonico.Marca = ElegirMejorCampo(canonico.Marca, miembros.Select(m => m.Marca));

@@ -55,6 +55,12 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.Property<int>("CatalogoId")
                         .HasColumnType("int");
 
+                    b.Property<string>("EmailRevisorCreador")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UmbralStock")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImagenCanonicaBase64")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ImagenCanonicaBase64");
@@ -153,6 +159,35 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.HasIndex("ClusterId");
 
                     b.ToTable("Items", (string)null);
+                });
+
+            modelBuilder.Entity("NearDupFinder_Dominio.Clases.Notificacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmailUsuario")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Leida")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Mensaje")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notificaciones");
                 });
 
             modelBuilder.Entity("NearDupFinder_Dominio.Clases.ParDuplicado", b =>

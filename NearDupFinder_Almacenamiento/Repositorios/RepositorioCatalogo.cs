@@ -19,7 +19,7 @@ namespace NearDupFinder_Almacenamiento.Repositorios
                 .FirstOrDefault(c => c.Titulo == titulo);
         }
 
-        public Catalogo? ObtenerPorId(int id)
+        public new Catalogo? ObtenerPorId(int id)
         {
             return _context.Set<Catalogo>()
                 .Include(c => c.Items)
