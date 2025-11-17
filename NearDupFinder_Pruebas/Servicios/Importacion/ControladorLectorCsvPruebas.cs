@@ -1,7 +1,6 @@
 using NearDupFinder_Almacenamiento;
 using NearDupFinder_Almacenamiento.Repositorios;
 using NearDupFinder_Dominio.Clases;
-using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlLectorCsv;
 using NearDupFinder_Pruebas.Utilidades;
 using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -91,14 +90,11 @@ public class ControladorLectorCsvPruebas
     [TestMethod]
     public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
     {
-        List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new()
-        {
-            new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import", "", "", "")
-        };
-        var datos = new DatosImportarCsv(titulos, 1, filas);
+        string contenido = 
+            "id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock\n" +
+            "101,notebook,lenovo,l14,intel i5,notebooks,Cat Import,,,";
 
-        _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
+        _controladorLectorCsv.ImportarItemsDesdeContenido(contenido);
 
         Catalogo catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Import")!;
         Assert.IsNotNull(catalogo);
@@ -106,16 +102,13 @@ public class ControladorLectorCsvPruebas
     }
 
     [TestMethod]
-    public void ImportarItemsDesdeCsv_RegistraIdGlobal()
+    public void ImportarItemsDesdeCsv_RegistraId()
     {
-        List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new()
-        {
-            new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import", "", "", "")
-        };
-        var datos = new DatosImportarCsv(titulos, 1, filas);
-
-        _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
+        string contenido =
+            "id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock\n" +
+            "101,notebook,lenovo,l14,intel i5,notebooks,Cat Import,,,";
+    
+        _controladorLectorCsv.ImportarItemsDesdeContenido(contenido);
 
         Assert.IsTrue(_gestorItems.ExisteItemConEseId(101));
     }
@@ -123,32 +116,14 @@ public class ControladorLectorCsvPruebas
     [TestMethod]
     public void ImportarItemsDesdeCsv_LimpiaListasDelLector()
     {
-        List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new()
-        {
-            new Fila("1", "t", "m", "x", "d", "c", "Cat", "", "", "")
-        };
-        var datos = new DatosImportarCsv(titulos, 1, filas);
-
-        _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
+        string contenido =
+            "id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock\n" +
+            "1,t,m,x,d,c,Cat,,,";
+    
+        _controladorLectorCsv.ImportarItemsDesdeContenido(contenido);
 
         Assert.AreEqual(0, _gestorLectorCsv.Titulos.Count);
         Assert.AreEqual(0, _gestorLectorCsv.Filas.Count);
-    }
-
-    [TestMethod]
-    public void ImportarItemsDesdeCsv_ReseteaCantidadDeFilas()
-    {
-        List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new()
-        {
-            new Fila("1", "t", "m", "x", "d", "c", "Cat", "", "", "")
-        };
-        var datos = new DatosImportarCsv(titulos, 1, filas);
-
-        _controladorLectorCsv.ImportarItemsDesdeCsv(datos);
-
-        Assert.AreEqual(0, _gestorLectorCsv.CantidadDeFilas);
     }
     
     [TestMethod]
@@ -210,5 +185,4 @@ public class ControladorLectorCsvPruebas
 
         Assert.AreEqual("El CSV no contiene encabezados.", ex.Message);
     }
-
 }

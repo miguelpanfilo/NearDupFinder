@@ -229,11 +229,9 @@ public class GestorLectorCsv(GestorCatalogos gestorCatalogos, GestorItems gestor
                 return null;
 
             byte[] bytes = File.ReadAllBytes(ruta);
-            string base64 = Convert.ToBase64String(bytes);
+            Imagen imagen = Imagen.CrearDesdeBase64(Convert.ToBase64String(bytes));
 
-            Imagen.CrearDesdeBase64(base64);
-
-            return base64;
+            return imagen.Base64;
         }
         catch
         {

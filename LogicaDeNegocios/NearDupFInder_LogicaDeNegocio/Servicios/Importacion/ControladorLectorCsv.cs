@@ -15,11 +15,4 @@ public class ControladorLectorCsv
     {
         _gestorLectorCsv.ImportarDesdeContenido(contenidoCsv);
     }
-
-    public void ImportarItemsDesdeCsv(DatosImportarCsv datosImportarCsv)
-    {
-        _gestorLectorCsv.LeerCsv(datosImportarCsv.Titulos, datosImportarCsv.Cantidad, datosImportarCsv.Filas);
-        _gestorLectorCsv.ImportarItems();
-        _gestorLectorCsv.Limpiar();
-    }
 }
