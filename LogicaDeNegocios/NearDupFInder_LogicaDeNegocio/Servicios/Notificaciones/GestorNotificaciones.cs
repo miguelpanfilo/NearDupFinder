@@ -20,7 +20,7 @@ public class GestorNotificaciones
 
         string mensaje =
             $"El stock del ítem canónico '{cluster.Canonico.Titulo}' " +
-            $"bajó por debajo del umbral definido ({cluster.StockActual}/{cluster.UmbralStock}).";
+            $"bajó por debajo del umbral definido ({cluster.StockActual}/{cluster.StockMinimoCanonico}).";
 
         var notificacion = new Notificacion(cluster.EmailRevisorCreador, mensaje);
 

@@ -256,7 +256,7 @@ public class GestorControlClusters
             _repoClusters.Actualizar(cluster);
             _repoClusters.GuardarCambios();
             
-            if (stockAntes >= cluster.UmbralStock && cluster.StockActual < cluster.UmbralStock)
+            if (stockAntes >= cluster.StockMinimoCanonico && cluster.StockActual < cluster.StockMinimoCanonico)
             {
                 _gestorNotificaciones.NotificarStockBajo(cluster);
             }

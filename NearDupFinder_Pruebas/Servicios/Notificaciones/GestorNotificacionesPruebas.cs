@@ -25,7 +25,7 @@ namespace NearDupFinder_Pruebas.Servicios.Notificaciones
             var cluster = new Cluster(1, new HashSet<Item> { itemCanonico });
             cluster.FusionarCanonico(emailRevisor);
             
-            cluster.UmbralStock = umbral;
+            cluster.StockMinimoCanonico = umbral;
             cluster.EmailRevisorCreador = emailRevisor;
 
             return cluster;
@@ -39,7 +39,7 @@ namespace NearDupFinder_Pruebas.Servicios.Notificaciones
 
             var clusterSinCanonico = new Cluster(1, new HashSet<Item>());
             clusterSinCanonico.EmailRevisorCreador = EmailUsuario;
-            clusterSinCanonico.UmbralStock = 5;
+            clusterSinCanonico.StockMinimoCanonico = 5;
 
             gestor.NotificarStockBajo(clusterSinCanonico);
 
@@ -57,7 +57,7 @@ namespace NearDupFinder_Pruebas.Servicios.Notificaciones
             var cluster = new Cluster(1, new HashSet<Item> { itemCanonico });
             cluster.FusionarCanonico(EmailUsuario);
             cluster.EmailRevisorCreador = string.Empty;
-            cluster.UmbralStock = 10;
+            cluster.StockMinimoCanonico = 10;
 
             gestor.NotificarStockBajo(cluster);
 
