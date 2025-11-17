@@ -220,5 +220,59 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             Assert.AreEqual(777, item.Precio);
             Assert.AreEqual(nuevaImagen, item.ImagenBase64);
         }
+
+        [TestMethod]
+        public void AsegurarIdUnico_IdExistente_IncrementaHastaEncontrarLibre()
+        {
+            Item.ResetearContadorId(1);
+
+            var itemExistente = Item.Crear("Item existente", "Desc");
+            _context.Items.Add(itemExistente);
+            _context.SaveChanges();
+
+            int idExistente = itemExistente.Id; 
+
+            var nuevoItem = new Item("Nuevo", "Desc", 0); 
+            nuevoItem.AjustarId(idExistente);             
+
+            _gestorItems.AsegurarIdUnico(nuevoItem);
+
+            Assert.AreEqual(idExistente + 1, nuevoItem.Id);
+        }
+
+        [TestMethod]
+        public void AsegurarIdUnico_VariosIdsConsecutivos_BuscaHastaElLibre()
+        {
+            Item.ResetearContadorId(1);
+
+            var item1 = Item.Crear("A", "D"); 
+            var item2 = Item.Crear("B", "D"); 
+            var item3 = Item.Crear("C", "D");
+
+            _context.Items.AddRange(item1, item2, item3);
+            _context.SaveChanges();
+
+            var nuevo = new Item("Nuevo", "Desc", 0); 
+            nuevo.AjustarId(1); 
+
+            _gestorItems.AsegurarIdUnico(nuevo);
+
+            Assert.AreEqual(4, nuevo.Id);
+        }
+        [TestMethod]
+        public void AsegurarIdUnico_IdNoExistente_NoModificaId()
+        {
+            Item.ResetearContadorId(1);
+    
+            var item = Item.Crear("Nuevo item", "Desc");
+
+            int idOriginal = item.Id;  
+
+            _gestorItems.AsegurarIdUnico(item);
+
+            Assert.AreEqual(idOriginal, item.Id,
+                "Si el ID no existe en repositorio, debe mantenerse el mismo.");
+        }
+ 
     }
 }

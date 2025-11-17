@@ -210,7 +210,34 @@ namespace NearDupFinder_Pruebas.Servicios
             var formato = hoja.Cell(2, 1).Style.DateFormat.Format;
             Assert.AreEqual("dd/MM/yyyy HH:mm:ss", formato);
         }
+        [TestMethod]
+        public void CambiarEstrategia_DeberiaUsarLaNuevaEstrategia()
+        {
+            var csvBytes = _gestorExportacion.ExportarAuditorias(
+                new DateTime(2025, 10, 25),
+                new DateTime(2025, 10, 28)
+            );
 
-        
+            var contenidoCsv = System.Text.Encoding.UTF8.GetString(csvBytes);
+
+            StringAssert.Contains(contenidoCsv, "Fecha y hora | Usuario | Acción");
+
+            _gestorExportacion.CambiarEstrategia(new EstrategiaExportarXlsx());
+
+            var xlsxBytes = _gestorExportacion.ExportarAuditorias(
+                new DateTime(2025, 10, 25),
+                new DateTime(2025, 10, 28)
+            );
+
+            using var memoria = new MemoryStream(xlsxBytes);
+
+            using var workbook = new ClosedXML.Excel.XLWorkbook(memoria);
+
+            var hoja = workbook.Worksheets.First();
+
+            Assert.AreEqual("Auditorías", hoja.Name,
+                "Después del cambio se espera una hoja XLSX válida.");
+        }
+
     }
 }
