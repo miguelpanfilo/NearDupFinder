@@ -1,5 +1,6 @@
 using NearDupFinder_Dominio.Clases;
 using NearDupFinder_Interfaces;
+using NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorAuditoria;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
@@ -7,8 +8,8 @@ namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 public class GestorAuditoria
 {
     private readonly IRepositorioAuditorias _repositorio;
-    private string _usuarioActual = "No hay usuario logueado";
     private readonly SesionUsuarioActual _sesion;
+    
     private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {
         { EntradaDeLog.AccionLog.AltaUsuario, "Creación de usuario" },
@@ -28,12 +29,14 @@ public class GestorAuditoria
         _repositorio = repositorio;
         _sesion = sesion;
     }
+
     public void RegistrarLog(EntradaDeLog.AccionLog accion, string? detalles, string? email = null)
     {
         var usuario = email ?? _sesion.EmailActual ?? "No hay usuario logueado";
+
         var entrada = new EntradaDeLog
         {
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.Now,
             Usuario = usuario,
             Accion = accion,
             Detalles = $"{_descripcionesAccion[accion]}: {detalles}"
@@ -42,6 +45,7 @@ public class GestorAuditoria
         _repositorio.Agregar(entrada);
         _repositorio.GuardarCambios();
     }
+
     public void RegistrarLogManual(DateTime fecha, string usuario, EntradaDeLog.AccionLog accion, string detalles)
     {
         var entrada = new EntradaDeLog
@@ -56,11 +60,21 @@ public class GestorAuditoria
         _repositorio.GuardarCambios();
     }
 
-    public IReadOnlyList<EntradaDeLog> ObtenerTodos()
+    internal AuditoriaDto MapeoADto(EntradaDeLog log)
     {
-        return _repositorio.ObtenerTodos();
+        return new AuditoriaDto
+        {
+            Id = log.Id,
+            Timestamp = log.Timestamp,   
+            Usuario = log.Usuario,
+            Accion = log.Accion.ToString(),
+            Detalles = log.Detalles
+        };
     }
-    
+
+    public IEnumerable<EntradaDeLog> ObtenerTodasLasEntidades()
+        => _repositorio.ObtenerTodos();
+
     public void AsignarUsuarioActual(string email) => _sesion.Asignar(email);
     public void DesasignarUsuario() => _sesion.Desasignar();
 }

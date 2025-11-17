@@ -1,8 +1,8 @@
 @page "/logs"
-@using NearDupFinder_Dominio.Clases
+@using NearDupFInder_LogicaDeNegocio.DTOs.ParaGestorAuditoria
 @using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias
-@inject GestorAuditoria GestorAuditoria
 @inject NavigationManager Nav
+@inject ControladorAuditoria ControladorAuditoria
 @rendermode InteractiveServer
 
 <PageTitle>Logs del Sistema</PageTitle>
@@ -29,6 +29,7 @@
         </button>
     </div>
 </div>
+
 @if (!string.IsNullOrEmpty(MensajeAdvertencia))
 {
     <div class="alert alert-warning mt-2">@MensajeAdvertencia</div>
@@ -60,7 +61,7 @@ else
         @foreach (var log in _logsFiltrados)
         {
             <tr>
-                <td>@log.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@log.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
                 <td>@log.Usuario</td>
                 <td>@log.Accion</td>
                 <td>@log.Detalles</td>
@@ -70,9 +71,8 @@ else
     </table>
 }
 
-
 @code {
-    private List<EntradaDeLog> _logs = new();
+    private List<AuditoriaDto> _logs = new();
     private DateTime Desde = DateTime.Now.AddDays(-7);
     private DateTime Hasta = DateTime.Now;
     private DateTime FechaMinimaLogs;
@@ -80,29 +80,30 @@ else
 
     private string? MensajeAdvertencia => _mensajeAdvertencia;
 
-    private IEnumerable<EntradaDeLog> _logsFiltrados =>
+    private IEnumerable<AuditoriaDto> _logsFiltrados =>
         _logs.Where(l =>
         {
-            var fecha = l.Timestamp.ToLocalTime();
+            var fecha = l.Timestamp;
             return fecha >= Desde.Date && fecha <= Hasta.Date.AddDays(1).AddTicks(-1);
         })
         .OrderByDescending(l => l.Timestamp);
 
     protected override void OnInitialized()
     {
-        _logs = GestorAuditoria.ObtenerTodos()
+        _logs = ControladorAuditoria.ObtenerTodos()
             .OrderBy(l => l.Timestamp)
             .ToList();
 
         if (_logs.Any())
         {
-            FechaMinimaLogs = _logs.First().Timestamp.ToLocalTime();
+            FechaMinimaLogs = _logs.First().Timestamp;
             Desde = FechaMinimaLogs;
             Hasta = DateTime.Now;
         }
 
         ValidarFechas();
     }
+
 
     private void OnFechaCambiada()
     {
