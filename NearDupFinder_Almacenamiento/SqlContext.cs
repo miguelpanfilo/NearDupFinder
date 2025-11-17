@@ -15,6 +15,8 @@ public class SqlContext : DbContext
     
     public DbSet<EntradaDeLog> Auditorias { get; set; }
     
+    public DbSet<Notificacion> Notificaciones { get; set; }
+    
 
     public SqlContext(DbContextOptions<SqlContext> options) : base(options)
     {
@@ -32,5 +34,6 @@ public class SqlContext : DbContext
         new ParDuplicadosConfiguraciones().Configure(modelBuilder.Entity<ParDuplicado>());
         new ClusterConfiguraciones().Configure(modelBuilder.Entity<Cluster>());
         new AuditoriaConfiguraciones().Configure(modelBuilder.Entity<EntradaDeLog>());
+        new NotificacionConfiguraciones().Configure(modelBuilder.Entity<Notificacion>());
     }
 }

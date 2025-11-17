@@ -7,6 +7,9 @@ public class Cluster
     public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
     public Item? Canonico { get; set; }
 
+    public int? UmbralStock { get; set; } = 5; // para prueba
+    public string? EmailRevisorCreador { get; set; }// test
+
     public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
         Id = id;
@@ -31,7 +34,7 @@ public class Cluster
     public int StockActual => _pertenecientesCluster.Sum(item => item.Stock);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
 
-    public bool FusionarCanonico()
+    public bool FusionarCanonico(string emailUsuario)
     {
         if (_pertenecientesCluster.Count == 0)
         {
@@ -49,10 +52,14 @@ public class Cluster
         Canonico = nuevoCanonico;
 
         FusionarCampos(Canonico, _pertenecientesCluster);
+        if (cambio)
+        {
+            EmailRevisorCreador = emailUsuario;
+        }
 
         return cambio;
     }
-
+    
     private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
     {
         canonico.Marca = ElegirMejorCampo(canonico.Marca, miembros.Select(m => m.Marca));

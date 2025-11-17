@@ -4,7 +4,9 @@ using NearDupFinder_Interfaces;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados;using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.ReservasStock;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 
@@ -12,20 +14,23 @@ public class GestorControlClusters
 {
     private readonly GestorCatalogos _gestorCatalogos;
     private readonly GestorAuditoria _gestorAuditoria;
-    private readonly IRepositorioCatalogos _repositorioCatalogos;
+    private readonly GestorNotificaciones _gestorNotificaciones;
+    private readonly SesionUsuarioActual _sesionUsuarioActual;
     private readonly IRepositorioClusters _repoClusters;
     private readonly IRepositorioItems _repoItems;
 
     public GestorControlClusters(
         GestorCatalogos gestorCatalogos,
         GestorAuditoria gestorAuditoria,
-        IRepositorioCatalogos repositorioCatalogos,
+        GestorNotificaciones gestorNotificaciones,
+        SesionUsuarioActual sesionUsuarioActual,
         IRepositorioClusters repoClusters,
         IRepositorioItems repoItems)
     {
         _gestorCatalogos       = gestorCatalogos;
         _gestorAuditoria       = gestorAuditoria;
-        _repositorioCatalogos  = repositorioCatalogos;
+        _gestorNotificaciones     = gestorNotificaciones;
+        _sesionUsuarioActual = sesionUsuarioActual;
         _repoClusters          = repoClusters;
         _repoItems             = repoItems;
     }
@@ -204,8 +209,8 @@ public class GestorControlClusters
         var catalogo = ObtenerCatalogo(datosFusionarItem.IdCatalogo);
         var cluster  = catalogo.ObtenerClusterPorId(datosFusionarItem.IdCluster)
                        ?? throw new ExcepcionCatalogo("Cluster inexistente.");
-
-        bool fusionado = cluster.FusionarCanonico();
+        string usuarioCreador = _sesionUsuarioActual.EmailActual;
+        bool fusionado = cluster.FusionarCanonico(usuarioCreador);
         if (fusionado)
         {
 
@@ -226,13 +231,19 @@ public class GestorControlClusters
         
         var cluster  = catalogo!.ObtenerClusterDe(item)
                        ?? throw new ExcepcionCatalogo("Cluster inexistente.");
+        int stockAntes = cluster.StockActual;
+
 
         bool reservo = GestorReservas.Aplicar(cluster, cantidad);
         if (reservo)
         {
-
             _repoClusters.Actualizar(cluster);
             _repoClusters.GuardarCambios();
+            
+            if (stockAntes >= cluster.UmbralStock && cluster.StockActual < cluster.UmbralStock)
+            {
+                _gestorNotificaciones.NotificarStockBajo(cluster);
+            }
 
             _gestorAuditoria.RegistrarLog(
                 EntradaDeLog.AccionLog.FusionarCluster,
