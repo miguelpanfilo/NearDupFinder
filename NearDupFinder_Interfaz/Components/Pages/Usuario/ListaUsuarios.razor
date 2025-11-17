@@ -1,13 +1,13 @@
 @page "/usuarios"
 
 @rendermode InteractiveServer
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
 @using NearDupFInder_LogicaDeNegocio.DTOs.ParaUsuarios
 @using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
 @attribute [Authorize(Roles = "Administrador")]
 @inject GestorUsuarios GestorUsuarios
 
 <PageTitle>Usuarios</PageTitle>
+
 
 <div class="d-flex align-items-center mb-3">
     <h1 class="h1 mb-0">Usuarios</h1>

@@ -12,17 +12,10 @@ public class DatosIdentificacion(string nombre, string email, int id, IReadOnlyC
     
     private static List<string> ConvertirListaRolesAString(IReadOnlyCollection<Rol> roles)
     {
-        List<string> listaDeRoles = [];
-        foreach (Rol rol in roles)
-        {
-            if (rol == Rol.Administrador && !listaDeRoles.Contains("Administrador"))
-                listaDeRoles.Add("Administrador");
-
-            if (rol == Rol.Revisor && !listaDeRoles.Contains("Revisor"))
-                listaDeRoles.Add("Revisor");
-        }
-
-        return listaDeRoles;
+        return roles
+            .Select(r => r.ToString())
+            .Distinct()
+            .ToList();
     }
 
     public static DatosIdentificacion FromEntity(Usuario usuario)
