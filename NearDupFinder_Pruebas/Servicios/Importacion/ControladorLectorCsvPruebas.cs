@@ -29,9 +29,9 @@ public class ControladorLectorCsvPruebas
     private ControladorItems _controladorItems = null!;
     private SqlContext _context = null!;
 
-    private readonly HashSet<int> _idsItemsGlobal = new();     
+    private readonly HashSet<int> _idsItemsGlobal = new();
     private IRepositorioDuplicados _repoDuplicados = null!;
-    
+
     [TestInitialize]
     public void Setup()
     {
@@ -88,8 +88,9 @@ public class ControladorLectorCsvPruebas
     public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
     {
         List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new() {
-            new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import")
+        List<Fila> filas = new()
+        {
+            new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import", "", "", "")
         };
         var datos = new DatosImportarCsv(titulos, 1, filas);
 
@@ -104,8 +105,9 @@ public class ControladorLectorCsvPruebas
     public void ImportarItemsDesdeCsv_RegistraIdGlobal()
     {
         List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new() {
-            new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import")
+        List<Fila> filas = new()
+        {
+            new Fila("101", "notebook", "lenovo", "l14", "intel i5", "notebooks", "Cat Import", "", "", "")
         };
         var datos = new DatosImportarCsv(titulos, 1, filas);
 
@@ -118,8 +120,9 @@ public class ControladorLectorCsvPruebas
     public void ImportarItemsDesdeCsv_LimpiaListasDelLector()
     {
         List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new() {
-            new Fila("1", "t", "m", "x", "d", "c", "Cat")
+        List<Fila> filas = new()
+        {
+            new Fila("1", "t", "m", "x", "d", "c", "Cat", "", "", "")
         };
         var datos = new DatosImportarCsv(titulos, 1, filas);
 
@@ -133,8 +136,9 @@ public class ControladorLectorCsvPruebas
     public void ImportarItemsDesdeCsv_ReseteaCantidadDeFilas()
     {
         List<string> titulos = new() { "id", "titulo" };
-        List<Fila> filas = new() {
-            new Fila("1", "t", "m", "x", "d", "c", "Cat")
+        List<Fila> filas = new()
+        {
+            new Fila("1", "t", "m", "x", "d", "c", "Cat", "", "", "")
         };
         var datos = new DatosImportarCsv(titulos, 1, filas);
 
@@ -142,4 +146,65 @@ public class ControladorLectorCsvPruebas
 
         Assert.AreEqual(0, _gestorLectorCsv.CantidadDeFilas);
     }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_CreaCatalogoEItem()
+    {
+        string csv = """
+                     id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock
+                     200,Mouse,Logitech,G203,"Mouse gamer","Periféricos","Cat DesdeContenido","",800,3
+                     """;
+
+        _controladorLectorCsv.ImportarItemsDesdeContenido(csv);
+
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat DesdeContenido");
+        Assert.IsNotNull(catalogo);
+        Assert.AreEqual(1, catalogo!.Items.Count);
+
+        var item = catalogo.Items.Single();
+        Assert.AreEqual("Mouse", item.Titulo);
+        Assert.AreEqual(800, item.Precio);
+        Assert.AreEqual(3, item.Stock);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_LimpiaEstadoDelGestorLector()
+    {
+        string csv = """
+                     id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock
+                     1,Teclado,Logitech,K120,"Teclado básico","Periféricos","Cat Limpieza","",500,2
+                     """;
+
+        _controladorLectorCsv.ImportarItemsDesdeContenido(csv);
+
+        Assert.AreEqual(0, _gestorLectorCsv.Titulos.Count);
+        Assert.AreEqual(0, _gestorLectorCsv.Filas.Count);
+        Assert.AreEqual(0, _gestorLectorCsv.CantidadDeFilas);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_CsvVacio_LanzaInvalidOperationException()
+    {
+        string contenidoVacio = string.Empty;
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(
+            () => _controladorLectorCsv.ImportarItemsDesdeContenido(contenidoVacio)
+        );
+
+        Assert.AreEqual("El archivo CSV está vacío.", ex.Message);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_SinEncabezados_LanzaInvalidOperationException()
+    {
+        string contenido = @",,,,
+        1,notebook,lenovo,l14,intel i5,notebooks,Cat Import";
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(
+            () => _controladorLectorCsv.ImportarItemsDesdeContenido(contenido)
+        );
+
+        Assert.AreEqual("El CSV no contiene encabezados.", ex.Message);
+    }
+
 }
