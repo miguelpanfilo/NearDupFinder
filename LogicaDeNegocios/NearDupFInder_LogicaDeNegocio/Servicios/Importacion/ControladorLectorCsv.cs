@@ -10,6 +10,11 @@ public class ControladorLectorCsv
     {
         _gestorLectorCsv = gestorLectorCsv;
     }
+    
+    public void ImportarItemsDesdeContenido(string contenidoCsv)
+    {
+        _gestorLectorCsv.ImportarDesdeContenido(contenidoCsv);
+    }
 
     public void ImportarItemsDesdeCsv(DatosImportarCsv datosImportarCsv)
     {

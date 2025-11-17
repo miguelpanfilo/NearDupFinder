@@ -43,26 +43,18 @@ public class Cluster
         if (precio is < 0)
             throw new ExcepcionItem("El precio no puede ser negativo.");
 
-        if (!string.IsNullOrWhiteSpace(imagenBase64))
+        if (string.IsNullOrWhiteSpace(imagenBase64))
+            ImagenCanonicaBase64 = null;
+        else
         {
-            try
-            {
-                byte[] bytes = Convert.FromBase64String(imagenBase64);
-
-                const int MaxBytes = 1 * 1024 * 1024;
-                if (bytes.Length > MaxBytes)
-                    throw new ExcepcionItem("La imagen del canónico no puede superar 1 MB.");
-            }
-            catch (FormatException)
-            {
-                throw new ExcepcionItem("La imagen del canónico no tiene un formato Base64 válido.");
-            }
+            var imagen = Imagen.CrearDesdeBase64(imagenBase64);
+            ImagenCanonicaBase64 = imagen.Base64;
         }
 
-        ImagenCanonicaBase64 = imagenBase64;
         StockMinimoCanonico = stockMinimo;
         PrecioCanonico = precio;
     }
+
 
     public bool FusionarCanonico()
     {
