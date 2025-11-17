@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
-using NearDupFinder_LogicaDeNegocio.Servicios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
-using NearDupFInder_LogicaDeNegocio.Servicios.Inicializacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Interfaz.Controladores;
@@ -16,8 +14,7 @@ public class ControladorDeAutenticacion : ControllerBase
 {
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] GestorAutenticacionUsuario gestorAutenticacionUsuario,
-        [FromServices] GestorInicializacion gestorInicializacion,[FromServices] GestorAuditoria gestorAuditoria)
+    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] GestorAutenticacionUsuario gestorAutenticacionUsuario,[FromServices] GestorAuditoria gestorAuditoria)
     {
         DatosAutenticacion datosAutenticacion = new DatosAutenticacion(email, clave);
         bool elUsuarioExiste = gestorAutenticacionUsuario.AutenticarUsuarioBooleano(datosAutenticacion);
