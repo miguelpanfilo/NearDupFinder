@@ -593,6 +593,12 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Guardar();
             RefrescarCatalogo();
 
+            var clusterConfig = _catalogo.Clusters.First();
+            clusterConfig.PrecioCanonico = 100;
+            clusterConfig.StockMinimoCanonico = 1;
+            Guardar();
+            RefrescarCatalogo();
+
             var cantidad = 4;
             _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, cantidad);
             RefrescarCatalogo();
@@ -605,6 +611,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Assert.AreEqual(7, byId["C"]);
             Assert.AreEqual(7, clusterRef.StockActual);
         }
+
         
         [TestMethod]
         public void ReservarStockEnCluster_ClusterInexistente_LanzaExcepcionCatalogo_OkTest()
@@ -631,8 +638,8 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Item i1 = Item.Crear("A", "d1");
             i1.Stock = 5;
             Item i2 = Item.Crear("B", "d1");
-            i1.Stock = 5;
-            
+            i2.Stock = 5;
+
             _catalogo.AgregarItem(i1);
             _catalogo.AgregarItem(i2);
             _catalogo.CrearCluster(new HashSet<Item> { i1, i2 });
@@ -640,12 +647,19 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
 
             var cluster = _catalogo.Clusters.First();
+            cluster.FusionarCanonico(_sesionUsuario.EmailActual);
+            cluster.PrecioCanonico = 100;
+            cluster.StockMinimoCanonico = 1;
+            Guardar();
+            RefrescarCatalogo();
 
             var ex = Assert.ThrowsException<InvalidOperationException>(() =>
                 _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, cantidadInvalida)
             );
+
             Assert.IsTrue(ex.Message.ToLower().Contains("cantidad inválida"));
         }
+
         
         [TestMethod]
         public void ConfigurarCanonicoCluster_ValoresValidos_SetearImagenStockYPrecioEnCluster_OkTest()

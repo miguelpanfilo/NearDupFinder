@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Excepciones;
 
 namespace NearDupFInder_LogicaDeNegocio.Servicios.ReservasStock;
 
@@ -6,6 +7,13 @@ public static class GestorReservas
 {
     public static bool Aplicar(Cluster cluster, int cantidad)
     {
+        if (!cluster.StockMinimoCanonico.HasValue ||
+            !cluster.PrecioCanonico.HasValue)
+        {
+            throw new ExcepcionCluster(
+                "El clúster no tiene configurados precio y/o umbral canónico."
+            );
+        }
         if (cantidad <= 0) throw new InvalidOperationException("Cantidad inválida.");
         if (cluster.StockActual < cantidad) throw new InvalidOperationException("Stock insuficiente.");
 
