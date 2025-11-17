@@ -1,6 +1,8 @@
 
 using NearDupFinder_Dominio.Clases;
 
+using NearDupFinder_Dominio.Excepciones;
+
 
 namespace NearDupFinder_Pruebas.Dominio.Clases
 {
@@ -201,6 +203,7 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             Assert.AreEqual("M123", itemCanonicoLuegoDeFusion.Modelo);
             Assert.AreEqual("Categoria Larguísima", itemCanonicoLuegoDeFusion.Categoria);
 
+            // Caso específico de empate de longitud en Marca con canónico vacío
             var itemCanonicoVacíoParaEmpate = CrearItemConCamposDetallados("X", "super larga", marca: "", modelo: "", categoria: "");
             var itemMarcaEmpateLexicoMenor = CrearItemConCamposDetallados("Y", "m", marca: "Beta", modelo: "", categoria: "");
             var itemMarcaEmpateLexicoMayor = CrearItemConCamposDetallados("Z", "m", marca: "Zeta", modelo: "", categoria: "");
@@ -278,6 +281,94 @@ namespace NearDupFinder_Pruebas.Dominio.Clases
             Assert.AreEqual("AC", itemCanonicoLuegoDeRecalculo.Marca);
             Assert.AreEqual("M2", itemCanonicoLuegoDeRecalculo.Modelo);
             Assert.AreEqual("X", itemCanonicoLuegoDeRecalculo.Categoria);
+        }
+
+        [TestMethod]
+        public void StockActual_SumaStockDeTodosLosMiembros_OkTest()
+        {
+            Item.ResetearContadorId();
+
+            var item1 = CrearItemConCamposDetallados("A", "DescA");
+            var item2 = CrearItemConCamposDetallados("B", "DescB");
+            var item3 = CrearItemConCamposDetallados("C", "DescC");
+
+            item1.EditarStock(2);
+            item2.EditarStock(3);
+            item3.EditarStock(5);
+
+            var miembros = new HashSet<Item> { item1, item2, item3 };
+            var clusterBajoPrueba = new Cluster(1, miembros);
+
+            var stockActual = clusterBajoPrueba.StockActual;
+
+            Assert.AreEqual(2 + 3 + 5, stockActual);
+        }
+
+        [TestMethod]
+        public void ConfigurarCanonico_ValoresValidos_SetearImagenStockYPrecio_OkTest()
+        {
+            var item1 = CrearItemConCamposDetallados("A", "DescA");
+            var item2 = CrearItemConCamposDetallados("B", "DescB");
+            var cluster = new Cluster(1, new HashSet<Item> { item1, item2 });
+
+            string imagen = "aGVsbG8=";
+            int stockMinimo = 10;
+            int precio = 999;
+
+            cluster.ConfigurarCanonico(imagen, stockMinimo, precio);
+
+            Assert.AreEqual(imagen, cluster.ImagenCanonicaBase64);
+            Assert.AreEqual(stockMinimo, cluster.StockMinimoCanonico);
+            Assert.AreEqual(precio, cluster.PrecioCanonico);
+        }
+
+        [TestMethod]
+        public void ConfigurarCanonico_StockMinimoNegativo_LanzaExcepcionItem_OkTest()
+        {
+            var item1 = CrearItemConCamposDetallados("A", "DescA");
+            var cluster = new Cluster(1, new HashSet<Item> { item1 });
+
+            Assert.ThrowsException<ExcepcionItem>(() =>
+                cluster.ConfigurarCanonico("BASE64", -1, 100)
+            );
+        }
+
+        [TestMethod]
+        public void ConfigurarCanonico_PrecioNegativo_LanzaExcepcionItem_OkTest()
+        {
+            var item1 = CrearItemConCamposDetallados("A", "DescA");
+            var cluster = new Cluster(1, new HashSet<Item> { item1 });
+
+            Assert.ThrowsException<ExcepcionItem>(() =>
+                cluster.ConfigurarCanonico("BASE64", 10, -5)
+            );
+        }
+        
+        [TestMethod]
+        public void ConfigurarCanonico_ImagenBase64Invalida_LanzaExcepcionItemFormatoBase64_OkTest()
+        {
+            var cluster = new Cluster(1, new HashSet<Item>());
+
+            var ex = Assert.ThrowsException<ExcepcionItem>(() =>
+                cluster.ConfigurarCanonico("no-es-base64", stockMinimo: null, precio: null)
+            );
+
+            StringAssert.Contains(ex.Message, "formato Base64");
+        }
+        
+        [TestMethod]
+        public void ConfigurarCanonico_ImagenSuperaMaxBytes_LanzaExcepcionItemTamano_OkTest()
+        {
+            var cluster = new Cluster(1, new HashSet<Item>());
+
+            var bytes = new byte[1024 * 1024 + 1];
+            string base64Grande = Convert.ToBase64String(bytes);
+
+            var ex = Assert.ThrowsException<ExcepcionItem>(() =>
+                cluster.ConfigurarCanonico(base64Grande, stockMinimo: null, precio: null)
+            );
+
+            StringAssert.Contains(ex.Message, "1 MB");
         }
     }
 }

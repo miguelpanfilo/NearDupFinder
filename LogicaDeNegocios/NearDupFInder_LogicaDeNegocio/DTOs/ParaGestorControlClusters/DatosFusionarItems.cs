@@ -1,13 +1,14 @@
-namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters;
-
-public class DatosFusionarItems
+namespace NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
 {
-    public int IdCluster { get; }
-    public int IdCatalogo { get; }
-
-    public DatosFusionarItems(int idCatalogo,int idCluster)
+    public class DatosFusionarItems
     {
-        IdCluster = idCluster;
-        IdCatalogo = idCatalogo;
+        public int IdCluster { get; }
+        public int IdCatalogo { get; }
+
+        public DatosFusionarItems(int idCatalogo, int idCluster)
+        {
+            IdCluster = idCluster;
+            IdCatalogo = idCatalogo;
+        }
     }
 }

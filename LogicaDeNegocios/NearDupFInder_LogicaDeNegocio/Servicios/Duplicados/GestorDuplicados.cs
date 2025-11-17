@@ -216,7 +216,6 @@ public class GestorDuplicados (IProcesadorTexto procesadorTexto)
         float constanteDeDescripcion = 0.35f;
         float constanteDeMarca = 0.10f;
         float constanteDeModelo = 0.10f;
-
         float score = constanteDeTitulo * jaccardTitulo + constanteDeDescripcion * jaccardDescripcion +
                       constanteDeMarca * marcaEq + constanteDeModelo * modeloEq;
 

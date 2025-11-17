@@ -13,30 +13,43 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios.Exportacion
             {
                 Delimiter = " | ",
             };
-            using var archivoDeMemoriaVirtual = new MemoryStream();
-            using (var escritorDelArchivoVirtual = new StreamWriter(archivoDeMemoriaVirtual))
-            using (var escritorDelCsvNuevo = new CsvWriter(escritorDelArchivoVirtual, configuracionDeLineasCsv))
-            {
-                escritorDelCsvNuevo.WriteField("Fecha y hora");
-                escritorDelCsvNuevo.WriteField("Usuario");
-                escritorDelCsvNuevo.WriteField("Acción");
-                escritorDelCsvNuevo.WriteField("Descripción");
-                escritorDelCsvNuevo.NextRecord();
 
-                foreach (var log in auditorias)
-                {
-                    escritorDelCsvNuevo.WriteField(log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
-                    escritorDelCsvNuevo.WriteField(log.Usuario);
-                    escritorDelCsvNuevo.WriteField(log.Accion.ToString());
-                    escritorDelCsvNuevo.WriteField(log.Detalles);
-                    escritorDelCsvNuevo.NextRecord();
-                }
+            MemoryStream archivoDeMemoriaVirtual = new MemoryStream();
+            StreamWriter escritorDelArchivoVirtual = new StreamWriter(archivoDeMemoriaVirtual);
+            CsvWriter escritorDelCsvNuevo = new CsvWriter(escritorDelArchivoVirtual, configuracionDeLineasCsv);
+
+            using (archivoDeMemoriaVirtual)
+            using (escritorDelArchivoVirtual)
+            using (escritorDelCsvNuevo)
+            {
+                EscribirEncabezados(escritorDelCsvNuevo);
+                EscribirLineas(escritorDelCsvNuevo, auditorias);
 
                 escritorDelArchivoVirtual.Flush();
             }
 
             return archivoDeMemoriaVirtual.ToArray();
         }
+        private void EscribirEncabezados(CsvWriter escritorDelCsvNuevo)
+        {
+            escritorDelCsvNuevo.WriteField("Fecha y hora");
+            escritorDelCsvNuevo.WriteField("Usuario");
+            escritorDelCsvNuevo.WriteField("Acción");
+            escritorDelCsvNuevo.WriteField("Descripción");
+            escritorDelCsvNuevo.NextRecord();
+        }
+        private void EscribirLineas(CsvWriter escritorDelCsvNuevo, List<EntradaDeLog> auditorias)
+        {
+            foreach (var log in auditorias)
+            {
+                escritorDelCsvNuevo.WriteField(log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
+                escritorDelCsvNuevo.WriteField(log.Usuario);
+                escritorDelCsvNuevo.WriteField(log.Accion.ToString());
+                escritorDelCsvNuevo.WriteField(log.Detalles);
+                escritorDelCsvNuevo.NextRecord();
+            }
+        }
+
 
     }
 }

@@ -8,17 +8,6 @@ namespace NearDupFinder_Almacenamiento.Repositorios
     {
         public RepositorioAuditorias(SqlContext context) : base(context) { }
 
-        public List<EntradaDeLog> ObtenerPorUsuario(string email)
-        {
-            return _dbSet.Where(a => a.Usuario == email).ToList();
-        }
-
-        public List<EntradaDeLog> ObtenerPorRangoDeFechas(DateTime inicio, DateTime fin)
-        {
-            return _dbSet
-                .Where(a => a.Timestamp >= inicio && a.Timestamp <= fin)
-                .OrderBy(a => a.Timestamp)
-                .ToList();
-        }
+      
     }
 }

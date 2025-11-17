@@ -51,7 +51,7 @@ public class ControladorItemsPruebas
         sesionUsuario.Asignar("tester@correo.com");
 
         _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
-        _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
+        _gestorCatalogos = new GestorCatalogos(repoCatalogos, repoClusters, repoItems);
         _gestorDuplicados = new GestorDuplicados(procesador);
         _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
         
@@ -93,7 +93,7 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void ActualizarItemEnCatalogo_ModificaTituloYDescripcion()
     {
-        var item = new Item("Original", "Descripción original",0)
+        var item = new Item("Original", "Descripción original", 0)
         {
             Categoria = "Cat 1",
             Marca = "Marca 1",
@@ -194,7 +194,7 @@ public class ControladorItemsPruebas
         Assert.AreEqual("Descripcion", items.First().Descripcion);
     }
 
-    
+
     [TestMethod]
     public void AltaItem_TituloVacio_Excepcion()
     {
@@ -269,7 +269,7 @@ public class ControladorItemsPruebas
         Assert.IsTrue(item2.EstadoDuplicado);
         Assert.IsTrue(duplicados.Count > 0, "Debe existir al menos un par duplicado persistido.");
     }
-  
+
     [TestMethod]
     public void AltaItemConDuplicados_AgregaItemConIdNoValido_LanzaExcepcion()
     {
@@ -297,7 +297,7 @@ public class ControladorItemsPruebas
             error.Message
         );
     }
-    
+
     [TestMethod]
     public void EliminarItemYActualizarEstadoDuplicados_Correcto()
     {
@@ -318,7 +318,7 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void EliminarItem_ItemNoExistente_DeberiaLanzarExcepcionConMensaje_Correcto()
     {
-        const int idItemInexistente=9999;
+        const int idItemInexistente = 9999;
         var dtoInexistente = new DatosEliminarItem(_catalogo.Id, idItemInexistente);
 
         var ex = Assert.ThrowsException<ExcepcionItem>(() =>
@@ -333,14 +333,14 @@ public class ControladorItemsPruebas
     public void EliminarItem_CatalogoNoExistente_DeberiaLanzarExcepcionCatalogoConMensaje_Correcto()
     {
         const int idCatalogoInexistente = 9999;
-        const int idItemExistente=1;
-        var dtoInexistente = new DatosEliminarItem(idCatalogoInexistente,idItemExistente);
+        const int idItemExistente = 1;
+        var dtoInexistente = new DatosEliminarItem(idCatalogoInexistente, idItemExistente);
 
 
         var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
             _controladorItems.EliminarItem(dtoInexistente)
         );
-        
+
 
         Assert.AreEqual("El catálogo no existe.", ex.Message);
     }
@@ -348,8 +348,8 @@ public class ControladorItemsPruebas
     [TestMethod]
     public void EliminarItem_EliminaItemDelCatalogo()
     {
-        Item item1 = Item.Crear("Item 1", "Desc 1" ,"Categoria", "Marca", "Modelo");
-        Item item2 = Item.Crear("Item 2", "Desc 2" ,"Categoria", "Marca", "Modelo");
+        Item item1 = Item.Crear("Item 1", "Desc 1", "Categoria", "Marca", "Modelo");
+        Item item2 = Item.Crear("Item 2", "Desc 2", "Categoria", "Marca", "Modelo");
 
         _catalogo.AgregarItem(item1);
         _catalogo.AgregarItem(item2);
@@ -380,21 +380,25 @@ public class ControladorItemsPruebas
 
         var itemCreado = _controladorItems.CrearItem(dto);
 
-        var logs = _gestorAuditoria.ObtenerTodos();
-        Assert.IsTrue(logs.Count >= cantidadValidaDeAuditoriasRegistradas, "Debe haberse registrado al menos un log por la creación del ítem.");
+        var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
+
+        Assert.IsTrue(logs.Count >= cantidadValidaDeAuditoriasRegistradas,
+            "Debe haberse registrado al menos un log por la creación del ítem.");
 
         var logAlta = logs.FirstOrDefault(l => l.Accion == EntradaDeLog.AccionLog.AltaItem);
         Assert.IsNotNull(logAlta, "Debe existir un log de AltaItem.");
 
-        var detalleEsperado = $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' en catálogo '{_catalogo.Titulo}'.";
+        var detalleEsperado =
+            $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' en catálogo '{_catalogo.Titulo}'.";
 
         Assert.AreEqual(detalleEsperado, logAlta.Detalles);
     }
 
+
     [TestMethod]
     public void ActualizarItem_DeberiaRegistrarLogDeEdicion()
     {
-        var item = new Item("Original", "Desc original",0);
+        var item = new Item("Original", "Desc original", 0);
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
 
@@ -410,17 +414,21 @@ public class ControladorItemsPruebas
 
         _controladorItems.ActualizarItemEnCatalogo(dto);
 
-        var logs = _gestorAuditoria.ObtenerTodos();
-        var logsEditar = logs.Where(l => l.Accion == EntradaDeLog.AccionLog.EditarItem).ToList();
+        var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
+
+        var logsEditar = logs
+            .Where(l => l.Accion == EntradaDeLog.AccionLog.EditarItem)
+            .ToList();
 
         Assert.AreEqual(1, logsEditar.Count, "Debe registrarse exactamente 1 log de edición.");
         StringAssert.Contains(logsEditar[0].Detalles, "Ítem actualizado");
     }
 
+
     [TestMethod]
     public void EliminarItem_DeberiaRegistrarLogDeEliminacion()
     {
-        var item = new Item("A borrar", "Descripción del item",0);
+        var item = new Item("A borrar", "Descripción del item", 0);
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
 
@@ -434,19 +442,20 @@ public class ControladorItemsPruebas
 
         _controladorItems.EliminarItem(dtoEliminar);
 
-        var logs = _gestorAuditoria.ObtenerTodos();
+        var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
         const int primeraAuditoriaRegistrada = 0;
 
         Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[primeraAuditoriaRegistrada].Accion);
         StringAssert.Contains(logs[primeraAuditoriaRegistrada].Detalles, "Item eliminado");
     }
-    
+
+
     [TestMethod]
     public void AgregarDuplicado_SePersisteEnBaseDeDatos()
     {
-        Item itemA = Item.Crear("Notebook", "Intel i5" ,"Categoria", "Marca", "Modelo");
-        Item itemB = Item.Crear("Notebook", "Intel i5" ,"Categoria", "Marca", "Modelo");
-        
+        Item itemA = Item.Crear("Notebook", "Intel i5", "Categoria", "Marca", "Modelo");
+        Item itemB = Item.Crear("Notebook", "Intel i5", "Categoria", "Marca", "Modelo");
+
         _context.Items.AddRange(itemA, itemB);
         _context.SaveChanges();
 
@@ -457,6 +466,48 @@ public class ControladorItemsPruebas
         var duplicados = _repoDuplicados.ObtenerListaDeDuplicados();
         Assert.AreEqual(1, duplicados.Count);
     }
+    [TestMethod]
+    public void ObtenerItemsDelCatalogo_SinItems_DevuelveListaVacia()
+    {
+        var resultado = _controladorItems.ObtenerItemsDelCatalogo(_catalogo.Id);
+
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(0, resultado.Count);
+    }
+    [TestMethod]
+    public void ObtenerItemsDelCatalogo_ConItems_DevuelveItemsCorrectos()
+    {
+        var item1 = Item.Crear("Item A", "Desc A");
+        var item2 = Item.Crear("Item B", "Desc B");
+
+        _catalogo.AgregarItem(item1);
+        _catalogo.AgregarItem(item2);
+
+        _context.Items.AddRange(item1, item2);
+        _context.SaveChanges();
+
+        var resultado = _controladorItems.ObtenerItemsDelCatalogo(_catalogo.Id);
+
+        Assert.AreEqual(2, resultado.Count);
+
+        Assert.IsTrue(resultado.Any(i => i.Id == item1.Id && i.Titulo == "Item A"));
+        Assert.IsTrue(resultado.Any(i => i.Id == item2.Id && i.Titulo == "Item B"));
+    }
+    [TestMethod]
+    public void ObtenerItemsDelCatalogo_CatalogoInexistente_LanzaExcepcion()
+    {
+        const int catalogoInexistente = 9999;
+
+        var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
+            _controladorItems.ObtenerItemsDelCatalogo(catalogoInexistente)
+        );
+
+        Assert.AreEqual($"Catálogo no encontrado (Id={catalogoInexistente}).", ex.Message);
+    }
+
+
+
+
 }
 
   

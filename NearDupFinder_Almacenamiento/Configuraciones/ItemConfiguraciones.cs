@@ -28,5 +28,10 @@ public class ItemConfiguraciones : IEntityTypeConfiguration<Item>
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
         builder.HasIndex("ClusterId");
+        
+        builder.Property(item => item.ImagenBase64)
+            .HasColumnName("ImagenBase64")
+            .HasColumnType("nvarchar(max)")
+            .IsRequired(false);
     }
 }

@@ -44,21 +44,42 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm rounded-4">
                         <div class="card-body">
-                            <h5 class="card-title">@cluster.Canonico.Titulo</h5>
                             
+                            @if (!string.IsNullOrEmpty(cluster.ImagenCanonicaBase64))
+                            {
+                                <div class="mb-3 text-center">
+                                    <img src="@($"data:image/png;base64,{cluster.ImagenCanonicaBase64}")"
+                                         alt="Imagen canónica"
+                                         style="max-width: 120px; max-height: 120px; object-fit: contain;" />
+                                </div>
+                            }
+                            
+                            <h5 class="card-title">@cluster.Canonico.Titulo</h5>
+
                             <ul class="list-unstyled">
                                 <li><b>Descripción:</b> @cluster.Canonico.Descripcion</li>
                                 <li><b>Categoría:</b> @cluster.Canonico.Categoria</li>
+
+                                <li>
+                                    <b>Precio:</b>
+                                    @(cluster.PrecioCanonico.HasValue
+                                        ? cluster.PrecioCanonico.Value.ToString()
+                                        : "Sin definir")
+                                </li>
                                 
-                                <li><b>Stock:</b> @GestorControlClusters.StockDelCluster(_catalogo.Id, cluster.Canonico.Id)</li>
+                                <li>
+                                    <b>Stock:</b>
+                                    @GestorControlClusters.StockDelCluster(_catalogo.Id, cluster.Canonico.Id)
+                                </li>
                             </ul>
 
                             <div class="text-end text-nowrap">
                                 <div class="d-inline-flex gap-2">
-                                    <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                    <button class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
                                             @onclick="() => ReservarStock(cluster.Canonico.Id)"
-                                            title="Reservar Stock">
-                                        <i class="bi bi-bag-check fs-6 lh-1"></i>
+                                            title="Reservar stock">
+                                        <i class="bi bi-bag-check fs-6 lh-1 me-1"></i>
+                                        Reservar
                                     </button>
                                 </div>
                             </div>
@@ -96,7 +117,11 @@
                                type="number"
                                class="form-control"
                                min="1"
+                               max="@_stockMaxReserva"
                                @bind="_cantidadReserva" />
+                        <small class="text-muted">
+                            Stock disponible: @_stockMaxReserva
+                        </small>
                     </div>
                 </div>
 
@@ -120,6 +145,8 @@
     private int _cantidadReserva;
     private int _itemIdParaReserva;
     private string? _mensajeErrorReserva;
+    private int _stockMaxReserva;
+
 
     protected override void OnInitialized()
     {
@@ -160,6 +187,9 @@
         _itemIdParaReserva = idItem;
         _cantidadReserva = 0;
         _mensajeErrorReserva = null;
+
+        _stockMaxReserva = GestorControlClusters.StockDelCluster(_catalogo!.Id, idItem) ?? 0;
+
         _mostrarModalReserva = true;
     }
 
@@ -168,6 +198,12 @@
         if (_cantidadReserva <= 0)
         {
             _mensajeErrorReserva = "La cantidad debe ser mayor a cero.";
+            return;
+        }
+
+        if (_cantidadReserva > _stockMaxReserva)
+        {
+            _mensajeErrorReserva = $"No puede reservar más que el stock disponible ({_stockMaxReserva}).";
             return;
         }
 

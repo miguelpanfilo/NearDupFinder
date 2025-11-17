@@ -149,5 +149,134 @@ namespace NearDupFinder_Pruebas.Servicios.Items
 
             Assert.IsTrue(existeItem);
         }
+        
+        [TestMethod]
+        public void CrearItem_ConPrecioEImagen_LosSeteaCorrectamente()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            string base64 = Convert.ToBase64String(bytes);
+
+            var dto = new DatosCrearItem(
+                IdCatalogo: _catalogo.Id,
+                Titulo: "Item con precio e imagen",
+                Descripcion: "Descripción",
+                Categoria: "Categoria 1",
+                Marca: "Marca 1",
+                Modelo: "Modelo 1",
+                Stock: 10,
+                Precio: 999,
+                ImagenBase64: base64
+            );
+
+            var item = _controladorItems.CrearItem(dto);
+
+            Assert.AreEqual("Item con precio e imagen", item.Titulo);
+            Assert.AreEqual("Descripción", item.Descripcion);
+            Assert.AreEqual(10, item.Stock);
+            Assert.AreEqual(999, item.Precio);
+            Assert.AreEqual(base64, item.ImagenBase64);
+        }
+        
+        [TestMethod]
+        public void ActualizarItemEnCatalogo_ModificaPrecioStockEImagen()
+        {
+            var item = new Item("Original", "Descripción original", 1)
+            {
+                Categoria = "Cat 1",
+                Marca = "Marca 1",
+                Modelo = "Modelo 1"
+            };
+
+            item.EditarPrecio(100);
+
+            var imagenInicial = Convert.ToBase64String(new byte[] { 1, 2, 3 });
+            item.EditarImagen(imagenInicial);
+
+            _catalogo.AgregarItem(item);
+            _idsItemsGlobal.Add(item.Id);
+            _context.Items.Add(item);
+            _context.SaveChanges();
+
+            var nuevaImagen = Convert.ToBase64String(new byte[] { 9, 8, 7 });
+
+            var dto = new DatosActualizarItem(
+                IdCatalogo: _catalogo.Id,
+                IdItem: item.Id,
+                Titulo: "Nuevo Título",
+                Descripcion: "Nueva Descripción",
+                Categoria: "Cat 2",
+                Marca: "Marca 2",
+                Modelo: "Modelo 2",
+                Stock: 50,
+                Precio: 777,
+                ImagenBase64: nuevaImagen
+            );
+
+            _controladorItems.ActualizarItemEnCatalogo(dto);
+
+            Assert.AreEqual("Nuevo Título", item.Titulo);
+            Assert.AreEqual("Nueva Descripción", item.Descripcion);
+            Assert.AreEqual("Cat 2", item.Categoria);
+            Assert.AreEqual("Marca 2", item.Marca);
+            Assert.AreEqual("Modelo 2", item.Modelo);
+
+            Assert.AreEqual(50, item.Stock);
+            Assert.AreEqual(777, item.Precio);
+            Assert.AreEqual(nuevaImagen, item.ImagenBase64);
+        }
+
+        [TestMethod]
+        public void AsegurarIdUnico_IdExistente_IncrementaHastaEncontrarLibre()
+        {
+            Item.ResetearContadorId(1);
+
+            var itemExistente = Item.Crear("Item existente", "Desc");
+            _context.Items.Add(itemExistente);
+            _context.SaveChanges();
+
+            int idExistente = itemExistente.Id; 
+
+            var nuevoItem = new Item("Nuevo", "Desc", 0); 
+            nuevoItem.AjustarId(idExistente);             
+
+            _gestorItems.AsegurarIdUnico(nuevoItem);
+
+            Assert.AreEqual(idExistente + 1, nuevoItem.Id);
+        }
+
+        [TestMethod]
+        public void AsegurarIdUnico_VariosIdsConsecutivos_BuscaHastaElLibre()
+        {
+            Item.ResetearContadorId(1);
+
+            var item1 = Item.Crear("A", "D"); 
+            var item2 = Item.Crear("B", "D"); 
+            var item3 = Item.Crear("C", "D");
+
+            _context.Items.AddRange(item1, item2, item3);
+            _context.SaveChanges();
+
+            var nuevo = new Item("Nuevo", "Desc", 0); 
+            nuevo.AjustarId(1); 
+
+            _gestorItems.AsegurarIdUnico(nuevo);
+
+            Assert.AreEqual(4, nuevo.Id);
+        }
+        [TestMethod]
+        public void AsegurarIdUnico_IdNoExistente_NoModificaId()
+        {
+            Item.ResetearContadorId(1);
+    
+            var item = Item.Crear("Nuevo item", "Desc");
+
+            int idOriginal = item.Id;  
+
+            _gestorItems.AsegurarIdUnico(item);
+
+            Assert.AreEqual(idOriginal, item.Id,
+                "Si el ID no existe en repositorio, debe mantenerse el mismo.");
+        }
+ 
     }
 }

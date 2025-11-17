@@ -62,7 +62,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
                 repoItems
             );
         }
-      
+
         private void Guardar() => _context.SaveChanges();
         private void RefrescarCatalogo() => _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
 
@@ -246,10 +246,49 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             var datos = new DatosRemoverItemCluster(canonico.Id, _catalogo.Id);
             _gestorControlClusters.BorrarItemDelCluster(datos);
             RefrescarCatalogo();
-            
+
             Assert.AreEqual(1, _catalogo.Clusters.Count);
-            Assert.IsNull(cluster.Canonico);
+            var clusterRef = _catalogo.Clusters.First();
+            Assert.IsNull(clusterRef.Canonico);
         }
+
+        [TestMethod]
+        public void BorrarItemDelCluster_ItemRemovidoEraCanonico_ReseteaConfiguracionCanonico_OkTest()
+        {
+            Item canonico = Item.Crear("Candidato", "descripcion muy larga");
+            // "YQ==" = "a" en Base64
+            canonico.EditarImagen("YQ==");
+            canonico.EditarPrecio(500);
+
+            Item otro = Item.Crear("Otro", "descripcion");
+            Item tercero = Item.Crear("Tercero", "desc");
+
+            _catalogo.AgregarItem(canonico);
+            _catalogo.AgregarItem(otro);
+            _catalogo.AgregarItem(tercero);
+            _catalogo.CrearCluster(new HashSet<Item> { canonico, otro, tercero });
+            Guardar();
+            RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
+            // "Yg==" = "b" en Base64
+            cluster.ConfigurarCanonico("Yg==", 10, 999);
+            cluster.FusionarCanonico("tester@correo.com");
+            Guardar();
+            RefrescarCatalogo();
+
+            var datos = new DatosRemoverItemCluster(canonico.Id, _catalogo.Id);
+            _gestorControlClusters.BorrarItemDelCluster(datos);
+            RefrescarCatalogo();
+
+            var clusterRef = _catalogo.Clusters.First();
+
+            Assert.IsNull(clusterRef.Canonico);
+            Assert.IsNull(clusterRef.ImagenCanonicaBase64);
+            Assert.IsNull(clusterRef.StockMinimoCanonico);
+            Assert.IsNull(clusterRef.PrecioCanonico);
+        }
+
 
         [TestMethod]
         public void BorrarItemDelCluster_ItemSinCluster_NoRealizaCambios_OkTest()
@@ -281,10 +320,46 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             _gestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(_catalogo.Id, cluster.Id));
             RefrescarCatalogo();
             var clusterRefrescado = _catalogo.Clusters.First();
-            
+
             Assert.IsNotNull(clusterRefrescado.Canonico);
             Assert.AreEqual(largo.Id, clusterRefrescado.Canonico!.Id);
         }
+
+        [TestMethod]
+        public void FusionarItemsEnElCluster_AplicaImagenYPrecioCanonicoAlItemCanonico_OkTest()
+        {
+            Item i1 = Item.Crear("A", "descripcion muy larga");
+            i1.EditarPrecio(100);
+            // "YQ==" = "a"
+            i1.EditarImagen("YQ==");
+
+            Item i2 = Item.Crear("B", "corta");
+            i2.EditarPrecio(200);
+            // "Yg==" = "b"
+            i2.EditarImagen("Yg==");
+
+            _catalogo.AgregarItem(i1);
+            _catalogo.AgregarItem(i2);
+            _catalogo.CrearCluster(new HashSet<Item> { i1, i2 });
+            Guardar();
+            RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
+
+            cluster.ConfigurarCanonico("Yg==", stockMinimo: 5, precio: 200);
+            Guardar();
+            RefrescarCatalogo();
+
+            _gestorControlClusters.FusionarItemsEnElCluster(new DatosFusionarItems(_catalogo.Id, cluster.Id));
+            RefrescarCatalogo();
+
+            var clusterRef = _catalogo.Clusters.First();
+            var canonico = clusterRef.Canonico!;
+
+            Assert.AreEqual("Yg==", canonico.ImagenBase64);
+            Assert.AreEqual(200, canonico.Precio);
+        }
+
 
         [TestMethod]
         public void FusionarItemsEnElCluster_ClusterInexistente_LanzaExcepcionCatalogo_YNoRealizaCambios_OkTest()
@@ -322,6 +397,77 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
             var ok = _gestorControlClusters.ItemEstaEnCluster(_catalogo.Id, a.Id);
             Assert.IsFalse(ok);
+        }
+        
+        [TestMethod]
+        public void StockDelCluster_ItemPerteneceACluster_RetornaStockActualDelCluster_OkTest()
+        {
+            Item i1 = Item.Crear("A", "d1");
+            i1.Stock = 2;
+            Item i2 = Item.Crear("B", "d1");
+            i2.Stock = 3;
+
+            _catalogo.AgregarItem(i1);
+            _catalogo.AgregarItem(i2);
+            _catalogo.CrearCluster(new HashSet<Item> { i1, i2 });
+            Guardar();
+            RefrescarCatalogo();
+
+            var expected = 2 + 3;
+
+            var stock = _gestorControlClusters.StockDelCluster(_catalogo.Id, i1.Id);
+
+            Assert.AreEqual(expected, stock);
+        }
+
+        [TestMethod]
+        public void StockDelCluster_ItemSinCluster_LanzaExcepcionCatalogo_OkTest()
+        {
+            Item i1 = Item.Crear("A", "d1");
+            i1.Stock = 5;
+
+            _catalogo.AgregarItem(i1);
+            Guardar();
+            RefrescarCatalogo();
+
+            var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
+                _gestorControlClusters.StockDelCluster(_catalogo.Id, i1.Id)
+            );
+
+            Assert.IsTrue(ex.Message.Contains($"El ítem (Id={i1.Id}) no pertenece a ningún cluster."));
+        }
+
+        [TestMethod]
+        public void StockDelCluster_CatalogoInexistente_LanzaExcepcionCatalogo_OkTest()
+        {
+            Item i1 = Item.Crear("A", "d1");
+            i1.Stock = 5;
+
+            _catalogo.AgregarItem(i1);
+            Guardar();
+
+            int catalogoInexistenteId = _catalogo.Id + 999;
+
+            Assert.ThrowsException<ExcepcionCatalogo>(() =>
+                _gestorControlClusters.StockDelCluster(catalogoInexistenteId, i1.Id)
+            );
+        }
+
+        [TestMethod]
+        public void StockDelCluster_ItemInexistenteEnCatalogo_LanzaExcepcionItem_OkTest()
+        {
+            Item i1 = Item.Crear("A", "d1");
+            i1.Stock = 5;
+
+            _catalogo.AgregarItem(i1);
+            Guardar();
+            RefrescarCatalogo();
+
+            int idInexistente = i1.Id + 999;
+
+            Assert.ThrowsException<ExcepcionItem>(() =>
+                _gestorControlClusters.StockDelCluster(_catalogo.Id, idInexistente)
+            );
         }
 
         [TestMethod]
@@ -467,6 +613,9 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             i1.Stock = 5;
             
             _catalogo.AgregarItem(i1);
+            Guardar();
+            RefrescarCatalogo();
+
             var ex = Assert.ThrowsException<ExcepcionCatalogo>(() =>
                 _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, 1)
             );
@@ -496,6 +645,126 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
                 _gestorControlClusters.ReservarStockEnCluster(_catalogo.Id, i1.Id, cantidadInvalida)
             );
             Assert.IsTrue(ex.Message.ToLower().Contains("cantidad inválida"));
+        }
+        
+        [TestMethod]
+        public void ConfigurarCanonicoCluster_ValoresValidos_SetearImagenStockYPrecioEnCluster_OkTest()
+        {
+            Item a = Item.Crear("A", "desc A");
+            a.EditarImagen("YQ=="); // "a"
+            a.EditarPrecio(100);
+
+            Item b = Item.Crear("B", "desc B");
+            b.EditarImagen("Yg=="); // "b"
+            b.EditarPrecio(200);
+
+            _catalogo.AgregarItem(a);
+            _catalogo.AgregarItem(b);
+            _catalogo.CrearCluster(new HashSet<Item> { a, b });
+            Guardar();
+            RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
+
+            var datos = new DatosConfigurarCanonicoCluster(
+                idCatalogo: _catalogo.Id,
+                idCluster: cluster.Id,
+                idItemImagenSeleccionada: b.Id,
+                stockMinimo: 10,
+                precioSeleccionado: 200
+            );
+
+            _gestorControlClusters.ConfigurarCanonicoCluster(datos);
+            RefrescarCatalogo();
+
+            var clusterRef = _catalogo.Clusters.First();
+
+            Assert.AreEqual("Yg==", clusterRef.ImagenCanonicaBase64);
+            Assert.AreEqual(10, clusterRef.StockMinimoCanonico);
+            Assert.AreEqual(200, clusterRef.PrecioCanonico);
+        }
+
+        [TestMethod]
+        public void ConfigurarCanonicoCluster_StockMinimoNegativo_LanzaExcepcionItem_OkTest()
+        {
+            Item a = Item.Crear("A", "desc A");
+            Item b = Item.Crear("B", "desc B");
+
+            _catalogo.AgregarItem(a);
+            _catalogo.AgregarItem(b);
+            _catalogo.CrearCluster(new HashSet<Item> { a, b });
+            Guardar();
+            RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
+
+            var datos = new DatosConfigurarCanonicoCluster(
+                idCatalogo: _catalogo.Id,
+                idCluster: cluster.Id,
+                idItemImagenSeleccionada: null,
+                stockMinimo: -1,
+                precioSeleccionado: 100
+            );
+
+            Assert.ThrowsException<ExcepcionItem>(() =>
+                _gestorControlClusters.ConfigurarCanonicoCluster(datos)
+            );
+        }
+
+        [TestMethod]
+        public void ConfigurarCanonicoCluster_PrecioNegativo_LanzaExcepcionItem_OkTest()
+        {
+            Item a = Item.Crear("A", "desc A");
+            Item b = Item.Crear("B", "desc B");
+
+            _catalogo.AgregarItem(a);
+            _catalogo.AgregarItem(b);
+            _catalogo.CrearCluster(new HashSet<Item> { a, b });
+            Guardar();
+            RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
+
+            var datos = new DatosConfigurarCanonicoCluster(
+                idCatalogo: _catalogo.Id,
+                idCluster: cluster.Id,
+                idItemImagenSeleccionada: null,
+                stockMinimo: 10,
+                precioSeleccionado: -5
+            );
+
+            Assert.ThrowsException<ExcepcionItem>(() =>
+                _gestorControlClusters.ConfigurarCanonicoCluster(datos)
+            );
+        }
+
+        [TestMethod]
+        public void ConfigurarCanonicoCluster_ItemImagenNoPerteneceAlCluster_LanzaExcepcionItem_OkTest()
+        {
+            Item a = Item.Crear("A", "desc A");
+            Item b = Item.Crear("B", "desc B");
+            Item c = Item.Crear("C", "desc C");
+
+            _catalogo.AgregarItem(a);
+            _catalogo.AgregarItem(b);
+            _catalogo.AgregarItem(c);
+            _catalogo.CrearCluster(new HashSet<Item> { a, b });
+            Guardar();
+            RefrescarCatalogo();
+
+            var cluster = _catalogo.Clusters.First();
+
+            var datos = new DatosConfigurarCanonicoCluster(
+                idCatalogo: _catalogo.Id,
+                idCluster: cluster.Id,
+                idItemImagenSeleccionada: c.Id,
+                stockMinimo: 10,
+                precioSeleccionado: 100
+            );
+
+            Assert.ThrowsException<ExcepcionItem>(() =>
+                _gestorControlClusters.ConfigurarCanonicoCluster(datos)
+            );
         }
     }
 }

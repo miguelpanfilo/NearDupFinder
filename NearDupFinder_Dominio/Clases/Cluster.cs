@@ -1,3 +1,5 @@
+using NearDupFinder_Dominio.Excepciones;
+
 namespace NearDupFinder_Dominio.Clases;
 
 public class Cluster
@@ -6,6 +8,9 @@ public class Cluster
     private readonly HashSet<Item> _pertenecientesCluster;
     public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
     public Item? Canonico { get; set; }
+    public string? ImagenCanonicaBase64 { get; set; }
+    public int? StockMinimoCanonico { get; set; }
+    public int? PrecioCanonico { get; set; }
 
     public int? UmbralStock { get; set; } = 5; // para prueba
     public string? EmailRevisorCreador { get; set; }// test
@@ -20,8 +25,7 @@ public class Cluster
     {
         _pertenecientesCluster = new HashSet<Item>();
     }
-
-
+    
     public void Agregar(Item item)
     {
         _pertenecientesCluster.Add(item);
@@ -33,10 +37,32 @@ public class Cluster
     }
     public int StockActual => _pertenecientesCluster.Sum(item => item.Stock);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
+    
+    public void ConfigurarCanonico(string? imagenBase64, int? stockMinimo, int? precio)
+    {
+        if (stockMinimo is < 0)
+            throw new ExcepcionItem("El stock mínimo no puede ser negativo.");
+
+        if (precio is < 0)
+            throw new ExcepcionItem("El precio no puede ser negativo.");
+
+        if (string.IsNullOrWhiteSpace(imagenBase64))
+            ImagenCanonicaBase64 = null;
+        else
+        {
+            var imagen = Imagen.CrearDesdeBase64(imagenBase64);
+            ImagenCanonicaBase64 = imagen.Base64;
+        }
+
+        StockMinimoCanonico = stockMinimo;
+        PrecioCanonico = precio;
+    }
+
 
     public bool FusionarCanonico(string emailUsuario)
     {
-        if (_pertenecientesCluster.Count == 0)
+        const int cantidadVaciaEnCluster = 0;
+        if (_pertenecientesCluster.Count == cantidadVaciaEnCluster)
         {
             Canonico = null;
             return false;
@@ -71,11 +97,12 @@ public class Cluster
 
     private static string? ElegirMejorCampo(string? actualCanonico, IEnumerable<string?> candidatos)
     {
+        const int largoStringVacio = 0;
         if (!string.IsNullOrWhiteSpace(actualCanonico)) return actualCanonico;
 
         var mejor = candidatos
             .Select(AseguraLargo)
-            .Where(v => v.Length > 0)
+            .Where(v => v.Length > largoStringVacio)
             .OrderByDescending(v => v.Length)
             .ThenBy(v => v, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();

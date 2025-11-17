@@ -17,6 +17,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_LogicaDeNegocio.Servicios.Exportacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
+using NearDupFInder_LogicaDeNegocio.Servicios.Inicializacion;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,7 +35,6 @@ builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
 builder.Services.AddScoped<IRepositorioAuditorias, RepositorioAuditorias>();
 builder.Services.AddScoped<GestorAuditoria>();
-builder.Services.AddScoped<GestorNotificaciones>();
 builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
     var gestorCatalogo = sp.GetRequiredService<GestorCatalogos>();
@@ -46,6 +46,7 @@ builder.Services.AddScoped<GestorControlClusters>(sp =>
 
     return new GestorControlClusters(gestorCatalogo, gestorAuditoria, gestorNotificaciones,sesionUsuarioActual, repoClusters, repoItems);
 });
+builder.Services.AddScoped<ControladorAuditoria>();
 builder.Services.AddScoped<ControladorDuplicados>(sp =>
 {
     var gestorAuditoria = sp.GetRequiredService<GestorAuditoria>();
@@ -118,7 +119,6 @@ builder.Services.AddScoped<IRepositorioClusters, RepositorioClusters>();
 builder.Services.AddScoped<IRepositorioSincronizacionIds, RepositorioSincronizacionIds>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioDuplicados, RepositorioDuplicados>();
-builder.Services.AddScoped<IRepositorioNotificaciones, RepositorioNotificaciones>();
 
 
 builder.Services.AddServerSideBlazor()

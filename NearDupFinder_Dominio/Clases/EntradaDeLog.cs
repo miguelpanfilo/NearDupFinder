@@ -4,7 +4,7 @@ public class EntradaDeLog
 {
     public int Id { get; set; }
     public DateTime Timestamp { get; init; } = DateTime.Now;
-    public string Usuario { get; init; } = "Desconocido";
+    public string Usuario { get; init; } = "No hay usuario logueado";
     public AccionLog Accion { get; init; }
     public string Detalles { get; init; } = string.Empty;
     public enum AccionLog
