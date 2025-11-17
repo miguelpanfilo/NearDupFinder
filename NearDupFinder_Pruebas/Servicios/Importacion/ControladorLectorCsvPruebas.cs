@@ -11,6 +11,7 @@ using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Importacion;
@@ -25,6 +26,7 @@ public class ControladorLectorCsvPruebas
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorControlClusters _gestorControlClusters = null!;
     private GestorDuplicados _gestorDuplicados = null!;
+    private GestorNotificaciones _gestorNotificaciones = null!;
     private ControladorLectorCsv _controladorLectorCsv = null!;
     private ControladorItems _controladorItems = null!;
     private SqlContext _context = null!;
@@ -49,16 +51,18 @@ public class ControladorLectorCsvPruebas
         IRepositorioItems repoItems           = new RepositorioItems(_context);
         IRepositorioClusters repoClusters     = new RepositorioClusters(_context);
         IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+        IRepositorioNotificaciones repoNotificaciones = new RepositorioNotificaciones(_context);
         _repoDuplicados = new RepositorioDuplicados(_context);
 
         _gestorAuditoria  = new GestorAuditoria(repoAuditorias, sesionUsuario);
         _gestorCatalogos  = new GestorCatalogos(repoCatalogos, repoClusters, repoItems);
         _gestorDuplicados = new GestorDuplicados(procesador);
-
+        _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
         _gestorControlClusters = new GestorControlClusters(
             _gestorCatalogos,
             _gestorAuditoria,
-            repoCatalogos,
+            _gestorNotificaciones,
+            sesionUsuario,
             repoClusters,
             repoItems
         );

@@ -10,6 +10,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_Pruebas.Utilidades;
 using NearDupFinder_Interfaces;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Items
@@ -24,6 +25,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
         private GestorControlClusters _gestorControlClusters = null!;
         private ControladorDuplicados _controladorDuplicados = null!;
         private GestorDuplicados _gestorDuplicados = null!;
+        private GestorNotificaciones _gestorNotificaciones = null!;
         private Catalogo _catalogo = null!;
         private HashSet<int> _idsItemsGlobal = null!;
         private SqlContext _context = null!;
@@ -42,6 +44,7 @@ namespace NearDupFinder_Pruebas.Servicios.Items
             IRepositorioCatalogos repoCatalogos = new RepositorioCatalogos(_context);
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
             IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+            IRepositorioNotificaciones repoNotificaciones = new RepositorioNotificaciones(_context);
             _repoDuplicados = new RepositorioDuplicados(_context);
 
             var sesionUsuario = new SesionUsuarioActual();
@@ -49,11 +52,12 @@ namespace NearDupFinder_Pruebas.Servicios.Items
 
             _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
             _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
-
+            _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
             _gestorControlClusters = new GestorControlClusters(
                 _gestorCatalogos,
                 _gestorAuditoria,
-                repoCatalogos,
+                _gestorNotificaciones,
+                sesionUsuario,
                 repoClusters,
                 repoItems
             );

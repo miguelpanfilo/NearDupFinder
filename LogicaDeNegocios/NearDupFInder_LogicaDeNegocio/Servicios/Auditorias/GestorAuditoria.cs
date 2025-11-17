@@ -8,7 +8,6 @@ namespace NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 public class GestorAuditoria
 {
     private readonly IRepositorioAuditorias _repositorio;
-    private string _usuarioActual = "No hay usuario logueado";
     private readonly SesionUsuarioActual _sesion;
     private readonly Dictionary<EntradaDeLog.AccionLog, string> _descripcionesAccion = new()
     {

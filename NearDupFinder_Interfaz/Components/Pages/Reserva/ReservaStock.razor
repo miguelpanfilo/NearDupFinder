@@ -3,8 +3,10 @@
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
+
 @inject GestorCatalogos GestorCatalogos
 @inject GestorControlClusters GestorControlClusters
+@inject NavigationManager NavManager
 @rendermode InteractiveServer
 
 <PageTitle>Reserva de Stock</PageTitle>
@@ -153,11 +155,6 @@
         }
     }
 
-    private void AbrirModalEditar(int idItem)
-    {
-        // TODO: abrir modal de edición de item canónico
-    }
-
     private void ReservarStock(int idItem)
     {
         _itemIdParaReserva = idItem;
@@ -178,6 +175,7 @@
         {
             GestorControlClusters.ReservarStockEnCluster(_catalogo!.Id, _itemIdParaReserva, _cantidadReserva);
             _mostrarModalReserva = false;
+            NavManager.NavigateTo(NavManager.Uri, forceLoad: false);
         }
         catch (Exception ex)
         {

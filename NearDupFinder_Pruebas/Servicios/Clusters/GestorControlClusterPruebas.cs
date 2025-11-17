@@ -10,6 +10,7 @@ using NearDupFinder_Interfaces;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
 using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Clusters
@@ -21,11 +22,14 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         private GestorCatalogos _gestorCatalogos = null!;
         private GestorAuditoria _gestorAuditoria = null!;
         private GestorControlClusters _gestorControlClusters = null!;
+        private GestorNotificaciones _gestorNotificaciones = null!;
         private Catalogo _catalogo = null!;
+        private SesionUsuarioActual _sesionUsuario = null!; 
 
         [TestInitialize]
         public void Setup()
         {
+            
             var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory($"BD_Clusters_{Guid.NewGuid()}");
             _context = SqlContextFactoryPruebas.CrearContexto(opciones);
             SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
@@ -36,20 +40,24 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             IRepositorioClusters repoClusters = new RepositorioClusters(_context);
             IRepositorioItems repoItems = new RepositorioItems(_context);
             IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+            
+            IRepositorioNotificaciones  repoNotificaciones = new RepositorioNotificaciones(_context);
+            
+            _sesionUsuario = new SesionUsuarioActual();
+            _sesionUsuario.Asignar("tester@correo.com");
 
-            var sesionUsuario = new SesionUsuarioActual();
-            sesionUsuario.Asignar("tester@correo.com");
-
-            _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
+            _gestorAuditoria = new GestorAuditoria(repoAuditorias, _sesionUsuario);
             _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
-
+            _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
+            
             _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Catálogo de Prueba"));
             _catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Catálogo de Prueba")!;
 
             _gestorControlClusters = new GestorControlClusters(
                 _gestorCatalogos,
                 _gestorAuditoria,
-                repoCatalogos,
+                _gestorNotificaciones,
+                _sesionUsuario,
                 repoClusters,
                 repoItems
             );
@@ -232,7 +240,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             Guardar();
             RefrescarCatalogo();
             var cluster = _catalogo.Clusters.First();
-            cluster.FusionarCanonico();
+            cluster.FusionarCanonico(_sesionUsuario.EmailActual);
             Guardar();
             RefrescarCatalogo();
             var datos = new DatosRemoverItemCluster(canonico.Id, _catalogo.Id);
@@ -435,7 +443,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
 
             var cluster = _catalogo.Clusters.First();
-            cluster.FusionarCanonico();
+            cluster.FusionarCanonico(_sesionUsuario.EmailActual);
             Guardar();
             RefrescarCatalogo();
 

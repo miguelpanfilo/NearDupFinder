@@ -11,6 +11,7 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Pruebas.Servicios.Items;
@@ -24,6 +25,7 @@ public class ControladorItemsPruebas
     private GestorAuditoria _gestorAuditoria = null!;
     private GestorControlClusters _gestorControlClusters = null!;
     private ControladorDuplicados _controladorDuplicados = null!;
+    private GestorNotificaciones _gestorNotificaciones = null!;
     private GestorDuplicados _gestorDuplicados = null!;
     private Catalogo _catalogo = null!;
     private HashSet<int> _idsItemsGlobal = null!;
@@ -43,18 +45,21 @@ public class ControladorItemsPruebas
         IRepositorioItems repoItems = new RepositorioItems(_context);
         IRepositorioClusters repoClusters = new RepositorioClusters(_context);
         IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
-
+        IRepositorioNotificaciones repoNotificaciones = new RepositorioNotificaciones(_context);
+        
         var sesionUsuario = new SesionUsuarioActual();
         sesionUsuario.Asignar("tester@correo.com");
 
         _gestorAuditoria = new GestorAuditoria(repoAuditorias, sesionUsuario);
         _gestorCatalogos = new GestorCatalogos(repoCatalogos,repoClusters, repoItems);
         _gestorDuplicados = new GestorDuplicados(procesador);
-
+        _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
+        
         _gestorControlClusters = new GestorControlClusters(
             _gestorCatalogos,
             _gestorAuditoria,
-            repoCatalogos,
+            _gestorNotificaciones,
+            sesionUsuario,
             repoClusters,
             repoItems
         );
