@@ -5,11 +5,13 @@ namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Email
 {
-    private readonly string _valor;
+    private Email() { }
+    
+    public string Valor { get; private set; } = null!;
 
-    private Email(string email)
+    public Email(string email)
     {    
-        _valor = email;
+        Valor = email;
     }
 
     public static Email Crear(string? email)
@@ -27,7 +29,7 @@ public sealed class Email
 
     public override string ToString()
     {
-        return _valor;
+        return Valor;
     }
     
     private static bool EsFormatoValido(string correo)
@@ -51,6 +53,6 @@ public sealed class Email
     
     public bool Igual(Email otroEmail)
     {
-        return string.Equals(this.ToString(), otroEmail.ToString());
+        return string.Equals(ToString(), otroEmail.ToString());
     }
 }

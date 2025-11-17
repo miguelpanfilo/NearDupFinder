@@ -1,0 +1,91 @@
+@page "/notificaciones"
+@rendermode InteractiveServer
+@using NearDupFInder_LogicaDeNegocio.DTOs.ParaNotificacion
+@using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones
+@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
+
+@inject NavigationManager NavManager
+@inject SesionUsuarioActual SesionUsuarioActual
+@inject GestorNotificaciones GestorNotificaciones
+
+<h3>Notificaciones</h3>
+
+@if (_estaCargando)
+{
+    <p>Cargando notificaciones...</p>
+}
+else if (!_notificaciones.Any())
+{
+    <div class="alert alert-info">
+        No tenés notificaciones pendientes.
+    </div>
+}
+else
+{
+    <button class="btn btn-sm btn-outline-primary mb-3" @onclick="MarcarTodasComoLeidas">
+        Marcar todas como leídas
+    </button>
+
+    @foreach (var n in _notificaciones)
+    {
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="mb-1">@n.Mensaje</p>
+                    <small class="text-muted">
+                        @n.FechaCreacion.ToString("dd/MM/yyyy HH:mm")
+                    </small>
+
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-primary mt-2" @onclick="() => MarcarComoLeida(n.Id)">
+                            Marcar como leída
+                        </button>
+                    </div>
+                </div>
+            </div>
+    }
+}
+
+@code {
+    private bool _estaCargando = true;
+    private List<DatosPublicosNotificacion> _notificaciones = new();
+
+    protected override void OnInitialized()
+    {
+        _estaCargando = true;
+
+        CargarNotificaciones();
+
+        _estaCargando = false;
+    }
+
+    private void CargarNotificaciones()
+    {
+        var email = SesionUsuarioActual.EmailActual;
+
+        if (!string.IsNullOrWhiteSpace(email) &&
+            email != "No hay usuario logueado")
+        {
+            _notificaciones = GestorNotificaciones
+                .ObtenerNoLeidas(email)
+                .ToList();
+        }
+    }
+
+    private void MarcarComoLeida(int id)
+    {
+        GestorNotificaciones.MarcarComoLeida(id);
+        NavManager.NavigateTo(NavManager.Uri, forceLoad: false);
+        CargarNotificaciones();
+    }
+
+    private void MarcarTodasComoLeidas()
+    {
+        foreach (var notif in _notificaciones)
+        {
+            GestorNotificaciones.MarcarComoLeida(notif.Id);
+        }
+        
+        NavManager.NavigateTo(NavManager.Uri, forceLoad: false);
+        CargarNotificaciones();
+    }
+}

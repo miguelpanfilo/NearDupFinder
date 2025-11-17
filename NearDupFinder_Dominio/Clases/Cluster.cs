@@ -1,32 +1,67 @@
+using NearDupFinder_Dominio.Excepciones;
+
 namespace NearDupFinder_Dominio.Clases;
 
 public class Cluster
 {
-    public int Id { get; }
+    public int Id { get; private set; }
     private readonly HashSet<Item> _pertenecientesCluster;
+    public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
     public Item? Canonico { get; set; }
-    public  IEnumerable<Item> PertenecientesCluster => _pertenecientesCluster;
+    public string? ImagenCanonicaBase64 { get; set; }
+    public int? StockMinimoCanonico { get; set; } = 0;
+    public int? PrecioCanonico { get; set; }
 
-    public  Cluster(int id, HashSet<Item> pertenecientesCluster)
+    public string? EmailRevisorCreador { get; set; }
+
+    public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {
         Id = id;
         _pertenecientesCluster = pertenecientesCluster;
+    }
+    
+    protected Cluster()
+    {
+        _pertenecientesCluster = new HashSet<Item>();
     }
     
     public void Agregar(Item item)
     {
         _pertenecientesCluster.Add(item);
     }
-    
+
     public void Remover(Item item)
     {
         _pertenecientesCluster.Remove(item);
     }
+    public int StockActual => _pertenecientesCluster.Sum(item => item.Stock);
     public bool Contiene(Item item) => _pertenecientesCluster.Contains(item);
     
-    public bool FusionarCanonico()
+    public void ConfigurarCanonico(string? imagenBase64, int? stockMinimo, int? precio)
     {
-        if (_pertenecientesCluster.Count == 0)
+        if (stockMinimo is < 0)
+            throw new ExcepcionItem("El stock mínimo no puede ser negativo.");
+
+        if (precio is < 0)
+            throw new ExcepcionItem("El precio no puede ser negativo.");
+
+        if (string.IsNullOrWhiteSpace(imagenBase64))
+            ImagenCanonicaBase64 = null;
+        else
+        {
+            var imagen = Imagen.CrearDesdeBase64(imagenBase64);
+            ImagenCanonicaBase64 = imagen.Base64;
+        }
+
+        StockMinimoCanonico = stockMinimo;
+        PrecioCanonico = precio;
+    }
+
+
+    public bool FusionarCanonico(string emailUsuario)
+    {
+        const int cantidadVaciaEnCluster = 0;
+        if (_pertenecientesCluster.Count == cantidadVaciaEnCluster)
         {
             Canonico = null;
             return false;
@@ -42,15 +77,18 @@ public class Cluster
         Canonico = nuevoCanonico;
 
         FusionarCampos(Canonico, _pertenecientesCluster);
+        if (cambio)
+        {
+            EmailRevisorCreador = emailUsuario;
+        }
 
-        return cambio; 
+        return cambio;
     }
     
     private void FusionarCampos(Item canonico, IReadOnlyCollection<Item> miembros)
     {
-        
-        canonico.Marca     = ElegirMejorCampo(canonico.Marca,     miembros.Select(m => m.Marca));
-        canonico.Modelo    = ElegirMejorCampo(canonico.Modelo,    miembros.Select(m => m.Modelo));
+        canonico.Marca = ElegirMejorCampo(canonico.Marca, miembros.Select(m => m.Marca));
+        canonico.Modelo = ElegirMejorCampo(canonico.Modelo, miembros.Select(m => m.Modelo));
         canonico.Categoria = ElegirMejorCampo(canonico.Categoria, miembros.Select(m => m.Categoria));
     }
 
@@ -58,16 +96,16 @@ public class Cluster
 
     private static string? ElegirMejorCampo(string? actualCanonico, IEnumerable<string?> candidatos)
     {
+        const int largoStringVacio = 0;
         if (!string.IsNullOrWhiteSpace(actualCanonico)) return actualCanonico;
 
         var mejor = candidatos
             .Select(AseguraLargo)
-            .Where(v => v.Length > 0)
+            .Where(v => v.Length > largoStringVacio)
             .OrderByDescending(v => v.Length)
             .ThenBy(v => v, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
-        
+
         return mejor ?? actualCanonico;
     }
-    
 }
