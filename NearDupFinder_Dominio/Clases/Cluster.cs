@@ -9,11 +9,10 @@ public class Cluster
     public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
     public Item? Canonico { get; set; }
     public string? ImagenCanonicaBase64 { get; set; }
-    public int? StockMinimoCanonico { get; set; }
+    public int? StockMinimoCanonico { get; set; } = 0;
     public int? PrecioCanonico { get; set; }
 
-    public int? UmbralStock { get; set; } = 5; // para prueba
-    public string? EmailRevisorCreador { get; set; }// test
+    public string? EmailRevisorCreador { get; set; }
 
     public Cluster(int id, HashSet<Item> pertenecientesCluster)
     {

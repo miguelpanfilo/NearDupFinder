@@ -35,6 +35,7 @@ builder.Services.AddScoped<GestorUsuarios>();
 builder.Services.AddScoped<GestorCatalogos>();
 builder.Services.AddScoped<IRepositorioAuditorias, RepositorioAuditorias>();
 builder.Services.AddScoped<GestorAuditoria>();
+builder.Services.AddScoped<GestorNotificaciones>();
 builder.Services.AddScoped<GestorControlClusters>(sp =>
 {
     var gestorCatalogo = sp.GetRequiredService<GestorCatalogos>();
@@ -119,6 +120,7 @@ builder.Services.AddScoped<IRepositorioClusters, RepositorioClusters>();
 builder.Services.AddScoped<IRepositorioSincronizacionIds, RepositorioSincronizacionIds>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioDuplicados, RepositorioDuplicados>();
+builder.Services.AddScoped<IRepositorioNotificaciones, RepositorioNotificaciones>();
 
 
 builder.Services.AddServerSideBlazor()
