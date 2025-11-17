@@ -1,8 +1,4 @@
-﻿@inject SesionUsuarioActual SesionUsuarioActual
-@inject GestorNotificaciones GestorNotificaciones
-@using Microsoft.AspNetCore.Components.Authorization
-@using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones
-@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
+﻿@using Microsoft.AspNetCore.Components.Authorization
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -15,17 +11,11 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         
-        <AuthorizeView Roles="Revisor, Administrador">
+        <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-1" href="notificaciones">
-                        <i class="bi bi-bell fs-5 lh-1" aria-hidden="true"></i>
-                        <span>Notificaciones</span>
-
-                        @if (_cantidadNoLeidas > 0)
-                        {
-                            <span class="badge bg-danger ms-1">@_cantidadNoLeidas</span>
-                        }
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
                     </NavLink>
                 </div>
             </Authorized>
@@ -108,17 +98,6 @@
                 </div>     
             </Authorized>
         </AuthorizeView>
-        
-        <AuthorizeView Roles="Operario, Administrador">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-1" href="ReservaStock">
-                        <i class="bi bi-box-seam fs-5 lh-1" aria-hidden="true"></i>
-                        <span>Reservas de Stock</span>
-                    </NavLink>
-                </div>     
-            </Authorized>
-        </AuthorizeView>
 
         <AuthorizeView Roles="Revisor, Administrador">
             <Authorized>
@@ -135,18 +114,3 @@
         
     </nav>
 </div>
-
-@code {
-private int _cantidadNoLeidas;
-
-    protected override void OnParametersSet()
-    {
-        var email = SesionUsuarioActual.EmailActual;
-
-        if (!string.IsNullOrWhiteSpace(email) &&
-        email != "No hay usuario logueado")
-        {
-            _cantidadNoLeidas = GestorNotificaciones.ObtenerNoLeidas(email).Count;
-        }
-    }
-}

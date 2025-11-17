@@ -5,31 +5,31 @@ namespace NearDupFinder_Dominio.Clases;
 public enum Rol
 {
     Administrador,
-    Revisor,
-    Operario
+    Revisor
 }
 
 public class Usuario
 {
     private static int _nextId = 1;
+    public int Id { get; }
+    public string Nombre { get; set; }
+    public string Apellido { get; set; }
+    public Email Email { get; }
+    public Fecha FechaNacimiento { get; set; }
 
-    public static void InicializarGeneradorIds(int idInicial)
-    {
-        if (idInicial > _nextId) 
-            _nextId = idInicial;
-    }
-    public int Id { get;  set; }
-    public string Nombre { get; set; } = null!;
-    public string Apellido { get; set; } = null!;
-    public Email Email { get; set; } = null!;
-    public Fecha FechaNacimiento { get; set; } = null!;
-    public Clave Clave { get; set; } = null!;
-  
-    public ICollection<Rol> Roles { get; private set; } = new List<Rol>();
+    private readonly HashSet<Rol> _roles = new();
     
-    public ICollection<RolPersistido> RolesPersistidos { get; private set; } = new List<RolPersistido>();
-
-    private Usuario() {} 
+    private Clave? _clave;
+    
+    private Usuario(string nombre, string apellido, Email email, Fecha fechaNacimiento)
+    {
+        Nombre = nombre;
+        Apellido = apellido;
+        Email = email;
+        FechaNacimiento = fechaNacimiento;
+        _clave = new Clave();
+        Id = _nextId++;
+    }
     
     public static Usuario Crear(string? nombre, string? apellido, Email email, Fecha fechaNacimiento)
     {
@@ -37,73 +37,28 @@ public class Usuario
             throw new ExcepcionDeUsuario("El nombre no puede estar vacío.");
         if (string.IsNullOrWhiteSpace(apellido))
             throw new ExcepcionDeUsuario("El apellido no puede estar vacío.");
-        
-        Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.Id = _nextId++;
-        nuevoUsuario.Nombre = nombre.Trim();
-        nuevoUsuario.Apellido = apellido.Trim();
-        nuevoUsuario.Email = email;
-        nuevoUsuario.FechaNacimiento = fechaNacimiento;
-        nuevoUsuario.Clave = new Clave();
 
-        return nuevoUsuario;
+        return new Usuario(nombre.Trim(), apellido.Trim(), email, fechaNacimiento);
     }
 
     public void AgregarRol(Rol rol)
     {
-        if (!Roles.Contains(rol)) 
-            Roles.Add(rol);
-        
-        String rolTexto = rol.ToString();
-        if (!RolesPersistidos.Any(rolPersistido => string.Equals(rolPersistido.Valor, rolTexto, StringComparison.OrdinalIgnoreCase)))
-            RolesPersistidos.Add(new RolPersistido(rolTexto));
+        _roles.Add(rol);
     }
-
+    
     public void RemoverRol(Rol rol)
     {
-        if (Roles.Contains(rol)) 
-            Roles.Remove(rol);
-        
-        String rolTexto = rol.ToString();
-        RolPersistido? rolPersistido = RolesPersistidos.FirstOrDefault(rPersistido => string.Equals(rPersistido.Valor, rolTexto, StringComparison.OrdinalIgnoreCase));
-        if (rolPersistido != null) 
-            RolesPersistidos.Remove(rolPersistido);
+        _roles.Remove(rol);
     }
-    public bool TieneRol(Rol rol) => Roles.Contains(rol);
+
+    public bool TieneRol(Rol rol)
+    {
+        return _roles.Contains(rol);
+    }
 
     public IReadOnlyCollection<Rol> ObtenerRoles()
     {
-        return Roles.ToList().AsReadOnly();
-    }
-    
-    public void SincronizarRolesDesdePersistencia()
-    {
-        const int cantidadNulaRolesPersistidos = 0;
-        Roles.Clear();
-
-        if (this.RolesPersistidos.Count == cantidadNulaRolesPersistidos)
-            return;
-
-        foreach (RolPersistido rolPersistido in RolesPersistidos)
-        {
-            string valorPersistido = rolPersistido.Valor;
-            Rol rolConvertido;
-            Enum.TryParse(valorPersistido, true, out rolConvertido);
-            bool yaExisteEnLaColeccion = Roles.Contains(rolConvertido);
-            if (!yaExisteEnLaColeccion)
-                Roles.Add(rolConvertido);
-        }
-    }
-
-    public void SincronizarRolesParaPersistencia()
-    {
-        RolesPersistidos.Clear();
-        foreach (Rol rol in Roles)
-        {
-            string nombreRol = rol.ToString();
-            RolPersistido rolPersistido = new RolPersistido (nombreRol);
-            RolesPersistidos.Add(rolPersistido);
-        }
+        return _roles.ToList().AsReadOnly();
     }
     
     public bool Igual(Usuario otroUsuario)
@@ -115,12 +70,12 @@ public class Usuario
     {
         if(string.IsNullOrEmpty(clave))
             return false;
-        return Clave.Verificar(clave);
+        return _clave!.Verificar(clave);
     }
     
     public bool CambiarClave(Clave nuevaClave)
     {
-        Clave = nuevaClave; 
+        _clave = nuevaClave; 
         return true;
     }
 }

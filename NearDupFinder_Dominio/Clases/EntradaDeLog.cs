@@ -2,9 +2,8 @@ namespace NearDupFinder_Dominio.Clases;
 
 public class EntradaDeLog
 {
-    public int Id { get; set; }
     public DateTime Timestamp { get; init; } = DateTime.Now;
-    public string Usuario { get; init; } = "No hay usuario logueado";
+    public string Usuario { get; init; } = "Desconocido";
     public AccionLog Accion { get; init; }
     public string Detalles { get; init; } = string.Empty;
     public enum AccionLog

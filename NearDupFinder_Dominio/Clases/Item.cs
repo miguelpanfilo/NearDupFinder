@@ -3,48 +3,26 @@ namespace NearDupFinder_Dominio.Clases;
 public class Item
 {
     private static int _siguienteId = 1;
-    private string? _titulo { get; set; }
-    private string? _descripcion { get; set; }
-    private string? _marca { get; set; }
-    private string? _modelo { get; set; }
-    private string? _categoria { get; set; }
-    public bool EstadoDuplicado { get; set; }
+    private string? _titulo;
+    private string? _descripcion;
+    private string? _marca;
+    private string? _modelo;
+    private string? _categoria;
+    public bool EstadoDuplicado = false;
     public int Id { get; private set; }
-    public int Stock { get; set; }
-    public int Precio { get; set; }
-    public string? ImagenBase64 { get; set; }
-
-    public static Item Crear(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null, int? stock = null, int? precio = null, string? imagenBase64 = null)
+    
+    public Item()
     {
-        int stockFinal = stock ?? 0;
-        int precioFinal = precio ?? 0;
-
-        var item = new Item(titulo, descripcion, stockFinal, marca, modelo, categoria);
-        item.AsignarId(_siguienteId++);
-
-        item.EditarPrecio(precioFinal);
-        item.EditarImagen(imagenBase64);
-
-        return item;
+        Id = _siguienteId++;
     }
-    
-    public Item() { }
-    
-    private void AsignarId(int id)
-    {
-        Id = id;
-    }
-    
-    public Item(string titulo, string descripcion, int stock, string? marca = null, string? modelo = null, string? categoria = null)
+    public Item(string titulo, string descripcion, string? marca = null, string? modelo = null, string? categoria = null)
     {
         Titulo = titulo;    
         Descripcion = descripcion; 
         Marca = marca;            
         Modelo = modelo;          
-        Categoria = categoria;
-        Stock = stock;
-        EstadoDuplicado = false;
-        Precio = 0;
+        Categoria = categoria;    
+        Id = _siguienteId++;
     }
     public string? Titulo
     {
@@ -53,9 +31,9 @@ public class Item
         {
             int tituloLargoInavlido = 120;
             if (string.IsNullOrWhiteSpace(value))
-                throw new ExcepcionItem("El Título es obligatorio");
+                throw new ExcepcionDeItem("El Título es obligatorio");
             if (value.Length > tituloLargoInavlido)
-                throw new ExcepcionItem("El Título no puede superar 120 caracteres.");
+                throw new ExcepcionDeItem("El Título no puede superar 120 caracteres.");
             _titulo = value;
         }
     }
@@ -66,9 +44,9 @@ public class Item
         {
             int descripcionLargoInavlido = 400;
             if (string.IsNullOrWhiteSpace(value))
-                throw new ExcepcionItem("La Descripción es obligatoria.");
+                throw new ExcepcionDeItem("La Descripción es obligatoria.");
             if (value.Length > descripcionLargoInavlido)
-                throw new ExcepcionItem("La descripcion no puede superar 400 caracteres.");
+                throw new ExcepcionDeItem("La descripcion no puede superar 400 caracteres.");
             _descripcion = value;
         }
     }
@@ -79,7 +57,7 @@ public class Item
         {
             int marcaLargoInavlido = 60;
             if (value != null && value.Length > marcaLargoInavlido)
-                throw new ExcepcionItem("La marca no puede superar 60 caracteres.");
+                throw new ExcepcionDeItem("La marca no puede superar 60 caracteres.");
             _marca = value;
         }
     }
@@ -90,7 +68,7 @@ public class Item
         {
             int modeloLargoInavlido = 60;
             if (value != null && value.Length > modeloLargoInavlido)
-                throw new ExcepcionItem("El modelo no puede superar 60 caracteres.");
+                throw new ExcepcionDeItem("El modelo no puede superar 60 caracteres.");
             _modelo = value;
         }
     }
@@ -101,7 +79,7 @@ public class Item
         {
             int categoriaLargoInavlido = 40;
             if (value != null && value.Length > categoriaLargoInavlido)
-                throw new ExcepcionItem("La categoria no puede superar 40 caracteres.");
+                throw new ExcepcionDeItem("La categoria no puede superar 40 caracteres.");
             _categoria = value;
         }
     }
@@ -121,68 +99,24 @@ public class Item
         _siguienteId = primerIdDeUnItemCreado;
     }
     public void EditarTitulo(string? nuevoTitulo) => Titulo = nuevoTitulo;
-    
     public void EditarDescripcion(string? nuevaDescripcion) => Descripcion = nuevaDescripcion;
-    
     public void EditarMarca(string? nuevaMarca) => Marca = nuevaMarca;
-    
     public void EditarModelo(string? nuevoModelo) => Modelo = nuevoModelo;
-    
     public void EditarCategoria(string? nuevaCategoria) => Categoria = nuevaCategoria;
-    
-    public void EditarImagen(string? nuevaImagenBase64)
-    {
-        CambiarImagenDesdeBase64(nuevaImagenBase64);
-    }
-
-    public void EditarPrecio(int nuevoPrecio)
-    {
-        if (nuevoPrecio < 0)
-            throw new ExcepcionItem("El precio no puede ser negativo.");
-
-        Precio = nuevoPrecio;
-    }
-
-    public void EditarStock(int nuevoStock)
-    {
-        if (nuevoStock < 0)
-            throw new ExcepcionItem("El stock no puede ser negativo.");
-
-        Stock = nuevoStock;
-    }
-    
     public void AjustarId(int id)
     {
         int idItemInexistente = 0;
         if (id == idItemInexistente)
-            throw new ExcepcionItem("El id no es valido");
-        
+            throw new ExcepcionDeItem("El id no es valido");
         Id = id;
+        _siguienteId = id + 1;
     }
     public void ModificarIdEnCasoDeImportacion(int id)
     {
         int idItemInexistente = 0;
         if (id == idItemInexistente)
-            throw new ExcepcionItem("El id no es valido");
-        
+            throw new ExcepcionDeItem("El id no es valido");
         _siguienteId--;
         Id = id;
-    }
-    public static void ResetearContadorId(int nuevoValor)
-    {
-        if (nuevoValor > 0)
-            _siguienteId = nuevoValor;
-    }
-
-    private void CambiarImagenDesdeBase64(string? base64)
-    {
-        if (string.IsNullOrWhiteSpace(base64))
-        {
-            ImagenBase64 = null;
-            return;
-        }
-
-        Imagen imagen = Imagen.CrearDesdeBase64(base64);
-        ImagenBase64 = imagen.Base64;
     }
 }
