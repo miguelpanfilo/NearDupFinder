@@ -1,4 +1,5 @@
 using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Dominio.Excepciones;
 using NearDupFInder_LogicaDeNegocio.Servicios.ReservasStock;
 
 namespace NearDupFinder_Pruebas.Servicios.Rerservas
@@ -73,11 +74,9 @@ namespace NearDupFinder_Pruebas.Servicios.Rerservas
             var cluster = ClusterCon(i5, i1, i4);
 
             int reservar = 4;
-
-            // Act
+            
             bool ok = GestorReservas.Aplicar(cluster, reservar);
 
-            // Assert
             Assert.IsTrue(ok);
             Assert.AreEqual(0, i1.Stock);
             Assert.AreEqual(0, i4.Stock);
@@ -108,7 +107,70 @@ namespace NearDupFinder_Pruebas.Servicios.Rerservas
             );
             Assert.IsTrue(ex.Message.ToLower().Contains("stock insuficiente"));
         }
+        
+        [TestMethod]
+        public void Aplicar_ClusterSinPrecioOUmbral_LanzaExcepcionCluster()
+        {
+            var item = ItemCon(1, 5);
 
+            var cluster = new Cluster(
+                id: 999,
+                pertenecientesCluster: new HashSet<Item> { item }
+            );
+
+            cluster.PrecioCanonico = null;
+            cluster.StockMinimoCanonico = null;
+
+            var ex = Assert.ThrowsException<ExcepcionCluster>(
+                () => GestorReservas.Aplicar(cluster, 3)
+            );
+
+            Assert.IsTrue(
+                ex.Message.Contains("precio y/o umbral canónico", StringComparison.OrdinalIgnoreCase)
+            );
+        }
+        [TestMethod]
+        public void Aplicar_ClusterSinPrecio_LanzaExcepcionCluster()
+        {
+            var item = ItemCon(1, 5);
+
+            var cluster = new Cluster(
+                id: 999,
+                pertenecientesCluster: new HashSet<Item> { item }
+            );
+
+            cluster.PrecioCanonico = null;
+            cluster.StockMinimoCanonico = 10;
+
+            var ex = Assert.ThrowsException<ExcepcionCluster>(
+                () => GestorReservas.Aplicar(cluster, 3)
+            );
+
+            Assert.IsTrue(
+                ex.Message.Contains("precio y/o umbral canónico", StringComparison.OrdinalIgnoreCase)
+            );
+        }
+        [TestMethod]
+        public void Aplicar_ClusterSinUmbral_LanzaExcepcionCluster()
+        {
+            var item = ItemCon(1, 5);
+
+            var cluster = new Cluster(
+                id: 999,
+                pertenecientesCluster: new HashSet<Item> { item }
+            );
+
+            cluster.PrecioCanonico = 100;
+            cluster.StockMinimoCanonico = null;
+
+            var ex = Assert.ThrowsException<ExcepcionCluster>(
+                () => GestorReservas.Aplicar(cluster, 3)
+            );
+
+            Assert.IsTrue(
+                ex.Message.Contains("precio y/o umbral canónico", StringComparison.OrdinalIgnoreCase)
+            );
+        }
 
         private static Item ItemCon(int id, int stock)
         {
@@ -120,7 +182,16 @@ namespace NearDupFinder_Pruebas.Servicios.Rerservas
 
         private static Cluster ClusterCon(params Item[] items)
         {
-            return new Cluster(id: 999, pertenecientesCluster: new HashSet<Item>(items));
+            var cluster = new Cluster(
+                id: 999,
+                pertenecientesCluster: new HashSet<Item>(items)
+            );
+
+            cluster.PrecioCanonico = 100;
+            cluster.StockMinimoCanonico = 1;
+
+            return cluster;
         }
+        
     }
 }
