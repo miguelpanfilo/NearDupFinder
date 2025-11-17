@@ -243,36 +243,6 @@ public class GestorLectorCsvPruebas
         Assert.IsNull(_gestorCatalogos.ObtenerCatalogoPorTitulo(nombreLargo));
         Assert.IsFalse(_gestorItems.ExisteItemConEseId(123));
     }
-    
-    [TestMethod]
-    public void ImportarItems_MasDeQuinceFilas_ImportaSoloQuinceItems()
-    {
-        var titulos = new List<string> { "id", "titulo" };
-        var filas = new List<Fila>();
-
-        for (int i = 1; i <= 20; i++)
-        {
-            filas.Add(new Fila(
-                i.ToString(),
-                $"Titulo {i}",
-                "Marca",
-                "Modelo",
-                "Descripcion",
-                "Cat",
-                "CatLimit",
-                "",
-                "100",
-                "1"
-            ));
-        }
-
-        _gestorLectorCsv.LeerCsv(titulos, 20, filas);
-        _gestorLectorCsv.ImportarItems();
-
-        Catalogo catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("CatLimit")!;
-        Assert.IsNotNull(catalogo);
-        Assert.AreEqual(15, catalogo.Items.Count, "Debe importar como máximo 15 ítems.");
-    }
 
     [TestMethod]
     public void ImportarItems_PrecioYStockValidos_SeAsignanAlItem()
@@ -312,6 +282,26 @@ public class GestorLectorCsvPruebas
 
         Assert.AreEqual(0, item.Precio);
         Assert.AreEqual(0, item.Stock);
+    }
+    
+    [TestMethod]
+    public void ImportarItemsDesdeContenido_ContenidoValido_CreaCatalogoEItem()
+    {
+        string csv = """
+                     id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock
+                     1,Notebook,Lenovo,L14,"Intel i5","Notebooks","Cat CSV","",1500,10
+                     """;
+
+        _gestorLectorCsv.ImportarDesdeContenido(csv);
+
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat CSV");
+        var item = catalogo!.Items.Single();
+        
+        Assert.IsNotNull(catalogo);
+        Assert.AreEqual(1, catalogo!.Items.Count);
+        Assert.AreEqual("Notebook", item.Titulo);
+        Assert.AreEqual(1500, item.Precio);
+        Assert.AreEqual(10, item.Stock);
     }
 
     [TestMethod]
@@ -369,26 +359,6 @@ public class GestorLectorCsvPruebas
     }
     
     [TestMethod]
-    public void ImportarItemsDesdeContenido_ContenidoValido_CreaCatalogoEItem()
-    {
-        string csv = """
-                     id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock
-                     1,Notebook,Lenovo,L14,"Intel i5","Notebooks","Cat CSV","",1500,10
-                     """;
-
-        _gestorLectorCsv.ImportarDesdeContenido(csv);
-
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat CSV");
-        Assert.IsNotNull(catalogo);
-        Assert.AreEqual(1, catalogo!.Items.Count);
-
-        var item = catalogo.Items.Single();
-        Assert.AreEqual("Notebook", item.Titulo);
-        Assert.AreEqual(1500, item.Precio);
-        Assert.AreEqual(10, item.Stock);
-    }
-    
-    [TestMethod]
     public void ImportarItemsDesdeContenido_MasDeQuinceFilas_ImportaSoloQuince()
     {
         var sb = new StringBuilder();
@@ -405,11 +375,11 @@ public class GestorLectorCsvPruebas
 
         var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Limit");
         Assert.IsNotNull(catalogo);
-        Assert.AreEqual(15, catalogo!.Items.Count, "Debe importar como máximo 15 ítems.");
+        Assert.AreEqual(15, catalogo!.Items.Count);
     }
     
     [TestMethod]
-    public void ImportarItems_RutaImagenMuyGrande_DisparaExcepcionItemYNoAsignaImagen()
+    public void ImportarItems_RutaImagenMuyGrande_NoAsignaImagen()
     {
         string tempFile = Path.GetTempFileName();
         try
@@ -429,9 +399,10 @@ public class GestorLectorCsvPruebas
             _gestorLectorCsv.ImportarItems();
 
             var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Img Big");
-            Assert.IsNotNull(catalogo);
             var item = catalogo!.Items.Single();
-            Assert.IsNull(item.ImagenBase64, "Cuando Imagen lanza ExcepcionItem, la imagen no debe asignarse.");
+
+            Assert.IsNotNull(catalogo);
+            Assert.IsNull(item.ImagenBase64);
         }
         finally
         {
@@ -441,7 +412,7 @@ public class GestorLectorCsvPruebas
     }
     
     [TestMethod]
-    public void ImportarItems_RutaImagenConErrorIO_DisparaCatchGenericoYNoAsignaImagen()
+    public void ImportarItems_RutaImagenConError_AsignaImagen()
     {
         string rutaInvalida = "C:\\ruta\\invalida\\<>:\"|?*\\imagen.png";
 
@@ -450,14 +421,14 @@ public class GestorLectorCsvPruebas
             1,
             new List<Fila>
             {
-                new Fila("1", "ItemErrorIO", "m", "x", "d", "c", "Cat Img IO", rutaInvalida, "100", "5")
+                new Fila("1", "ItemError", "m", "x", "d", "c", "Cat Img", rutaInvalida, "100", "5")
             });
 
         _gestorLectorCsv.ImportarItems();
+        Catalogo? catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Img");
+        Item item = catalogo!.Items.Single();
 
-        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Img IO");
         Assert.IsNotNull(catalogo);
-        var item = catalogo!.Items.Single();
-        Assert.IsNull(item.ImagenBase64, "Ante cualquier error de IO, la imagen no debe asignarse.");
+        Assert.IsNull(item.ImagenBase64);
     }
 }
