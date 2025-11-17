@@ -93,20 +93,17 @@
                                 }
                             </ul>
 
-                            <div class="d-flex justify-content-end mb-2">
-                                <button class="btn btn-sm btn-primary"
-                                        @onclick="() => AbrirModalCluster(cluster)"
-                                        title="@(cluster.Canonico is null ? "Fusionar cluster" : "Editar cluster")">
-                                    @if (cluster.Canonico is null)
-                                    {
-                                        <i class="bi bi-arrow-repeat me-1"></i>
-                                        <span>Fusionar</span>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-pencil-square me-1"></i>
-                                        <span>Editar cluster</span>
-                                    }
+                            <div class="d-flex justify-content-end gap-2 mb-2">
+                                <button class="btn btn-sm btn-primary d-flex align-items-center"
+                                        @onclick="() => AbrirModalCluster(cluster, false)">
+                                    <i class="bi bi-arrow-repeat me-1"></i>
+                                    <span>Fusionar</span>
+                                </button>
+
+                                <button class="btn btn-sm btn-secondary d-flex align-items-center"
+                                        @onclick="() => AbrirModalCluster(cluster, true)">
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                    <span>Editar cluster</span>
                                 </button>
                             </div>
 
@@ -264,13 +261,13 @@
         StateHasChanged();
     }
 
-    private void AbrirModalCluster(DatosPublicosCluster cluster)
+    private void AbrirModalCluster(DatosPublicosCluster cluster, bool soloEditar)
     {
         _clusterSeleccionado = cluster;
         _mostrarModalCluster = true;
         _mensajeErrorModalCluster = null;
 
-        _soloEditarConfig = cluster.Canonico is not null;
+        _soloEditarConfig = soloEditar;
 
         _stockMinimo = cluster.StockMinimoCanonico;
         _precioSeleccionado = cluster.PrecioCanonico;
@@ -287,6 +284,7 @@
             _idItemImagenSeleccionada = null;
         }
     }
+
 
     private void CerrarModalCluster()
     {

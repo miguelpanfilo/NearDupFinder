@@ -9,7 +9,7 @@ public class Cluster
     public IReadOnlyCollection<Item> PertenecientesCluster => _pertenecientesCluster;
     public Item? Canonico { get; set; }
     public string? ImagenCanonicaBase64 { get; set; }
-    public int? StockMinimoCanonico { get; set; } = 0;
+    public int? StockMinimoCanonico { get; set; }
     public int? PrecioCanonico { get; set; }
 
     public string? EmailRevisorCreador { get; set; }
