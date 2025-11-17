@@ -375,21 +375,25 @@ public class ControladorItemsPruebas
 
         var itemCreado = _controladorItems.CrearItem(dto);
 
-        var logs = _gestorAuditoria.ObtenerTodos();
-        Assert.IsTrue(logs.Count >= cantidadValidaDeAuditoriasRegistradas, "Debe haberse registrado al menos un log por la creación del ítem.");
+        var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
+
+        Assert.IsTrue(logs.Count >= cantidadValidaDeAuditoriasRegistradas,
+            "Debe haberse registrado al menos un log por la creación del ítem.");
 
         var logAlta = logs.FirstOrDefault(l => l.Accion == EntradaDeLog.AccionLog.AltaItem);
         Assert.IsNotNull(logAlta, "Debe existir un log de AltaItem.");
 
-        var detalleEsperado = $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' en catálogo '{_catalogo.Titulo}'.";
+        var detalleEsperado =
+            $"Alta de ítem: Item agregado: '{itemCreado.Titulo}' en catálogo '{_catalogo.Titulo}'.";
 
         Assert.AreEqual(detalleEsperado, logAlta.Detalles);
     }
 
+
     [TestMethod]
     public void ActualizarItem_DeberiaRegistrarLogDeEdicion()
     {
-        var item = new Item("Original", "Desc original",0);
+        var item = new Item("Original", "Desc original", 0);
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
 
@@ -405,17 +409,21 @@ public class ControladorItemsPruebas
 
         _controladorItems.ActualizarItemEnCatalogo(dto);
 
-        var logs = _gestorAuditoria.ObtenerTodos();
-        var logsEditar = logs.Where(l => l.Accion == EntradaDeLog.AccionLog.EditarItem).ToList();
+        var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
+
+        var logsEditar = logs
+            .Where(l => l.Accion == EntradaDeLog.AccionLog.EditarItem)
+            .ToList();
 
         Assert.AreEqual(1, logsEditar.Count, "Debe registrarse exactamente 1 log de edición.");
         StringAssert.Contains(logsEditar[0].Detalles, "Ítem actualizado");
     }
 
+
     [TestMethod]
     public void EliminarItem_DeberiaRegistrarLogDeEliminacion()
     {
-        var item = new Item("A borrar", "Descripción del item",0);
+        var item = new Item("A borrar", "Descripción del item", 0);
         _catalogo.AgregarItem(item);
         _idsItemsGlobal.Add(item.Id);
 
@@ -429,12 +437,13 @@ public class ControladorItemsPruebas
 
         _controladorItems.EliminarItem(dtoEliminar);
 
-        var logs = _gestorAuditoria.ObtenerTodos();
+        var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
         const int primeraAuditoriaRegistrada = 0;
 
         Assert.AreEqual(EntradaDeLog.AccionLog.EliminarItem, logs[primeraAuditoriaRegistrada].Accion);
         StringAssert.Contains(logs[primeraAuditoriaRegistrada].Detalles, "Item eliminado");
     }
+
     
     [TestMethod]
     public void AgregarDuplicado_SePersisteEnBaseDeDatos()
