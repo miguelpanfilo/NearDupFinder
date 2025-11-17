@@ -1,11 +1,9 @@
 @page "/usuarios/{id:int}/editar/"
-
 @rendermode InteractiveServer
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorUsuario
-@using NearDupFInder_LogicaDeNegocio.DTOs.ParaUsuarios
-@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
+@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_LogicaDeNegocio
 @attribute [Authorize(Roles = "Administrador")]
-@inject GestorUsuarios GestorUsuarios;
+@inject Sistema Sistema
 @inject NavigationManager Nav
 
 <PageTitle>Editar Usuario</PageTitle>
@@ -47,11 +45,6 @@
             <input class="form-check-input" type="checkbox" id="rolRevisor" @bind="_rolRevisor" />
             <label class="form-check-label" for="rolRevisor">Revisor</label>
         </div>
-        
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="rolOperario" @bind="_rolOperario" />
-            <label class="form-check-label" for="rolOperario">Operario</label>
-        </div>
     </div>
     
     <div class="mb-3">
@@ -68,7 +61,7 @@
     [Parameter]
     public int Id { get; set; }
 
-    private DatosPublicosUsuario? _usuarioActual;
+    private Usuario? _usuarioActual;
     
     private string _nombre = string.Empty;
     private string _apellido = string.Empty;
@@ -78,43 +71,35 @@
     
     private bool _rolAdmin;
     private bool _rolRevisor;
-    private bool _rolOperario;
-
     
     private bool _error;
     private string _mensajeDeError = string.Empty;
     
     protected override void OnInitialized()
     {
-        _usuarioActual = GestorUsuarios.ObtenerUsuarioPorId(Id);
+        _usuarioActual = Sistema.BuscarUsuarioPorId(Id);
         _nombre = _usuarioActual!.Nombre;
         _apellido = _usuarioActual.Apellido;
-        _email = _usuarioActual.Email;
-        _fecha = _usuarioActual.FechaNacimiento;
-        _rolAdmin = GestorUsuarios.UsuarioTieneRol(_usuarioActual.Email, "Administrador");
-        _rolRevisor = GestorUsuarios.UsuarioTieneRol(_usuarioActual.Email, "Revisor");
-        _rolOperario = GestorUsuarios.UsuarioTieneRol(_usuarioActual.Email, "Operario");
-
+        _email = _usuarioActual.Email.ToString();
+        _fecha = _usuarioActual.FechaNacimiento.ToDateTime();
+        _rolAdmin = Sistema.UsuarioTieneRol(_usuarioActual, Rol.Administrador);
+        _rolRevisor = Sistema.UsuarioTieneRol(_usuarioActual, Rol.Revisor);
     }
     
     private void Editar()
     {
         CerrarAlerta();
         
-        List<string> roles = [];
+        List<Rol> roles = [];
         if (_rolAdmin)   
-            roles.Add("Administrador");
+            roles.Add(Rol.Administrador);
         if (_rolRevisor)
-            roles.Add("Revisor");
-        if (_rolOperario)
-            roles.Add("Operario");
+            roles.Add(Rol.Revisor);
 
         if (!ValidarCampos(_nombre, _apellido, _fecha))
             return;
         
-        bool seModificoUsuarioCorrectamente = GestorUsuarios.ModificarUsuario(new DatosEdicionUsuario(_email,_nombre, _apellido, 
-            _fecha!.Value.Year, _fecha.Value.Month, 
-            _fecha.Value.Day, _clave, roles));
+        bool seModificoUsuarioCorrectamente = Sistema.ModificarUsuario(_nombre, _apellido, _email, _fecha!.Value.Year, _fecha.Value.Month, _fecha.Value.Day, _clave, roles);
         
         if (seModificoUsuarioCorrectamente)
         {
@@ -158,7 +143,7 @@
             return false;
         }
         
-        if (fecha is null || fecha > DateTime.Today)
+        if (fecha is null)
         {
             NotificarError("La fecha ingresada es incorrecta");
             return false;

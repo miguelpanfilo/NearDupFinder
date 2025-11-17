@@ -8,16 +8,16 @@ public sealed class Clave
 {
     private const int LargoMinimo = 8;
 
-    public string Hash { get; private set; }
-    
+    private readonly string _hash;
+
     public Clave()
     {
-        Hash = String.Empty;
+        _hash = String.Empty;
     }
 
     private Clave(string hash)
     {
-        Hash = hash;
+        _hash = hash;
     }
     
     public static bool Validar(string? clave)
@@ -57,11 +57,11 @@ public sealed class Clave
     
     public bool Verificar(string clave)
     {
-        return string.Equals(HashearMd5(clave), Hash);
+        return string.Equals(HashearMd5(clave), _hash);
     }
 
     public string ObtenerHash()
     {
-        return Hash;
+        return _hash;
     }
 }

@@ -5,17 +5,15 @@ namespace NearDupFinder_Dominio.Clases;
 
 public sealed class Fecha
 {
-    private Fecha() {}
-
-    public int Anio { get; private set; }
-    public int Mes  { get; private set; }
-    public int Dia  { get; private set; }
+    private readonly int _anio;
+    private readonly int _mes;
+    private readonly int _dia;
     
-    public Fecha(int anio, int mes, int dia)
+    private Fecha(int anio, int mes, int dia)
     {
-        Anio = anio;
-        Mes  = mes;
-        Dia  = dia;
+        _anio = anio;
+        _mes  = mes;
+        _dia  = dia;
     }
     
     public static Fecha Crear(int anio, int mes, int dia)
@@ -33,11 +31,11 @@ public sealed class Fecha
 
     public override string ToString()
     {
-        return new DateTime(Anio, Mes, Dia).ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
+        return new DateTime(_anio, _mes, _dia).ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
     }
 
     public DateTime ToDateTime()
     {
-        return new DateTime(Anio, Mes, Dia);
+        return new DateTime(_anio, _mes, _dia);
     }
 }

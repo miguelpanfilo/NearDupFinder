@@ -1,16 +1,9 @@
 @page "/lista-items"
+@using NearDupFinder_Dominio.Clases
 @using NearDupFinder_Dominio.Excepciones
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
-@using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
-@using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
-@using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados
-@using NearDupFinder_LogicaDeNegocio.Servicios.Items
-@inject GestorControlClusters GestorControlClusters
-@inject ControladorDuplicados ControladorDuplicados
-@inject GestorCatalogos GestorCatalogos
-@inject ControladorItems ControladorItems
+@using NearDupFinder_LogicaDeNegocio
+@using NearDupFInder_LogicaDeNegocio.DTO
+@inject Sistema sistema
 @rendermode InteractiveServer
 
 <PageTitle>Items</PageTitle>
@@ -29,7 +22,7 @@
             @bind="_catalogoSeleccionadoTitulo" 
             @bind:after="CargarItemsDeCatalogo">
         <option value="">-- Seleccione un catálogo --</option>
-        @foreach (var cat in GestorCatalogos.ObtenerCatalogos())
+        @foreach (var cat in sistema.Catalogos)
         {
             <option value="@cat.Titulo">@cat.Titulo</option>
         }
@@ -59,9 +52,6 @@
             <th>Título</th>
             <th>Descripción</th>
             <th>Categoría</th>
-            <th>Stock</th>
-            <th>Precio</th>
-            <th>Imagen</th> 
             <th>Estado Duplicado</th>
             <th>Está en un cluster</th>
             <th class="text-end">Acciones</th>
@@ -75,20 +65,16 @@
                 <td>@itemDto.Titulo</td>
                 <td>@itemDto.Descripcion</td>
                 <td>@itemDto.Categoria</td>
-                <td>@itemDto.Stock</td>
-                <td>@itemDto.Precio</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(itemDto.ImagenBase64))
-                    {
-                        <img src="data:image/png;base64,@itemDto.ImagenBase64"
-                             style="max-width: 50px; max-height: 50px;" />
-                    }
-                </td>
                 <td>@(itemDto.EstadoDuplicado ? "Con candidatos" : "Sin candidatos")</td>
                 <td>
-                    @(GestorControlClusters.ItemEstaEnCluster(_catalogoSeleccionado.Id, itemDto.Id)
-                        ? "En clúster"
-                        : "No pertenece a clúster")
+                    @if (sistema.ItemEstaEnCluster(_catalogoSeleccionado, itemDto))
+                    {
+                        <text>En clúster</text>
+                    }
+                    else
+                    {
+                        <text>No pertence a clúster</text>
+                    }
                 </td>
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
@@ -146,25 +132,6 @@
                         <label>Modelo:</label>
                         <input class="form-control" @bind="_itemEditado.Modelo"/>
                     </div>
-                    <div class="mb-3">
-                        <label>Stock:</label>
-                        <input class="form-control" type="number" min="0" @bind="_itemEditado.Stock"/>
-                    </div>
-                    <div class="mb-3">
-                        <label>Precio:</label>
-                        <input class="form-control" type="number" min="0" @bind="_itemEditado.Precio"/>
-                    </div>
-                    <div class="mb-3">
-                        <label>Imagen:</label>
-                        <InputFile OnChange="OnInputFileChangeEditar"/>
-                        @if (!string.IsNullOrEmpty(_itemEditado?.ImagenBase64))
-                        {
-                            <div class="mt-2">
-                                <img src="data:image/png;base64,@_itemEditado.ImagenBase64"
-                                     style="max-width: 150px; max-height: 150px;" />
-                            </div>
-                        }
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" @onclick="GuardarCambios">Guardar</button>
@@ -178,21 +145,23 @@
 @code {
     private string? _mensajeErrorModal = "";
     private bool _mostrarModalEditar;
-    private DatosItemListaItems? _itemEditado;
-    private DatosPublicosCatalogo? _catalogoSeleccionado;
+    private ItemDto? _itemEditado;
+    private Catalogo? _catalogoSeleccionado;
     private string _catalogoSeleccionadoTitulo = "";
-    private List<DatosItemListaItems> _itemsFiltradosEnTabla = new();
+    private List<ItemDto> _itemsFiltradosEnTabla = new();
     private List<string> _categorias = new();
     private string _textoBusqueda = string.Empty;
     private string _categoriaAFiltrar = string.Empty;
 
     private void CargarItemsDeCatalogo()
     {
-        _catalogoSeleccionado = GestorCatalogos.ObtenerCatalogoDtoPorTitulo(_catalogoSeleccionadoTitulo);
+        _catalogoSeleccionado = sistema.ObtenerCatalogoPorTitulo(_catalogoSeleccionadoTitulo);
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = ControladorItems.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id);
+            _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
+                .Select(item => ItemDto.FromEntity(item))
+                .ToList();
 
             _categorias = ObtenerCategoriasUnicas(_catalogoSeleccionado);
             ActualizarEstadoDuplicados();
@@ -208,7 +177,7 @@
     {
         if (_catalogoSeleccionado == null) return;
 
-        _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
+        _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
             .Where(item =>
                 item.Descripcion != null
                 &&
@@ -221,7 +190,7 @@
                 (string.IsNullOrWhiteSpace(_categoriaAFiltrar) ||
                  item.Categoria == _categoriaAFiltrar)
             )
-            .Select(item => DatosItemListaItems.FromEntity(item))
+            .Select(item => ItemDto.FromEntity(item))
             .ToList();
 
         
@@ -235,8 +204,8 @@
 
         if (_catalogoSeleccionado != null)
         {
-            _itemsFiltradosEnTabla = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id)
-                .Select(item => DatosItemListaItems.FromEntity(item))
+            _itemsFiltradosEnTabla = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado)
+                .Select(item => ItemDto.FromEntity(item))
                 .ToList();
         }
     }
@@ -260,27 +229,14 @@
         _mostrarModalEditar = false;
         _itemEditado = null;
     }
-    
-    private void AbrirModalEditar(DatosItemListaItems listaItems)
-    {
-        _itemEditado = new DatosItemListaItems
-        {
-            Id = listaItems.Id,
-            Titulo = listaItems.Titulo,
-            Descripcion = listaItems.Descripcion,
-            Categoria = listaItems.Categoria,
-            Marca = listaItems.Marca,
-            Modelo = listaItems.Modelo,
-            Stock = listaItems.Stock,
-            Precio = listaItems.Precio,
-            ImagenBase64 = listaItems.ImagenBase64,
-            EstadoDuplicado = listaItems.EstadoDuplicado
-        };
 
+    private void AbrirModalEditar(ItemDto dto)
+    {
+        _itemEditado = dto;
         _mostrarModalEditar = true;
         _mensajeErrorModal = null;
     }
-    
+
     private void GuardarCambios()
     {
         if (_itemEditado == null || _catalogoSeleccionado == null) return;
@@ -293,22 +249,13 @@
                 return;
             }
 
-            ControladorItems.ActualizarItemEnCatalogo(
-                new DatosActualizarItem(
-                    IdCatalogo: _catalogoSeleccionado.Id,
-                    IdItem: _itemEditado.Id,
-                    Titulo: _itemEditado.Titulo,
-                    Descripcion: _itemEditado.Descripcion,
-                    Categoria: _itemEditado.Categoria,
-                    Marca: _itemEditado.Marca,
-                    Modelo: _itemEditado.Modelo,
-                    Stock: _itemEditado.Stock,
-                    Precio: _itemEditado.Precio,
-                    ImagenBase64: _itemEditado.ImagenBase64
-                )
-            );
+            sistema.ActualizarItemEnCatalogo(_catalogoSeleccionado, _itemEditado);
+
+            var itemOriginal = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado).First(i => i.Id == _itemEditado.Id);
+            sistema.ActualizarDuplicadosPara(_catalogoSeleccionado, itemOriginal);
 
             ActualizarEstadoDuplicados();
+
             ReconstruirCategorias();
             AplicarFiltros();
 
@@ -318,7 +265,7 @@
 
             StateHasChanged();
         }
-        catch (ExcepcionItem ex)
+        catch (ExcepcionDeItem ex)
         {
             _mensajeErrorModal = ex.Message;
         }
@@ -337,61 +284,29 @@
 
         foreach (var item in _itemsFiltradosEnTabla)
         {
-            var original = GestorCatalogos.ObtenerItemsDelCatalogo(_catalogoSeleccionado.Id).FirstOrDefault(i => i.Id == item.Id);
+            var original = sistema.ObtenerItemsDelCatalogo(_catalogoSeleccionado).FirstOrDefault(i => i.Id == item.Id);
             if (original != null)
                 item.EstadoDuplicado = original.EstadoDuplicado;
         }
     }
-    
-    private List<string> ObtenerCategoriasUnicas(DatosPublicosCatalogo catalogo)
+    private List<string> ObtenerCategoriasUnicas(Catalogo catalogo)
     {
-        return GestorCatalogos.ObtenerItemsDelCatalogo(catalogo.Id)
+        return sistema.ObtenerItemsDelCatalogo(catalogo)
             .Select(i => i.Categoria)
             .Where(c => !string.IsNullOrEmpty(c))
             .Distinct()
             .ToList()!;
     }
     
-    private void EliminarItem(DatosItemListaItems? item)
+    private void EliminarItem(ItemDto? item)
     {
         if (_catalogoSeleccionado == null || item == null) return;
 
-        ControladorItems.EliminarItem(new DatosEliminarItem(_catalogoSeleccionado.Id, item.Id));
+        sistema.EliminarItem(_catalogoSeleccionado.Titulo, item);
 
         ReconstruirCategorias();
-        
         AplicarFiltros();
-        
         StateHasChanged();
     }
-    
-    private async Task OnInputFileChangeEditar(InputFileChangeEventArgs e)
-    {
-        _mensajeErrorModal = "";
 
-        if (_itemEditado is null)
-            return;
-
-        var file = e.File;
-        if (file is null)
-        {
-            _itemEditado.ImagenBase64 = null;
-            return;
-        }
-
-        try
-        {
-            using var stream = file.OpenReadStream(maxAllowedSize: 1024 * 1024);
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-            var bytes = ms.ToArray();
-
-            _itemEditado.ImagenBase64 = Convert.ToBase64String(bytes);
-        }
-        catch
-        {
-            _mensajeErrorModal = "Error al cargar la imagen. Verifique el tamaño y el formato.";
-            _itemEditado.ImagenBase64 = null;
-        }
-    }
 }
