@@ -118,10 +118,9 @@ public class ControladorItems
         var itemAEliminar = catalogo.Items.FirstOrDefault(i => i.Id == itemDtoAEliminar.IdItem)
                             ?? throw new ExcepcionItem("El item no existe en el catálogo.");
         
+        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar, catalogo.Id);
         _gestorControlClusters.BorrarItemDelCluster(new DatosRemoverItemCluster(itemDtoAEliminar.IdItem, catalogo.Id));
         catalogo.EliminarItem(itemAEliminar);
-
-        _controladorDuplicados.EliminarDuplicadosPrevios(itemAEliminar, catalogo.Id);
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
         _gestorItems.EliminarItem(itemAEliminar);
 
