@@ -1,6 +1,4 @@
 @page "/lista-items"
-@using NearDupFinder_Dominio.Excepciones
-@using NearDupFinder_LogicaDeNegocio.DTOs.ParaDuplicados
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorItems
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
@@ -318,7 +316,7 @@
 
             StateHasChanged();
         }
-        catch (ExcepcionItem ex)
+        catch (Exception ex)
         {
             _mensajeErrorModal = ex.Message;
         }

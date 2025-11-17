@@ -1,7 +1,6 @@
 @page "/Cluster"
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorCatalogo
 @using NearDupFinder_LogicaDeNegocio.DTOs.ParaGestorControlClusters
-@using NearDupFinder_Dominio.Excepciones
 @using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos
 @using NearDupFInder_LogicaDeNegocio.Servicios.Clusters
 @inject GestorCatalogos GestorCatalogos;
@@ -325,13 +324,10 @@
             RefrescarClustersPorTitulo(_catalogo.Titulo);
             StateHasChanged();
         }
-        catch (ExcepcionItem ex)
+        catch (Exception ex)
         {
             _mensajeErrorModalCluster = ex.Message;
         }
-        catch (ExcepcionCatalogo ex)
-        {
-            _mensajeErrorModalCluster = ex.Message;
-        }
+        
     }
 }
