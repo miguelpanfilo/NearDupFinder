@@ -186,7 +186,5 @@ public class GestionAuditoriaPruebas
         Assert.AreEqual(accionEsperada, log.Accion, "La acción registrada no coincide.");
         Assert.AreEqual(detallesEsperados, log.Detalles, "Los detalles registrados no coinciden.");
     }
-
-
     
 }
