@@ -220,14 +220,11 @@ public class GestorCatalogoPruebas
     [TestMethod]
     public void Catalogos_DevuelveLosCatalogosExistentes_OkTest()
     {
-        // Arrange
         _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat1"));
         _gestorCatalogos.CrearCatalogo(new DatosCatalogoCrear("Cat2"));
 
-        // Act
         var catalogos = _gestorCatalogos.ObtenerCatalogos();
 
-        // Assert
         Assert.AreEqual(2, catalogos.Count, "La cantidad de catálogos devuelta no es la esperada.");
         Assert.IsTrue(catalogos.Any(c => c.Titulo == "Cat1"), "No se encontró el catálogo 'Cat1'.");
         Assert.IsTrue(catalogos.Any(c => c.Titulo == "Cat2"), "No se encontró el catálogo 'Cat2'.");

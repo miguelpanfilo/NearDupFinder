@@ -45,9 +45,9 @@ namespace NearDupFinder_LogicaDeNegocio.Servicios.Exportacion
 
             hojaVirtualExcel.SheetView.FreezeRows(1);
 
-            using var archivoEnMemoriaRam = new MemoryStream();
-            hojaExcel.SaveAs(archivoEnMemoriaRam);
-            return archivoEnMemoriaRam.ToArray();
+            using var archivoEnMemoria = new MemoryStream();
+            hojaExcel.SaveAs(archivoEnMemoria);
+            return archivoEnMemoria.ToArray();
         }
     }
 }

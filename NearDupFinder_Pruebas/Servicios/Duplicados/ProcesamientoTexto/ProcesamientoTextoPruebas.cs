@@ -1,5 +1,3 @@
-
-
 using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
 
 namespace NearDupFinder_Pruebas.Servicios.Duplicados.ProcesamientoTexto
@@ -128,13 +126,5 @@ namespace NearDupFinder_Pruebas.Servicios.Duplicados.ProcesamientoTexto
                 salida
             );
         }
-
-
-
-
-
-
-
-
     }
 }

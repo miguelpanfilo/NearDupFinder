@@ -4,7 +4,6 @@ using NearDupFinder_Dominio.Clases;
 using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
 using NearDupFinder_Pruebas.Utilidades;
-using System.Linq;
 
 namespace NearDupFinder_Pruebas.Dominio.Log;
 [TestClass]

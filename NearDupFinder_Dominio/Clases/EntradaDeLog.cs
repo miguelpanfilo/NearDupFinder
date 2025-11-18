@@ -18,8 +18,8 @@ public class EntradaDeLog
         AltaUsuario,
         EditarUsuario,
         DeteccionDuplicados,
-        EliminarUser
-    
+        EliminarUser,
+        ReservarStock
     }
 }
 
