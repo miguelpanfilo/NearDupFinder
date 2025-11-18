@@ -22,7 +22,14 @@ public class SqlContext : DbContext
     {
         if (Database.IsRelational())
         {
-            Database.Migrate();
+            try
+            {
+                Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error aplicando migraciones: {ex.Message}");
+            }
         }
     }
 

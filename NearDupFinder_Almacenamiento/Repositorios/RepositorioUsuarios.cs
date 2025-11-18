@@ -72,7 +72,8 @@ namespace NearDupFinder_Almacenamiento.Repositorios
                 .Select(usuario => (int?)usuario.Id)
                 .Max();
 
-            return idMaximo ?? 0;        }
+            return idMaximo ?? 0;        
+        }
 
         public void Agregar(Usuario usuario)
         {
