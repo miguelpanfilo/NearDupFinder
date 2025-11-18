@@ -5,6 +5,7 @@
 @using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
 @attribute [Authorize(Roles = "Administrador")]
 @inject GestorUsuarios GestorUsuarios
+@inject SesionUsuarioActual SesionUsuarioActual
 
 <PageTitle>Usuarios</PageTitle>
 
@@ -63,12 +64,13 @@
                            aria-label="Editar" title="Editar">
                             <i class="bi bi-pencil-square fs-6 lh-1"></i>
                         </a>
-
-                        <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
-                                @onclick="(() => EliminarUsuario(usuario.Email))"
-                                aria-label="Eliminar" title="Eliminar">
-                            <i class="bi bi-trash3 fs-6 lh-1"></i>
-                        </button>
+                        @if(!usuario.Email.Equals(SesionUsuarioActual.EmailActual)){
+                            <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                    @onclick="(() => EliminarUsuario(usuario.Email))"
+                                    aria-label="Eliminar" title="Eliminar">
+                                <i class="bi bi-trash3 fs-6 lh-1"></i>
+                            </button>
+                        }
                     </div>
                 </td>
             </tr>
