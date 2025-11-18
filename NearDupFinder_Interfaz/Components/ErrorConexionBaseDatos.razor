@@ -14,13 +14,8 @@
 </div>
 
 @code {
-    [Parameter] public Action? OnReintentar { get; set; }
-
     private void Reintentar()
     {
-        Console.WriteLine(">>> HIZO CLICK EN REINTENTAR <<<");
-        OnReintentar?.Invoke();
-
         Nav.NavigateTo("/", forceLoad: true);
     }
 }

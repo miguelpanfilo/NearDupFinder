@@ -99,11 +99,7 @@
             LimpiarCampos();
             TraerCatalogos();
         }
-        catch (InvalidOperationException ex)
-        {
-            NotificarError(ex.Message);
-        }
-        catch (ArgumentException ex)
+        catch (Exception ex)
         {
             NotificarError(ex.Message);
         }
