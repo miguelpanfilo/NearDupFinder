@@ -34,12 +34,3 @@
 </body>
 
 </html>
-
-@code {
-    private ErrorBoundary? _errorBoundary;
-
-    private void OnReintentar()
-    {
-        _errorBoundary?.Recover();
-    }
-}
