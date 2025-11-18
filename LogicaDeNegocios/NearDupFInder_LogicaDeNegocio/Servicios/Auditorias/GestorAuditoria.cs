@@ -22,6 +22,8 @@ public class GestorAuditoria
         { EntradaDeLog.AccionLog.DescartarDuplicado, "Descartar duplicado" },
         { EntradaDeLog.AccionLog.EditarItem, "Edición de ítem" },
         { EntradaDeLog.AccionLog.EliminarUser, "Eliminación de usuario" },
+        { EntradaDeLog.AccionLog.ReservarStock, "Reserva de stock" }
+
     };
 
     public GestorAuditoria(IRepositorioAuditorias repositorio, SesionUsuarioActual sesion)

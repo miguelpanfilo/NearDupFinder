@@ -20,10 +20,4 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="AuditoriaEndPoints.cs">
-        <DependentUpon>appsettings.Development.json</DependentUpon>
-      </Compile>
-    </ItemGroup>
-
 </Project>

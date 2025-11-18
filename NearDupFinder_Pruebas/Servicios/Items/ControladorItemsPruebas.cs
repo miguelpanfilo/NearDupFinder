@@ -504,10 +504,7 @@ public class ControladorItemsPruebas
 
         Assert.AreEqual($"Catálogo no encontrado (Id={catalogoInexistente}).", ex.Message);
     }
-
-
-
-
+    
 }
 
   

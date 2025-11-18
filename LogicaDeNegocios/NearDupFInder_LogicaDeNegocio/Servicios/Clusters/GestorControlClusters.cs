@@ -262,7 +262,7 @@ public class GestorControlClusters
             }
 
             _gestorAuditoria.RegistrarLog(
-                EntradaDeLog.AccionLog.FusionarCluster,
+                EntradaDeLog.AccionLog.ReservarStock,
                 $"Se reservó el stock del Item '{cluster.Canonico?.Titulo}' (Cluster Id={cluster.Id}).");
         }
     }

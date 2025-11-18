@@ -256,7 +256,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         public void BorrarItemDelCluster_ItemRemovidoEraCanonico_ReseteaConfiguracionCanonico_OkTest()
         {
             Item canonico = Item.Crear("Candidato", "descripcion muy larga");
-            // "YQ==" = "a" en Base64
+
             canonico.EditarImagen("YQ==");
             canonico.EditarPrecio(500);
 
@@ -271,7 +271,7 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
             RefrescarCatalogo();
 
             var cluster = _catalogo.Clusters.First();
-            // "Yg==" = "b" en Base64
+
             cluster.ConfigurarCanonico("Yg==", 10, 999);
             cluster.FusionarCanonico("tester@correo.com");
             Guardar();
@@ -330,12 +330,10 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         {
             Item i1 = Item.Crear("A", "descripcion muy larga");
             i1.EditarPrecio(100);
-            // "YQ==" = "a"
             i1.EditarImagen("YQ==");
 
             Item i2 = Item.Crear("B", "corta");
             i2.EditarPrecio(200);
-            // "Yg==" = "b"
             i2.EditarImagen("Yg==");
 
             _catalogo.AgregarItem(i1);
@@ -665,11 +663,11 @@ namespace NearDupFinder_Pruebas.Servicios.Clusters
         public void ConfigurarCanonicoCluster_ValoresValidos_SetearImagenStockYPrecioEnCluster_OkTest()
         {
             Item a = Item.Crear("A", "desc A");
-            a.EditarImagen("YQ=="); // "a"
+            a.EditarImagen("YQ=="); 
             a.EditarPrecio(100);
 
             Item b = Item.Crear("B", "desc B");
-            b.EditarImagen("Yg=="); // "b"
+            b.EditarImagen("Yg=="); 
             b.EditarPrecio(200);
 
             _catalogo.AgregarItem(a);

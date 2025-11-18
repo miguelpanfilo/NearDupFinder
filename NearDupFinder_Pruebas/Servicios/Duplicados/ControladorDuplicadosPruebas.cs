@@ -244,17 +244,14 @@ public class ControladorDuplicadosPruebas
         Item itemB = CrearItem(catalogo.Id, "b", "d", "m", "x", "c");
         Item itemC = CrearItem(catalogo.Id, "c", "d", "m", "x", "c");
 
-        // Sembrar el par en BD (no en memoria)
         _repoDuplicados.AgregarDuplicado(new ParDuplicado(
             itemA, itemB, 0.88f, TipoDuplicado.PosibleDuplicado,
             1.0f, 1.0f, 1, 1,
             new[] { "t" }, new[] { "d" },
             catalogo.Id));
 
-        // Act
         _controladorDuplicados.ActualizarEstadoDuplicadosEnCatalogo(catalogo);
 
-        // Assert
         Assert.IsTrue(itemA.EstadoDuplicado);
         Assert.IsTrue(itemB.EstadoDuplicado);
         Assert.IsFalse(itemC.EstadoDuplicado);
