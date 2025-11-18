@@ -7,8 +7,10 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <base href="/"/>
+    <title>NearDupFinder</title>
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css"/>
-    <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="NearDupFinder_Interfaz.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png"/>
@@ -17,9 +19,27 @@
 
 <body>
 <CascadingAuthenticationState>
-    <Routes />
+    <ErrorBoundary>
+        <ChildContent>
+            <Routes />
+        </ChildContent>
+
+        <ErrorContent>
+            <ErrorConexionBaseDatos @rendermode="InteractiveServer" />
+        </ErrorContent>
+    </ErrorBoundary>
 </CascadingAuthenticationState>
+
 <script src="_framework/blazor.web.js"></script>
 </body>
 
 </html>
+
+@code {
+    private ErrorBoundary? _errorBoundary;
+
+    private void OnReintentar()
+    {
+        _errorBoundary?.Recover();
+    }
+}

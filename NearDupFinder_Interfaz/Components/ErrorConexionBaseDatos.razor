@@ -1,0 +1,26 @@
+@inject NavigationManager Nav
+
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
+    <h2 class="text-danger mb-3">No hay conexión con la base de datos</h2>
+
+    <p class="mb-3 text-center">
+        Parece que la base de datos no está disponible.<br />
+        Verificá que el contenedor de Docker esté levantado.
+    </p>
+
+    <button class="btn btn-primary" @onclick="Reintentar">
+        Reintentar
+    </button>
+</div>
+
+@code {
+    [Parameter] public Action? OnReintentar { get; set; }
+
+    private void Reintentar()
+    {
+        Console.WriteLine(">>> HIZO CLICK EN REINTENTAR <<<");
+        OnReintentar?.Invoke();
+
+        Nav.NavigateTo("/", forceLoad: true);
+    }
+}
