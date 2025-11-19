@@ -1,0 +1,188 @@
+using NearDupFinder_Almacenamiento;
+using NearDupFinder_Almacenamiento.Repositorios;
+using NearDupFinder_Dominio.Clases;
+using NearDupFinder_Pruebas.Utilidades;
+using NearDupFinder_Interfaces;
+using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
+using NearDupFInder_LogicaDeNegocio.Servicios.Catalogos;
+using NearDupFInder_LogicaDeNegocio.Servicios.Clusters;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados;
+using NearDupFinder_LogicaDeNegocio.Servicios.Duplicados.ProcesamientoTexto;
+using NearDupFinder_LogicaDeNegocio.Servicios.Importacion;
+using NearDupFinder_LogicaDeNegocio.Servicios.Items;
+using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones;
+using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios;
+
+namespace NearDupFinder_Pruebas.Servicios.Importacion;
+
+[TestClass]
+public class ControladorLectorCsvPruebas
+{
+    private GestorLectorCsv _gestorLectorCsv = null!;
+    private GestorCatalogos _gestorCatalogos = null!;
+    private GestorItems _gestorItems = null!;
+    private ControladorDuplicados _controladorDuplicados = null!;
+    private GestorAuditoria _gestorAuditoria = null!;
+    private GestorControlClusters _gestorControlClusters = null!;
+    private GestorDuplicados _gestorDuplicados = null!;
+    private GestorNotificaciones _gestorNotificaciones = null!;
+    private ControladorLectorCsv _controladorLectorCsv = null!;
+    private ControladorItems _controladorItems = null!;
+    private SqlContext _context = null!;
+
+    private readonly HashSet<int> _idsItemsGlobal = new();
+    private IRepositorioDuplicados _repoDuplicados = null!;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _idsItemsGlobal.Clear();
+
+        var opciones = SqlContextFactoryPruebas.CrearOpcionesInMemory("BD_LectorCsv");
+        _context = SqlContextFactoryPruebas.CrearContexto(opciones);
+        SqlContextFactoryPruebas.LimpiarBaseDeDatos(_context);
+
+        var sesionUsuario = new SesionUsuarioActual();
+        sesionUsuario.Asignar("tester@correo.com");
+        var procesador = new ProcesadorTexto();
+
+        IRepositorioCatalogos repoCatalogos   = new RepositorioCatalogos(_context);
+        IRepositorioItems repoItems           = new RepositorioItems(_context);
+        IRepositorioClusters repoClusters     = new RepositorioClusters(_context);
+        IRepositorioAuditorias repoAuditorias = new RepositorioAuditorias(_context);
+        IRepositorioNotificaciones repoNotificaciones = new RepositorioNotificaciones(_context);
+        _repoDuplicados = new RepositorioDuplicados(_context);
+
+        _gestorAuditoria  = new GestorAuditoria(repoAuditorias, sesionUsuario);
+        _gestorCatalogos  = new GestorCatalogos(repoCatalogos, repoClusters, repoItems);
+        _gestorDuplicados = new GestorDuplicados(procesador);
+        _gestorNotificaciones = new GestorNotificaciones(repoNotificaciones);
+        _gestorControlClusters = new GestorControlClusters(
+            _gestorCatalogos,
+            _gestorAuditoria,
+            _gestorNotificaciones,
+            sesionUsuario,
+            repoClusters,
+            repoItems
+        );
+
+        _gestorItems = new GestorItems(repoItems);
+
+        _controladorDuplicados = new ControladorDuplicados(
+            _gestorAuditoria,
+            _gestorDuplicados,
+            _gestorCatalogos,
+            _gestorControlClusters,
+            _repoDuplicados
+        );
+
+        _controladorItems = new ControladorItems(
+            _gestorItems,
+            _gestorCatalogos,
+            _controladorDuplicados,
+            _gestorControlClusters,
+            _gestorAuditoria);
+
+        _gestorLectorCsv = new GestorLectorCsv(_gestorCatalogos, _gestorItems, _controladorItems);
+        _controladorLectorCsv = new ControladorLectorCsv(_gestorLectorCsv);
+    }
+
+    [TestMethod]
+    public void ImportarItemsDesdeCsv_CreaCatalogoEImportaUnItem()
+    {
+        string contenido = 
+            "id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock\n" +
+            "101,notebook,lenovo,l14,intel i5,notebooks,Cat Import,,,";
+
+        _controladorLectorCsv.ImportarItemsDesdeContenido(contenido);
+
+        Catalogo catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat Import")!;
+        Assert.IsNotNull(catalogo);
+        Assert.AreEqual(1, catalogo.Items.Count);
+    }
+
+    [TestMethod]
+    public void ImportarItemsDesdeCsv_RegistraId()
+    {
+        string contenido =
+            "id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock\n" +
+            "101,notebook,lenovo,l14,intel i5,notebooks,Cat Import,,,";
+    
+        _controladorLectorCsv.ImportarItemsDesdeContenido(contenido);
+
+        Assert.IsTrue(_gestorItems.ExisteItemConEseId(101));
+    }
+
+    [TestMethod]
+    public void ImportarItemsDesdeCsv_LimpiaListasDelLector()
+    {
+        string contenido =
+            "id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock\n" +
+            "1,t,m,x,d,c,Cat,,,";
+    
+        _controladorLectorCsv.ImportarItemsDesdeContenido(contenido);
+
+        Assert.AreEqual(0, _gestorLectorCsv.Titulos.Count);
+        Assert.AreEqual(0, _gestorLectorCsv.Filas.Count);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_CreaCatalogoEItem()
+    {
+        string csv = """
+                     id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock
+                     200,Mouse,Logitech,G203,"Mouse gamer","Periféricos","Cat DesdeContenido","",800,3
+                     """;
+
+        _controladorLectorCsv.ImportarItemsDesdeContenido(csv);
+
+        var catalogo = _gestorCatalogos.ObtenerCatalogoPorTitulo("Cat DesdeContenido");
+        Assert.IsNotNull(catalogo);
+        Assert.AreEqual(1, catalogo!.Items.Count);
+
+        var item = catalogo.Items.Single();
+        Assert.AreEqual("Mouse", item.Titulo);
+        Assert.AreEqual(800, item.Precio);
+        Assert.AreEqual(3, item.Stock);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_LimpiaEstadoDelGestorLector()
+    {
+        string csv = """
+                     id,titulo,marca,modelo,descripción,categoría,catalogo,imagen,precio,stock
+                     1,Teclado,Logitech,K120,"Teclado básico","Periféricos","Cat Limpieza","",500,2
+                     """;
+
+        _controladorLectorCsv.ImportarItemsDesdeContenido(csv);
+
+        Assert.AreEqual(0, _gestorLectorCsv.Titulos.Count);
+        Assert.AreEqual(0, _gestorLectorCsv.Filas.Count);
+        Assert.AreEqual(0, _gestorLectorCsv.CantidadDeFilas);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_CsvVacio_LanzaInvalidOperationException()
+    {
+        string contenidoVacio = string.Empty;
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(
+            () => _controladorLectorCsv.ImportarItemsDesdeContenido(contenidoVacio)
+        );
+
+        Assert.AreEqual("El archivo CSV está vacío.", ex.Message);
+    }
+    
+    [TestMethod]
+    public void ImportarDesdeContenido_SinEncabezados_LanzaInvalidOperationException()
+    {
+        string contenido = @",,,,
+        1,notebook,lenovo,l14,intel i5,notebooks,Cat Import";
+
+        var ex = Assert.ThrowsException<InvalidOperationException>(
+            () => _controladorLectorCsv.ImportarItemsDesdeContenido(contenido)
+        );
+
+        Assert.AreEqual("El CSV no contiene encabezados.", ex.Message);
+    }
+}

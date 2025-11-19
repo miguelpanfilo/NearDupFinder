@@ -8,11 +8,16 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LogicaDeNegocios\NearDupFInder_LogicaDeNegocio\NearDupFInder_LogicaDeNegocio.csproj" />
-      <ProjectReference Include="..\NearDupFinder_Dominio\NearDupFinder_Dominio.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="CsvHelper" Version="33.1.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     </ItemGroup>
 
 </Project>
