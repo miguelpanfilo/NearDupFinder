@@ -1,14 +1,12 @@
 @page "/usuarios"
 
 @rendermode InteractiveServer
-@using NearDupFInder_LogicaDeNegocio.DTOs.ParaUsuarios
-@using NearDupFInder_LogicaDeNegocio.Servicios.Usuarios
+@using NearDupFinder_Dominio.Clases
+@using NearDupFinder_LogicaDeNegocio
 @attribute [Authorize(Roles = "Administrador")]
-@inject GestorUsuarios GestorUsuarios
-@inject SesionUsuarioActual SesionUsuarioActual
+@inject Sistema Sistema
 
 <PageTitle>Usuarios</PageTitle>
-
 
 <div class="d-flex align-items-center mb-3">
     <h1 class="h1 mb-0">Usuarios</h1>
@@ -41,16 +39,16 @@
         <tbody>
         @foreach (var usuario in _usuarios!)
         {
-            IReadOnlyCollection<string> roles = usuario.Roles;
+            var roles = Sistema.ObtenerRolesDeUsuario(usuario);
             <tr>
                 <td>@usuario.Nombre</td>
                 <td>@usuario.Apellido</td>
-                <td>@usuario.Email</td>
-                <td>@usuario.FechaNacimiento</td>
+                <td>@usuario.Email.ToString()</td>
+                <td>@usuario.FechaNacimiento.ToString()</td>
                 <td>
                     @if (roles.Any())
                     {
-                        @string.Join(", ", roles.Select(rol => rol))
+                        @string.Join(", ", roles.Select(r => r.ToString()))
                     }
                     else
                     {
@@ -60,17 +58,16 @@
                 <td class="text-end text-nowrap">
                     <div class="d-inline-flex gap-2">
                         <a class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center"
-                           href="usuarios/@GestorUsuarios.ObtenerIdDeUsuario(usuario.Email)/editar"
+                           href="usuarios/@usuario.Id/editar"
                            aria-label="Editar" title="Editar">
                             <i class="bi bi-pencil-square fs-6 lh-1"></i>
                         </a>
-                        @if(!usuario.Email.Equals(SesionUsuarioActual.EmailActual)){
-                            <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
-                                    @onclick="(() => EliminarUsuario(usuario.Email))"
-                                    aria-label="Eliminar" title="Eliminar">
-                                <i class="bi bi-trash3 fs-6 lh-1"></i>
-                            </button>
-                        }
+
+                        <button class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                @onclick="(() => EliminarUsuario(usuario.Email))"
+                                aria-label="Eliminar" title="Eliminar">
+                            <i class="bi bi-trash3 fs-6 lh-1"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -80,23 +77,22 @@
 </div>
 
 @code {
-    private IReadOnlyList<DatosPublicosUsuario>? _usuarios;
+    private IReadOnlyList<Usuario>? _usuarios;
     private bool _error;
     private string _mensajeDeError = string.Empty;
 
 
     protected override void OnInitialized()
     {
-        _usuarios = GestorUsuarios.ObtenerUsuarios();
+        _usuarios = Sistema.ObtenerUsuarios();
     }
 
-    private void EliminarUsuario(string correo)
+    private void EliminarUsuario(Email correo)
     {
-        bool seEliminoElUsuario = GestorUsuarios.BorrarUsuario(correo);
+        bool seEliminoElUsuario = Sistema.EliminarUsuario(correo.ToString());
         if(!seEliminoElUsuario)
             NotificarError("Error al intentar eliminar el usuario.");
-        
-        _usuarios = GestorUsuarios.ObtenerUsuarios();
+        _usuarios = Sistema.ObtenerUsuarios();
         StateHasChanged();
     }
     

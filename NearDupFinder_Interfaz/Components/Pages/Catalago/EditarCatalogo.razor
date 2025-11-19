@@ -78,7 +78,11 @@ else
 
 
             Nav.NavigateTo("/CrearCatalogo");
-        }catch (Exception ex)
+        }catch (InvalidOperationException ex)
+        {
+            NotificarError(ex.Message);
+        }
+        catch (ArgumentException ex)
         {
             NotificarError(ex.Message);
         }
