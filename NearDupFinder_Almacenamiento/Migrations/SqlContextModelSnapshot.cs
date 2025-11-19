@@ -58,9 +58,6 @@ namespace NearDupFinder_Almacenamiento.Migrations
                     b.Property<string>("EmailRevisorCreador")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UmbralStock")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImagenCanonicaBase64")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ImagenCanonicaBase64");
