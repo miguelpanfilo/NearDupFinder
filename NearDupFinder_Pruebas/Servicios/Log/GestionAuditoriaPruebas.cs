@@ -128,7 +128,7 @@ public class GestionAuditoriaPruebas
     [TestMethod]
     public void RegistrarLog_DeberiaUsarUsuarioActual()
     {
-        _gestorAuditoria.AsignarUsuarioActual("nuevo@correo.com");
+        _sesion.Asignar("nuevo@correo.com");
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Prueba de log");
 
         var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
@@ -141,8 +141,8 @@ public class GestionAuditoriaPruebas
     [TestMethod]
     public void LogoutUsuario_DeberiaRestablecerUsuarioPredeterminado()
     {
-        _gestorAuditoria.AsignarUsuarioActual("otro@correo.com");
-        _gestorAuditoria.DesasignarUsuario();
+        _sesion.Asignar("otro@correo.com");
+        _sesion.Desasignar();
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.EditarUsuario, "Logout");
 
         var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();
@@ -154,8 +154,8 @@ public class GestionAuditoriaPruebas
     [TestMethod]
     public void RegistrarLog_DeberiaUsarUltimoUsuarioSeteado_Correcto()
     {
-        _gestorAuditoria.AsignarUsuarioActual("primero@correo.com");
-        _gestorAuditoria.AsignarUsuarioActual("segundo@correo.com");
+        _sesion.Asignar("primero@correo.com");
+        _sesion.Asignar("segundo@correo.com");
         _gestorAuditoria.RegistrarLog(EntradaDeLog.AccionLog.AltaUsuario, "Cambio de usuario");
 
         var logs = _gestorAuditoria.ObtenerTodasLasEntidades().ToList();

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using NearDupFinder_Interfaz.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,15 @@ using NearDupFInder_LogicaDeNegocio.Servicios.Inicializacion;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IProcesadorTexto, ProcesadorTexto>();
-builder.Services.AddSingleton<SesionUsuarioActual>();
+builder.Services.AddScoped<SesionUsuarioActual>(sp =>
+{
+    var accessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var sesion = new SesionUsuarioActual();
+    var email = accessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value;
+    if (!string.IsNullOrWhiteSpace(email))
+        sesion.Asignar(email);
+    return sesion;
+});
 builder.Services.AddSingleton<GestorDuplicados>(sp =>
 {
     var procesador = sp.GetRequiredService<IProcesadorTexto>();
@@ -123,7 +132,7 @@ builder.Services.AddScoped<IRepositorioNotificaciones, RepositorioNotificaciones
 
 
 builder.Services.AddServerSideBlazor()
-    .AddCircuitOptions(options => { options.DetailedErrors = true; });
+    .AddCircuitOptions(options => { options.DetailedErrors = builder.Environment.IsDevelopment(); });
 
 
 var app = builder.Build();
@@ -131,6 +140,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var servicios = scope.ServiceProvider;
+    var db = servicios.GetRequiredService<SqlContext>();
+    db.Database.Migrate();
     var gestorInit = servicios.GetRequiredService<GestorInicializacion>();
     gestorInit.AsegurarInicializacion();
 }

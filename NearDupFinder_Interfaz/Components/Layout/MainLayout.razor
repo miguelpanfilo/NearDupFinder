@@ -1,9 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
-@using NearDupFinder_LogicaDeNegocio.Servicios
-@using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias
-@inject AuthenticationStateProvider AuthStateProvider
-@inject GestorAuditoria GestorAuditoria
 
 <div class="page">
     <div class="sidebar">
@@ -38,32 +34,3 @@
     <a class="dismiss">🗙</a>
 </div>
 
-@code {
-    
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await AsignarUsuario();
-        
-        AuthStateProvider.AuthenticationStateChanged += async _ => await AsignarUsuario();
-    }
-    
-    protected async Task AsignarUsuario()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
-        {
-            foreach (var claim in user.Claims)
-            {
-                if (claim.Type == System.Security.Claims.ClaimTypes.Email)
-                {
-                    GestorAuditoria.AsignarUsuarioActual(claim.Value);
-                    break;
-                }
-            }
-        }
-    }
-
-}

@@ -52,13 +52,11 @@ public class GestorUsuariosPruebas
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
 
         var sesionUsuario = new SesionUsuarioActual();
-        sesionUsuario.Asignar("tester@correo.com");
+        sesionUsuario.Asignar("manuel@gmail.com");
 
         _gestorAuditoria = new GestorAuditoria(repositorioAuditorias, sesionUsuario);
         _gestorAutenticacionUsuario = new GestorAutenticacionUsuario(_repositorioUsuarios);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _gestorAuditoria, _gestorAutenticacionUsuario);
-
-        _gestorAuditoria.AsignarUsuarioActual("manuel@gmail.com");
     }
 
 
