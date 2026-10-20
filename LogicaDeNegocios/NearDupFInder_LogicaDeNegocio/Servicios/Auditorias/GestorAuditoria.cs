@@ -76,7 +76,4 @@ public class GestorAuditoria
 
     public IEnumerable<EntradaDeLog> ObtenerTodasLasEntidades()
         => _repositorio.ObtenerTodos();
-
-    public void AsignarUsuarioActual(string email) => _sesion.Asignar(email);
-    public void DesasignarUsuario() => _sesion.Desasignar();
 }

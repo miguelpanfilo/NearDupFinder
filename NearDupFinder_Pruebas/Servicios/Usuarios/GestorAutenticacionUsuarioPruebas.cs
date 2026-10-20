@@ -54,7 +54,7 @@ public class GestorAutenticacionUsuarioPruebas
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
 
         var sesionUsuario = new SesionUsuarioActual();
-        sesionUsuario.Asignar("tester@correo.com");
+        sesionUsuario.Asignar("manuel@gmail.com");
 
         _gestorAuditoria = new GestorAuditoria(repositorioAuditorias, sesionUsuario);
         _gestorAutenticacionUsuario = new GestorAutenticacionUsuario(_repositorioUsuarios);
@@ -63,8 +63,6 @@ public class GestorAutenticacionUsuarioPruebas
             _gestorAuditoria,
             _gestorAutenticacionUsuario
         );
-
-        _gestorAuditoria.AsignarUsuarioActual("manuel@gmail.com");
     }
 
     [TestCleanup]
@@ -197,33 +195,29 @@ public class GestorAutenticacionUsuarioPruebas
     }
     
     [TestMethod]
-    public void AutenticarUsuarioDto_UsuarioInexistente_LanzaExcepcion()
+    public void AutenticarUsuarioDto_UsuarioInexistente_RetornaNull()
     {
         string email = "noexiste@neardupfinder.com";
         string clave = "123QWEasdzxc@";
         DatosAutenticacion datos = new DatosAutenticacion(email, clave);
-       
-        var ex = Assert.ThrowsException<ExcepcionDeUsuario>(() =>
-            _gestorAutenticacionUsuario.AutenticarUsuarioDto(datos)
-        );
 
-        StringAssert.Contains(ex.Message, "El usuario no es valido");
+        var resultado = _gestorAutenticacionUsuario.AutenticarUsuarioDto(datos);
+
+        Assert.IsNull(resultado);
     }
 
     [TestMethod]
-    public void AutenticarUsuarioDto_ClaveIncorrecta_LanzaExcepcion()
+    public void AutenticarUsuarioDto_ClaveIncorrecta_RetornaNull()
     {
-        string email = "manuel@ejemplo.com"; 
+        string email = "manuel@ejemplo.com";
         string claveCorrecta = "123QWEasdzxc@";
         string claveIncorrecta = "ClaveMala123@";
         _gestorUsuarios.CrearUsuario(CrearDtoUsuario(email, claveCorrecta));
         DatosAutenticacion datos = new DatosAutenticacion(email, claveIncorrecta);
-       
-        var ex = Assert.ThrowsException<ExcepcionDeUsuario>(() =>
-            _gestorAutenticacionUsuario.AutenticarUsuarioDto(datos)
-        );
 
-        StringAssert.Contains(ex.Message, "El usuario no es valido");
+        var resultado = _gestorAutenticacionUsuario.AutenticarUsuarioDto(datos);
+
+        Assert.IsNull(resultado);
     }
 
     [TestMethod]

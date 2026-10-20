@@ -1,4 +1,5 @@
 @page "/notificaciones"
+@attribute [Authorize(Roles="Revisor,Administrador")]
 @rendermode InteractiveServer
 @using NearDupFInder_LogicaDeNegocio.DTOs.ParaNotificacion
 @using NearDupFinder_LogicaDeNegocio.Servicios.Notificaciones

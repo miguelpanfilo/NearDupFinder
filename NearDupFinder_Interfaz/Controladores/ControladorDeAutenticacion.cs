@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NearDupFinder_LogicaDeNegocio.DTOs.ParaLogin;
-using NearDupFInder_LogicaDeNegocio.Servicios.Auditorias;
 using NearDupFinder_LogicaDeNegocio.Servicios.Usuarios;
 
 namespace NearDupFinder_Interfaz.Controladores;
@@ -14,16 +13,12 @@ public class ControladorDeAutenticacion : ControllerBase
 {
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] GestorAutenticacionUsuario gestorAutenticacionUsuario,[FromServices] GestorAuditoria gestorAuditoria)
+    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string clave, [FromServices] GestorAutenticacionUsuario gestorAutenticacionUsuario)
     {
         DatosAutenticacion datosAutenticacion = new DatosAutenticacion(email, clave);
-        bool elUsuarioExiste = gestorAutenticacionUsuario.AutenticarUsuarioBooleano(datosAutenticacion);
-        if (!elUsuarioExiste)
+        DatosIdentificacion? usuario = gestorAutenticacionUsuario.AutenticarUsuarioDto(datosAutenticacion);
+        if (usuario is null)
             return Redirect("/login?error=1");
-        
-        DatosIdentificacion usuario = gestorAutenticacionUsuario.AutenticarUsuarioDto(datosAutenticacion);
-
-        gestorAuditoria.AsignarUsuarioActual(usuario.Email); 
 
         var claims = new List<Claim>
         {
@@ -41,10 +36,8 @@ public class ControladorDeAutenticacion : ControllerBase
 
     [HttpPost("logout")]
     [AllowAnonymous]
-    public async Task<IActionResult> Logout([FromServices] GestorAuditoria gestorAuditoria)
+    public async Task<IActionResult> Logout()
     {
-        gestorAuditoria.DesasignarUsuario();
-
         await HttpContext.SignOutAsync();
         return Redirect("/login");
     }

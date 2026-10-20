@@ -20,17 +20,6 @@ public class SqlContext : DbContext
 
     public SqlContext(DbContextOptions<SqlContext> options) : base(options)
     {
-        if (Database.IsRelational())
-        {
-            try
-            {
-                Database.Migrate();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error aplicando migraciones: {ex.Message}");
-            }
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

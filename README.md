@@ -61,6 +61,12 @@ Abrir `http://localhost:5040`.
 dotnet test
 ```
 
+### Credenciales de prueba
+
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| `admin@gmail.com` | `123QWEasdzxc@` | Administrador |
+
 ## 📸 Capturas
 
 <!-- Agregá acá 2 o 3 capturas: lista de duplicados, clusters e importación CSV -->

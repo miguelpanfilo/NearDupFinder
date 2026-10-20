@@ -36,11 +36,11 @@ public class GestorAutenticacionUsuario(IRepositorioUsuarios repositorioUsuarios
         return true;
     }
     
-    public DatosIdentificacion AutenticarUsuarioDto(DatosAutenticacion datosAutenticacion)
+    public DatosIdentificacion? AutenticarUsuarioDto(DatosAutenticacion datosAutenticacion)
     {
-        Usuario? usuario = AutenticarUsuario(datosAutenticacion);;
+        Usuario? usuario = AutenticarUsuario(datosAutenticacion);
         if (usuario is null)
-            throw new ExcepcionDeUsuario("El usuario no es valido");
+            return null;
 
         return DatosIdentificacion.FromEntity(usuario);
     }
