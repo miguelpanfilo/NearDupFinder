@@ -71,8 +71,11 @@ dotnet test
 
 ## 📸 Capturas
 
-<!-- Agregá acá 2 o 3 capturas: lista de duplicados, clusters e importación CSV -->
-<!-- ![Duplicados](docs/duplicados.png) -->
+<img width="2876" height="1136" alt="image" src="https://github.com/user-attachments/assets/5b06d634-26f9-4598-ac39-7dc57fcadd3b" />
+
+<img width="2876" height="764" alt="image" src="https://github.com/user-attachments/assets/cc75af69-dcec-4c24-b824-f22e7acec559" />
+
+
 
 ---
 
