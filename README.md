@@ -81,13 +81,12 @@ Pares de ítems similares con su score de similitud y clasificación (posible du
 ### Gestión de usuarios
 Alta, edición y roles (Administrador, Revisor, Operario).
 
-<img width="100%" alt="Gestión de usuarios" src="https://github.com/user-attachments/assets/5b06d634-26f9-4598-ac39-7dc57fcadd3b" />
+<img width="100%" alt="Gestión de usuarios" src="https://github.com/user-attachments/assets/cc75af69-dcec-4c24-b824-f22e7acec559" />
 
 ### Auditoría
 Registro de acciones de los usuarios, con filtro por fechas y exportación a CSV / Excel.
 
-<img width="100%" alt="Auditoría" src="https://github.com/user-attachments/assets/cc75af69-dcec-4c24-b824-f22e7acec559" />
-
+<img width="100%" alt="Auditoría" src="https://github.com/user-attachments/assets/5b06d634-26f9-4598-ac39-7dc57fcadd3b" />
 ---
 
 **Miguel Panfilo** — [LinkedIn](https://www.linkedin.com/in/miguel-panfilo-214aa2127) · [GitHub](https://github.com/miguelpanfilo)
