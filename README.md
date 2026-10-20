@@ -69,7 +69,7 @@ dotnet test
 |---|---|---|
 | `admin@gmail.com` | `123QWEasdzxc@` | Administrador |
 
-## 📸 Capturas
+##  Capturas
 
 ### Detección de duplicados
 Pares de ítems similares con su score de similitud y clasificación (posible duplicado / alerta).
