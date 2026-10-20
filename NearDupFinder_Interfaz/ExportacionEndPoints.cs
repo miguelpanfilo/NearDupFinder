@@ -16,7 +16,7 @@ public static class ExportacionEndPoints
 
                 var nombreCsvCreado = $"auditorias_{fechaInicial:dd-MM-yy}_al_{fechaFinal:dd-MM-yy}.csv";
                 return Results.File(bytes, "text/csv", nombreCsvCreado);
-            });
+            }).RequireAuthorization(p => p.RequireRole("Administrador", "Revisor"));
 
         app.MapGet("/api/auditorias/export/xlsx",
             (DateTime fechaInicial, DateTime fechaFinal,
@@ -29,6 +29,6 @@ public static class ExportacionEndPoints
                 return Results.File(bytes,
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     nombreXlsxCreado);
-            });
+            }).RequireAuthorization(p => p.RequireRole("Administrador", "Revisor"));
     }
 }
