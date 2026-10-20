@@ -1,5 +1,7 @@
 # NearDupFinder — Detector de productos duplicados
 
+   [![Build and Test](https://github.com/miguelpanfilo/NearDupFinder/actions/workflows/dotnet-test.yml/badge.svg)](https://github.com/miguelpanfilo/NearDupFinder/actions/workflows/dotnet-test.yml)
+
 Aplicación web para **detectar y gestionar productos casi duplicados** en catálogos. Compara los ítems por similitud de texto, los agrupa en *clusters* y permite fusionarlos, gestionar stock y exportar los resultados.
 
 > Proyecto obligatorio de **Diseño de Aplicaciones 1** — Universidad ORT Uruguay (Licenciatura en Sistemas).
